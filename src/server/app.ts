@@ -12,6 +12,8 @@ import { compose } from "../middleware/runner.js";
 import type { Middleware } from "../middleware/types.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 import { headersToObject, parseCookies } from "../core/http.js";
+import { tryHandleApiRoute } from "./api.js";
+import { buildHydrationModule, runtimeHydrateModule } from "./runtimeServe.js";
 
 type AppMode = "dev" | "prod";
 
@@ -22,7 +24,6 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
   log.info(`Routes discovered: ${routes.length}`);
   for (const r of routes) log.info(`  ${r.urlPath} -> ${r.filePath}`);
 
-  // static assets
   const serveAssets = sirv(join(process.cwd(), config.siteDir), {
     dev: mode === "dev",
     etag: true
@@ -35,18 +36,51 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
 
   const middlewares: Middleware[] = [
     async (ctx, next) => {
-      // basic logger
       log.info(`${ctx.req.method} ${ctx.url.pathname}`);
       await next();
     },
 
     async (ctx, next) => {
-      // serve dist first in prod
+      // runtime internal modules
+      if (ctx.url.pathname === "/__runtime/hydrate.js") {
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+        ctx.res.end(runtimeHydrateModule());
+        return;
+      }
+
+      if (ctx.url.pathname === "/__hydrate") {
+        const file = ctx.url.searchParams.get("file");
+        if (!file) {
+          ctx.res.statusCode = 400;
+          ctx.res.end("missing file");
+          return;
+        }
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+        ctx.res.end(buildHydrationModule(file));
+        return;
+      }
+
+      await next();
+    },
+
+    async (ctx, next) => {
+      // API routes
+      const handled = await tryHandleApiRoute({
+        req: ctx.req,
+        res: ctx.res,
+        siteDir: config.siteDir
+      });
+      if (handled) return;
+      await next();
+    },
+
+    async (ctx, next) => {
+      // dist
       if (mode === "prod") {
-        let handled = false;
         await new Promise<void>((resolve) => {
           serveDist(ctx.req as any, ctx.res as any, () => resolve());
-          handled = ctx.res.headersSent;
         });
         if (ctx.res.writableEnded || ctx.res.headersSent) return;
       }
@@ -54,7 +88,7 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
     },
 
     async (ctx, next) => {
-      // serve site assets in dev
+      // site assets in dev
       if (mode === "dev") {
         await new Promise<void>((resolve) => {
           serveAssets(ctx.req as any, ctx.res as any, () => resolve());
@@ -65,7 +99,7 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
     },
 
     async (ctx, next) => {
-      // SSR route handler
+      // SSR
       if (ctx.req.method !== "GET") return next();
 
       const m = matchRoute(routes, ctx.url.pathname);
@@ -93,7 +127,6 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
     },
 
     async (ctx) => {
-      // 404
       ctx.res.statusCode = 404;
       ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
       ctx.res.end("404 Not Found");
@@ -108,5 +141,5 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
       await appMiddleware({ req, res, url }, async () => {});
     }
   };
-            }
-        
+      }
+      
