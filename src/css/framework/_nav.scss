@@ -1,0 +1,28 @@
+/* src/css/framework/_nav.scss */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: $z-dropdown;
+  border-bottom: 1px solid $border;
+  background: rgba(11,15,20,.75);
+  backdrop-filter: blur(16px);
+}
+
+.nav-inner {
+  @include container;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav a {
+  color: $muted;
+  &:hover { color: $text; }
+}
