@@ -1,0 +1,37 @@
+/* src/css/framework/_inputs.scss */
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.03);
+  color: $text;
+  @include interactive;
+
+  &:focus-visible { @include focus-ring; }
+}
+
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.03);
+  color: $text;
+
+  &:focus-visible { @include focus-ring; }
+}
+
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.03);
+  color: $text;
+  cursor: pointer;
+
+  &:focus-visible { @include focus-ring; }
+}
