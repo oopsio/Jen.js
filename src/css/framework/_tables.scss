@@ -1,0 +1,20 @@
+/* src/css/framework/_tables.scss */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.02);
+}
+
+.table th,
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid $border;
+  text-align: left;
+}
+
+.table th { color: $muted; font-weight: 650; }
+
+.table tr:hover td { background: rgba(255,255,255,.03); }
