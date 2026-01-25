@@ -1,4 +1,13 @@
-import { mkdirSync, rmSync, writeFileSync, existsSync, copyFileSync, readdirSync, statSync } from "node:fs";
+import {
+  mkdirSync,
+  rmSync,
+  writeFileSync,
+  existsSync,
+  copyFileSync,
+  readdirSync,
+  statSync,
+  readFileSync
+} from "node:fs";
 import { join } from "node:path";
 
 import type { FrameworkConfig } from "../core/config.js";
@@ -19,6 +28,14 @@ function copyDir(src: string, dst: string) {
     if (st.isDirectory()) copyDir(sp, dp);
     else copyFileSync(sp, dp);
   }
+}
+
+function compileScssFallback(scssPath: string) {
+  // No sass dependency allowed here (you said SCSS framework built-in later)
+  // so we do minimal: output raw scss as css comment + keep empty css.
+  if (!existsSync(scssPath)) return "/* no global scss */\n";
+  const raw = readFileSync(scssPath, "utf8");
+  return `/* SCSS placeholder (compile later in Rust) */\n/*\n${raw}\n*/\n`;
 }
 
 export async function buildSite(opts: { config: FrameworkConfig }) {
@@ -55,11 +72,11 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     log.info(`SSG: ${r.urlPath} -> ${outPath}`);
   }
 
-  // Copy site assets into dist
   copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
 
-  // Temporary CSS output placeholder
-  writeFileSync(join(dist, "styles.css"), `/* TODO: compile SCSS -> CSS */\n`, "utf8");
+  // styles.css
+  const cssOut = compileScssFallback(join(process.cwd(), config.css.globalScss));
+  writeFileSync(join(dist, "styles.css"), cssOut, "utf8");
 
   log.info("Build complete.");
 }
