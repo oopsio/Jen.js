@@ -1,0 +1,24 @@
+/* src/css/framework/_reset.scss */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: $bg;
+  color: $text;
+  font-family: $font-sans;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video, canvas { max-width: 100%; height: auto; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+
+a { color: inherit; text-decoration: none; }
+
+pre, code { font-family: $font-mono; }
