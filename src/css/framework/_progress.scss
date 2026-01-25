@@ -1,0 +1,16 @@
+/* src/css/framework/_progress.scss */
+.progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.03);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: var(--value, 0%);
+  background: rgba(124,58,237,.95);
+  transition: width .18s ease;
+}
