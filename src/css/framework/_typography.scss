@@ -1,0 +1,8 @@
+/* src/css/framework/_typography.scss */
+.h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; }
+.h2 { font-size: 32px; font-weight: 750; letter-spacing: -0.02em; }
+.h3 { font-size: 24px; font-weight: 700; }
+.p { font-size: 16px; line-height: 1.6; color: $muted; }
+.small { font-size: 13px; color: $subtle; }
+
+.mono { font-family: $font-mono; }
