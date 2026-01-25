@@ -1,0 +1,20 @@
+/* src/css/framework/_base.scss */
+::selection { background: rgba(124,58,237,.35); }
+
+hr {
+  border: none;
+  border-top: 1px solid $border;
+  margin: $space-6 0;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.04);
+  font-family: $font-mono;
+  font-size: 12px;
+}
