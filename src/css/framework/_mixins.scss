@@ -1,0 +1,35 @@
+/* src/css/framework/_mixins.scss */
+@use "sass:math";
+
+@mixin focus-ring {
+  outline: none;
+  box-shadow: $focus;
+}
+
+@mixin interactive {
+  transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease, opacity .12s ease;
+  &:active { transform: translateY(1px); }
+}
+
+@mixin glass($alpha: .6) {
+  background: rgba(15,22,32,$alpha);
+  backdrop-filter: blur(14px);
+  border: 1px solid $border;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin container {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+@mixin grid($cols: 12, $gap: 16px) {
+  display: grid;
+  grid-template-columns: repeat($cols, minmax(0, 1fr));
+  gap: $gap;
+}
