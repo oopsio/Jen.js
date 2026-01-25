@@ -49,18 +49,23 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
         return;
       }
 
-      if (ctx.url.pathname === "/__hydrate") {
+          if (ctx.url.pathname === "/__hydrate") {
         const file = ctx.url.searchParams.get("file");
         if (!file) {
           ctx.res.statusCode = 400;
           ctx.res.end("missing file");
           return;
         }
+
+        const js = buildHydrationModule(file);
+
         ctx.res.statusCode = 200;
         ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
-        ctx.res.end(buildHydrationModule(file));
+        ctx.res.setHeader("cache-control", "no-store");
+        ctx.res.end(js);
         return;
-      }
+          }
+      
 
       await next();
     },
