@@ -1,0 +1,14 @@
+/* src/css/framework/_code.scss */
+.codeblock {
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  background: rgba(0,0,0,.35);
+  padding: 14px;
+  overflow: auto;
+  box-shadow: $shadow-sm;
+}
+
+.codeblock code {
+  color: rgba(34,197,94,.95);
+  font-size: 13px;
+}
