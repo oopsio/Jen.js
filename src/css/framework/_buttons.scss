@@ -1,0 +1,38 @@
+/* src/css/framework/_buttons.scss */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  background: rgba(255,255,255,.04);
+  color: $text;
+  cursor: pointer;
+  user-select: none;
+  @include interactive;
+
+  &:hover { background: rgba(255,255,255,.06); }
+  &:focus-visible { @include focus-ring; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-primary {
+  background: rgba(124,58,237,.9);
+  border-color: rgba(124,58,237,.55);
+
+  &:hover { background: rgba(124,58,237,1); }
+}
+
+.btn-danger {
+  background: rgba(239,68,68,.9);
+  border-color: rgba(239,68,68,.55);
+
+  &:hover { background: rgba(239,68,68,1); }
+}
+
+.btn-ghost {
+  background: transparent;
+  &:hover { background: rgba(255,255,255,.05); }
+}
