@@ -1,0 +1,26 @@
+/* src/css/framework/_tooltip.scss */
+.tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  background: $panel;
+  box-shadow: $shadow-md;
+  color: $muted;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease;
+}
+
+.tooltip:hover::after { opacity: 1; }
