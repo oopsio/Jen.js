@@ -1,0 +1,19 @@
+/* src/css/framework/_alerts.scss */
+.alert {
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.03);
+}
+
+.alert-warn {
+  background: rgba(245,158,11,.12);
+  border-color: rgba(245,158,11,.35);
+  color: rgba(245,158,11,.95);
+}
+
+.alert-danger {
+  background: rgba(239,68,68,.12);
+  border-color: rgba(239,68,68,.35);
+  color: rgba(239,68,68,.95);
+}
