@@ -1,0 +1,22 @@
+{
+  "name": "framework-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.ts dev",
+    "start": "node server.ts start",
+    "build": "node build.ts",
+    "clean": "node src/build/clean.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.0",
+    "preact": "^10.25.4",
+    "preact-render-to-string": "^6.5.13",
+    "sirv": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}
