@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import type { FrameworkConfig } from "../core/config.js";
 import type { RouteEntry } from "../core/routes/scan.js";
 import type { LoaderContext, RouteModule } from "../core/types.js";
@@ -55,17 +54,14 @@ export async function renderRouteToHtml(opts: {
       const headNode = h(mod.Head as any, { data, params, query });
       const headHtml = renderToString(headNode);
       headParts.push(headHtml);
-    } catch {
-      // ignore head errors for now
-    }
+    } catch {}
   }
 
-  // CSS injection (simple placeholder, SCSS compile later)
-  // If site/styles/global.scss exists, we just link a fake file for now.
-  // Later your Rust builder will compile it into dist/assets/global.css.
   headParts.push(`<link rel="stylesheet" href="/styles.css">`);
 
   const payload = escapeHtml(JSON.stringify({ data, params, query }));
+
+  const hydrationEntry = `/__hydrate?file=${encodeURIComponent(route.filePath)}`;
 
   const html = `<!doctype html>
 <html>
@@ -75,6 +71,10 @@ ${headParts.join("\n")}
 <body>
 <div id="app">${bodyHtml}</div>
 <script id="__FRAMEWORK_DATA__" type="application/json">${payload}</script>
+<script type="module">
+  import { hydrateClient } from "/__runtime/hydrate.js";
+  hydrateClient(${JSON.stringify(hydrationEntry)});
+</script>
 ${config.inject.bodyEnd.join("\n")}
 </body>
 </html>`;
