@@ -1,0 +1,19 @@
+/* src/css/framework/_modal.scss */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: grid;
+  place-items: center;
+  z-index: $z-modal;
+  padding: 20px;
+}
+
+.modal {
+  width: min(560px, 100%);
+  border-radius: $radius-xl;
+  border: 1px solid $border;
+  background: $panel;
+  box-shadow: $shadow-lg;
+  padding: $space-6;
+}
