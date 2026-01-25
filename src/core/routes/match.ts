@@ -6,13 +6,17 @@ export type MatchResult = {
 };
 
 export function matchRoute(routes: RouteEntry[], pathname: string): MatchResult | null {
-  // exact match first
   for (const r of routes) {
-    if (r.urlPath === pathname) return { route: r, params: {} };
+    const re = new RegExp(r.pattern);
+    const m = pathname.match(re);
+    if (!m) continue;
+
+    const params: Record<string, string> = {};
+    for (let i = 0; i < r.paramNames.length; i++) {
+      params[r.paramNames[i]] = decodeURIComponent(m[i + 1] ?? "");
+    }
+
+    return { route: r, params };
   }
-
-  // dynamic match: /user/:id style via (id).tsx later
-  // for now minimal, extend later
-
   return null;
 }
