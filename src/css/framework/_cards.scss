@@ -1,0 +1,19 @@
+/* src/css/framework/_cards.scss */
+.card {
+  border-radius: $radius-xl;
+  border: 1px solid $border;
+  background: $panel;
+  box-shadow: $shadow-md;
+  padding: $space-5;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card-subtitle {
+  margin-top: 4px;
+  font-size: 14px;
+  color: $muted;
+}
