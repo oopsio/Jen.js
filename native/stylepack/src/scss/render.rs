@@ -19,6 +19,16 @@ pub fn render_css(ast: Ast) -> Result<String> {
         if r.decls.is_empty() {
             continue;
         }
+
+        if r.decls.len() == 1 && r.decls[0].0 == "@__RAW_AT__" {
+            out.push_str(&r.decls[0].1);
+            if !r.decls[0].1.trim_end().ends_with('\n') {
+                out.push('\n');
+            }
+            out.push('\n');
+            continue;
+        }
+
         out.push_str(&r.selectors.join(", "));
         out.push_str(" {\n");
         for (k, v) in r.decls {
@@ -51,13 +61,8 @@ fn flatten_nodes(
                 decls.push((prop.to_string(), v));
             }
             Node::RawAt { text } => {
-                let sel = if parents.is_empty() {
-                    vec![":root".to_string()]
-                } else {
-                    parents.to_vec()
-                };
                 out.push(FlatRule {
-                    selectors: sel,
+                    selectors: vec![],
                     decls: vec![("@__RAW_AT__".to_string(), text.to_string())],
                 });
             }
@@ -114,4 +119,4 @@ fn expand_parent(parent: &str, child: &str) -> String {
     } else {
         format!("{} {}", parent, child)
     }
-}
+                        }
