@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "strict": true,
+    "outDir": "build",
     "skipLibCheck": true,
     "types": ["node"],
     "baseUrl": ".",
@@ -13,5 +14,5 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "server.ts", "build.ts", "framework.config.ts", "site/**/*.ts", "site/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "server.ts", "build.ts", "jen.config.ts", "site/**/*.ts", "site/**/*.tsx"]
 }

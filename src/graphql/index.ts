@@ -1,12 +1,6 @@
-import { graphql } from 'graphql';
-import { schema } from './schema';
-import { resolvers } from './resolvers';
+// GraphQL utilities - external GraphQL library not included
+// Users should implement with their own graphql library (e.g., npm install graphql)
 
 export async function runQuery(query: string, variables?: any) {
-  return await graphql({
-    schema,
-    source: query,
-    rootValue: resolvers,
-    variableValues: variables
-  });
+  throw new Error('GraphQL implementation requires external library. Install: npm install graphql');
 }

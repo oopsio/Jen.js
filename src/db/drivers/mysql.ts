@@ -1,16 +1,13 @@
-import mysql from 'mysql2/promise';
+// MySQL driver - external MySQL library not included
+// Users should implement with their own mysql2 library (e.g., npm install mysql2)
 import { QueryResult } from '../types';
 
 export class MySQLDriver {
-  pool?: mysql.Pool;
-
   connect(connectionString: string) {
-    this.pool = mysql.createPool(connectionString);
+    throw new Error('MySQL implementation requires external library. Install: npm install mysql2');
   }
 
   async query<T=any>(sql: string, params: any[] = []): Promise<QueryResult<T>> {
-    if (!this.pool) throw new Error('MySQL not connected');
-    const [rows] = await this.pool.query<T & mysql.RowDataPacket[]>(sql, params);
-    return rows;
+    throw new Error('MySQL implementation requires external library. Install: npm install mysql2');
   }
 }

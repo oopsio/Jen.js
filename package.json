@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node server.ts dev",
     "start": "node server.ts start",
-    "build": "node build.ts",
+    "build": "node build.js",
+    "bundle": "node bundle.js",
     "clean": "node src/build/clean.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -16,7 +17,11 @@
     "sirv": "^3.0.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/node": "^22.10.0",
-    "typescript": "^5.7.2"
+    "eslint": "^9.39.2",
+    "globals": "^17.1.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.53.1"
   }
 }

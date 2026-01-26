@@ -1,17 +1,4 @@
-import { buildSchema } from 'graphql';
+// GraphQL schema - external GraphQL library not included
+// Users should implement with their own graphql library (e.g., npm install graphql)
 
-export const schema = buildSchema(`
-  type User {
-    id: ID!
-    name: String!
-    email: String!
-  }
-
-  type Query {
-    users: [User]
-  }
-
-  type Mutation {
-    createUser(name: String!, email: String!): User
-  }
-`);
+export const schema = null;

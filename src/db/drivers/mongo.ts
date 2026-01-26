@@ -1,18 +1,13 @@
-import { MongoClient, Db } from 'mongodb';
+// MongoDB driver - external MongoDB library not included
+// Users should implement with their own mongodb library (e.g., npm install mongodb)
 import { QueryResult } from '../types';
 
 export class MongoDriver {
-  client?: MongoClient;
-  db?: Db;
-
   async connect(connectionString: string, dbName?: string) {
-    this.client = new MongoClient(connectionString);
-    await this.client.connect();
-    this.db = this.client.db(dbName);
+    throw new Error('MongoDB implementation requires external library. Install: npm install mongodb');
   }
 
   async query<T=any>(collection: string, filter: object = {}): Promise<QueryResult<T>> {
-    if (!this.db) throw new Error('MongoDB not connected');
-    return this.db.collection<T>(collection).find(filter).toArray();
+    throw new Error('MongoDB implementation requires external library. Install: npm install mongodb');
   }
 }

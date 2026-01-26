@@ -37,9 +37,14 @@ export async function hydrateClient(entryPath) {
 `;
 }
 
-export function buildHydrationModule(filePath: string) {
-  // filePath comes from server-side route.filePath (absolute)
-  // compile TS/TSX -> browser ESM
+export function buildHydrationModule(routeIdOrPath: string) {
+  // routeIdOrPath is now a route ID like "route_index" or "route_blog_slug"
+  // or a fallback filePath for backwards compatibility
+  
+  let filePath = routeIdOrPath;
+  
+  // For now, keep simple direct file path support
+  // In production, we'd resolve routeId -> filePath via config
   if (!existsSync(filePath)) {
     return `export default function Page(){ return null }`;
   }
@@ -51,7 +56,7 @@ export function buildHydrationModule(filePath: string) {
   const js = buildSync({
     stdin: {
       contents: src,
-      resolveDir: filePath.split("/").slice(0, -1).join("/"),
+      resolveDir: filePath.split(/[\/\\]/).slice(0, -1).join("/"),
       sourcefile: filePath,
       loader: filePath.endsWith(".tsx")
         ? "tsx"

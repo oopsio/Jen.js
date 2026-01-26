@@ -4,6 +4,8 @@ import type { LoaderContext, RouteModule } from "../core/types.js";
 
 import { h } from "preact";
 import renderToString from "preact-render-to-string";
+import { pathToFileURL } from "node:url";
+import esbuild from "esbuild";
 
 function escapeHtml(s: string) {
   return s
@@ -25,7 +27,22 @@ export async function renderRouteToHtml(opts: {
 }) {
   const { config, route, url, params, query, headers, cookies } = opts;
 
-  const mod: RouteModule = await import(route.filePath);
+  // Transpile route file if needed
+  let moduleUrl = route.filePath;
+  if (route.filePath.endsWith('.tsx') || route.filePath.endsWith('.ts')) {
+    const result = await esbuild.build({
+      entryPoints: [route.filePath],
+      outfile: route.filePath.replace(/\.(tsx?|jsx?)$/, '.esbuild.mjs'),
+      format: 'esm',
+      platform: 'browser',
+      target: 'es2022',
+      bundle: false,
+      write: true
+    });
+    moduleUrl = route.filePath.replace(/\.(tsx?|jsx?)$/, '.esbuild.mjs');
+  }
+  
+  const mod: RouteModule = await import(pathToFileURL(moduleUrl).href);
 
   const loaderCtx: LoaderContext = {
     url,
@@ -59,9 +76,13 @@ export async function renderRouteToHtml(opts: {
 
   headParts.push(`<link rel="stylesheet" href="/styles.css">`);
 
-  const payload = escapeHtml(JSON.stringify({ data, params, query }));
+  // Serialize framework data WITHOUT HTML escaping quotes
+  // Only escape </script to prevent script injection
+  const frameworkDataStr = JSON.stringify({ data, params, query }, null, 2)
+    .replace(/<\/script/g, "<\\/script");
 
-  const hydrationEntry = `/__hydrate?file=${encodeURIComponent(route.filePath)}`;
+  // Use URL pathname as stable route ID
+  const routeId = route.urlPath === "/" ? "route_index" : `route_${route.urlPath.slice(1).replace(/\//g, "_")}`;
 
   const html = `<!doctype html>
 <html>
@@ -70,10 +91,12 @@ ${headParts.join("\n")}
 </head>
 <body>
 <div id="app">${bodyHtml}</div>
-<script id="__FRAMEWORK_DATA__" type="application/json">${payload}</script>
+<script id="__FRAMEWORK_DATA__" type="application/json">
+${frameworkDataStr}
+</script>
 <script type="module">
   import { hydrateClient } from "/__runtime/hydrate.js";
-  hydrateClient(${JSON.stringify(hydrationEntry)});
+  hydrateClient(${JSON.stringify(`/__hydrate?id=${routeId}`)});
 </script>
 ${config.inject.bodyEnd.join("\n")}
 </body>

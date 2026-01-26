@@ -1,15 +1,12 @@
-import jwt from 'jsonwebtoken';
+// JWT token utilities - external JWT library not included
+// Users should implement with their own jwt library (e.g., npm install jsonwebtoken)
 
 const SECRET = process.env.JWT_SECRET || 'supersecret';
 
 export function signToken(payload: object, expiresIn: string = '1h') {
-  return jwt.sign(payload, SECRET, { expiresIn });
+  throw new Error('JWT implementation requires external library. Install: npm install jsonwebtoken');
 }
 
 export function verifyToken(token: string) {
-  try {
-    return jwt.verify(token, SECRET);
-  } catch {
-    return null;
-  }
+  throw new Error('JWT implementation requires external library. Install: npm install jsonwebtoken');
 }

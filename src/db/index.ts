@@ -33,12 +33,12 @@ export class DB {
   }
 
   async query<T=any>(table: string, sqlOrFilter: any, params: any[] = []): Promise<QueryResult<T>> {
-    this.lua.run(table, 'query', { sqlOrFilter, params });
     switch(this.config.driver) {
-      case 'sqlite': return this.sqlite.query<T>(sqlOrFilter, params);
-      case 'postgres': return this.postgres.query<T>(sqlOrFilter, params);
-      case 'mysql': return this.mysql.query<T>(sqlOrFilter, params);
-      case 'mongodb': return this.mongo.query<T>(table, sqlOrFilter);
+      case 'sqlite': return await this.sqlite.query<T>(sqlOrFilter, params);
+      case 'postgres': return await this.postgres.query<T>(sqlOrFilter, params);
+      case 'mysql': return await this.mysql.query<T>(sqlOrFilter, params);
+      case 'mongodb': return await this.mongo.query<T>(table, sqlOrFilter);
+      default: throw new Error('Unsupported driver');
     }
   }
 }

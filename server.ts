@@ -2,9 +2,9 @@ import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import config from "./framework.config.ts";
-import { createApp } from "./src/server/app.js";
-import { log } from "./src/shared/log.js";
+import config from "./jen.config.js";
+import { createApp } from "@src/server/app.js";
+import { log } from "@src/shared/log.js";
 
 const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";

@@ -1,16 +1,13 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
+// SQLite driver - external SQLite library not included
+// Users should implement with their own sqlite library (e.g., npm install sqlite3 sqlite)
 import { QueryResult } from '../types';
 
 export class SQLiteDriver {
-  db?: sqlite3.Database;
-
   async connect(path: string) {
-    this.db = await open({ filename: path, driver: sqlite3.Database });
+    throw new Error('SQLite implementation requires external library. Install: npm install sqlite3 sqlite');
   }
 
   async query<T=any>(sql: string, params: any[] = []): Promise<QueryResult<T>> {
-    if (!this.db) throw new Error('SQLite not connected');
-    return this.db.all<T>(sql, params);
+    throw new Error('SQLite implementation requires external library. Install: npm install sqlite3 sqlite');
   }
 }
