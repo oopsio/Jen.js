@@ -5,6 +5,8 @@ import type { LoaderContext, RouteModule } from "../core/types.js";
 import { h } from "preact";
 import renderToString from "preact-render-to-string";
 import { pathToFileURL } from "node:url";
+import { join, dirname, basename } from "node:path";
+import { mkdirSync, existsSync } from "node:fs";
 import esbuild from "esbuild";
 
 function escapeHtml(s: string) {
@@ -14,6 +16,16 @@ function escapeHtml(s: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function getCachePath(filePath: string) {
+  const cacheDir = join(process.cwd(), "node_modules", ".jen", "cache");
+  if (!existsSync(cacheDir)) {
+    mkdirSync(cacheDir, { recursive: true });
+  }
+  // Flatten path to avoid directory structure issues
+  const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
+  return join(cacheDir, flatName + ".mjs");
 }
 
 export async function renderRouteToHtml(opts: {
@@ -30,19 +42,22 @@ export async function renderRouteToHtml(opts: {
   // Transpile route file if needed
   let moduleUrl = route.filePath;
   if (route.filePath.endsWith('.tsx') || route.filePath.endsWith('.ts')) {
-    const result = await esbuild.build({
+    const outfile = getCachePath(route.filePath);
+    await esbuild.build({
       entryPoints: [route.filePath],
-      outfile: route.filePath.replace(/\.(tsx?|jsx?)$/, '.esbuild.mjs'),
+      outfile,
       format: 'esm',
-      platform: 'browser',
+      platform: 'node', // Use node platform for SSR to support built-ins
       target: 'es2022',
-      bundle: false,
+      bundle: true, // Bundle to resolve local imports (simple)
+      external: ['preact', 'preact-render-to-string', 'jenjs'], // Keep framework externals
       write: true
     });
-    moduleUrl = route.filePath.replace(/\.(tsx?|jsx?)$/, '.esbuild.mjs');
+    moduleUrl = outfile;
   }
   
-  const mod: RouteModule = await import(pathToFileURL(moduleUrl).href);
+  // Cache busting for dynamic import
+  const mod: RouteModule = await import(pathToFileURL(moduleUrl).href + "?t=" + Date.now());
 
   const loaderCtx: LoaderContext = {
     url,

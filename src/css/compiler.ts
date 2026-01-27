@@ -1,7 +1,8 @@
 import { compile, compileString } from "sass";
+import { globSync } from "glob";
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, extname, relative } from "node:path";
-import { log } from "@src/shared/log.js";
+import { log } from "../shared/log.js";
 
 export interface CompileOptions {
   inputPath: string;
@@ -68,8 +69,7 @@ export class ScssCompiler {
   }
 
   compileGlob(pattern: string, outputDir: string, minified: boolean = false): number {
-    const { glob } = require("glob");
-    const files = glob.sync(pattern);
+    const files = globSync(pattern);
 
     let count = 0;
     files.forEach((file: string) => {

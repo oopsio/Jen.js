@@ -18,6 +18,7 @@ await esbuild.build({
     join(__dirname, 'src/core/types.ts'),
     join(__dirname, 'src/runtime/render.ts'),
     join(__dirname, 'src/shared/log.ts'),
+    join(__dirname, 'src/css/compiler.ts'),
     join(__dirname, 'jen.config.ts'),
   ],
   outdir,
