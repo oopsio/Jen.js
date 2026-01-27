@@ -1,0 +1,36 @@
+{
+  "name": "jenjs",
+  "version": "0.0.1",
+  "description": "A modern TypeScript-first framework for building static-generated (SSG) and server-rendered (SSR) web applications with Preact.",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "default": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "jen",
+    "jenjs",
+    "framework",
+    "ssr",
+    "ssg",
+    "preact",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kessud2021/jenjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kessud2021/jenjs/issues"
+  },
+  "homepage": "https://github.com/kessud2021/jenjs#readme"
+}

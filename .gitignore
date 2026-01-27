@@ -4,3 +4,5 @@ build/
 .esbuild/
 .build/
 target/
+*.esbuild.mjs
+*.esbuild.js

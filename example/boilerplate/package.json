@@ -1,0 +1,28 @@
+{
+  "name": "jen-js-boilerplate",
+  "version": "1.0.0",
+  "description": "Full-featured Jen.js boilerplate with Tailwind CSS, custom styling, plugins, and modern tooling",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.ts dev",
+    "start": "node server.ts start",
+    "build": "node build.ts",
+    "typecheck": "tsc -p ../../tsconfig.json --noEmit",
+    "clean": "rmdir /s /q dist .esbuild 2>nul || exit 0"
+  },
+  "dependencies": {
+    "clsx": "^2.0.0",
+    "esbuild": "^0.25.0",
+    "preact": "^10.25.4",
+    "preact-render-to-string": "^6.5.13",
+    "sirv": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild-register": "^3.6.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

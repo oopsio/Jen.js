@@ -1,0 +1,24 @@
+{
+  "name": "jen-ssg-example",
+  "version": "1.0.0",
+  "description": "Production-ready SSG example with Jen.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js dev",
+    "start": "node server.js start",
+    "build": "node build.js",
+    "build:clean": "rm -rf dist .jen .esbuild",
+    "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.0",
+    "preact": "^10.25.4",
+    "preact-render-to-string": "^6.5.13",
+    "sirv": "^3.0.1",
+    "sass": "^1.69.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}

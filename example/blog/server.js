@@ -25,14 +25,16 @@ async function main() {
   
   console.log(`[SERVER] Transpiling config...`);
   await esbuild.build({
-    entryPoints: [configPath],
-    outdir,
-    format: "esm",
-    platform: "node",
-    target: "es2022",
-    bundle: false,
-    logLevel: "silent"
-  });
+  entryPoints: [configPath],
+  outdir,
+  format: "esm",
+  platform: "node",
+  target: "es2022",
+  bundle: true,          // bundle so .tsx imports are resolved
+  loader: { ".ts": "ts", ".tsx": "tsx" },
+  logLevel: "silent"
+});
+
 
   // Load config
   const configFile = join(outdir, "jen.config.js");

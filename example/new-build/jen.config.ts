@@ -1,4 +1,4 @@
-import type { FrameworkConfig } from "./src/core/config.js";
+import type { FrameworkConfig } from "../../src/core/config.js";
 
 const config: FrameworkConfig = {
   siteDir: "site",
@@ -20,6 +20,7 @@ const config: FrameworkConfig = {
       `<meta charset="utf-8">`,
       `<meta name="viewport" content="width=device-width,initial-scale=1">`,
       `<meta name="theme-color" content="#2563eb">`,
+      `<meta name="description" content="Production-ready SSG example built with Jen.js">`,
     ],
     bodyEnd: [],
   },
