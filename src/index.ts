@@ -18,11 +18,14 @@ export * from './auth/session.js';
 // ============================================================================
 // Build Module - SSG Pipeline & Utilities
 // ============================================================================
+export { buildSite as legacyBuildSite, type BuildOptions } from './build-tools/build-site.js';
 export * from './build/build.js';
+export { ProductionBuilder, type ProductionBuildConfig } from './build/production-build.js';
 export * from './build/ssg-build.js';
 export * from './build/ssg-pipeline.js';
 export * from './build/corrected-pipeline.js';
 export * from './build/island-hydration.js';
+export * from './build/hydration-islands.js';
 export * from './build/asset-manifest.js';
 export * from './build/asset-hashing.js';
 export * from './build/page-renderer.js';
@@ -31,6 +34,7 @@ export * from './build/critical-css.js';
 export * from './build/ssg-runtime.js';
 export * from './build/deterministic.js';
 export * from './build/build-invariants.js';
+export * from './build/build-cache.js';
 export type { Island, IslandRegistry } from './build/island-hydration.js';
 export {
   createIslandRegistry,
@@ -52,6 +56,7 @@ export * from './cache/redis.js';
 // ============================================================================
 export * from './cli/templates/ssg/jen.config.js';
 export * from './cli/templates/ssr/jen.config.js';
+export * from './cli/banner.js';
 
 // ============================================================================
 // Core Module
@@ -64,9 +69,9 @@ export * from './core/routes/match.js';
 export * from './core/routes/scan.js';
 
 // ============================================================================
-// CSS Module (if exists)
+// CSS Module
 // ============================================================================
-// Note: css module exists but has no .ts files yet
+export * from './css/compiler.js';
 
 // ============================================================================
 // Database Module
@@ -124,6 +129,7 @@ export * from './plugin/loader.js';
 export * from './runtime/render.js';
 export * from './runtime/client-runtime.js';
 export * from './runtime/hydrate.js';
+export * from './runtime/hmr.js';
 
 // ============================================================================
 // Server Module

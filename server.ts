@@ -5,6 +5,7 @@ import { join } from "node:path";
 import config from "./jen.config.js";
 import { createApp } from "@src/server/app.js";
 import { log } from "@src/shared/log.js";
+import { printBanner } from "@src/cli/banner.js";
 
 const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";
@@ -26,9 +27,10 @@ async function main() {
   });
 
   server.listen(config.server.port, config.server.hostname, () => {
-    log.info(
-      `Server running: http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`
-    );
+    printBanner(config.server.port, isDev ? "development" : "production");
+    // log.info(
+    //   `Server running: http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`
+    // );
   });
 
   process.on("SIGINT", () => {

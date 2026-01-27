@@ -37,6 +37,10 @@ export async function hydrateClient(entryPath) {
 `;
 }
 
+export function invalidateCache(filePath: string) {
+  cache.delete(filePath);
+}
+
 export function buildHydrationModule(routeIdOrPath: string) {
   // routeIdOrPath is now a route ID like "route_index" or "route_blog_slug"
   // or a fallback filePath for backwards compatibility
@@ -50,7 +54,15 @@ export function buildHydrationModule(routeIdOrPath: string) {
   }
 
   const key = filePath;
-  const prev = cache.get(key);
+  // Simple dev cache: check if file content changed? 
+  // Actually, for dev speed, we trust explicit invalidation or just rebuild on request.
+  // Since buildSync is fast for single files, let's just rebuild if not in cache.
+  // The cache is populated. If invalidation happens, it's removed.
+  
+  if (cache.has(key)) {
+    return cache.get(key)!.js;
+  }
+
   const src = readFileSync(filePath, "utf8");
 
   const js = buildSync({

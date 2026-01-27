@@ -36,7 +36,7 @@ async function main() {
   const config = (await import(configUrl)).default;
 
   // Load framework build function
-  const buildPath = pathToFileURL(join(rootDir, "src/build/build.js")).href;
+  const buildPath = pathToFileURL(join(rootDir, "build/src/build/build.js")).href;
   const { buildSite } = await import(buildPath);
 
   console.log("[BUILD] Building site...");

@@ -42,7 +42,7 @@ async function main() {
   const config = (await import(configUrl)).default;
 
   // Load framework app creator
-  const appPath = pathToFileURL(join(rootDir, "src/server/app.js")).href;
+  const appPath = pathToFileURL(join(rootDir, "build/src/server/app.js")).href;
   const appModule = await import(appPath);
   const { createApp } = appModule;
 

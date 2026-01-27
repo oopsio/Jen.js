@@ -1,0 +1,43 @@
+$primary: #2563eb;
+$bg: #f8fafc;
+$text: #1e293b;
+
+body {
+  background-color: $bg;
+  color: $text;
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 600px;
+  padding: 2rem;
+  text-align: center;
+
+  h1 {
+    color: $primary;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    margin-top: 2rem;
+
+    h2 {
+      margin-top: 0;
+      color: darken($primary, 10%);
+    }
+
+    p {
+      color: lighten($text, 20%);
+    }
+  }
+}

@@ -9,6 +9,7 @@ import {
   readFileSync
 } from "node:fs";
 import { join } from "node:path";
+import { createScssCompiler } from "../css/compiler.js";
 
 import type { FrameworkConfig } from "../core/config.js";
 import { scanRoutes } from "../core/routes/scan.js";
@@ -28,14 +29,6 @@ function copyDir(src: string, dst: string) {
     if (st.isDirectory()) copyDir(sp, dp);
     else copyFileSync(sp, dp);
   }
-}
-
-function compileScssFallback(scssPath: string) {
-  // No sass dependency allowed here (you said SCSS framework built-in later)
-  // so we do minimal: output raw scss as css comment + keep empty css.
-  if (!existsSync(scssPath)) return "/* no global scss */\n";
-  const raw = readFileSync(scssPath, "utf8");
-  return `/* SCSS placeholder (compile later in Rust) */\n/*\n${raw}\n*/\n`;
 }
 
 export async function buildSite(opts: { config: FrameworkConfig }) {
@@ -75,8 +68,25 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
 
   // styles.css
-  const cssOut = compileScssFallback(join(process.cwd(), config.css.globalScss));
-  writeFileSync(join(dist, "styles.css"), cssOut, "utf8");
+  const scssPath = join(process.cwd(), config.css.globalScss);
+  if (existsSync(scssPath)) {
+    const compiler = createScssCompiler();
+    const result = compiler.compile({
+      inputPath: scssPath,
+      minified: true
+    });
+    
+    if (result.error) {
+      log.error(`SCSS Compilation Failed: ${result.error}`);
+      writeFileSync(join(dist, "styles.css"), "/* SCSS Compilation Failed */");
+    } else {
+      writeFileSync(join(dist, "styles.css"), result.css);
+      log.info(`Compiled global SCSS: ${config.css.globalScss}`);
+    }
+  } else {
+    log.warn(`Global SCSS file not found: ${scssPath}`);
+    writeFileSync(join(dist, "styles.css"), "/* No global SCSS found */");
+  }
 
   log.info("Build complete.");
 }
