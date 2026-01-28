@@ -49,6 +49,31 @@ importers:
         specifier: ^8.53.1
         version: 8.53.1(eslint@9.39.2)(typescript@5.9.3)
 
+  packages/create-jen-app/templates/new-sass-compiler:
+    dependencies:
+      '@jenjs/master':
+        specifier: ^1.2.5
+        version: 1.2.5
+      esbuild:
+        specifier: ^0.25.0
+        version: 0.25.12
+      preact:
+        specifier: ^10.25.4
+        version: 10.28.2
+      preact-render-to-string:
+        specifier: ^6.5.13
+        version: 6.6.5(preact@10.28.2)
+      sirv:
+        specifier: ^3.0.1
+        version: 3.0.2
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.7
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
 packages:
 
   '@esbuild/aix-ppc64@0.25.12':
@@ -268,6 +293,9 @@ packages:
   '@isaacs/brace-expansion@5.0.0':
     resolution: {integrity: sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==}
     engines: {node: 20 || >=22}
+
+  '@jenjs/master@1.2.5':
+    resolution: {integrity: sha512-yHCRbC31r3mjWAq4qLi3yLsLTJABVhOl/EH4289UJuJ6TZgoYySr1RFnYxWrd+LkfQGBCA2lZoLXoS3CtEY0Zg==}
 
   '@parcel/watcher-android-arm64@2.5.6':
     resolution: {integrity: sha512-YQxSS34tPF/6ZG7r/Ih9xy+kP/WwediEUsqmtf0cuCV5TPPKw/PQHRhueUo6JdeFJaqV3pyjm0GdYjZotbRt/A==}
@@ -971,6 +999,8 @@ snapshots:
   '@isaacs/brace-expansion@5.0.0':
     dependencies:
       '@isaacs/balanced-match': 4.0.1
+
+  '@jenjs/master@1.2.5': {}
 
   '@parcel/watcher-android-arm64@2.5.6':
     optional: true

@@ -1,0 +1,44 @@
+{
+  "name": "create-jen-app",
+  "version": "1.0.0",
+  "description": "Create a beautiful Jen.js application with a single command",
+  "type": "module",
+  "bin": {
+    "create-jen-app": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "esbuild src/index.ts --minify --bundle --platform=node --target=es2022 --format=esm --external:prompts --external:child_process --outfile=dist/index.js && chmod +x dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "jen",
+    "jenjs",
+    "create",
+    "cli",
+    "scaffold",
+    "boilerplate"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kessud2021/Jen.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kessud2021/Jen.js/issues"
+  },
+  "homepage": "https://github.com/kessud2021/Jen.js#readme",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.2"
+  }
+}

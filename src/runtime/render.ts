@@ -96,9 +96,6 @@ export async function renderRouteToHtml(opts: {
   const frameworkDataStr = JSON.stringify({ data, params, query }, null, 2)
     .replace(/<\/script/g, "<\\/script");
 
-  // Use URL pathname as stable route ID
-  const routeId = route.urlPath === "/" ? "route_index" : `route_${route.urlPath.slice(1).replace(/\//g, "_")}`;
-
   const html = `<!doctype html>
 <html>
 <head>
@@ -111,7 +108,7 @@ ${frameworkDataStr}
 </script>
 <script type="module">
   import { hydrateClient } from "/__runtime/hydrate.js";
-  hydrateClient(${JSON.stringify(`/__hydrate?id=${routeId}`)});
+  hydrateClient(${JSON.stringify(`/__hydrate?file=${encodeURIComponent(route.filePath)}`)});
 </script>
 ${config.inject.bodyEnd.join("\n")}
 </body>
