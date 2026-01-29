@@ -1,0 +1,10 @@
+name: Production
+on:
+  schedule:
+    - cron: '*/5 * * * *' # Runs every 2 minutes
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel
+        run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
