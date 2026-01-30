@@ -9,7 +9,7 @@ import type { FrameworkConfig } from "../core/config.js";
 import { scanRoutes } from "../core/routes/scan.js";
 import { matchRoute } from "../core/routes/match.js";
 import { log } from "../shared/log.js";
-import { compose } from "../middleware/runner.js";
+import { Kernel } from "../middleware/kernel.js";
 import type { Middleware } from "../middleware/types.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
@@ -261,20 +261,20 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
       ctx.res.end(finalHtml);
     },
 
-    async (ctx) => {
-      ctx.res.statusCode = 404;
-      ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
-      ctx.res.end("404 Not Found");
+        async (ctx) => {
+          ctx.res.statusCode = 404;
+          ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
+          ctx.res.end("404 Not Found");
+        }
+      ];
+    
+      const kernel = new Kernel();
+      middlewares.forEach(m => kernel.use(m));
+    
+      return {
+        async handle(req: IncomingMessage, res: ServerResponse) {
+          await kernel.handle(req, res);
+        }
+      };
     }
-  ];
-
-  const appMiddleware = compose(middlewares);
-
-  return {
-    async handle(req: IncomingMessage, res: ServerResponse) {
-      const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
-      await appMiddleware({ req, res, url }, async () => {});
-    }
-  };
-      }
-      
+    
