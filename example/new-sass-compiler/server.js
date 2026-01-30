@@ -23,6 +23,7 @@ async function main() {
     platform: "node",
     target: "es2022",
     bundle: true,
+    minify: true,
     loader: { ".ts": "ts" },
     logLevel: "silent"
   });
