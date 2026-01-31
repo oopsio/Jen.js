@@ -2,6 +2,7 @@ import { buildSync } from "esbuild";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
+import { basename, dirname } from "node:path";
 
 const cache = new Map<string, { js: string; etag: string }>();
 
@@ -63,20 +64,17 @@ export function buildHydrationModule(routeIdOrPath: string) {
     return cache.get(key)!.js;
   }
 
-  const src = readFileSync(filePath, "utf8");
+  // Use a proxy entry to allow tree-shaking of server-only exports (like loader)
+  const fileName = basename(filePath);
+  const dir = dirname(filePath);
+  const proxyContent = `export { default } from "./${fileName}";`;
 
   const js = buildSync({
     stdin: {
-      contents: src,
-      resolveDir: filePath.split(/[\/\\]/).slice(0, -1).join("/"),
-      sourcefile: filePath,
-      loader: filePath.endsWith(".tsx")
-        ? "tsx"
-        : filePath.endsWith(".jsx")
-        ? "jsx"
-        : filePath.endsWith(".ts")
-        ? "ts"
-        : "js"
+      contents: proxyContent,
+      resolveDir: dir,
+      sourcefile: 'hydration-proxy.tsx',
+      loader: 'tsx'
     },
     format: "esm",
     platform: "browser",

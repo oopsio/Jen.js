@@ -1,0 +1,13 @@
+{
+  "name": "example-jdb",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx server.ts",
+    "build": "tsx build.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}

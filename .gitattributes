@@ -1,2 +1,1 @@
-*.html linguist-detectable=false
-website/** linguist-documentation
+website/** linguist-language=Typescript

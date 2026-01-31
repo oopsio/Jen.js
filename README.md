@@ -174,20 +174,18 @@ export default {
 
 ## 💾 Database
 
-Supported drivers: SQLite, PostgreSQL, MySQL, MongoDB
+Supported drivers: jDB (embedded), SQLite, PostgreSQL, MySQL.
 
 ```typescript
 import { DB } from "@src/db";
-import config from "@src/core/config";
 
-const db = new DB(
-  { driver: "sqlite", connectionString: "data/app.db" },
-  new SchemaManager(),
-  new LuaHooks()
-);
+const db = new DB({
+  type: "jdb",
+  jdb: { root: "data" }
+});
 
 await db.connect();
-const users = await db.query("users", {});
+const users = await db.find("users", {});
 ```
 
 ## 🔐 Authentication

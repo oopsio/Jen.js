@@ -1,44 +1,59 @@
-import { DBConfig, QueryResult } from './types';
-import { SchemaManager } from './schema';
-import { LuaHooks } from './luaHooks';
-import { SQLiteDriver } from './drivers/sqlite';
-import { PostgresDriver } from './drivers/postgres';
-import { MySQLDriver } from './drivers/mysql';
-import { MongoDriver } from './drivers/mongo';
+import { DBConfig, IDBDriver, UnifiedQuery, FindQuery } from './types';
+import { DBConnector } from './connector';
+import { Filter, Update } from '../jdb/types';
+
+export * from './types';
+export * from './drivers/jdb';
+export * from './drivers/sql';
 
 export class DB {
-  config: DBConfig;
-  schema: SchemaManager;
-  lua: LuaHooks;
+  private driver: IDBDriver;
+  private config: DBConfig;
 
-  sqlite = new SQLiteDriver();
-  postgres = new PostgresDriver();
-  mysql = new MySQLDriver();
-  mongo = new MongoDriver();
-
-  constructor(config: DBConfig, schema: SchemaManager, lua: LuaHooks) {
+  constructor(config: DBConfig) {
     this.config = config;
-    this.schema = schema;
-    this.lua = lua;
+    this.driver = DBConnector.create(config);
   }
 
   async connect() {
-    switch(this.config.driver) {
-      case 'sqlite': await this.sqlite.connect(this.config.connectionString); break;
-      case 'postgres': this.postgres.connect(this.config.connectionString); break;
-      case 'mysql': this.mysql.connect(this.config.connectionString); break;
-      case 'mongodb': await this.mongo.connect(this.config.connectionString); break;
-      default: throw new Error('Unsupported driver');
-    }
+    await this.driver.connect();
   }
 
-  async query<T=any>(table: string, sqlOrFilter: any, params: any[] = []): Promise<QueryResult<T>> {
-    switch(this.config.driver) {
-      case 'sqlite': return await this.sqlite.query<T>(sqlOrFilter, params);
-      case 'postgres': return await this.postgres.query<T>(sqlOrFilter, params);
-      case 'mysql': return await this.mysql.query<T>(sqlOrFilter, params);
-      case 'mongodb': return await this.mongo.query<T>(table, sqlOrFilter);
-      default: throw new Error('Unsupported driver');
+  async disconnect() {
+    await this.driver.disconnect();
+  }
+
+  async query<T = any>(q: UnifiedQuery<T> | string, params?: any[]): Promise<T[]> {
+    if (typeof q === 'string') {
+      return this.driver.query({ sql: q, params });
     }
+    return this.driver.query(q);
+  }
+
+  // Fluent API Shortcuts
+  
+  find<T = any>(collection: string, filter?: Filter<T>, options?: any): Promise<T[]> {
+    return this.driver.query({ find: collection, where: filter, options });
+  }
+
+  async findOne<T = any>(collection: string, filter: Filter<T>): Promise<T | null> {
+    const res = await this.driver.query({ find: collection, where: filter, options: { limit: 1 } });
+    return res[0] || null;
+  }
+
+  create<T = any>(collection: string, data: any): Promise<T> {
+    return this.driver.create(collection, data);
+  }
+
+  update<T = any>(collection: string, filter: Filter<T>, update: Update<T>): Promise<number> {
+    return this.driver.update(collection, filter, update);
+  }
+
+  delete<T = any>(collection: string, filter: Filter<T>): Promise<number> {
+    return this.driver.delete(collection, filter);
+  }
+
+  count<T = any>(collection: string, filter: Filter<T>): Promise<number> {
+    return this.driver.count(collection, filter);
   }
 }
