@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "npm install",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Dev Server",
+      "type": "shell",
+      "command": "npm run dev",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Static Site",
+      "type": "shell",
+      "command": "npm run build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Type Check",
+      "type": "shell",
+      "command": "npm run typecheck",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}
