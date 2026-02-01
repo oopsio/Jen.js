@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contact Maintainer
+    url: https://github.com/oopsio/Jen.js/issues/new
+    about: If you find a security issue or need help, please contact the maintainer directly.
