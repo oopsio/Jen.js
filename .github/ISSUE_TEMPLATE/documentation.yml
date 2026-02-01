@@ -1,0 +1,29 @@
+name: Documentation
+description: Suggest improvements to docs
+title: '[DOC]'
+labels: documentation
+assignees: []
+
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Which part of the documentation needs improvement?
+      placeholder: "e.g., clarify route loader example"
+    validations:
+      required: true
+
+  - type: textarea
+    id: changes
+    attributes:
+      label: Suggested Changes
+      description: Describe the improvements or corrections
+      placeholder: "Explain what should change or be added."
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Any other context or examples
+      placeholder: "Additional information, links, or references."
