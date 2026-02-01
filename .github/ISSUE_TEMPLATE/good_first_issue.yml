@@ -1,0 +1,29 @@
+name: Good First Issue
+description: Beginner-friendly tasks to get started contributing
+title: '[GOOD FIRST ISSUE]'
+labels: good first issue
+assignees: []
+
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A short description of the task
+      placeholder: "e.g., Fix typo in route loader example"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Explain the task or what needs to be done
+      placeholder: "Add details so a new contributor can understand"
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Any additional guidance or links
+      placeholder: "Mention related files, references, or tips"
