@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",       // Prettier for formatting
+    "dbaeumer.vscode-eslint",       // ESLint integration
+    "ms-vscode.vscode-typescript-tslint-plugin", // TypeScript linting support
+    "pflannery.vscode-versionlens", // VersionLens for package.json
+    "xabikos.javascriptsnippets",   // JS/TS code snippets
+    "o2sh.prettier-ts",             // Prettier + TypeScript support
+    "pmneo.tsimporter",             // Auto import for TS/JS
+    "chrmarti.regex"                // Regex preview in editor
+  ],
+}
