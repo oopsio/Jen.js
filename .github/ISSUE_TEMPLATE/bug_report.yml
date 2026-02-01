@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a problem with Jen.js
+title: '[BUG]'
+labels: bug
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out this template to help us reproduce the issue.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: A short description of the problem
+      placeholder: "e.g., SSR fails for dynamic route"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: List the steps to reproduce the behavior
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: "The page renders without errors"
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: "Error message or wrong rendering"
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Node.js, Jen.js version, OS, etc.
+      placeholder: "Node v20, Jen.js v0.3.0, Windows 11"
