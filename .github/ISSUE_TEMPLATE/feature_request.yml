@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: '[FEATURE]'
+labels: enhancement
+assignees: []
+
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Short description of the requested feature
+      placeholder: "e.g., Add caching for API responses"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this feature needed?
+      placeholder: "Explain why this feature would be useful."
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Optional ideas for implementation
+      placeholder: "Describe how you would implement it, if known."
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other approaches you considered
+      placeholder: "Other solutions, if any."
