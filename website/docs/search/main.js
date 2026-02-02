@@ -48,7 +48,7 @@ function displayResults (results) {
     if (!noResultsText) {
       noResultsText = "No results found";
     }
-    search_results.insertAdjacentHTML('beforeend', '<p>' + noResultsText + '</p>');
+    search_results.insertAdjacentHTML('beforeend', '<p>' + escapeHtml(noResultsText) + '</p>');
   }
 }
 
