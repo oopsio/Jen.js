@@ -29,3 +29,4 @@ See `CONTRIBUTING.md`.
 
 GNU GPL 3.0
 
+> Note: GitHub Linguist is configured to reflect the primary source language used during development.
