@@ -19,7 +19,7 @@
   "eslint.validate": ["javascript", "typescript", "typescriptreact"],
   "prettier.requireConfig": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "explicit"
   },
   "files.autoSave": "onFocusChange",
   "editor.defaultFormatter": "esbenp.prettier-vscode"
