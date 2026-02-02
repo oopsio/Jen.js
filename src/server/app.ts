@@ -199,10 +199,10 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
               `/* SCSS Error: ${result.error.replace(
                 /\*\//g,
                 "* /"
-              )} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error.replace(
-                /"/g,
-                '\\"'
-              )}"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`
+              )} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error
+                .replace(/\\/g, "\\\\")
+                .replace(/"/g, '\\"')
+              }"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`
             );
             return;
           }
