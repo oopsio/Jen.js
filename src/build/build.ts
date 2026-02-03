@@ -47,6 +47,8 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     const html = await renderRouteToHtml({
       config,
       route: r,
+      req: {} as any,
+      res: {} as any,
       url,
       params: {},
       query: {},

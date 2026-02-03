@@ -25,6 +25,7 @@ export * from './core/paths.js';
 export * from './core/types.js';
 export * from './core/routes/match.js';
 export * from './core/routes/scan.js';
+export * from './core/middleware-hooks.js';
 export * from './css/compiler.js';
 export * from './db/index.js';
 export * from './db/types.js';
@@ -59,7 +60,13 @@ export * from './runtime/render.js';
 export * from './runtime/client-runtime.js';
 export * from './runtime/hydrate.js';
 export * from './runtime/hmr.js';
+export * from './runtime/islands.js';
+export * from './runtime/island-hydration-client.js';
 export * from './server/app.js';
-export * from './server/api.js';
+// Use new api-routes.ts for HTTP method handlers (replaces old api.js behavior)
+export { tryHandleApiRoute as tryHandleApiRoute_v2 } from './server/api-routes.js';
+export type { ApiHandler, ApiRouteContext, ApiRouteModule } from './server/api-routes.js';
+// Keep old api.js exports for backward compatibility
+export { tryHandleApiRoute } from './server/api.js';
 export * from './server/runtimeServe.js';
 export * from './shared/log.js';

@@ -15,7 +15,7 @@ async function main() {
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
-  
+
   await esbuild.build({
     entryPoints: [configPath],
     outdir,

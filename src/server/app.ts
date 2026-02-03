@@ -10,12 +10,14 @@ import { scanRoutes } from "../core/routes/scan.js";
 import { matchRoute } from "../core/routes/match.js";
 import { log } from "../shared/log.js";
 import { Kernel } from "../middleware/kernel.js";
-import type { Middleware } from "../middleware/types.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
 import { headersToObject, parseCookies } from "../core/http.js";
 import { tryHandleApiRoute } from "./api.js";
 import { buildHydrationModule, runtimeHydrateModule, invalidateCache } from "./runtimeServe.js";
+
+// Local middleware type for app routing
+type Middleware = (ctx: any, next: () => Promise<void>) => Promise<void>;
 
 type AppMode = "dev" | "prod";
 
@@ -106,6 +108,107 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
         ctx.res.statusCode = 200;
         ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
         ctx.res.end(runtimeHydrateModule());
+        return;
+      }
+      
+      if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+        const islandCode = `
+import { hydrate } from "https://esm.sh/preact@10";
+import { h } from "https://esm.sh/preact@10";
+
+function extractIslands() {
+  const islands = [];
+  const html = document.documentElement.outerHTML;
+  const regex = /<!--__ISLAND_(LOAD|IDLE|VISIBLE)__:([^:]+):([^:]+):(.+?)-->/g;
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const strategy = match[1].toLowerCase();
+    const id = match[2];
+    const component = match[3];
+    const propsStr = match[4].replace(/\\\\u003c/g, "<");
+    try {
+      islands.push({
+        id, component, strategy,
+        props: JSON.parse(propsStr),
+      });
+    } catch (e) {
+      console.warn('Failed to parse island ' + id);
+    }
+  }
+  return islands;
+}
+
+async function hydrateIsland(island) {
+  const target = document.getElementById(island.id);
+  if (!target) {
+    console.warn('Island target #' + island.id + ' not found');
+    return;
+  }
+  try {
+    const hydrationUrl = '/__hydrate?file=' + encodeURIComponent(island.component);
+    const mod = await import(hydrationUrl);
+    const Component = mod.default;
+    if (!Component) {
+      console.warn('Component not exported from ' + island.component);
+      return;
+    }
+    const app = h(Component, island.props);
+    hydrate(app, target);
+  } catch (err) {
+    console.error('Failed to hydrate island ' + island.id + ':', err);
+  }
+}
+
+function hydrateWithStrategy(islands) {
+  for (const island of islands) {
+    switch (island.strategy) {
+      case 'load':
+        hydrateIsland(island);
+        break;
+      case 'idle':
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => hydrateIsland(island));
+        } else {
+          setTimeout(() => hydrateIsland(island), 2000);
+        }
+        break;
+      case 'visible':
+        if ('IntersectionObserver' in window) {
+          const target = document.getElementById(island.id);
+          if (target) {
+            const observer = new IntersectionObserver((entries) => {
+              if (entries[0].isIntersecting) {
+                hydrateIsland(island);
+                observer.disconnect();
+              }
+            }, { threshold: 0.1 });
+            observer.observe(target);
+          }
+        } else {
+          setTimeout(() => hydrateIsland(island), 3000);
+        }
+        break;
+    }
+  }
+}
+
+export function initializeIslands() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const islands = extractIslands();
+      hydrateWithStrategy(islands);
+    });
+  } else {
+    const islands = extractIslands();
+    hydrateWithStrategy(islands);
+  }
+}
+
+initializeIslands();
+`;
+        ctx.res.end(islandCode);
         return;
       }
 
@@ -240,25 +343,35 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
       const query: Record<string, string> = {};
       for (const [k, v] of ctx.url.searchParams.entries()) query[k] = v;
 
-      const html = await renderRouteToHtml({
-        config,
-        route: m.route,
-        url: ctx.url,
-        params: m.params,
-        query,
-        headers: reqHeaders,
-        cookies
-      });
+      try {
+        const html = await renderRouteToHtml({
+          config,
+          route: m.route,
+          req: ctx.req,
+          res: ctx.res,
+          url: ctx.url,
+          params: m.params,
+          query,
+          headers: reqHeaders,
+          cookies
+        });
 
-      let finalHtml = html;
-      if (mode === "dev") {
-        // Inject HMR client
-        finalHtml = html.replace("</body>", `<script>${HMR_CLIENT_SCRIPT}</script></body>`);
+        let finalHtml = html;
+        if (mode === "dev") {
+          // Inject HMR client
+          finalHtml = html.replace("</body>", `<script>${HMR_CLIENT_SCRIPT}</script></body>`);
+        }
+
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader("content-type", "text/html; charset=utf-8");
+        ctx.res.end(finalHtml);
+      } catch (err: any) {
+        // Middleware may have sent a response (redirect/json)
+        if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
+          return; // Response already sent
+        }
+        throw err;
       }
-
-      ctx.res.statusCode = 200;
-      ctx.res.setHeader("content-type", "text/html; charset=utf-8");
-      ctx.res.end(finalHtml);
     },
 
         async (ctx) => {
