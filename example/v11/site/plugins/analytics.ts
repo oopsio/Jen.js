@@ -26,7 +26,20 @@ class Analytics {
   }
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const timestamp = Date.now();
+
+    if (typeof window !== "undefined" && window.crypto && window.crypto.getRandomValues) {
+      const array = new Uint32Array(2);
+      window.crypto.getRandomValues(array);
+      const randomPart =
+        array[0].toString(36).padStart(8, "0") +
+        array[1].toString(36).padStart(8, "0");
+      return `session_${timestamp}_${randomPart}`;
+    }
+
+    // Fallback for environments without window.crypto
+    const fallbackRandom = Math.random().toString(36).substr(2, 16);
+    return `session_${timestamp}_${fallbackRandom}`;
   }
 
   trackPageView() {
