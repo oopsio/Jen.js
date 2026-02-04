@@ -8,7 +8,14 @@
     "build": "node build.js",
     "bundle": "node bundle.js",
     "clean": "node src/build/clean.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "setup": "bash scripts/setup.sh || powershell -File scripts/setup.ps1",
+    "setup:unix": "bash scripts/setup.sh",
+    "setup:windows": "powershell -ExecutionPolicy Bypass -File scripts/setup.ps1",
+    "dev:unix": "bash scripts/dev.sh",
+    "dev:windows": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1",
+    "build:unix": "bash scripts/build.sh",
+    "build:windows": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1"
   },
   "dependencies": {
     "@types/glob": "^9.0.0",

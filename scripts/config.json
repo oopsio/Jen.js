@@ -1,0 +1,90 @@
+{
+  "project": {
+    "name": "Jen.js Framework",
+    "version": "1.0.0",
+    "description": "TypeScript-first framework for building static-generated and server-rendered sites with Preact"
+  },
+  "environments": {
+    "linux": {
+      "shell": "bash",
+      "pathSeparator": "/",
+      "nodeModules": "node_modules",
+      "npmClient": "npm",
+      "commands": {
+        "install": "npm install",
+        "dev": "npm run dev",
+        "build": "npm run build",
+        "typecheck": "npm run typecheck",
+        "clean": "npm run clean",
+        "test": "npm test"
+      },
+      "ports": {
+        "dev": 3000,
+        "example": 3000
+      },
+      "dirs": {
+        "src": "src",
+        "dist": "dist",
+        "example": "example/release-16"
+      }
+    },
+    "macos": {
+      "shell": "bash",
+      "pathSeparator": "/",
+      "nodeModules": "node_modules",
+      "npmClient": "npm",
+      "commands": {
+        "install": "npm install",
+        "dev": "npm run dev",
+        "build": "npm run build",
+        "typecheck": "npm run typecheck",
+        "clean": "npm run clean",
+        "test": "npm test"
+      },
+      "ports": {
+        "dev": 3000,
+        "example": 3000
+      },
+      "dirs": {
+        "src": "src",
+        "dist": "dist",
+        "example": "example/release-16"
+      }
+    },
+    "windows": {
+      "shell": "powershell",
+      "pathSeparator": "\\",
+      "nodeModules": "node_modules",
+      "npmClient": "npm",
+      "commands": {
+        "install": "npm install",
+        "dev": "npm run dev",
+        "build": "npm run build",
+        "typecheck": "npm run typecheck",
+        "clean": "npm run clean",
+        "test": "npm test"
+      },
+      "ports": {
+        "dev": 3000,
+        "example": 3000
+      },
+      "dirs": {
+        "src": "src",
+        "dist": "dist",
+        "example": "example\\release-16"
+      }
+    }
+  },
+  "development": {
+    "browser": "http://localhost:3000",
+    "watchDirs": ["src", "site", "example"],
+    "ignoreDirs": ["node_modules", "dist", ".git", ".esbuild"],
+    "fileExtensions": [".ts", ".tsx", ".js", ".jsx", ".json", ".scss", ".css"]
+  },
+  "build": {
+    "minify": true,
+    "sourceMap": false,
+    "target": "es2022",
+    "platform": "node"
+  }
+}
