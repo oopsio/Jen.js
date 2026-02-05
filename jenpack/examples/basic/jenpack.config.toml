@@ -1,0 +1,28 @@
+# JenPack Configuration for Basic Example
+
+# Entry points
+entry = ["src/index.html", "src/main.ts"]
+
+# Output directory
+outdir = "dist"
+
+# Minification
+minify = true
+
+# Source maps (disabled for examples, enable with --sourcemap)
+sourcemap = true
+
+# External dependencies (don't bundle these)
+externals = [
+    "react",
+    "preact",
+    "lodash",
+    "axios"
+]
+
+# Path aliases
+[aliases]
+"@" = "src"
+"@utils" = "src/utils"
+"@styles" = "src/styles"
+"@components" = "src/components"

@@ -1,1 +1,2 @@
-website/** linguist-language=Typescript
+website/** linguist-generated
+jenpack/** linguist-language=Rust

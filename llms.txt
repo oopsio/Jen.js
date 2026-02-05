@@ -1,0 +1,526 @@
+# Jen.js
+
+> TypeScript-first web framework for building static-generated (SSG) and server-rendered (SSR) applications with Preact.
+
+Jen.js is a modern, file-based routing framework that combines the simplicity of static site generation with the power of server-side rendering and interactive islands architecture. Built on Preact for minimal bundle sizes and maximum performance.
+
+## Core Concepts
+
+### Rendering Modes
+- **SSG (Static Site Generation)**: Pre-render pages at build time (default)
+- **SSR (Server-Side Rendering)**: Render pages on each request
+- **ISR (Incremental Static Regeneration)**: Revalidate static pages after a time interval
+- **PPR (Partial Pre-Rendering)**: Hybrid static shell with dynamic content
+
+### File-Based Routing
+Routes are defined by files in the `site/` directory using parenthetical naming:
+- `site/(home).tsx` → `/`
+- `site/(about).tsx` → `/about`
+- `site/blog/(post).tsx` → `/blog/post`
+- `site/api/(hello).ts` → `/api/hello`
+
+### Islands Architecture
+Partial hydration model where only interactive components ("islands") are hydrated client-side. Static content remains pure HTML with zero JavaScript.
+
+Hydration strategies:
+- `load`: Hydrate immediately on page load
+- `idle`: Hydrate when browser is idle (requestIdleCallback)
+- `visible`: Hydrate when element enters viewport (IntersectionObserver)
+
+## Quick Start
+
+```bash
+npm install
+npm run dev     # Development server at http://localhost:3000
+npm run build   # Build static site to dist/
+npm run start   # Production server
+```
+
+## Architecture
+
+```
+Jen.js/
+├── src/                    # Framework source
+│   ├── build/              # SSG pipeline, minification, asset hashing
+│   ├── server/             # HTTP server, API routes
+│   ├── runtime/            # Client hydration, islands, HMR
+│   ├── core/               # Config, routing, types, middleware hooks
+│   ├── middleware/         # Express-style middleware system
+│   ├── api/                # API route examples
+│   ├── auth/               # JWT and session authentication
+│   ├── cache/              # Memory and Redis caching
+│   ├── db/                 # Database drivers (SQLite, MySQL, PostgreSQL)
+│   ├── jdb/                # Built-in JSON document database
+│   ├── graphql/            # GraphQL schema and resolvers
+│   ├── i18n/               # Internationalization
+│   ├── css/                # SCSS compiler
+│   ├── plugin/             # Plugin system
+│   └── native/             # Native module stubs (bundler, optimizer)
+├── site/                   # Your application routes
+├── jen.config.ts           # Framework configuration
+├── server.ts               # Server entry point
+└── build.ts                # Build entry point
+```
+
+## Configuration (jen.config.ts)
+
+```typescript
+import type { FrameworkConfig } from "./src/core/config.js";
+
+const config: FrameworkConfig = {
+  siteDir: "site",           // Routes directory
+  distDir: "dist",           // Build output
+  
+  routes: {
+    fileExtensions: [".tsx", ".jsx", ".ts", ".js"],
+    routeFilePattern: /^\((.+)\)\.(t|j)sx?$/,
+    enableIndexFallback: true
+  },
+  
+  rendering: {
+    defaultMode: "ssg",      // "ssg" | "ssr" | "isr" | "ppr"
+    defaultRevalidateSeconds: 0
+  },
+  
+  css: {
+    globalScss: "site/styles/global.scss",
+    criticalBudget: 4096,
+    extractCritical: true
+  },
+  
+  build: {
+    minifyHtml: true,
+    minifyCss: true,
+    minifyJs: true,
+    hashAssets: true,
+    generateSitemap: true,
+    incrementalBuild: true
+  },
+  
+  server: {
+    port: 3000,
+    hostname: "0.0.0.0"
+  }
+};
+
+export default config;
+```
+
+## Route Modules
+
+### Basic Page
+
+```typescript
+// site/(about).tsx
+export const mode = "ssg";       // Override rendering mode
+export const hydrate = false;    // Pure static, no JS
+
+export function Head() {
+  return <title>About Us</title>;
+}
+
+export default function AboutPage() {
+  return <h1>About Us</h1>;
+}
+```
+
+### With Data Loader
+
+```typescript
+// site/(blog).tsx
+import type { LoaderContext } from "@src/core/types.js";
+
+export async function loader(ctx: LoaderContext) {
+  const posts = await fetchPosts();
+  return { posts };
+}
+
+export default function BlogPage({ data }: { data: { posts: Post[] } }) {
+  return (
+    <ul>
+      {data.posts.map(post => <li key={post.id}>{post.title}</li>)}
+    </ul>
+  );
+}
+```
+
+### LoaderContext Properties
+- `url: URL` - Full request URL
+- `params: Record<string, string>` - Route parameters
+- `query: Record<string, string>` - Query string parameters
+- `headers: Record<string, string>` - Request headers
+- `cookies: Record<string, string>` - Parsed cookies
+- `data?: Record<string, any>` - Data from route middleware
+
+### With Route Middleware
+
+```typescript
+// site/(dashboard).tsx
+import type { RouteMiddleware } from "@src/core/middleware-hooks.js";
+
+const authMiddleware: RouteMiddleware = (ctx) => {
+  const token = ctx.cookies["auth_token"];
+  if (!token) {
+    ctx.redirect("/login");
+  }
+  ctx.data = { userId: parseToken(token).userId };
+};
+
+export const middleware = authMiddleware; // or array: [authMiddleware, logMiddleware]
+
+export default function Dashboard({ data }) {
+  return <h1>Welcome, User {data?.userId}</h1>;
+}
+```
+
+### RouteMiddlewareContext Methods
+- `status(code)` - Set response status code (chainable)
+- `setHeader(key, value)` - Set response header (chainable)
+- `redirect(url, statusCode?)` - Redirect and stop execution
+- `json(data, statusCode?)` - Send JSON response and stop
+
+## Islands Architecture
+
+### Defining an Island
+
+```typescript
+// site/(home).tsx
+import { Island } from "@src/runtime/islands.js";
+
+function CounterImpl({ initialCount }: { initialCount: number }) {
+  const [count, setCount] = useState(initialCount);
+  return (
+    <button onClick={() => setCount(c => c + 1)}>
+      Count: {count}
+    </button>
+  );
+}
+
+// Mark as island with hydration strategy
+const Counter = Island(CounterImpl, "load");   // "load" | "idle" | "visible"
+
+export default function HomePage() {
+  return (
+    <div>
+      <h1>Welcome</h1>           {/* Static HTML, no JS */}
+      <Counter initialCount={0} /> {/* Hydrated island */}
+    </div>
+  );
+}
+```
+
+### Hydration Strategies
+- `load` - Hydrate immediately when page loads
+- `idle` - Hydrate when browser is idle (uses requestIdleCallback)
+- `visible` - Hydrate when island scrolls into viewport (uses IntersectionObserver)
+
+## API Routes
+
+### HTTP Method Handlers
+
+```typescript
+// site/api/(users).ts
+import type { ApiHandler, ApiRouteContext } from "@src/server/api-routes.js";
+
+export const GET: ApiHandler = async (ctx) => {
+  const users = await getUsers();
+  return { users };  // Auto-serialized to JSON
+};
+
+export const POST: ApiHandler = async (ctx) => {
+  const { name, email } = ctx.body;
+  const user = await createUser({ name, email });
+  return new Response(JSON.stringify(user), {
+    status: 201,
+    headers: { "Content-Type": "application/json" }
+  });
+};
+
+export const DELETE: ApiHandler = async (ctx) => {
+  return { message: "User deleted" };
+};
+```
+
+### ApiRouteContext Properties
+- `req: IncomingMessage` - Raw Node.js request
+- `res: ServerResponse` - Raw Node.js response
+- `url: URL` - Parsed URL
+- `method: string` - HTTP method (GET, POST, etc.)
+- `query: Record<string, string>` - Query parameters
+- `body: any` - Parsed request body (JSON auto-parsed)
+- `params: Record<string, string>` - Dynamic route params
+
+### Return Types
+- `Response` - Full control over response
+- `string` - Returned as text/plain
+- `object` - Auto-serialized as JSON
+
+## Middleware System
+
+### Built-in Middleware
+
+```typescript
+import { createLoggerMiddleware } from "@src/middleware/builtins/logger.js";
+import { createCorsMiddleware } from "@src/middleware/builtins/cors.js";
+import { createRateLimitMiddleware } from "@src/middleware/builtins/rate-limit.js";
+import { createSecurityHeadersMiddleware } from "@src/middleware/builtins/security-headers.js";
+import { createBodyParserMiddleware } from "@src/middleware/builtins/body-parser.js";
+import { createRequestIdMiddleware } from "@src/middleware/builtins/request-id.js";
+```
+
+### Custom Global Middleware
+
+```typescript
+// Middleware context available:
+interface MiddlewareContext {
+  req: IncomingMessage;
+  res: ServerResponse;
+  next: () => Promise<void>;
+}
+```
+
+## Database Layer
+
+### Unified Database Interface
+
+```typescript
+import { createDB } from "@src/db/index.js";
+
+// Supported: 'jdb' | 'sqlite' | 'mysql' | 'postgres'
+const db = createDB({
+  type: 'sqlite',
+  connection: './data.db'
+});
+
+await db.connect();
+
+// Query methods
+const users = await db.query({ find: 'users', where: { active: true } });
+const user = await db.create('users', { name: 'Alice', email: 'alice@example.com' });
+await db.update('users', { id: 1 }, { name: 'Bob' });
+await db.delete('users', { id: 1 });
+const count = await db.count('users', { active: true });
+
+// Raw SQL (for SQL databases)
+const results = await db.query({ sql: 'SELECT * FROM users WHERE id = ?', params: [1] });
+```
+
+### Built-in JSON Database (JDB)
+
+```typescript
+import { JDB } from "@src/jdb/index.js";
+
+const db = new JDB({ root: './data', inMemory: false });
+const users = db.collection('users');
+
+await users.insert({ name: 'Alice', age: 30 });
+const docs = await users.find({ age: { $gt: 25 } });
+await users.update({ name: 'Alice' }, { $set: { age: 31 } });
+await users.delete({ name: 'Alice' });
+```
+
+## Caching
+
+### Memory Cache
+
+```typescript
+import { MemoryCache } from "@src/cache/memory.js";
+
+const cache = new MemoryCache();
+cache.set('key', 'value', 3600); // TTL in seconds
+const value = cache.get('key');
+cache.delete('key');
+cache.clear();
+```
+
+### Redis Cache
+
+```typescript
+import { RedisCache } from "@src/cache/redis.js";
+
+const cache = new RedisCache({ host: 'localhost', port: 6379 });
+await cache.connect();
+await cache.set('key', 'value', 3600);
+const value = await cache.get('key');
+```
+
+## Authentication
+
+### Session Management
+
+```typescript
+import { SessionManager } from "@src/auth/session.js";
+
+const sessions = new SessionManager();
+sessions.createSession(userId, { role: 'admin' });
+const session = sessions.getSession(userId);
+sessions.destroySession(userId);
+```
+
+### JWT (requires external library)
+
+```typescript
+// Install: npm install jsonwebtoken
+import { signToken, verifyToken } from "@src/auth/jwt.js";
+
+const token = signToken({ userId: 123 }, '1h');
+const payload = verifyToken(token);
+```
+
+## Internationalization
+
+```typescript
+import { I18n } from "@src/i18n/index.js";
+
+const i18n = new I18n('en');  // 'en' | 'es'
+i18n.setLocale('es');
+const text = i18n.t('greeting');  // Uses translations from src/i18n/*.json
+```
+
+## Plugin System
+
+### Creating a Plugin
+
+```typescript
+// src/plugin/plugins/my-plugin.ts
+import type { Plugin } from "@src/plugin/loader.js";
+
+const plugin: Plugin = {
+  name: 'my-plugin',
+  version: '1.0.0',
+  
+  async onBuild() {
+    console.log('Running during build...');
+  },
+  
+  async onServe() {
+    console.log('Running during dev server...');
+  },
+  
+  async onDeploy() {
+    console.log('Running during deployment...');
+  }
+};
+
+export default plugin;
+```
+
+## Build System
+
+### SSG Pipeline
+
+```typescript
+import { SSGPipeline } from "@src/build/ssg-pipeline.js";
+
+const pipeline = new SSGPipeline(config);
+await pipeline.run();
+```
+
+Pipeline steps:
+1. Clean and prepare dist directory
+2. Process and copy static assets
+3. Compile SCSS to CSS with optional minification
+4. Render all routes to static HTML
+5. Generate sitemap and robots.txt (if enabled)
+
+### Asset Hashing
+
+```typescript
+import { AssetHasher } from "@src/build/asset-hashing.js";
+
+const hashedName = AssetHasher.hashFile('/path/to/file.css');
+// Returns: "file.abc123def456.css"
+```
+
+### Minification
+
+```typescript
+import { Minifier } from "@src/build/minifier.js";
+
+const minifiedHtml = Minifier.html(rawHtml);
+const minifiedCss = Minifier.css(rawCss);
+const minifiedJs = Minifier.js(rawJs);
+```
+
+## SCSS Compilation
+
+```typescript
+import { createScssCompiler } from "@src/css/compiler.js";
+
+const compiler = createScssCompiler();
+const result = compiler.compile({
+  inputPath: 'site/styles/main.scss',
+  minified: true
+});
+
+if (result.error) {
+  console.error(result.error);
+} else {
+  console.log(result.css);
+}
+```
+
+## Development Commands
+
+```bash
+npm run dev          # Start dev server with HMR
+npm run build        # Production build
+npm run start        # Production server
+npm run typecheck    # TypeScript type checking
+npm run clean        # Clean build artifacts
+```
+
+## TypeScript Configuration
+
+- Target: ES2022
+- Module: NodeNext
+- Strict mode enabled
+- Path aliases: `@src/*` → `src/*`
+- JSX: preact-jsx
+
+## Key Types
+
+```typescript
+// Rendering modes
+type RenderMode = "ssr" | "ssg" | "isr" | "ppr";
+
+// Route module exports
+type RouteModule = {
+  mode?: RenderMode;
+  revalidateSeconds?: number;
+  hydrate?: boolean;
+  middleware?: RouteMiddleware | RouteMiddleware[];
+  loader?: (ctx: LoaderContext) => Promise<any> | any;
+  Head?: (props: any) => any;
+  default: (props: any) => any;
+};
+
+// Hydration strategies for islands
+type HydrationStrategy = "load" | "idle" | "visible";
+
+// API handlers
+type ApiHandler = (ctx: ApiRouteContext) => Promise<Response | string | object | null>;
+
+// Database types
+type DBType = 'jdb' | 'sqlite' | 'mysql' | 'postgres';
+```
+
+## Best Practices
+
+1. **Use SSG by default** - Only use SSR when you need request-time data
+2. **Set `hydrate: false`** - For pure static pages with no interactivity
+3. **Use islands sparingly** - Keep interactive components isolated
+4. **Prefer `visible` hydration** - For below-the-fold islands
+5. **Use route middleware** - For authentication, logging, data injection
+6. **Enable incremental builds** - For faster rebuilds during development
+
+## Optional: External Dependencies
+
+Some features require external libraries:
+- **JWT**: `npm install jsonwebtoken`
+- **GraphQL**: `npm install graphql`
+- **Redis**: `npm install redis` (for Redis cache)
+
+## License
+
+GNU GPL 3.0
