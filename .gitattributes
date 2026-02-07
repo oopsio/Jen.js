@@ -1,2 +1,3 @@
 website/** linguist-generated
 jenpack/** linguist-language=Rust
+*.js linguist-language=Typescript
