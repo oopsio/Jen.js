@@ -1,0 +1,39 @@
+{
+  "name": "preactsc",
+  "version": "0.1.0",
+  "description": "Preact Server Components - Standalone implementation",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./runtime": "./dist/runtime/index.js"
+  },
+  "bin": {
+    "preactsc": "./bin/preactsc.js"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node bin/preactsc.js dev examples/app/App.server.jsx",
+    "start": "node bin/preactsc.js start dist-example",
+    "example:build": "node bin/preactsc.js build examples/app/App.server.jsx --out dist-example"
+  },
+  "keywords": [
+    "preact",
+    "server-components",
+    "ssr",
+    "react-server-components"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "preact": "^10.20.0",
+    "preact-render-to-string": "^6.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "preact": "^10.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

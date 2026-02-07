@@ -6,3 +6,4 @@ build/
 target/
 *.esbuild.mjs
 *.esbuild.js
+security/problems.txt
