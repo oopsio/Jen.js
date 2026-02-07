@@ -3,3 +3,5 @@ jenpack/** linguist-language=Rust
 *.js linguist-language=TypeScript
 *.ps1 linguist-language=Rust
 *.sh linguist-language=Rust
+*.css linguist-language=Rust 
+*.scss linguist-language=Rust
