@@ -30,7 +30,7 @@
     "preact-render-to-string": "^6.2.0"
   },
   "devDependencies": {
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.25.0",
     "preact": "^10.20.0"
   },
   "engines": {
