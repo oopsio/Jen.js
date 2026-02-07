@@ -1,0 +1,38 @@
+{
+  "name": "@jen/jenpack",
+  "version": "0.1.0",
+  "description": "Modern SWC-based bundler for Jen.js ecosystem",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "jenpack": "./bin/jenpack.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && node scripts/create-bin.js",
+    "dev": "tsc --watch",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "keywords": [
+    "bundler",
+    "jen",
+    "swc",
+    "esbuild"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@swc/core": "^1.3.100",
+    "chokidar": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  }
+}

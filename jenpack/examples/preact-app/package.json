@@ -1,0 +1,17 @@
+{
+  "name": "jenpack-preact-example",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "jenpack dev src/index.tsx",
+    "build": "jenpack build src/index.tsx --out dist",
+    "analyze": "jenpack analyze src/index.tsx"
+  },
+  "dependencies": {
+    "preact": "^10.17.0"
+  },
+  "devDependencies": {
+    "@jen/jenpack": "workspace:*",
+    "typescript": "^5.3.3"
+  }
+}

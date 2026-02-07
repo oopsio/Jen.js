@@ -1,0 +1,9 @@
+src/
+examples/
+scripts/
+tsconfig.json
+.prettierrc
+.eslintrc.json
+*.test.ts
+.git/
+.gitignore
