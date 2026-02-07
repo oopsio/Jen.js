@@ -1,11 +1,12 @@
 import { createServer } from 'http';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, realpathSync } from 'fs';
 import { join, extname } from 'path';
 import { WebSocketServer } from 'ws';
 import type { IncomingMessage, ServerResponse } from 'http';
 import type { DevServerOptions, ModuleGraph } from '../types.js';
 import { info, success, error as logError } from '../utils/log.js';
 import { getFileName } from '../utils/path.js';
+import { parse as parseUrl } from 'url';
 
 interface ClientMessage {
   type: 'ping' | 'ready';
@@ -57,37 +58,79 @@ export class DevServer {
   }
 
   private handleRequest(req: IncomingMessage, res: ServerResponse): void {
-    const url = req.url || '/';
+    const parsed = parseUrl(req.url || '/');
+    let pathname = parsed.pathname || '/';
+    // Ensure pathname starts with a leading slash
+    if (!pathname.startsWith('/')) {
+      pathname = '/' + pathname;
+    }
+
+    try {
+      pathname = decodeURIComponent(pathname);
+    } catch {
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end('Bad Request');
+      return;
+    }
+
 
     // WebSocket endpoint
-    if (url === '/__jenpack_ws') {
+    if (pathname === '/__jenpack_ws') {
       return;
     }
 
     // Jenpack client
-    if (url === '/__jenpack_client.js') {
+    if (pathname === '/__jenpack_client.js') {
       return this.sendJenpackClient(res);
     }
 
     // Serve bundled module
-    if (url.startsWith('/__modules/')) {
-      return this.serveModule(url, res);
+    if (pathname.startsWith('/__modules/')) {
+      return this.serveModule(pathname, res);
     }
 
-    // Serve static files
+    // Serve static files from project root
     const publicDir = join(this.root, 'public');
-    if (extname(url) === '' && url !== '/') {
-      return this.serveFile(join(this.root, url), res);
+    if (extname(pathname) === '' && pathname !== '/') {
+      const candidate = join(this.root, pathname);
+      let resolved: string;
+      try {
+        resolved = realpathSync(candidate);
+      } catch {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+        return;
+      }
+      if (!resolved.startsWith(this.root)) {
+        res.writeHead(403, { 'Content-Type': 'text/plain' });
+        res.end('Forbidden');
+        return;
+      }
+      return this.serveFile(resolved, res);
     }
 
     // Try to serve from public directory
-    const filePath = join(publicDir, url === '/' ? 'index.html' : url);
-    if (existsSync(filePath)) {
-      return this.serveFile(filePath, res);
+    const requestedPath = pathname === '/' ? 'index.html' : pathname;
+    const publicCandidate = join(publicDir, requestedPath);
+    if (existsSync(publicCandidate)) {
+      let resolvedPublic: string;
+      try {
+        resolvedPublic = realpathSync(publicCandidate);
+      } catch {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+        return;
+      }
+      if (!resolvedPublic.startsWith(publicDir)) {
+        res.writeHead(403, { 'Content-Type': 'text/plain' });
+        res.end('Forbidden');
+        return;
+      }
+      return this.serveFile(resolvedPublic, res);
     }
 
     // Serve HTML for entry point
-    if (url === '/') {
+    if (pathname === '/') {
       return this.serveIndex(res);
     }
 
