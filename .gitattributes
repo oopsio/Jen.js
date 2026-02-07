@@ -1,3 +1,5 @@
 website/** linguist-generated
 jenpack/** linguist-language=Rust
-*.js linguist-language=Typescript
+*.js linguist-language=TypeScript
+*.ps1 linguist-language=Rust
+*.sh linguist-language=Rust
