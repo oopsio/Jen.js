@@ -11,9 +11,7 @@ $COLOR_GREEN = "Green"
 $COLOR_YELLOW = "Yellow"
 $COLOR_RED = "Red"
 
-Write-Host "================================" -ForegroundColor $COLOR_BLUE
-Write-Host "  Jen.js Framework Setup" -ForegroundColor $COLOR_BLUE
-Write-Host "================================" -ForegroundColor $COLOR_BLUE
+Write-Host "  Jen.js Dev Enviroment Setup" -ForegroundColor $COLOR_BLUE
 Write-Host ""
 
 # Check Node.js
