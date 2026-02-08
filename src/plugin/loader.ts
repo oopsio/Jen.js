@@ -16,7 +16,9 @@ export interface Plugin {
 
 const PLUGIN_DIR = "src/plugin/plugins";
 
-export async function runPlugins(event: "build" | "serve" | "deploy" = "build") {
+export async function runPlugins(
+  event: "build" | "serve" | "deploy" = "build",
+) {
   log.info(`Running plugins (${event})...`);
 
   try {
@@ -29,7 +31,7 @@ export async function runPlugins(event: "build" | "serve" | "deploy" = "build") 
       const pluginUrl = pathToFileURL(pluginPath).href;
 
       try {
-        const module = await import(pluginUrl) as { default?: Plugin };
+        const module = (await import(pluginUrl)) as { default?: Plugin };
         const plugin = module.default;
 
         if (!plugin) continue;

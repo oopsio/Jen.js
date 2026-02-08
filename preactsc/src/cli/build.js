@@ -17,10 +17,14 @@ export async function buildCommand(args) {
   }
 
   if (!entryFile) {
-    throw new Error("Missing entry file: preactsc build <entry.server.jsx> --out <dir>");
+    throw new Error(
+      "Missing entry file: preactsc build <entry.server.jsx> --out <dir>",
+    );
   }
   if (!outDir) {
-    throw new Error("Missing output directory: preactsc build <entry> --out <dir>");
+    throw new Error(
+      "Missing output directory: preactsc build <entry> --out <dir>",
+    );
   }
 
   entryFile = path.resolve(process.cwd(), entryFile);

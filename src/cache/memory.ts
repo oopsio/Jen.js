@@ -3,7 +3,7 @@ export class MemoryCache {
 
   set(key: string, value: any, ttlMs?: number) {
     this.store.set(key, value);
-    if(ttlMs) setTimeout(() => this.store.delete(key), ttlMs);
+    if (ttlMs) setTimeout(() => this.store.delete(key), ttlMs);
   }
 
   get(key: string) {

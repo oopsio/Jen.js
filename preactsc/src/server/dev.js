@@ -20,7 +20,10 @@ function escapeHtml(text) {
 
 // Security: JSON escaping to prevent XSS in script tags
 function escapeJson(obj) {
-  return JSON.stringify(obj).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
+  return JSON.stringify(obj)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 }
 
 export async function startDevServer(entryFile, initialComponents) {
@@ -116,7 +119,9 @@ export async function startDevServer(entryFile, initialComponents) {
       console.error("Server error:", err);
       res.writeHead(500, { "Content-Type": "text/html" });
       // Security: Don't expose internal error details to client
-      res.end("<h1>Server Error</h1><p>An error occurred. Check server logs.</p>");
+      res.end(
+        "<h1>Server Error</h1><p>An error occurred. Check server logs.</p>",
+      );
     }
   });
 

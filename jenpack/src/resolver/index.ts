@@ -1,9 +1,25 @@
-import { resolve, dirname, join } from 'path';
-import { existsSync, statSync, readFileSync } from 'fs';
-import { normalizePath, isTypeScriptFile, isJavaScriptFile, isJsonFile, isCssFile, isAssetFile, removeExt } from '../utils/path.js';
-import type { ResolveOptions } from '../types.js';
+import { resolve, dirname, join } from "path";
+import { existsSync, statSync, readFileSync } from "fs";
+import {
+  normalizePath,
+  isTypeScriptFile,
+  isJavaScriptFile,
+  isJsonFile,
+  isCssFile,
+  isAssetFile,
+  removeExt,
+} from "../utils/path.js";
+import type { ResolveOptions } from "../types.js";
 
-const BUILTIN_MODULES = new Set(['fs', 'path', 'url', 'stream', 'util', 'events', 'crypto']);
+const BUILTIN_MODULES = new Set([
+  "fs",
+  "path",
+  "url",
+  "stream",
+  "util",
+  "events",
+  "crypto",
+]);
 
 export class Resolver {
   private alias: Record<string, string> = {};
@@ -11,16 +27,16 @@ export class Resolver {
   private moduleCache: Map<string, string> = new Map();
   private root: string;
 
-  constructor(root: string, options: ResolveOptions = { alias: {}, external: [] }) {
+  constructor(
+    root: string,
+    options: ResolveOptions = { alias: {}, external: [] },
+  ) {
     this.root = root;
     this.alias = options.alias;
     this.external = new Set(options.external);
   }
 
-  resolve(
-    specifier: string,
-    referrer: string,
-  ): string | null {
+  resolve(specifier: string, referrer: string): string | null {
     // Check cache
     const cacheKey = `${referrer}::${specifier}`;
     if (this.moduleCache.has(cacheKey)) {
@@ -29,7 +45,7 @@ export class Resolver {
 
     let resolved: string | null = null;
 
-    if (specifier.startsWith('.')) {
+    if (specifier.startsWith(".")) {
       // Relative import
       resolved = this.resolveRelative(specifier, referrer);
     } else if (this.isBuiltinModule(specifier)) {
@@ -57,10 +73,13 @@ export class Resolver {
     return this.tryResolveFile(resolved);
   }
 
-  private resolveNodeModule(specifier: string, referrer: string): string | null {
+  private resolveNodeModule(
+    specifier: string,
+    referrer: string,
+  ): string | null {
     // Check aliases first
     for (const [alias, target] of Object.entries(this.alias)) {
-      if (specifier === alias || specifier.startsWith(alias + '/')) {
+      if (specifier === alias || specifier.startsWith(alias + "/")) {
         const remaining = specifier.slice(alias.length);
         const resolved = resolve(this.root, target + remaining);
         const result = this.tryResolveFile(resolved);
@@ -73,7 +92,7 @@ export class Resolver {
     const root = this.root;
 
     while (current.length > root.length) {
-      const nodeModulesPath = join(current, 'node_modules', specifier);
+      const nodeModulesPath = join(current, "node_modules", specifier);
       const result = this.tryResolveNodeModule(nodeModulesPath);
       if (result) return result;
 
@@ -81,7 +100,7 @@ export class Resolver {
     }
 
     // Try root node_modules
-    const rootNodeModules = join(root, 'node_modules', specifier);
+    const rootNodeModules = join(root, "node_modules", specifier);
     return this.tryResolveNodeModule(rootNodeModules);
   }
 
@@ -96,17 +115,17 @@ export class Resolver {
     }
 
     // Try package.json exports field
-    const pkgJsonPath = join(packagePath, 'package.json');
+    const pkgJsonPath = join(packagePath, "package.json");
     if (existsSync(pkgJsonPath)) {
       try {
-        const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf8'));
+        const pkgJson = JSON.parse(readFileSync(pkgJsonPath, "utf8"));
         if (pkgJson.exports) {
-          const exportTarget = pkgJson.exports['.'];
-          if (exportTarget && typeof exportTarget === 'string') {
+          const exportTarget = pkgJson.exports["."];
+          if (exportTarget && typeof exportTarget === "string") {
             const resolved = join(packagePath, exportTarget);
             return this.tryResolveFile(resolved);
           }
-          if (exportTarget && typeof exportTarget === 'object') {
+          if (exportTarget && typeof exportTarget === "object") {
             const importTarget = exportTarget.import || exportTarget.default;
             if (importTarget) {
               const resolved = join(packagePath, importTarget);
@@ -127,7 +146,7 @@ export class Resolver {
     }
 
     // Try index files
-    return this.tryResolveFile(join(packagePath, 'index'));
+    return this.tryResolveFile(join(packagePath, "index"));
   }
 
   private tryResolveFile(basePath: string): string | null {
@@ -137,7 +156,7 @@ export class Resolver {
     }
 
     // Try extensions in order
-    const extensions = ['.ts', '.tsx', '.js', '.jsx', '.json', '.css'];
+    const extensions = [".ts", ".tsx", ".js", ".jsx", ".json", ".css"];
     for (const ext of extensions) {
       const withExt = basePath + ext;
       if (existsSync(withExt)) {
@@ -148,7 +167,7 @@ export class Resolver {
     // Try directory with index
     if (existsSync(basePath) && statSync(basePath).isDirectory()) {
       for (const ext of extensions) {
-        const indexPath = join(basePath, 'index' + ext);
+        const indexPath = join(basePath, "index" + ext);
         if (existsSync(indexPath)) {
           return normalizePath(indexPath);
         }
@@ -159,20 +178,20 @@ export class Resolver {
   }
 
   private isBuiltinModule(specifier: string): boolean {
-    const name = specifier.split('/')[0];
-    return BUILTIN_MODULES.has(name) || name === 'node:' + name.slice(5);
+    const name = specifier.split("/")[0];
+    return BUILTIN_MODULES.has(name) || name === "node:" + name.slice(5);
   }
 
   private isExternalModule(specifier: string): boolean {
-    const name = specifier.split('/')[0];
+    const name = specifier.split("/")[0];
     return this.external.has(name);
   }
 
-  getType(filePath: string): 'esm' | 'json' | 'css' | 'asset' {
-    if (isJsonFile(filePath)) return 'json';
-    if (isCssFile(filePath)) return 'css';
-    if (isAssetFile(filePath)) return 'asset';
-    return 'esm';
+  getType(filePath: string): "esm" | "json" | "css" | "asset" {
+    if (isJsonFile(filePath)) return "json";
+    if (isCssFile(filePath)) return "css";
+    if (isAssetFile(filePath)) return "asset";
+    return "esm";
   }
 
   clearCache(): void {
@@ -180,6 +199,9 @@ export class Resolver {
   }
 }
 
-export function createResolver(root: string, options?: ResolveOptions): Resolver {
+export function createResolver(
+  root: string,
+  options?: ResolveOptions,
+): Resolver {
   return new Resolver(root, options);
 }

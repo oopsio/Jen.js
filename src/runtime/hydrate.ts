@@ -10,7 +10,7 @@ export async function hydrateClient(entryPath: string) {
   const app = h(Page, {
     data: data?.data ?? null,
     params: data?.params ?? {},
-    query: data?.query ?? {}
+    query: data?.query ?? {},
   });
 
   const root = document.getElementById("app");

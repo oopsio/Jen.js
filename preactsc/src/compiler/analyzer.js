@@ -41,7 +41,10 @@ export function analyzeComponents(entryFile) {
 
     if (filePath.endsWith(".server.jsx") || filePath.endsWith(".server.js")) {
       serverComponents.push(filePath);
-    } else if (filePath.endsWith(".client.jsx") || filePath.endsWith(".client.js")) {
+    } else if (
+      filePath.endsWith(".client.jsx") ||
+      filePath.endsWith(".client.js")
+    ) {
       clientComponents.push(filePath);
     }
 
@@ -64,7 +67,8 @@ export function analyzeComponents(entryFile) {
 
 function extractImports(content) {
   const imports = [];
-  const importRegex = /import\s+(?:{[^}]*}|[^from]+)\s+from\s+["']([^"']+)["']/g;
+  const importRegex =
+    /import\s+(?:{[^}]*}|[^from]+)\s+from\s+["']([^"']+)["']/g;
 
   let match;
   while ((match = importRegex.exec(content)) !== null) {
@@ -89,7 +93,9 @@ function resolveImport(importPath, fromFile) {
 
   // Prevent path traversal attacks
   if (!normalizedResolved.startsWith(projectRoot)) {
-    console.warn(`[PRSC] Path traversal attempt blocked: ${importPath} from ${fromFile}`);
+    console.warn(
+      `[PRSC] Path traversal attempt blocked: ${importPath} from ${fromFile}`,
+    );
     return null;
   }
 

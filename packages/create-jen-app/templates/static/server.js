@@ -28,7 +28,7 @@ const Minifier = {
       .replace(/\s+/g, " ")
       .replace(/;\s*}/g, "}")
       .trim();
-  }
+  },
 };
 
 async function main() {
@@ -36,7 +36,7 @@ async function main() {
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
-  
+
   await esbuild.build({
     entryPoints: [configPath],
     outdir,
@@ -46,7 +46,7 @@ async function main() {
     minify: true,
     bundle: true,
     loader: { ".ts": "ts" },
-    logLevel: "silent"
+    logLevel: "silent",
   });
 
   const configFile = join(outdir, "jen.config.js");
@@ -56,18 +56,20 @@ async function main() {
   const { createApp } = await import(appPath);
 
   // Load banner
-  const bannerPath = pathToFileURL(join(rootDir, "build/src/cli/banner.js")).href;
+  const bannerPath = pathToFileURL(
+    join(rootDir, "build/src/cli/banner.js"),
+  ).href;
   const { printBanner } = await import(bannerPath);
 
   const app = await createApp({
     config,
-    mode: isDev ? "dev" : "prod"
+    mode: isDev ? "dev" : "prod",
   });
 
   const server = createServer(async (req, res) => {
     // Intercept response to minify
     const originalEnd = res.end;
-    res.end = function(chunk, encoding, callback) {
+    res.end = function (chunk, encoding, callback) {
       if (chunk) {
         const type = res.getHeader("content-type");
         if (typeof type === "string") {

@@ -2,7 +2,10 @@ import type { FrameworkConfig } from "../core/config.js";
 import type { RouteEntry } from "../core/routes/scan.js";
 import type { LoaderContext, RouteModule } from "../core/types.js";
 import type { RouteMiddleware } from "../core/middleware-hooks.js";
-import { createRouteMiddlewareContext, executeRouteMiddleware } from "../core/middleware-hooks.js";
+import {
+  createRouteMiddlewareContext,
+  executeRouteMiddleware,
+} from "../core/middleware-hooks.js";
 import { createIslandMarker } from "./islands.js";
 
 import { h } from "preact";
@@ -46,23 +49,25 @@ export async function renderRouteToHtml(opts: {
 
   // Transpile route file if needed
   let moduleUrl = route.filePath;
-  if (route.filePath.endsWith('.tsx') || route.filePath.endsWith('.ts')) {
+  if (route.filePath.endsWith(".tsx") || route.filePath.endsWith(".ts")) {
     const outfile = getCachePath(route.filePath);
     await esbuild.build({
       entryPoints: [route.filePath],
       outfile,
-      format: 'esm',
-      platform: 'node', // Use node platform for SSR to support built-ins
-      target: 'es2022',
+      format: "esm",
+      platform: "node", // Use node platform for SSR to support built-ins
+      target: "es2022",
       bundle: true, // Bundle to resolve local imports (simple)
-      external: ['preact', 'preact-render-to-string', 'jenjs'], // Keep framework externals
-      write: true
+      external: ["preact", "preact-render-to-string", "jenjs"], // Keep framework externals
+      write: true,
     });
     moduleUrl = outfile;
   }
-  
+
   // Cache busting for dynamic import
-  const mod: RouteModule = await import(pathToFileURL(moduleUrl).href + "?t=" + Date.now());
+  const mod: RouteModule = await import(
+    pathToFileURL(moduleUrl).href + "?t=" + Date.now()
+  );
 
   // Execute route middleware if present
   const middlewareCtx = createRouteMiddlewareContext({
@@ -72,7 +77,7 @@ export async function renderRouteToHtml(opts: {
     params,
     query,
     headers,
-    cookies
+    cookies,
   });
 
   const middlewares: RouteMiddleware[] = [];
@@ -100,7 +105,7 @@ export async function renderRouteToHtml(opts: {
     query,
     headers,
     cookies,
-    data: middlewareCtx.data // Pass middleware data to loader
+    data: middlewareCtx.data, // Pass middleware data to loader
   };
 
   let data: any = null;
@@ -116,7 +121,7 @@ export async function renderRouteToHtml(opts: {
   const app = h(Page as any, { data, params, query });
 
   let bodyHtml = renderToString(app);
-  
+
   // If this module exports island components, add hydration markers
   // Look for components marked with __island metadata
   for (const [key, value] of Object.entries(mod)) {
@@ -160,8 +165,11 @@ ${headParts.join("\n")}
   if (shouldHydrate) {
     // Serialize framework data WITHOUT HTML escaping quotes
     // Only escape </script to prevent script injection
-    const frameworkDataStr = JSON.stringify({ data, params, query }, null, 2)
-      .replace(/<\/script/g, "<\\/script");
+    const frameworkDataStr = JSON.stringify(
+      { data, params, query },
+      null,
+      2,
+    ).replace(/<\/script/g, "<\\/script");
 
     html += `
 <script id="__FRAMEWORK_DATA__" type="application/json">

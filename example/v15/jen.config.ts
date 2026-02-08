@@ -6,30 +6,30 @@ const config: FrameworkConfig = {
   routes: {
     fileExtensions: [".tsx", ".jsx", ".ts", ".js"],
     routeFilePattern: /^\(([^)]+)\)\.(tsx|jsx|ts|js)$/,
-    enableIndexFallback: true
+    enableIndexFallback: true,
   },
   rendering: {
     defaultMode: "ssg",
-    defaultRevalidateSeconds: 0
+    defaultRevalidateSeconds: 0,
   },
   inject: {
     head: ['<link rel="stylesheet" href="/styles.css">'],
-    bodyEnd: []
+    bodyEnd: [],
   },
   css: {
-    globalScss: "site/styles/global.scss"
+    globalScss: "site/styles/global.scss",
   },
   assets: {
     publicDir: "site/assets",
-    cacheControl: "public, max-age=3600"
+    cacheControl: "public, max-age=3600",
   },
   server: {
     port: 3001,
-    hostname: "localhost"
+    hostname: "localhost",
   },
   dev: {
-    liveReload: true
-  }
+    liveReload: true,
+  },
 };
 
 export default config;

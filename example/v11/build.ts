@@ -4,5 +4,5 @@ import { buildSite } from "../../src/build/build.js";
 import config from "./jen.config.ts";
 
 await buildSite({
-  config
+  config,
 });

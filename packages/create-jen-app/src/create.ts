@@ -149,7 +149,7 @@ dist/
 .env.local
 .DS_Store
 *.log
-`
+`,
       );
       printSuccess("Git repository initialized");
     } catch {
@@ -158,7 +158,9 @@ dist/
   }
 
   // Success message
-  console.log(`\n${colors.accent(colors.bold("✨ Your Jen.js app is ready!"))}`);
+  console.log(
+    `\n${colors.accent(colors.bold("✨ Your Jen.js app is ready!"))}`,
+  );
 
   const nextSteps = [
     `${colors.cyan(`cd ${projectName}`)}`,

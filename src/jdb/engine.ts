@@ -1,6 +1,21 @@
-import path from 'path';
-import { JDBConfig, IDatabaseEngine, ICollection, Document, Filter, Update, QueryOptions } from './types';
-import { ensureDir, readJSON, writeJSON, generateId, matchFilter, applyUpdate } from './utils';
+import path from "path";
+import {
+  JDBConfig,
+  IDatabaseEngine,
+  ICollection,
+  Document,
+  Filter,
+  Update,
+  QueryOptions,
+} from "./types";
+import {
+  ensureDir,
+  readJSON,
+  writeJSON,
+  generateId,
+  matchFilter,
+  applyUpdate,
+} from "./utils";
 
 class JDBCollection<T extends Document> implements ICollection<T> {
   private file: string;
@@ -9,7 +24,11 @@ class JDBCollection<T extends Document> implements ICollection<T> {
   private saving = false;
   private queueSave = false;
 
-  constructor(public name: string, private dir: string, private inMemory: boolean) {
+  constructor(
+    public name: string,
+    private dir: string,
+    private inMemory: boolean,
+  ) {
     this.file = path.join(dir, `${name}.jdb`);
   }
 
@@ -41,28 +60,32 @@ class JDBCollection<T extends Document> implements ICollection<T> {
     }
   }
 
-  async insert(doc: Omit<T, '_id' | '_created' | '_updated'> & { _id?: string }): Promise<T> {
+  async insert(
+    doc: Omit<T, "_id" | "_created" | "_updated"> & { _id?: string },
+  ): Promise<T> {
     await this.load();
     const now = Date.now();
     const newDoc = {
       _id: doc._id || generateId(),
       _created: now,
       _updated: now,
-      ...doc
+      ...doc,
     } as T;
     this.data.push(newDoc);
     this.save();
     return newDoc;
   }
 
-  async insertMany(docs: (Omit<T, '_id' | '_created' | '_updated'> & { _id?: string })[]): Promise<T[]> {
+  async insertMany(
+    docs: (Omit<T, "_id" | "_created" | "_updated"> & { _id?: string })[],
+  ): Promise<T[]> {
     await this.load();
     const now = Date.now();
-    const newDocs = docs.map(doc => ({
+    const newDocs = docs.map((doc) => ({
       _id: doc._id || generateId(),
       _created: now,
       _updated: now,
-      ...doc
+      ...doc,
     })) as T[];
     this.data.push(...newDocs);
     this.save();
@@ -71,12 +94,12 @@ class JDBCollection<T extends Document> implements ICollection<T> {
 
   async findOne(filter: Filter<T>): Promise<T | null> {
     await this.load();
-    return this.data.find(doc => matchFilter(doc, filter)) || null;
+    return this.data.find((doc) => matchFilter(doc, filter)) || null;
   }
 
   async find(filter: Filter<T>, options?: QueryOptions): Promise<T[]> {
     await this.load();
-    let result = this.data.filter(doc => matchFilter(doc, filter));
+    let result = this.data.filter((doc) => matchFilter(doc, filter));
 
     if (options?.sort) {
       const sortKeys = Object.keys(options.sort);
@@ -100,7 +123,11 @@ class JDBCollection<T extends Document> implements ICollection<T> {
     return result;
   }
 
-  async update(filter: Filter<T>, update: Update<T>, multi = false): Promise<number> {
+  async update(
+    filter: Filter<T>,
+    update: Update<T>,
+    multi = false,
+  ): Promise<number> {
     await this.load();
     let count = 0;
     for (const doc of this.data) {
@@ -118,7 +145,7 @@ class JDBCollection<T extends Document> implements ICollection<T> {
     await this.load();
     const originalLen = this.data.length;
     if (!multi) {
-      const index = this.data.findIndex(doc => matchFilter(doc, filter));
+      const index = this.data.findIndex((doc) => matchFilter(doc, filter));
       if (index !== -1) {
         this.data.splice(index, 1);
         this.save();
@@ -126,7 +153,7 @@ class JDBCollection<T extends Document> implements ICollection<T> {
       }
       return 0;
     } else {
-      this.data = this.data.filter(doc => !matchFilter(doc, filter));
+      this.data = this.data.filter((doc) => !matchFilter(doc, filter));
       const deleted = originalLen - this.data.length;
       if (deleted > 0) this.save();
       return deleted;
@@ -135,7 +162,7 @@ class JDBCollection<T extends Document> implements ICollection<T> {
 
   async count(filter: Filter<T>): Promise<number> {
     await this.load();
-    return this.data.filter(doc => matchFilter(doc, filter)).length;
+    return this.data.filter((doc) => matchFilter(doc, filter)).length;
   }
 }
 
@@ -154,7 +181,10 @@ export class JDBEngine implements IDatabaseEngine {
 
   collection<T extends Document>(name: string): ICollection<T> {
     if (!this.collections.has(name)) {
-      this.collections.set(name, new JDBCollection<T>(name, this.config.root, !!this.config.inMemory));
+      this.collections.set(
+        name,
+        new JDBCollection<T>(name, this.config.root, !!this.config.inMemory),
+      );
     }
     return this.collections.get(name)!;
   }

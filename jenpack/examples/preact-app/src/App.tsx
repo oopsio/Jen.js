@@ -1,6 +1,6 @@
-import { useState } from 'preact/hooks';
-import { Counter } from './Counter.js';
-import './App.css';
+import { useState } from "preact/hooks";
+import { Counter } from "./Counter.js";
+import "./App.css";
 
 export function App() {
   const [count, setCount] = useState(0);

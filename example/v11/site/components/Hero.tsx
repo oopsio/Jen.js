@@ -7,7 +7,12 @@ interface HeroProps {
   ctaLink?: string;
 }
 
-const Hero: FunctionComponent<HeroProps> = ({ title, subtitle, ctaText = "Get Started", ctaLink = "#" }) => {
+const Hero: FunctionComponent<HeroProps> = ({
+  title,
+  subtitle,
+  ctaText = "Get Started",
+  ctaLink = "#",
+}) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-blue-50 py-20 md:py-32">
       {/* Background decoration */}
@@ -27,12 +32,8 @@ const Hero: FunctionComponent<HeroProps> = ({ title, subtitle, ctaText = "Get St
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
-            <button className="btn-primary">
-              {ctaText}
-            </button>
-            <button className="btn-secondary">
-              Learn More
-            </button>
+            <button className="btn-primary">{ctaText}</button>
+            <button className="btn-secondary">Learn More</button>
           </div>
         </div>
       </div>

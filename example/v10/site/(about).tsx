@@ -9,9 +9,9 @@ export default function About() {
         <section>
           <h2>Our Mission</h2>
           <p>
-            We believe in sharing knowledge and helping developers build better applications.
-            This blog is dedicated to providing practical insights, tutorials, and best practices
-            for modern web development.
+            We believe in sharing knowledge and helping developers build better
+            applications. This blog is dedicated to providing practical
+            insights, tutorials, and best practices for modern web development.
           </p>
         </section>
 
@@ -66,7 +66,10 @@ export function Head() {
   return (
     <>
       <title>About - Our Blog</title>
-      <meta name="description" content="Learn about our blog and the authors behind it." />
+      <meta
+        name="description"
+        content="Learn about our blog and the authors behind it."
+      />
     </>
   );
 }

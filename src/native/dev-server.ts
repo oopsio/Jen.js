@@ -18,7 +18,9 @@ export async function startDevServer(opts: DevServerOptions = {}) {
 
   const server = createServer((req, res) => {
     res.writeHead(200, { "content-type": "text/plain" });
-    res.end("TypeScript dev server stub (replace with Rust native build in production)\n");
+    res.end(
+      "TypeScript dev server stub (replace with Rust native build in production)\n",
+    );
   });
 
   server.listen(port, hostname, () => {

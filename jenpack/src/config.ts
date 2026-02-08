@@ -1,12 +1,12 @@
-import { resolve } from 'path';
-import { existsSync } from 'fs';
-import type { JenpackConfig, ResolvedConfig } from './types.js';
+import { resolve } from "path";
+import { existsSync } from "fs";
+import type { JenpackConfig, ResolvedConfig } from "./types.js";
 
 const DEFAULT_CONFIG: JenpackConfig = {
-  entry: 'src/index.ts',
-  outDir: 'dist',
-  publicDir: 'public',
-  jsxImportSource: 'preact',
+  entry: "src/index.ts",
+  outDir: "dist",
+  publicDir: "public",
+  jsxImportSource: "preact",
   minify: true,
   sourcemap: true,
   define: {},
@@ -14,8 +14,10 @@ const DEFAULT_CONFIG: JenpackConfig = {
   external: [],
 };
 
-export async function loadConfig(root: string = process.cwd()): Promise<ResolvedConfig> {
-  const configPath = resolve(root, 'jenpack.config.ts');
+export async function loadConfig(
+  root: string = process.cwd(),
+): Promise<ResolvedConfig> {
+  const configPath = resolve(root, "jenpack.config.ts");
 
   let userConfig: JenpackConfig = {};
 

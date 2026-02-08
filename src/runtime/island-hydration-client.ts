@@ -105,7 +105,7 @@ function hydrateWithStrategy(islands: Island[]) {
                   observer.disconnect();
                 }
               },
-              { threshold: 0.1 }
+              { threshold: 0.1 },
             );
             observer.observe(target);
           }

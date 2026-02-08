@@ -17,9 +17,15 @@ interface BlogIndexData {
   currentPage: number;
 }
 
-export default function BlogIndex({ data, query }: { data: BlogIndexData; query: any }) {
+export default function BlogIndex({
+  data,
+  query,
+}: {
+  data: BlogIndexData;
+  query: any;
+}) {
   const page = parseInt(query.page || "1");
-  
+
   return (
     <main className="blog-index">
       <header className="page-header">
@@ -37,11 +43,15 @@ export default function BlogIndex({ data, query }: { data: BlogIndexData; query:
                   <span className="category">{post.category}</span>
                   <span className="views">{post.views} views</span>
                 </div>
-                <h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2>
+                <h2>
+                  <a href={`/blog/${post.slug}`}>{post.title}</a>
+                </h2>
                 <p className="excerpt">{post.excerpt}</p>
                 <footer>
                   <span className="author">By {post.author}</span>
-                  <a href={`/blog/${post.slug}`} className="read-more">Read Article →</a>
+                  <a href={`/blog/${post.slug}`} className="read-more">
+                    Read Article →
+                  </a>
                 </footer>
               </article>
             ))}
@@ -49,13 +59,19 @@ export default function BlogIndex({ data, query }: { data: BlogIndexData; query:
 
           <nav className="pagination">
             {page > 1 && (
-              <a href={`/blog?page=${page - 1}`} className="prev">← Previous</a>
+              <a href={`/blog?page=${page - 1}`} className="prev">
+                ← Previous
+              </a>
             )}
-            
-            <span className="page-info">Page {page} of {data.totalPages}</span>
-            
+
+            <span className="page-info">
+              Page {page} of {data.totalPages}
+            </span>
+
             {page < data.totalPages && (
-              <a href={`/blog?page=${page + 1}`} className="next">Next →</a>
+              <a href={`/blog?page=${page + 1}`} className="next">
+                Next →
+              </a>
             )}
           </nav>
         </>
@@ -93,7 +109,7 @@ export async function loader(ctx: LoaderContext): Promise<BlogIndexData> {
       author: "Sarah Chen",
       date: "2026-01-26",
       views: 1523,
-      category: "Tutorial"
+      category: "Tutorial",
     },
     {
       id: "2",
@@ -103,7 +119,7 @@ export async function loader(ctx: LoaderContext): Promise<BlogIndexData> {
       author: "Alex Rivera",
       date: "2026-01-25",
       views: 892,
-      category: "Best Practices"
+      category: "Best Practices",
     },
     {
       id: "3",
@@ -113,7 +129,7 @@ export async function loader(ctx: LoaderContext): Promise<BlogIndexData> {
       author: "Jordan Park",
       date: "2026-01-24",
       views: 654,
-      category: "TypeScript"
+      category: "TypeScript",
     },
   ];
 
@@ -124,6 +140,6 @@ export async function loader(ctx: LoaderContext): Promise<BlogIndexData> {
   return {
     posts,
     totalPages,
-    currentPage: page
+    currentPage: page,
   };
 }

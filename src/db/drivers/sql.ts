@@ -1,5 +1,11 @@
-import { IDBDriver, DBConfig, UnifiedQuery, SQLQuery, FindQuery } from '../types';
-import { Filter, Update } from '../../jdb/types';
+import {
+  IDBDriver,
+  DBConfig,
+  UnifiedQuery,
+  SQLQuery,
+  FindQuery,
+} from "../types";
+import { Filter, Update } from "../../jdb/types";
 
 type QueryExecutor = (sql: string, params: any[]) => Promise<any[]>;
 
@@ -12,7 +18,9 @@ const ALLOWED_IDENTIFIERS = new Set<string>();
  */
 function quoteIdentifier(id: string): string {
   if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) {
-    throw new Error(`Invalid SQL identifier: ${id}. Only alphanumeric, underscore, and hyphen allowed.`);
+    throw new Error(
+      `Invalid SQL identifier: ${id}. Only alphanumeric, underscore, and hyphen allowed.`,
+    );
   }
   return `\`${id}\``; // Use backticks for MySQL, adjust for other databases
 }
@@ -50,14 +58,16 @@ export class SQLDriver implements IDBDriver {
   private executor: QueryExecutor;
 
   constructor(config: DBConfig) {
-    if (typeof config.connection === 'function') {
+    if (typeof config.connection === "function") {
       this.executor = config.connection;
     } else if (config.connection && config.connection.query) {
-       // Support objects like Pool or Client from pg/mysql
-       this.executor = (sql, params) => config.connection.query(sql, params);
+      // Support objects like Pool or Client from pg/mysql
+      this.executor = (sql, params) => config.connection.query(sql, params);
     } else {
       // Default stub that warns if no connection provided, or we could try to load a default
-      this.executor = async () => { throw new Error('No SQL connection provided to SQLDriver'); };
+      this.executor = async () => {
+        throw new Error("No SQL connection provided to SQLDriver");
+      };
     }
   }
 
@@ -70,28 +80,30 @@ export class SQLDriver implements IDBDriver {
   }
 
   async query<T = any>(q: UnifiedQuery<T>): Promise<T[]> {
-    if (typeof q === 'string') {
+    if (typeof q === "string") {
       return this.executor(q, []);
     }
-    if ('sql' in q) {
+    if ("sql" in q) {
       return this.executor(q.sql, q.params || []);
     }
-    
+
     // Convert NoSQL style to SQL (Basic translation)
     const query = q as FindQuery<T>;
     const { sql, params } = this.translateQuery(query);
     return this.executor(sql, params);
   }
 
-  private translateQuery(q: FindQuery): { sql: string, params: any[] } {
+  private translateQuery(q: FindQuery): { sql: string; params: any[] } {
     // Security: Validate table name
     if (!isTableAllowed(q.find)) {
-      throw new Error(`Table '${q.find}' not registered. Call registerAllowedTable() first.`);
+      throw new Error(
+        `Table '${q.find}' not registered. Call registerAllowedTable() first.`,
+      );
     }
-    
+
     let sql = `SELECT * FROM ${quoteIdentifier(q.find)}`;
     const params: any[] = [];
-    
+
     if (q.where && Object.keys(q.where).length > 0) {
       const conditions: string[] = [];
       for (const key in q.where) {
@@ -103,7 +115,7 @@ export class SQLDriver implements IDBDriver {
         conditions.push(`${quoteIdentifier(key)} = ?`);
         params.push(val);
       }
-      sql += ` WHERE ${conditions.join(' AND ')}`;
+      sql += ` WHERE ${conditions.join(" AND ")}`;
     }
 
     if (q.options?.limit) {
@@ -116,48 +128,64 @@ export class SQLDriver implements IDBDriver {
       const skip = validateInteger(q.options.skip);
       sql += ` OFFSET ${skip}`;
     }
-    
+
     return { sql, params };
   }
 
   async create<T = any>(collection: string, data: any): Promise<T> {
     // Security: Validate table name
     if (!isTableAllowed(collection)) {
-      throw new Error(`Table '${collection}' not registered. Call registerAllowedTable() first.`);
+      throw new Error(
+        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
+      );
     }
-    
+
     const keys = Object.keys(data);
-    
+
     // Security: Validate all column names
     for (const key of keys) {
       if (!/^[a-zA-Z0-9_-]+$/.test(key)) {
         throw new Error(`Invalid column name: ${key}`);
       }
     }
-    
-    const placeholders = keys.map(() => '?').join(',');
-    const quotedKeys = keys.map(k => quoteIdentifier(k)).join(',');
+
+    const placeholders = keys.map(() => "?").join(",");
+    const quotedKeys = keys.map((k) => quoteIdentifier(k)).join(",");
     const sql = `INSERT INTO ${quoteIdentifier(collection)} (${quotedKeys}) VALUES (${placeholders})`;
-    const params = keys.map(k => data[k]);
+    const params = keys.map((k) => data[k]);
     await this.executor(sql, params);
     // Retrieve generic - this might need adjustment per driver for "returning" support
-    return data as T; 
+    return data as T;
   }
 
-  async update<T = any>(collection: string, filter: Filter<T>, update: Update<T>): Promise<number> {
+  async update<T = any>(
+    collection: string,
+    filter: Filter<T>,
+    update: Update<T>,
+  ): Promise<number> {
     // Basic implementation requiring WHERE clause
     // This is complex to map generic Mongo-style updates to SQL without a robust builder
-    throw new Error('Complex update translation not implemented for Generic SQL Driver yet. Use raw SQL.');
+    throw new Error(
+      "Complex update translation not implemented for Generic SQL Driver yet. Use raw SQL.",
+    );
   }
 
-  async delete<T = any>(collection: string, filter: Filter<T>): Promise<number> {
+  async delete<T = any>(
+    collection: string,
+    filter: Filter<T>,
+  ): Promise<number> {
     // Security: Validate table name
     if (!isTableAllowed(collection)) {
-      throw new Error(`Table '${collection}' not registered. Call registerAllowedTable() first.`);
+      throw new Error(
+        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
+      );
     }
-    
-    const { sql, params } = this.translateQuery({ find: collection, where: filter });
-    const deleteSql = sql.replace('SELECT *', 'DELETE');
+
+    const { sql, params } = this.translateQuery({
+      find: collection,
+      where: filter,
+    });
+    const deleteSql = sql.replace("SELECT *", "DELETE");
     await this.executor(deleteSql, params);
     return 1; // Unknown count without driver specific result
   }
@@ -165,11 +193,16 @@ export class SQLDriver implements IDBDriver {
   async count<T = any>(collection: string, filter: Filter<T>): Promise<number> {
     // Security: Validate table name
     if (!isTableAllowed(collection)) {
-      throw new Error(`Table '${collection}' not registered. Call registerAllowedTable() first.`);
+      throw new Error(
+        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
+      );
     }
-    
-    const { sql, params } = this.translateQuery({ find: collection, where: filter });
-    const countSql = sql.replace('SELECT *', 'SELECT COUNT(*) as count');
+
+    const { sql, params } = this.translateQuery({
+      find: collection,
+      where: filter,
+    });
+    const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as count");
     const res = await this.executor(countSql, params);
     return res[0]?.count || 0;
   }

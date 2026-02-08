@@ -11,7 +11,7 @@ async function main() {
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
-  
+
   await esbuild.build({
     entryPoints: [configPath],
     outdir,
@@ -20,13 +20,15 @@ async function main() {
     target: "es2022",
     bundle: true,
     loader: { ".ts": "ts" },
-    logLevel: "silent"
+    logLevel: "silent",
   });
 
   const configFile = join(outdir, "jen.config.js");
   const config = (await import(pathToFileURL(configFile).href)).default;
 
-  const buildPath = pathToFileURL(join(rootDir, "build/src/build/build.js")).href;
+  const buildPath = pathToFileURL(
+    join(rootDir, "build/src/build/build.js"),
+  ).href;
   const { buildSite } = await import(buildPath);
 
   await buildSite({ config });

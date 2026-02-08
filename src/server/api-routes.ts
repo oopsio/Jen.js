@@ -22,8 +22,13 @@ export interface ApiRouteContext {
  * Return Response, string, or object (auto JSON).
  */
 export type ApiHandler = (
-  ctx: ApiRouteContext
-) => Promise<Response | string | Record<string, any> | null> | Response | string | Record<string, any> | null;
+  ctx: ApiRouteContext,
+) =>
+  | Promise<Response | string | Record<string, any> | null>
+  | Response
+  | string
+  | Record<string, any>
+  | null;
 
 /**
  * API route module.
@@ -47,7 +52,7 @@ const apiCacheDir = join(process.cwd(), "node_modules", ".jen", "api-cache");
 async function transpileApiRoute(filePath: string): Promise<string> {
   const outfile = join(
     apiCacheDir,
-    basename(filePath).replace(/\.ts$/, `.${Date.now()}.mjs`)
+    basename(filePath).replace(/\.ts$/, `.${Date.now()}.mjs`),
   );
 
   await esbuild.build({
@@ -79,7 +84,10 @@ export async function tryHandleApiRoute(opts: {
 }): Promise<boolean> {
   const { req, res, siteDir } = opts;
 
-  const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
+  const url = new URL(
+    req.url ?? "/",
+    `http://${req.headers.host ?? "localhost"}`,
+  );
   const method = (req.method ?? "GET").toUpperCase();
 
   // Must start with /api/
@@ -101,7 +109,12 @@ export async function tryHandleApiRoute(opts: {
   let apiFile: string | null = null;
   let routeParams: Record<string, string> = {};
 
-  const exactPath = join(process.cwd(), siteDir, "api", `${pathParts.join("/")}.ts`);
+  const exactPath = join(
+    process.cwd(),
+    siteDir,
+    "api",
+    `${pathParts.join("/")}.ts`,
+  );
   if (existsSync(exactPath)) {
     apiFile = exactPath;
   } else {
@@ -111,7 +124,11 @@ export async function tryHandleApiRoute(opts: {
       const staticSegments = pathParts.slice(0, i);
       const dynamicSegments = pathParts.slice(i);
 
-      const tryDynamic = join(basePath, ...staticSegments.map((s) => `[${s}]`), `[${staticSegments[staticSegments.length - 1]}].ts`);
+      const tryDynamic = join(
+        basePath,
+        ...staticSegments.map((s) => `[${s}]`),
+        `[${staticSegments[staticSegments.length - 1]}].ts`,
+      );
       // Actually, try: api/[id].ts for /api/123
       // and api/users/[id].ts for /api/users/123
 
@@ -147,7 +164,12 @@ export async function tryHandleApiRoute(opts: {
   } catch (err: any) {
     res.statusCode = 500;
     res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: "Failed to load API route", details: err.message }));
+    res.end(
+      JSON.stringify({
+        error: "Failed to load API route",
+        details: err.message,
+      }),
+    );
     return true;
   }
 
@@ -207,7 +229,9 @@ export async function tryHandleApiRoute(opts: {
   } catch (err: any) {
     res.statusCode = 500;
     res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: "Internal server error", details: err.message }));
+    res.end(
+      JSON.stringify({ error: "Internal server error", details: err.message }),
+    );
     return true;
   }
 }

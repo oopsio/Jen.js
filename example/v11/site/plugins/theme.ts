@@ -35,13 +35,16 @@ class ThemeManager {
 
   private getSystemTheme(): Theme {
     if (typeof window === "undefined") return "light";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
 
   private applyTheme() {
     if (typeof document === "undefined") return;
 
-    const theme = this.currentTheme === "auto" ? this.getSystemTheme() : this.currentTheme;
+    const theme =
+      this.currentTheme === "auto" ? this.getSystemTheme() : this.currentTheme;
 
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -69,7 +72,9 @@ class ThemeManager {
   }
 
   getEffectiveTheme(): "light" | "dark" {
-    return this.currentTheme === "auto" ? this.getSystemTheme() : this.currentTheme;
+    return this.currentTheme === "auto"
+      ? this.getSystemTheme()
+      : this.currentTheme;
   }
 }
 

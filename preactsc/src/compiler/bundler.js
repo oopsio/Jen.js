@@ -47,7 +47,7 @@ export async function bundleForProduction(entryFile, components, outDir) {
     // Build client bundle with bootloader + all client components
     const clientBundleContent = await bundleClientComponents(
       components.client,
-      outDir
+      outDir,
     );
 
     // Security: Write with safe permissions (mode 0o644 for files, 0o755 for dirs)
@@ -60,7 +60,9 @@ export async function bundleForProduction(entryFile, components, outDir) {
 
     // Generate manifest
     const manifest = createManifest(components.client, outDir);
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), { mode: 0o644 });
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), {
+      mode: 0o644,
+    });
 
     return {
       server: serverPath,
@@ -104,7 +106,11 @@ async function bundleClientComponents(clientPaths, outDir) {
       const chunks = fs.readdirSync(chunkDir);
       for (const chunk of chunks.sort()) {
         // Security: Validate chunk filename to prevent path traversal
-        if (chunk.includes("..") || chunk.includes("/") || chunk.includes("\\")) {
+        if (
+          chunk.includes("..") ||
+          chunk.includes("/") ||
+          chunk.includes("\\")
+        ) {
           console.warn(`[PRSC] Skipping suspicious chunk: ${chunk}`);
           continue;
         }
@@ -126,5 +132,8 @@ async function bundleClientComponents(clientPaths, outDir) {
 }
 
 function createComponentId(filePath) {
-  return path.basename(filePath).replace(/\.[jt]sx?$/, "").toLowerCase();
+  return path
+    .basename(filePath)
+    .replace(/\.[jt]sx?$/, "")
+    .toLowerCase();
 }

@@ -64,7 +64,10 @@ export function createProjectFiles(dir: string, options: ProjectOptions) {
     },
   };
 
-  fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify(packageJson, null, 2));
+  fs.writeFileSync(
+    path.join(dir, "package.json"),
+    JSON.stringify(packageJson, null, 2),
+  );
 
   // Create tsconfig.json if TypeScript
   if (options.typescript) {
@@ -88,7 +91,7 @@ export function createProjectFiles(dir: string, options: ProjectOptions) {
 
     fs.writeFileSync(
       path.join(dir, "tsconfig.json"),
-      JSON.stringify(tsconfig, null, 2)
+      JSON.stringify(tsconfig, null, 2),
     );
   }
 
@@ -148,12 +151,7 @@ NODE_ENV=development
   fs.writeFileSync(path.join(dir, ".env.example"), envExample);
 
   // Create directory structure
-  const dirs = [
-    "site/styles",
-    "site/components",
-    "site/routes",
-    "site/assets",
-  ];
+  const dirs = ["site/styles", "site/components", "site/routes", "site/assets"];
 
   for (const dir_path of dirs) {
     fs.mkdirSync(path.join(dir, dir_path), { recursive: true });

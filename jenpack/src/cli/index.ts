@@ -1,37 +1,37 @@
-import { dev } from './commands/dev.js';
-import { build } from './commands/build.js';
-import { analyze } from './commands/analyze.js';
-import { clean } from './commands/clean.js';
+import { dev } from "./commands/dev.js";
+import { build } from "./commands/build.js";
+import { analyze } from "./commands/analyze.js";
+import { clean } from "./commands/clean.js";
 
 const args = process.argv.slice(2);
 const command = args[0];
 const subArgs = args.slice(1);
 
 async function main(): Promise<void> {
-  if (!command || command === '--help' || command === '-h') {
+  if (!command || command === "--help" || command === "-h") {
     printHelp();
     return;
   }
 
-  if (command === '--version' || command === '-v') {
-    console.log('jenpack 0.1.0');
+  if (command === "--version" || command === "-v") {
+    console.log("jenpack 0.1.0");
     return;
   }
 
   try {
-    if (command === 'dev') {
+    if (command === "dev") {
       const entry = subArgs[0];
       const options = parseDevOptions(subArgs);
       await dev(entry, options);
-    } else if (command === 'build') {
-      const entry = subArgs.find((arg) => !arg.startsWith('--'));
+    } else if (command === "build") {
+      const entry = subArgs.find((arg) => !arg.startsWith("--"));
       const options = parseBuildOptions(subArgs);
       await build(entry, options);
-    } else if (command === 'analyze') {
+    } else if (command === "analyze") {
       const entry = subArgs[0];
       const options = parseAnalyzeOptions(subArgs);
       await analyze(entry, options);
-    } else if (command === 'clean') {
+    } else if (command === "clean") {
       const options = parseCleanOptions(subArgs);
       await clean(options);
     } else {
@@ -49,10 +49,10 @@ function parseDevOptions(args: string[]): { port?: number; host?: string } {
   const options: any = {};
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--port' && args[i + 1]) {
+    if (args[i] === "--port" && args[i + 1]) {
       options.port = parseInt(args[i + 1], 10);
       i++;
-    } else if (args[i] === '--host' && args[i + 1]) {
+    } else if (args[i] === "--host" && args[i + 1]) {
       options.host = args[i + 1];
       i++;
     }
@@ -61,20 +61,24 @@ function parseDevOptions(args: string[]): { port?: number; host?: string } {
   return options;
 }
 
-function parseBuildOptions(args: string[]): { out?: string; minify?: boolean; sourcemap?: boolean } {
+function parseBuildOptions(args: string[]): {
+  out?: string;
+  minify?: boolean;
+  sourcemap?: boolean;
+} {
   const options: any = {};
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--out' && args[i + 1]) {
+    if (args[i] === "--out" && args[i + 1]) {
       options.out = args[i + 1];
       i++;
-    } else if (args[i] === '--minify') {
+    } else if (args[i] === "--minify") {
       options.minify = true;
-    } else if (args[i] === '--no-minify') {
+    } else if (args[i] === "--no-minify") {
       options.minify = false;
-    } else if (args[i] === '--sourcemap') {
+    } else if (args[i] === "--sourcemap") {
       options.sourcemap = true;
-    } else if (args[i] === '--no-sourcemap') {
+    } else if (args[i] === "--no-sourcemap") {
       options.sourcemap = false;
     }
   }
@@ -88,7 +92,7 @@ function parseAnalyzeOptions(args: string[]): { entry?: string } {
 
 function parseCleanOptions(args: string[]): { all?: boolean } {
   return {
-    all: args.includes('--all'),
+    all: args.includes("--all"),
   };
 }
 
@@ -123,6 +127,6 @@ Examples:
 }
 
 main().catch((error) => {
-  console.error('Fatal error:', error);
+  console.error("Fatal error:", error);
   process.exit(1);
 });

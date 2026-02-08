@@ -7,9 +7,15 @@ export default function Contact() {
         <nav>
           <h1>Jen.js SSG</h1>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
           <button className="btn-primary">Get Started</button>
         </nav>
@@ -22,9 +28,18 @@ export default function Contact() {
         </section>
 
         <section style={{ maxWidth: "600px", margin: "2rem auto" }}>
-          <form style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <form
+            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+          >
             <div>
-              <label htmlFor="name" style={{ display: "block", marginBottom: "0.5rem", fontWeight: "600" }}>
+              <label
+                htmlFor="name"
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: "600",
+                }}
+              >
                 Name
               </label>
               <input
@@ -43,7 +58,14 @@ export default function Contact() {
             </div>
 
             <div>
-              <label htmlFor="email" style={{ display: "block", marginBottom: "0.5rem", fontWeight: "600" }}>
+              <label
+                htmlFor="email"
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: "600",
+                }}
+              >
                 Email
               </label>
               <input
@@ -62,7 +84,14 @@ export default function Contact() {
             </div>
 
             <div>
-              <label htmlFor="message" style={{ display: "block", marginBottom: "0.5rem", fontWeight: "600" }}>
+              <label
+                htmlFor="message"
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: "600",
+                }}
+              >
                 Message
               </label>
               <textarea
@@ -81,12 +110,23 @@ export default function Contact() {
               />
             </div>
 
-            <button type="submit" className="btn-primary" style={{ alignSelf: "flex-start" }}>
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ alignSelf: "flex-start" }}
+            >
               Send Message
             </button>
           </form>
 
-          <div style={{ marginTop: "3rem", padding: "2rem", background: "#f9fafb", borderRadius: "8px" }}>
+          <div
+            style={{
+              marginTop: "3rem",
+              padding: "2rem",
+              background: "#f9fafb",
+              borderRadius: "8px",
+            }}
+          >
             <h3>Other Ways to Reach Us</h3>
             <ul style={{ listStyle: "none", paddingLeft: 0 }}>
               <li>📧 Email: hello@example.com</li>
@@ -108,7 +148,10 @@ export function Head() {
   return (
     <>
       <title>Contact - Jen.js SSG</title>
-      <meta name="description" content="Contact us for questions about Jen.js or to get support for your static site project." />
+      <meta
+        name="description"
+        content="Contact us for questions about Jen.js or to get support for your static site project."
+      />
     </>
   );
 }

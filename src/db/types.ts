@@ -1,6 +1,6 @@
-import { Filter, Update, QueryOptions } from '../jdb/types';
+import { Filter, Update, QueryOptions } from "../jdb/types";
 
-export type DBType = 'jdb' | 'sqlite' | 'mysql' | 'postgres';
+export type DBType = "jdb" | "sqlite" | "mysql" | "postgres";
 
 export interface DBConfig {
   type: DBType;
@@ -31,7 +31,11 @@ export interface IDBDriver {
   query<T = any>(q: UnifiedQuery<T>): Promise<T[]>;
   // CRUD shortcuts
   create<T = any>(collection: string, data: any): Promise<T>;
-  update<T = any>(collection: string, filter: Filter<T>, update: Update<T>): Promise<number>;
+  update<T = any>(
+    collection: string,
+    filter: Filter<T>,
+    update: Update<T>,
+  ): Promise<number>;
   delete<T = any>(collection: string, filter: Filter<T>): Promise<number>;
   count<T = any>(collection: string, filter: Filter<T>): Promise<number>;
 }

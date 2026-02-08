@@ -20,7 +20,12 @@ export interface CompileResult {
 
 export class ScssCompiler {
   compile(options: CompileOptions): CompileResult {
-    const { inputPath, outputPath, minified = false, sourceMap = false } = options;
+    const {
+      inputPath,
+      outputPath,
+      minified = false,
+      sourceMap = false,
+    } = options;
 
     try {
       if (!existsSync(inputPath)) {
@@ -40,12 +45,16 @@ export class ScssCompiler {
           writeFileSync(outputPath + ".map", JSON.stringify(result.sourceMap));
         }
 
-        log.info(`[SCSS] ✓ ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`);
+        log.info(
+          `[SCSS] ✓ ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`,
+        );
       }
 
       return {
         css: result.css,
-        sourceMap: result.sourceMap ? JSON.stringify(result.sourceMap) : undefined,
+        sourceMap: result.sourceMap
+          ? JSON.stringify(result.sourceMap)
+          : undefined,
       };
     } catch (err: any) {
       const message = err.message || String(err);
@@ -68,14 +77,22 @@ export class ScssCompiler {
     }
   }
 
-  compileGlob(pattern: string, outputDir: string, minified: boolean = false): number {
+  compileGlob(
+    pattern: string,
+    outputDir: string,
+    minified: boolean = false,
+  ): number {
     const files = globSync(pattern);
 
     let count = 0;
     files.forEach((file: string) => {
       const rel = relative(outputDir, file);
       const output = join(outputDir, rel.replace(/\.scss$/, ".css"));
-      const result = this.compile({ inputPath: file, outputPath: output, minified });
+      const result = this.compile({
+        inputPath: file,
+        outputPath: output,
+        minified,
+      });
 
       if (!result.error) count++;
     });

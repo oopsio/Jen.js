@@ -34,7 +34,7 @@ export function cors(options: CORSOptions = {}) {
       // DANGEROUS: only use with credentials: false
       if (opts.credentials) {
         console.warn(
-          "SECURITY WARNING: CORS origin '*' with credentials=true is insecure. Origin set to empty."
+          "SECURITY WARNING: CORS origin '*' with credentials=true is insecure. Origin set to empty.",
         );
         allowOrigin = false;
       } else {
@@ -53,10 +53,13 @@ export function cors(options: CORSOptions = {}) {
     }
 
     if (ctx.req.method === "OPTIONS") {
-      ctx.response.header("Access-Control-Allow-Methods", opts.methods?.join(","));
+      ctx.response.header(
+        "Access-Control-Allow-Methods",
+        opts.methods?.join(","),
+      );
       ctx.response.header(
         "Access-Control-Allow-Headers",
-        opts.allowedHeaders?.join(",")
+        opts.allowedHeaders?.join(","),
       );
       if (opts.maxAge) {
         ctx.response.header("Access-Control-Max-Age", opts.maxAge);

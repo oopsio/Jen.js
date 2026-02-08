@@ -41,8 +41,10 @@ async function renderComponentTree(vnode) {
   if (vnode.type && vnode.type.__isClientComponent) {
     // Security: Validate client component metadata
     if (!validateComponentPath(vnode.type.__clientPath)) {
-      console.error(`Invalid client component path: ${vnode.type.__clientPath}`);
-      return "<div style=\"color: red;\">Invalid component configuration</div>";
+      console.error(
+        `Invalid client component path: ${vnode.type.__clientPath}`,
+      );
+      return '<div style="color: red;">Invalid component configuration</div>';
     }
 
     const id = nextClientId++;
@@ -50,7 +52,7 @@ async function renderComponentTree(vnode) {
     // Security: Limit component ID count to prevent DoS
     if (id > 10000) {
       console.error("Too many client components");
-      return "<div style=\"color: red;\">Too many components</div>";
+      return '<div style="color: red;">Too many components</div>';
     }
 
     clientComponentMap.set(id, {
@@ -67,7 +69,7 @@ async function renderComponentTree(vnode) {
   } catch (err) {
     console.error("Error rendering component:", err);
     // Security: Don't expose error details in HTML
-    return "<div style=\"color: red;\">Component render error</div>";
+    return '<div style="color: red;">Component render error</div>';
   }
 }
 

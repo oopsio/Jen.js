@@ -1,11 +1,23 @@
-import { mkdirSync, writeFileSync } from 'fs';
-import { join, dirname } from 'path';
-import type { Module, ModuleGraph, Chunk, BuildResult, BuildManifest, ModuleManifestEntry } from '../types.js';
-import { transformFileSync } from '../swc/transform.js';
-import { computeHash } from '../utils/hash.js';
-import { normalizePath, isJsonFile, isCssFile, isAssetFile } from '../utils/path.js';
-import { formatSize, info, success } from '../utils/log.js';
-import { computeFileHash, BuildCache } from '../cache/index.js';
+import { mkdirSync, writeFileSync } from "fs";
+import { join, dirname } from "path";
+import type {
+  Module,
+  ModuleGraph,
+  Chunk,
+  BuildResult,
+  BuildManifest,
+  ModuleManifestEntry,
+} from "../types.js";
+import { transformFileSync } from "../swc/transform.js";
+import { computeHash } from "../utils/hash.js";
+import {
+  normalizePath,
+  isJsonFile,
+  isCssFile,
+  isAssetFile,
+} from "../utils/path.js";
+import { formatSize, info, success } from "../utils/log.js";
+import { computeFileHash, BuildCache } from "../cache/index.js";
 
 export class Bundler {
   private moduleGraph: ModuleGraph;
@@ -32,9 +44,9 @@ export class Bundler {
     const assetModules: Module[] = [];
 
     for (const module of modules.values()) {
-      if (module.type === 'asset' || isAssetFile(module.path)) {
+      if (module.type === "asset" || isAssetFile(module.path)) {
         assetModules.push(module);
-      } else if (module.type === 'css' || isCssFile(module.path)) {
+      } else if (module.type === "css" || isCssFile(module.path)) {
         cssModules.push(module);
       } else {
         jsModules.push(module);
@@ -85,10 +97,10 @@ export class Bundler {
   }
 
   private bundleCSSModules(modules: Module[]): Chunk {
-    let css = '';
+    let css = "";
 
     for (const module of modules) {
-      css += module.source + '\n';
+      css += module.source + "\n";
     }
 
     const code = css;
@@ -124,7 +136,7 @@ export class Bundler {
           const result = transformFileSync(module.source, {
             filename: module.path,
             isModule: true,
-            jsxImportSource: this.config.jsxImportSource || 'preact',
+            jsxImportSource: this.config.jsxImportSource || "preact",
             minify: this.config.minify || false,
             sourcemap: this.config.sourcemap || false,
           });
@@ -143,12 +155,15 @@ export class Bundler {
         // Rewrite imports
         for (const [specifier, resolved] of module.dependencies) {
           const rewriteFrom = new RegExp(
-            `from\\s+["']${specifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']`,
-            'g',
+            `from\\s+["']${specifier.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["']`,
+            "g",
           );
           code = code.replace(rewriteFrom, `from "${resolved}"`);
 
-          const importFrom = new RegExp(`import\\s+["']${specifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']`, 'g');
+          const importFrom = new RegExp(
+            `import\\s+["']${specifier.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["']`,
+            "g",
+          );
           code = code.replace(importFrom, `import "${resolved}"`);
         }
 
@@ -160,7 +175,7 @@ export class Bundler {
     }
 
     // Generate bundle
-    let bundle = '';
+    let bundle = "";
 
     // Add module registry
     bundle += `const __modules = {};\n`;
@@ -193,9 +208,13 @@ export class Bundler {
     return bundle;
   }
 
-  private generateManifest(chunks: Chunk[], assets: Map<string, string>, modules: Map<string, Module>): BuildManifest {
+  private generateManifest(
+    chunks: Chunk[],
+    assets: Map<string, string>,
+    modules: Map<string, Module>,
+  ): BuildManifest {
     const manifest: BuildManifest = {
-      version: '1.0.0',
+      version: "1.0.0",
       timestamp: Date.now(),
       chunks: {},
       assets: {},
@@ -203,7 +222,7 @@ export class Bundler {
     };
 
     for (const chunk of chunks) {
-      const size = Buffer.byteLength(chunk.code, 'utf8');
+      const size = Buffer.byteLength(chunk.code, "utf8");
       manifest.chunks[chunk.id] = {
         file: `${chunk.name}.js`,
         name: chunk.name,
@@ -222,9 +241,9 @@ export class Bundler {
       const entry: ModuleManifestEntry = {
         id: module.id,
         path: module.path,
-        chunk: chunks.find((c) => c.modules.includes(module))?.id || 'unknown',
+        chunk: chunks.find((c) => c.modules.includes(module))?.id || "unknown",
         dependencies: Array.from(module.dependencies.keys()),
-        size: Buffer.byteLength(module.source, 'utf8'),
+        size: Buffer.byteLength(module.source, "utf8"),
         hash: module.hash,
       };
       manifest.modules[id] = entry;
@@ -239,6 +258,10 @@ export class Bundler {
   }
 }
 
-export function createBundler(moduleGraph: ModuleGraph, config: any, cache: BuildCache): Bundler {
+export function createBundler(
+  moduleGraph: ModuleGraph,
+  config: any,
+  cache: BuildCache,
+): Bundler {
   return new Bundler(moduleGraph, config, cache);
 }

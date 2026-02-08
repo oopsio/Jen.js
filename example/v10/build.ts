@@ -7,8 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Paths
-const exampleDir = dirname(__dirname);  // example/
-const rootDir = dirname(exampleDir);   // root (Jen.js)
+const exampleDir = dirname(__dirname); // example/
+const rootDir = dirname(exampleDir); // root (Jen.js)
 
 // Load local config
 const configPath = pathToFileURL(join(__dirname, "jen.config.js")).href;
@@ -19,5 +19,5 @@ const buildPath = pathToFileURL(join(rootDir, "src/build/build.js")).href;
 const { buildSite } = await import(buildPath);
 
 await buildSite({
-  config
+  config,
 });

@@ -1,12 +1,15 @@
-import { IDBDriver, DBConfig, UnifiedQuery, FindQuery } from '../types';
-import { JDBEngine, JDBConfig } from '../../jdb';
-import { Filter, Update } from '../../jdb/types';
+import { IDBDriver, DBConfig, UnifiedQuery, FindQuery } from "../types";
+import { JDBEngine, JDBConfig } from "../../jdb";
+import { Filter, Update } from "../../jdb/types";
 
 export class JDBDriver implements IDBDriver {
   private engine: JDBEngine;
 
   constructor(config: DBConfig) {
-    const jdbConfig: JDBConfig = config.jdb || { root: './data', inMemory: false };
+    const jdbConfig: JDBConfig = config.jdb || {
+      root: "./data",
+      inMemory: false,
+    };
     this.engine = new JDBEngine(jdbConfig);
   }
 
@@ -19,13 +22,15 @@ export class JDBDriver implements IDBDriver {
   }
 
   async query<T = any>(q: UnifiedQuery<T>): Promise<T[]> {
-    if (typeof q === 'string') {
-      throw new Error('Raw string queries not supported in JDB directly. Use object syntax.');
+    if (typeof q === "string") {
+      throw new Error(
+        "Raw string queries not supported in JDB directly. Use object syntax.",
+      );
     }
-    if ('sql' in q) {
-      throw new Error('SQL queries not supported in JDB driver.');
+    if ("sql" in q) {
+      throw new Error("SQL queries not supported in JDB driver.");
     }
-    
+
     const query = q as FindQuery<T>;
     const coll = this.engine.collection<any>(query.find);
     return await coll.find(query.where || {}, query.options);
@@ -35,11 +40,20 @@ export class JDBDriver implements IDBDriver {
     return await this.engine.collection<any>(collection).insert(data);
   }
 
-  async update<T = any>(collection: string, filter: Filter<T>, update: Update<T>): Promise<number> {
-    return await this.engine.collection<any>(collection).update(filter, update, true);
+  async update<T = any>(
+    collection: string,
+    filter: Filter<T>,
+    update: Update<T>,
+  ): Promise<number> {
+    return await this.engine
+      .collection<any>(collection)
+      .update(filter, update, true);
   }
 
-  async delete<T = any>(collection: string, filter: Filter<T>): Promise<number> {
+  async delete<T = any>(
+    collection: string,
+    filter: Filter<T>,
+  ): Promise<number> {
     return await this.engine.collection<any>(collection).delete(filter, true);
   }
 

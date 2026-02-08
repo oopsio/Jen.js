@@ -13,7 +13,7 @@ const isDev = mode === "dev";
 async function main() {
   const app = await createApp({
     config,
-    mode: isDev ? "dev" : "prod"
+    mode: isDev ? "dev" : "prod",
   });
 
   const server = createServer(async (req, res) => {

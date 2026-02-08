@@ -9,9 +9,15 @@ export default function Home() {
         <nav>
           <h1>Jen.js SSG</h1>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
           <button className="btn-primary">Get Started</button>
         </nav>
@@ -24,7 +30,9 @@ export default function Home() {
             Production-ready SSG with Jen.js. Minified HTML, optimized CSS, and
             interactive islands.
           </p>
-          <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+          <div
+            style={{ display: "flex", gap: "1rem", justifyContent: "center" }}
+          >
             <button className="btn-primary">Start Building</button>
             <button className="btn-secondary">Learn More</button>
           </div>
@@ -55,7 +63,13 @@ export default function Home() {
         </section>
 
         <section className="newsletter-section">
-          <div style={{ maxWidth: "500px", margin: "0 auto", padding: "2rem 1rem" }}>
+          <div
+            style={{
+              maxWidth: "500px",
+              margin: "0 auto",
+              padding: "2rem 1rem",
+            }}
+          >
             <h2>Stay Updated</h2>
             <p style={{ marginBottom: "2rem", color: "rgba(255,255,255,0.9)" }}>
               Get the latest news and updates delivered to your inbox.
@@ -76,11 +90,17 @@ export default function Home() {
                     fontSize: "1rem",
                   }}
                 />
-                <button type="submit" className="btn-primary" style={{ width: "100%" }}>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  style={{ width: "100%" }}
+                >
                   Subscribe
                 </button>
               </form>
-              <script type="application/json">{JSON.stringify({ endpoint: "/api/subscribe" })}</script>
+              <script type="application/json">
+                {JSON.stringify({ endpoint: "/api/subscribe" })}
+              </script>
             </div>
           </div>
         </section>
@@ -97,7 +117,10 @@ export function Head() {
   return (
     <>
       <title>Jen.js SSG Example - Production-Ready Static Site</title>
-      <meta name="description" content="A production-ready SSG example built with Jen.js featuring minified output, critical CSS, and interactive islands." />
+      <meta
+        name="description"
+        content="A production-ready SSG example built with Jen.js featuring minified output, critical CSS, and interactive islands."
+      />
     </>
   );
 }

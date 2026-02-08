@@ -22,19 +22,18 @@ async function main() {
   // Transpile config
   const configPath = join(blogDir, "jen.config.ts");
   const outdir = join(blogDir, ".esbuild");
-  
+
   console.log(`[SERVER] Transpiling config...`);
   await esbuild.build({
-  entryPoints: [configPath],
-  outdir,
-  format: "esm",
-  platform: "node",
-  target: "es2022",
-  bundle: true,          // bundle so .tsx imports are resolved
-  loader: { ".ts": "ts", ".tsx": "tsx" },
-  logLevel: "silent"
-});
-
+    entryPoints: [configPath],
+    outdir,
+    format: "esm",
+    platform: "node",
+    target: "es2022",
+    bundle: true, // bundle so .tsx imports are resolved
+    loader: { ".ts": "ts", ".tsx": "tsx" },
+    logLevel: "silent",
+  });
 
   // Load config
   const configFile = join(outdir, "jen.config.js");
@@ -49,7 +48,7 @@ async function main() {
   console.log(`[SERVER] Creating app...`);
   const app = await createApp({
     config,
-    mode: isDev ? "dev" : "prod"
+    mode: isDev ? "dev" : "prod",
   });
 
   const server = createServer(async (req, res) => {
@@ -63,7 +62,9 @@ async function main() {
   });
 
   server.listen(config.server.port, config.server.hostname, () => {
-    console.log(`[SERVER] ✅ Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`);
+    console.log(
+      `[SERVER] ✅ Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`,
+    );
   });
 
   process.on("SIGINT", () => {
@@ -72,7 +73,7 @@ async function main() {
   });
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error("[SERVER] ❌ Error:", err);
   process.exit(1);
 });

@@ -7,9 +7,27 @@ export { compileScss, compileCSS, watchStyles } from "./style-compiler.js";
 export { optimize, optimizeImages, minifyHTML } from "./optimizer.js";
 // Native module status
 export const NATIVE_MODULES = {
-    devServer: { name: "dev-server", status: "stub", implementation: "TypeScript" },
-    bundler: { name: "bundler", status: "stub", implementation: "esbuild wrapper" },
-    styleCompiler: { name: "style-compiler", status: "stub", implementation: "TypeScript" },
-    optimizer: { name: "optimizer", status: "stub", implementation: "TypeScript" }
+  devServer: {
+    name: "dev-server",
+    status: "stub",
+    implementation: "TypeScript",
+  },
+  bundler: {
+    name: "bundler",
+    status: "stub",
+    implementation: "esbuild wrapper",
+  },
+  styleCompiler: {
+    name: "style-compiler",
+    status: "stub",
+    implementation: "TypeScript",
+  },
+  optimizer: {
+    name: "optimizer",
+    status: "stub",
+    implementation: "TypeScript",
+  },
 };
-console.log("[NATIVE MODULES] Loaded (TypeScript stubs - replace with native bindings in production)");
+console.log(
+  "[NATIVE MODULES] Loaded (TypeScript stubs - replace with native bindings in production)",
+);

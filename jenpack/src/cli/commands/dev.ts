@@ -1,13 +1,13 @@
-import { resolve } from 'path';
-import { normalizePath } from '../../utils/path.js';
-import { info, success, error as logError, time } from '../../utils/log.js';
-import { loadConfig } from '../../config.js';
-import { createResolver } from '../../resolver/index.js';
-import { createModuleGraphBuilder } from '../../core/graph.js';
-import { createBundler } from '../../core/bundler.js';
-import { createDevServer } from '../../server/dev-server.js';
-import { createWatcher } from '../../server/watcher.js';
-import { BuildCache } from '../../cache/index.js';
+import { resolve } from "path";
+import { normalizePath } from "../../utils/path.js";
+import { info, success, error as logError, time } from "../../utils/log.js";
+import { loadConfig } from "../../config.js";
+import { createResolver } from "../../resolver/index.js";
+import { createModuleGraphBuilder } from "../../core/graph.js";
+import { createBundler } from "../../core/bundler.js";
+import { createDevServer } from "../../server/dev-server.js";
+import { createWatcher } from "../../server/watcher.js";
+import { BuildCache } from "../../cache/index.js";
 
 interface DevOptions {
   entry?: string;
@@ -15,7 +15,10 @@ interface DevOptions {
   host?: string;
 }
 
-export async function dev(entryArg: string | undefined, options: DevOptions = {}): Promise<void> {
+export async function dev(
+  entryArg: string | undefined,
+  options: DevOptions = {},
+): Promise<void> {
   try {
     const root = process.cwd();
     const config = await loadConfig(root);
@@ -37,7 +40,7 @@ export async function dev(entryArg: string | undefined, options: DevOptions = {}
     info(`Starting dev server for ${config.entry}`);
 
     // Initialize components
-    const cache = new BuildCache('.jenpack-cache');
+    const cache = new BuildCache(".jenpack-cache");
     const resolver = createResolver(root, {
       alias: config.alias,
       external: config.external,
@@ -46,7 +49,7 @@ export async function dev(entryArg: string | undefined, options: DevOptions = {}
     const graphBuilder = createModuleGraphBuilder(resolver);
     const devServer = createDevServer({
       port: options.port || 3000,
-      host: options.host || '0.0.0.0',
+      host: options.host || "0.0.0.0",
       config,
     });
 
@@ -56,7 +59,7 @@ export async function dev(entryArg: string | undefined, options: DevOptions = {}
     });
 
     // Initial build
-    const timer = time('Initial build');
+    const timer = time("Initial build");
     try {
       const graph = await graphBuilder.build(normalizedEntry);
       const bundler = createBundler(graph, config, cache);
@@ -81,7 +84,7 @@ export async function dev(entryArg: string | undefined, options: DevOptions = {}
     let pendingRebuild = false;
 
     watcher.onChange((path, type) => {
-      if (type === 'change' || type === 'add' || type === 'unlink') {
+      if (type === "change" || type === "add" || type === "unlink") {
         if (rebuildTimer) {
           pendingRebuild = true;
           return;
@@ -94,7 +97,7 @@ export async function dev(entryArg: string | undefined, options: DevOptions = {}
         rebuildTimer = setTimeout(async () => {
           rebuildTimer = null;
 
-          const rebuildTimer2 = time('Rebuild');
+          const rebuildTimer2 = time("Rebuild");
           try {
             // Clear resolver cache for changed files
             resolver.clearCache();
@@ -129,8 +132,8 @@ export async function dev(entryArg: string | undefined, options: DevOptions = {}
     await watcher.watch();
 
     // Handle graceful shutdown
-    process.on('SIGINT', async () => {
-      info('Shutting down...');
+    process.on("SIGINT", async () => {
+      info("Shutting down...");
       await watcher.close();
       await devServer.close();
       await cache.save();

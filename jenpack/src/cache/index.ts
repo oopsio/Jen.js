@@ -1,6 +1,6 @@
-import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
-import { join } from 'path';
-import { createHash } from 'crypto';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "fs";
+import { join } from "path";
+import { createHash } from "crypto";
 
 interface CacheEntry {
   hash: string;
@@ -14,7 +14,7 @@ export class BuildCache {
   private cache: Map<string, CacheEntry> = new Map();
   private dirty: Set<string> = new Set();
 
-  constructor(cacheDir: string = '.jenpack-cache') {
+  constructor(cacheDir: string = ".jenpack-cache") {
     this.cacheDir = cacheDir;
     this.loadCache();
   }
@@ -26,9 +26,9 @@ export class BuildCache {
     }
 
     try {
-      const indexPath = join(this.cacheDir, 'index.json');
+      const indexPath = join(this.cacheDir, "index.json");
       if (existsSync(indexPath)) {
-        const data = JSON.parse(readFileSync(indexPath, 'utf8'));
+        const data = JSON.parse(readFileSync(indexPath, "utf8"));
         for (const [key, value] of Object.entries(data)) {
           this.cache.set(key, value as CacheEntry);
         }
@@ -76,7 +76,11 @@ export class BuildCache {
       data[key] = value;
     }
 
-    writeFileSync(join(this.cacheDir, 'index.json'), JSON.stringify(data, null, 2), 'utf8');
+    writeFileSync(
+      join(this.cacheDir, "index.json"),
+      JSON.stringify(data, null, 2),
+      "utf8",
+    );
     this.dirty.clear();
   }
 
@@ -97,5 +101,8 @@ export class BuildCache {
 }
 
 export function computeFileHash(filePath: string, content: string): string {
-  return createHash('sha256').update(`${filePath}:${content}`).digest('hex').slice(0, 12);
+  return createHash("sha256")
+    .update(`${filePath}:${content}`)
+    .digest("hex")
+    .slice(0, 12);
 }

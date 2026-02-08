@@ -15,7 +15,10 @@ function escapeHtml(text) {
 
 // Security: JSON escaping to prevent XSS in script tags
 function escapeJson(obj) {
-  return JSON.stringify(obj).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
+  return JSON.stringify(obj)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
 }
 
 // Security: Validate manifest data
@@ -51,7 +54,7 @@ export async function startProdServer(outDir) {
   let manifest;
   try {
     const manifestData = JSON.parse(
-      fs.readFileSync(path.join(outDir, "manifest.json"), "utf-8")
+      fs.readFileSync(path.join(outDir, "manifest.json"), "utf-8"),
     );
     manifest = validateManifest(manifestData);
   } catch (err) {
@@ -144,7 +147,9 @@ if (document.readyState === 'loading') {
       console.error("Server error:", err);
       res.writeHead(500, { "Content-Type": "text/html" });
       // Security: Don't expose internal error details to client
-      res.end("<h1>Server Error</h1><p>An error occurred. Check server logs.</p>");
+      res.end(
+        "<h1>Server Error</h1><p>An error occurred. Check server logs.</p>",
+      );
     }
   });
 

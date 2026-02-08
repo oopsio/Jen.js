@@ -45,9 +45,9 @@ export function invalidateCache(filePath: string) {
 export function buildHydrationModule(routeIdOrPath: string) {
   // routeIdOrPath is now a route ID like "route_index" or "route_blog_slug"
   // or a fallback filePath for backwards compatibility
-  
+
   let filePath = routeIdOrPath;
-  
+
   // For now, keep simple direct file path support
   // In production, we'd resolve routeId -> filePath via config
   if (!existsSync(filePath)) {
@@ -55,11 +55,11 @@ export function buildHydrationModule(routeIdOrPath: string) {
   }
 
   const key = filePath;
-  // Simple dev cache: check if file content changed? 
+  // Simple dev cache: check if file content changed?
   // Actually, for dev speed, we trust explicit invalidation or just rebuild on request.
   // Since buildSync is fast for single files, let's just rebuild if not in cache.
   // The cache is populated. If invalidation happens, it's removed.
-  
+
   if (cache.has(key)) {
     return cache.get(key)!.js;
   }
@@ -73,8 +73,8 @@ export function buildHydrationModule(routeIdOrPath: string) {
     stdin: {
       contents: proxyContent,
       resolveDir: dir,
-      sourcefile: 'hydration-proxy.tsx',
-      loader: 'tsx'
+      sourcefile: "hydration-proxy.tsx",
+      loader: "tsx",
     },
     format: "esm",
     platform: "browser",
@@ -84,14 +84,14 @@ export function buildHydrationModule(routeIdOrPath: string) {
     jsx: "automatic",
     jsxImportSource: "preact",
     define: {
-      "process.env.NODE_ENV": JSON.stringify("development")
+      "process.env.NODE_ENV": JSON.stringify("development"),
     },
     external: [
       "preact",
       "preact/hooks",
       "preact/jsx-runtime",
-      "preact-render-to-string"
-    ]
+      "preact-render-to-string",
+    ],
   }).outputFiles?.[0]?.text;
 
   const out =
@@ -109,4 +109,4 @@ import { jsx, jsxs } from "https://esm.sh/preact@10.25.4/jsx-runtime";
 export function getHydrationEtag(filePath: string) {
   const v = cache.get(filePath);
   return v?.etag ?? null;
-    }
+}
