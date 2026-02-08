@@ -21,7 +21,9 @@ export function createCommand(args) {
   const templateDir = path.resolve("src/cli/templates", template);
   copyFolder(templateDir, projectDir);
 
-  console.log(`Created new app '${name}' using ${template.toUpperCase()} template`);
+  console.log(
+    `Created new app '${name}' using ${template.toUpperCase()} template`,
+  );
 }
 
 // Recursively copy folder

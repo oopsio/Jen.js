@@ -5,7 +5,10 @@ export type MatchResult = {
   params: Record<string, string>;
 };
 
-export function matchRoute(routes: RouteEntry[], pathname: string): MatchResult | null {
+export function matchRoute(
+  routes: RouteEntry[],
+  pathname: string,
+): MatchResult | null {
   for (const r of routes) {
     const re = new RegExp(r.pattern);
     const m = pathname.match(re);

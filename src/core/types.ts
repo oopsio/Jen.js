@@ -20,4 +20,3 @@ export type LoaderContext = {
   cookies: Record<string, string>;
   data?: Record<string, any>; // From route middleware
 };
-  

@@ -1,15 +1,20 @@
-import { readFileSync } from 'fs';
-import { extname } from 'path';
-import type { Module, ModuleGraph } from '../types.js';
-import { Resolver } from '../resolver/index.js';
-import { computeHash } from '../utils/hash.js';
-import { parseFile, extractImports } from '../swc/transform.js';
-import { normalizePath, isCssFile, isJsonFile, isAssetFile } from '../utils/path.js';
-import { warn } from '../utils/log.js';
+import { readFileSync } from "fs";
+import { extname } from "path";
+import type { Module, ModuleGraph } from "../types.js";
+import { Resolver } from "../resolver/index.js";
+import { computeHash } from "../utils/hash.js";
+import { parseFile, extractImports } from "../swc/transform.js";
+import {
+  normalizePath,
+  isCssFile,
+  isJsonFile,
+  isAssetFile,
+} from "../utils/path.js";
+import { warn } from "../utils/log.js";
 
 export class ModuleGraphBuilder {
   private resolver: Resolver;
-  private graph: ModuleGraph = { modules: new Map(), entry: '' };
+  private graph: ModuleGraph = { modules: new Map(), entry: "" };
   private visited: Set<string> = new Set();
   private resolving: Set<string> = new Set();
 
@@ -35,25 +40,28 @@ export class ModuleGraphBuilder {
 
     if (this.resolving.has(modulePath)) {
       // Circular dependency
-      return this.createModule(modulePath, '', []);
+      return this.createModule(modulePath, "", []);
     }
 
     this.visited.add(modulePath);
     this.resolving.add(modulePath);
 
     try {
-      const source = readFileSync(modulePath, 'utf8');
+      const source = readFileSync(modulePath, "utf8");
       const type = this.resolver.getType(modulePath);
       const dependencies = new Map<string, string>();
       const imports: string[] = [];
 
-      if (type === 'esm') {
+      if (type === "esm") {
         try {
           const ast = await parseFile(source, modulePath);
           const extractedImports = extractImports(ast);
 
           for (const importInfo of extractedImports) {
-            const resolved = this.resolver.resolve(importInfo.source, modulePath);
+            const resolved = this.resolver.resolve(
+              importInfo.source,
+              modulePath,
+            );
             if (resolved) {
               dependencies.set(importInfo.source, resolved);
               imports.push(resolved);
@@ -65,9 +73,9 @@ export class ModuleGraphBuilder {
         } catch (error) {
           warn(`Failed to parse imports from ${modulePath}`);
         }
-      } else if (type === 'json') {
+      } else if (type === "json") {
         // JSON files have no dependencies
-      } else if (type === 'css') {
+      } else if (type === "css") {
         // CSS can import other CSS files
         const cssImports = this.extractCssImports(source);
         for (const cssImport of cssImports) {
@@ -80,7 +88,12 @@ export class ModuleGraphBuilder {
         }
       }
 
-      const module = this.createModule(modulePath, source, imports, dependencies);
+      const module = this.createModule(
+        modulePath,
+        source,
+        imports,
+        dependencies,
+      );
       this.graph.modules.set(modulePath, module);
 
       this.resolving.delete(modulePath);
@@ -88,7 +101,7 @@ export class ModuleGraphBuilder {
     } catch (error) {
       warn(`Failed to load module ${modulePath}: ${(error as Error).message}`);
       this.resolving.delete(modulePath);
-      return this.createModule(modulePath, '', []);
+      return this.createModule(modulePath, "", []);
     }
   }
 
@@ -135,6 +148,8 @@ export class ModuleGraphBuilder {
   }
 }
 
-export function createModuleGraphBuilder(resolver: Resolver): ModuleGraphBuilder {
+export function createModuleGraphBuilder(
+  resolver: Resolver,
+): ModuleGraphBuilder {
   return new ModuleGraphBuilder(resolver);
 }

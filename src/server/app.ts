@@ -14,26 +14,33 @@ import { renderRouteToHtml } from "../runtime/render.js";
 import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
 import { headersToObject, parseCookies } from "../core/http.js";
 import { tryHandleApiRoute } from "./api.js";
-import { buildHydrationModule, runtimeHydrateModule, invalidateCache } from "./runtimeServe.js";
+import {
+  buildHydrationModule,
+  runtimeHydrateModule,
+  invalidateCache,
+} from "./runtimeServe.js";
 
 // Local middleware type for app routing
 type Middleware = (ctx: any, next: () => Promise<void>) => Promise<void>;
 
 type AppMode = "dev" | "prod";
 
-export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }) {
+export async function createApp(opts: {
+  config: FrameworkConfig;
+  mode: AppMode;
+}) {
   const { config, mode } = opts;
 
   // HMR / Live Reload Setup
   const hmrClients = new Set<ServerResponse>();
-  
+
   if (mode === "dev") {
     const sitePath = join(process.cwd(), config.siteDir);
     log.info(`[HMR] Watching ${sitePath} for changes...`);
-    
+
     // Recursive watch (Node 20+)
     let debounceTimer: NodeJS.Timeout;
-    
+
     try {
       watch(sitePath, { recursive: true }, (eventType, filename) => {
         if (!filename) return;
@@ -46,11 +53,11 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
           filename.endsWith(".tmp") ||
           filename.endsWith(".esbuild.mjs") || // Ignore build artifacts
           filename.includes("\\.") || // Windows hidden files
-          filename.includes("/.")     // Unix hidden files
+          filename.includes("/.") // Unix hidden files
         ) {
           return;
         }
-        
+
         // Debounce to avoid double events
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
@@ -62,9 +69,11 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
           if (ext === ".css" || ext === ".scss") {
             // Hot CSS
             const cssName = filename.replace(/\.scss$/, ".css");
-            
+
             for (const client of hmrClients) {
-              client.write(`event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`);
+              client.write(
+                `event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`,
+              );
             }
           } else {
             // Invalidate hydration cache for changed file
@@ -88,12 +97,12 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
 
   const serveAssets = sirv(join(process.cwd(), config.siteDir), {
     dev: mode === "dev",
-    etag: true
+    etag: true,
   });
 
   const serveDist = sirv(join(process.cwd(), config.distDir), {
     dev: mode === "dev",
-    etag: true
+    etag: true,
   });
 
   const middlewares: Middleware[] = [
@@ -106,14 +115,20 @@ export async function createApp(opts: { config: FrameworkConfig; mode: AppMode }
       // runtime internal modules
       if (ctx.url.pathname === "/__runtime/hydrate.js") {
         ctx.res.statusCode = 200;
-        ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+        ctx.res.setHeader(
+          "content-type",
+          "application/javascript; charset=utf-8",
+        );
         ctx.res.end(runtimeHydrateModule());
         return;
       }
-      
+
       if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
         ctx.res.statusCode = 200;
-        ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+        ctx.res.setHeader(
+          "content-type",
+          "application/javascript; charset=utf-8",
+        );
         const islandCode = `
 import { hydrate } from "https://esm.sh/preact@10";
 import { h } from "https://esm.sh/preact@10";
@@ -218,17 +233,17 @@ initializeIslands();
         ctx.res.setHeader("content-type", "text/event-stream");
         ctx.res.setHeader("cache-control", "no-cache");
         ctx.res.setHeader("connection", "keep-alive");
-        
+
         ctx.res.write("data: connected\n\n");
         hmrClients.add(ctx.res);
-        
+
         ctx.req.on("close", () => {
           hmrClients.delete(ctx.res);
         });
         return;
       }
 
-          if (ctx.url.pathname === "/__hydrate") {
+      if (ctx.url.pathname === "/__hydrate") {
         const file = ctx.url.searchParams.get("file");
         if (!file) {
           ctx.res.statusCode = 400;
@@ -239,12 +254,14 @@ initializeIslands();
         const js = buildHydrationModule(file);
 
         ctx.res.statusCode = 200;
-        ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+        ctx.res.setHeader(
+          "content-type",
+          "application/javascript; charset=utf-8",
+        );
         ctx.res.setHeader("cache-control", "no-store");
         ctx.res.end(js);
         return;
-          }
-      
+      }
 
       await next();
     },
@@ -254,7 +271,7 @@ initializeIslands();
       const handled = await tryHandleApiRoute({
         req: ctx.req,
         res: ctx.res,
-        siteDir: config.siteDir
+        siteDir: config.siteDir,
       });
       if (handled) return;
       await next();
@@ -281,7 +298,11 @@ initializeIslands();
         } else {
           // Map /foo.css -> siteDir/foo.scss
           const rel = ctx.url.pathname.slice(1);
-          const tryPath = join(process.cwd(), config.siteDir, rel.replace(/\.css$/, ".scss"));
+          const tryPath = join(
+            process.cwd(),
+            config.siteDir,
+            rel.replace(/\.css$/, ".scss"),
+          );
           if (existsSync(tryPath)) {
             scssFile = tryPath;
           }
@@ -292,7 +313,7 @@ initializeIslands();
           const result = compiler.compile({
             inputPath: scssFile,
             minified: false,
-            sourceMap: true
+            sourceMap: true,
           });
 
           if (result.error) {
@@ -301,11 +322,13 @@ initializeIslands();
             ctx.res.end(
               `/* SCSS Error: ${result.error.replace(
                 /\*\//g,
-                "* /"
+                "* /",
               )} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error
                 .replace(/\\/g, "\\\\")
-                .replace(/"/g, '\\"')
-              }"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`
+                .replace(
+                  /"/g,
+                  '\\"',
+                )}"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`,
             );
             return;
           }
@@ -353,13 +376,16 @@ initializeIslands();
           params: m.params,
           query,
           headers: reqHeaders,
-          cookies
+          cookies,
         });
 
         let finalHtml = html;
         if (mode === "dev") {
           // Inject HMR client
-          finalHtml = html.replace("</body>", `<script>${HMR_CLIENT_SCRIPT}</script></body>`);
+          finalHtml = html.replace(
+            "</body>",
+            `<script>${HMR_CLIENT_SCRIPT}</script></body>`,
+          );
         }
 
         ctx.res.statusCode = 200;
@@ -374,20 +400,19 @@ initializeIslands();
       }
     },
 
-        async (ctx) => {
-          ctx.res.statusCode = 404;
-          ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
-          ctx.res.end("404 Not Found");
-        }
-      ];
-    
-      const kernel = new Kernel();
-      middlewares.forEach(m => kernel.use(m));
-    
-      return {
-        async handle(req: IncomingMessage, res: ServerResponse) {
-          await kernel.handle(req, res);
-        }
-      };
-    }
-    
+    async (ctx) => {
+      ctx.res.statusCode = 404;
+      ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
+      ctx.res.end("404 Not Found");
+    },
+  ];
+
+  const kernel = new Kernel();
+  middlewares.forEach((m) => kernel.use(m));
+
+  return {
+    async handle(req: IncomingMessage, res: ServerResponse) {
+      await kernel.handle(req, res);
+    },
+  };
+}

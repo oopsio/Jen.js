@@ -11,7 +11,7 @@ export async function devCommand(args) {
   }
 
   const entryFile = path.resolve(process.cwd(), args[0]);
-  
+
   // Validate file exists
   if (!fs.existsSync(entryFile)) {
     throw new Error(`Entry file not found: ${entryFile}`);
@@ -19,7 +19,9 @@ export async function devCommand(args) {
 
   // Validate it's a server component
   if (!entryFile.endsWith(".server.jsx") && !entryFile.endsWith(".server.js")) {
-    throw new Error(`Entry file must be a .server.jsx or .server.js file: ${entryFile}`);
+    throw new Error(
+      `Entry file must be a .server.jsx or .server.js file: ${entryFile}`,
+    );
   }
 
   console.log(`[PRSC] Dev server for: ${entryFile}`);

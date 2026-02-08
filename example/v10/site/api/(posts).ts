@@ -17,7 +17,7 @@ const posts: Post[] = [
     title: "Getting Started with Jen.js",
     author: "Sarah Chen",
     date: "2026-01-26",
-    views: 1523
+    views: 1523,
   },
   {
     id: "2",
@@ -25,7 +25,7 @@ const posts: Post[] = [
     title: "Building Production-Grade Apps",
     author: "Alex Rivera",
     date: "2026-01-25",
-    views: 892
+    views: 892,
   },
   {
     id: "3",
@@ -33,8 +33,8 @@ const posts: Post[] = [
     title: "TypeScript Best Practices",
     author: "Jordan Park",
     date: "2026-01-24",
-    views: 654
-  }
+    views: 654,
+  },
 ];
 
 export async function handle(req: IncomingMessage, res: ServerResponse) {
@@ -55,15 +55,19 @@ export async function handle(req: IncomingMessage, res: ServerResponse) {
     const author = url.searchParams.get("author");
 
     const filtered = author
-      ? posts.filter(p => p.author.toLowerCase().includes(author.toLowerCase()))
+      ? posts.filter((p) =>
+          p.author.toLowerCase().includes(author.toLowerCase()),
+        )
       : posts;
 
     res.writeHead(200);
-    res.end(JSON.stringify({
-      success: true,
-      data: filtered,
-      count: filtered.length
-    }));
+    res.end(
+      JSON.stringify({
+        success: true,
+        data: filtered,
+        count: filtered.length,
+      }),
+    );
   } else if (req.method === "POST") {
     // Create new post (stub)
     let body = "";
@@ -88,16 +92,18 @@ export async function handle(req: IncomingMessage, res: ServerResponse) {
           title: newPost.title,
           author: newPost.author,
           date: new Date().toISOString().split("T")[0],
-          views: 0
+          views: 0,
         };
 
         posts.push(post);
 
         res.writeHead(201);
-        res.end(JSON.stringify({
-          success: true,
-          data: post
-        }));
+        res.end(
+          JSON.stringify({
+            success: true,
+            data: post,
+          }),
+        );
       } catch (err) {
         res.writeHead(400);
         res.end(JSON.stringify({ error: "Invalid JSON" }));

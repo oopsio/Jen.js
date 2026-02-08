@@ -1,9 +1,12 @@
-import { watch } from 'chokidar';
-import type { FSWatcher } from 'chokidar';
-import type { WatcherConfig } from '../types.js';
-import { debug } from '../utils/log.js';
+import { watch } from "chokidar";
+import type { FSWatcher } from "chokidar";
+import type { WatcherConfig } from "../types.js";
+import { debug } from "../utils/log.js";
 
-export type FileChangeCallback = (path: string, type: 'add' | 'change' | 'unlink') => void;
+export type FileChangeCallback = (
+  path: string,
+  type: "add" | "change" | "unlink",
+) => void;
 
 export class FileWatcher {
   private watcher: FSWatcher | null = null;
@@ -16,11 +19,11 @@ export class FileWatcher {
 
   async watch(): Promise<void> {
     const ignored = this.config.ignored || [
-      '**/node_modules/**',
-      '**/.git/**',
-      '**/.jenpack-cache/**',
-      '**/dist/**',
-      '**/build/**',
+      "**/node_modules/**",
+      "**/.git/**",
+      "**/.jenpack-cache/**",
+      "**/dist/**",
+      "**/build/**",
     ];
 
     this.watcher = watch(this.config.root, {
@@ -32,24 +35,24 @@ export class FileWatcher {
       },
     });
 
-    this.watcher.on('add', (path) => {
+    this.watcher.on("add", (path) => {
       debug(`[watcher] File added: ${path}`);
-      this.emit(path, 'add');
+      this.emit(path, "add");
     });
 
-    this.watcher.on('change', (path) => {
+    this.watcher.on("change", (path) => {
       debug(`[watcher] File changed: ${path}`);
-      this.emit(path, 'change');
+      this.emit(path, "change");
     });
 
-    this.watcher.on('unlink', (path) => {
+    this.watcher.on("unlink", (path) => {
       debug(`[watcher] File removed: ${path}`);
-      this.emit(path, 'unlink');
+      this.emit(path, "unlink");
     });
 
     return new Promise((resolve) => {
-      this.watcher?.on('ready', () => {
-        debug('[watcher] Ready');
+      this.watcher?.on("ready", () => {
+        debug("[watcher] Ready");
         resolve();
       });
     });
@@ -59,7 +62,7 @@ export class FileWatcher {
     this.callbacks.add(callback);
   }
 
-  private emit(path: string, type: 'add' | 'change' | 'unlink'): void {
+  private emit(path: string, type: "add" | "change" | "unlink"): void {
     for (const callback of this.callbacks) {
       try {
         callback(path, type);

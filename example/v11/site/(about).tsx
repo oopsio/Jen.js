@@ -17,7 +17,9 @@ export default function About() {
               About This Boilerplate
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl">
-              A comprehensive starter template for building modern web applications with Jen.js, featuring Tailwind CSS, custom styling, and production-ready plugins.
+              A comprehensive starter template for building modern web
+              applications with Jen.js, featuring Tailwind CSS, custom styling,
+              and production-ready plugins.
             </p>
           </div>
         </section>
@@ -27,24 +29,44 @@ export default function About() {
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="space-y-12">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Jen.js?</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Why Jen.js?
+                </h2>
                 <p className="text-gray-600 mb-4">
-                  Jen.js is a modern TypeScript framework built for the next generation of web applications. It combines the best of server-side rendering and static generation with a lightweight client runtime powered by Preact.
+                  Jen.js is a modern TypeScript framework built for the next
+                  generation of web applications. It combines the best of
+                  server-side rendering and static generation with a lightweight
+                  client runtime powered by Preact.
                 </p>
                 <ul className="space-y-2 text-gray-600">
-                  <li>✓ <strong>Hybrid Rendering:</strong> Choose between SSR, SSG, or hybrid for each route</li>
-                  <li>✓ <strong>TypeScript First:</strong> Full type safety from server to client</li>
-                  <li>✓ <strong>Lightweight:</strong> Preact reduces bundle size significantly</li>
-                  <li>✓ <strong>Developer Experience:</strong> Hot module reloading and fast builds</li>
+                  <li>
+                    ✓ <strong>Hybrid Rendering:</strong> Choose between SSR,
+                    SSG, or hybrid for each route
+                  </li>
+                  <li>
+                    ✓ <strong>TypeScript First:</strong> Full type safety from
+                    server to client
+                  </li>
+                  <li>
+                    ✓ <strong>Lightweight:</strong> Preact reduces bundle size
+                    significantly
+                  </li>
+                  <li>
+                    ✓ <strong>Developer Experience:</strong> Hot module
+                    reloading and fast builds
+                  </li>
                 </ul>
               </div>
 
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">What This Boilerplate Includes</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  What This Boilerplate Includes
+                </h2>
                 <p className="text-gray-600 mb-4">
-                  This boilerplate is pre-configured with everything you need to launch a professional web application:
+                  This boilerplate is pre-configured with everything you need to
+                  launch a professional web application:
                 </p>
-                
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                     <h3 className="font-bold text-gray-900 mb-3">🎨 Styling</h3>
@@ -67,7 +89,9 @@ export default function About() {
                   </div>
 
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <h3 className="font-bold text-gray-900 mb-3">💎 Components</h3>
+                    <h3 className="font-bold text-gray-900 mb-3">
+                      💎 Components
+                    </h3>
                     <ul className="space-y-1 text-sm text-gray-600">
                       <li>• Responsive Header</li>
                       <li>• Hero sections</li>
@@ -89,23 +113,53 @@ export default function About() {
               </div>
 
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Getting Started</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Getting Started
+                </h2>
                 <p className="text-gray-600 mb-4">
                   To use this boilerplate for your next project:
                 </p>
                 <ol className="space-y-3 text-gray-600">
-                  <li><strong>1. Copy the boilerplate:</strong> Use this directory as your project template</li>
-                  <li><strong>2. Install dependencies:</strong> Run <code className="bg-gray-100 px-2 py-1 rounded">npm install</code> or <code className="bg-gray-100 px-2 py-1 rounded">pnpm install</code></li>
-                  <li><strong>3. Start development:</strong> Run <code className="bg-gray-100 px-2 py-1 rounded">npm run dev</code></li>
-                  <li><strong>4. Customize:</strong> Replace content in <code className="bg-gray-100 px-2 py-1 rounded">site/</code> with your own</li>
-                  <li><strong>5. Build for production:</strong> Run <code className="bg-gray-100 px-2 py-1 rounded">npm run build</code></li>
+                  <li>
+                    <strong>1. Copy the boilerplate:</strong> Use this directory
+                    as your project template
+                  </li>
+                  <li>
+                    <strong>2. Install dependencies:</strong> Run{" "}
+                    <code className="bg-gray-100 px-2 py-1 rounded">
+                      npm install
+                    </code>{" "}
+                    or{" "}
+                    <code className="bg-gray-100 px-2 py-1 rounded">
+                      pnpm install
+                    </code>
+                  </li>
+                  <li>
+                    <strong>3. Start development:</strong> Run{" "}
+                    <code className="bg-gray-100 px-2 py-1 rounded">
+                      npm run dev
+                    </code>
+                  </li>
+                  <li>
+                    <strong>4. Customize:</strong> Replace content in{" "}
+                    <code className="bg-gray-100 px-2 py-1 rounded">site/</code>{" "}
+                    with your own
+                  </li>
+                  <li>
+                    <strong>5. Build for production:</strong> Run{" "}
+                    <code className="bg-gray-100 px-2 py-1 rounded">
+                      npm run build
+                    </code>
+                  </li>
                 </ol>
               </div>
 
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Project Structure</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Project Structure
+                </h2>
                 <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto border border-gray-200">
-{`boilerplate/
+                  {`boilerplate/
 ├── site/
 │   ├── components/        # Reusable React components
 │   ├── plugins/           # Analytics, theme, notifications
@@ -123,7 +177,13 @@ export default function About() {
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
                 <h3 className="font-bold text-blue-900 mb-2">💡 Pro Tip</h3>
                 <p className="text-blue-800">
-                  The plugins in <code className="bg-blue-100 px-2 py-1 rounded">site/plugins/</code> are designed to be easily customizable and extensible. Feel free to modify them or create new ones for your specific needs.
+                  The plugins in{" "}
+                  <code className="bg-blue-100 px-2 py-1 rounded">
+                    site/plugins/
+                  </code>{" "}
+                  are designed to be easily customizable and extensible. Feel
+                  free to modify them or create new ones for your specific
+                  needs.
                 </p>
               </div>
             </div>
@@ -155,7 +215,10 @@ export function Head() {
   return (
     <>
       <title>About - Jen.js Boilerplate</title>
-      <meta name="description" content="Learn about the Jen.js boilerplate, its features, and how to get started building modern web applications." />
+      <meta
+        name="description"
+        content="Learn about the Jen.js boilerplate, its features, and how to get started building modern web applications."
+      />
     </>
   );
 }

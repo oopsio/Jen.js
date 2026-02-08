@@ -11,9 +11,9 @@ interface FeatureGridProps {
   features: Feature[];
 }
 
-const FeatureGrid: FunctionComponent<FeatureGridProps> = ({ 
-  title = "Key Features", 
-  features 
+const FeatureGrid: FunctionComponent<FeatureGridProps> = ({
+  title = "Key Features",
+  features,
 }) => {
   return (
     <section className="py-16 md:py-24 bg-white">
@@ -31,8 +31,8 @@ const FeatureGrid: FunctionComponent<FeatureGridProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="card group hover:border-primary-500 animate-slide-up"
               style={{ animationDelay: `${idx * 100}ms` }}
             >

@@ -4,6 +4,6 @@ export default async function handler(ctx: any) {
     message: "Hello from API route",
     method: ctx.method,
     query: ctx.query,
-    body: ctx.body
+    body: ctx.body,
   };
 }

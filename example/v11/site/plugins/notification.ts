@@ -72,7 +72,7 @@ class NotificationManager {
 
   private broadcastUpdate() {
     const notifications = this.getAll();
-    this.listeners.forEach(listener => listener(notifications));
+    this.listeners.forEach((listener) => listener(notifications));
   }
 
   private generateId(): string {

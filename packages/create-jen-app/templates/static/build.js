@@ -25,7 +25,7 @@ const Minifier = {
       .replace(/\s+/g, " ")
       .replace(/;\s*}/g, "}")
       .trim();
-  }
+  },
 };
 
 async function main() {
@@ -33,7 +33,7 @@ async function main() {
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
-  
+
   await esbuild.build({
     entryPoints: [configPath],
     outdir,
@@ -44,19 +44,21 @@ async function main() {
     minify: true,
     sourcemap: true,
     loader: { ".ts": "ts" },
-    logLevel: "silent"
+    logLevel: "silent",
   });
 
   const configFile = join(outdir, "jen.config.js");
   const config = (await import(pathToFileURL(configFile).href)).default;
 
-  const buildPath = pathToFileURL(join(rootDir, "build/src/build/build.js")).href;
+  const buildPath = pathToFileURL(
+    join(rootDir, "build/src/build/build.js"),
+  ).href;
   const { buildSite } = await import(buildPath);
 
   await buildSite({ config });
 
   console.log("[BUILD] Minifying output...");
-  
+
   async function minifyDir(dir) {
     try {
       const files = await readdir(dir);
@@ -74,7 +76,7 @@ async function main() {
         }
       }
     } catch (e) {
-      if (e.code !== 'ENOENT') console.warn("Minification warning:", e.message);
+      if (e.code !== "ENOENT") console.warn("Minification warning:", e.message);
     }
   }
 

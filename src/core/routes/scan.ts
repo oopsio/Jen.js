@@ -72,7 +72,9 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
   for (const abs of files) {
     const rel = normalizeSlashes(relative(siteRoot, abs));
 
-    const extMatch = config.routes.fileExtensions.some((ext) => rel.endsWith(ext));
+    const extMatch = config.routes.fileExtensions.some((ext) =>
+      rel.endsWith(ext),
+    );
     if (!extMatch) continue;
 
     const base = rel.split("/").pop()!;
@@ -103,7 +105,10 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
     // (...rest).tsx => /*rest
     if (routeSeg !== "home") {
       // if file is (id).tsx, treat as dynamic param
-      if (!routeSeg.startsWith("...") && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(routeSeg)) {
+      if (
+        !routeSeg.startsWith("...") &&
+        /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(routeSeg)
+      ) {
         // if directory already contains literal segments, keep them
         // BUT if the routeSeg looks like a normal name, we still treat it as literal.
         // We only treat it as param when the directory name includes [param] style? no.
@@ -147,7 +152,7 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
       filePath: abs,
       urlPath: url,
       pattern: src,
-      paramNames
+      paramNames,
     });
   }
 
@@ -160,5 +165,4 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
   });
 
   return routes;
-      }
-      
+}

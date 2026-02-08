@@ -18,7 +18,7 @@ export interface Module {
   id: string;
   path: string;
   source: string;
-  type: 'esm' | 'json' | 'asset';
+  type: "esm" | "json" | "asset";
   dependencies: Map<string, string>;
   imports: string[];
   exports: string[];

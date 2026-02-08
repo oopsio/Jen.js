@@ -1,19 +1,17 @@
-const terminalBody = document.querySelector('.terminal-body');
+const terminalBody = document.querySelector(".terminal-body");
 
-const commands = [
-  'npm create jen-app@latest',
-];
+const commands = ["npm create jen-app@latest"];
 
 let i = 0;
 
 function typeCommand() {
   if (i >= commands.length) return;
-  const p = document.createElement('p');
-  const span = document.createElement('span');
-  span.className = 'prompt';
-  span.textContent = 'user@computer:~$';
+  const p = document.createElement("p");
+  const span = document.createElement("span");
+  span.className = "prompt";
+  span.textContent = "user@computer:~$";
   p.appendChild(span);
-  p.appendChild(document.createTextNode(' '));
+  p.appendChild(document.createTextNode(" "));
   terminalBody.appendChild(p);
 
   let j = 0;
@@ -23,24 +21,24 @@ function typeCommand() {
       p.appendChild(document.createTextNode(commands[i][j]));
       j++;
       setTimeout(typeChar, 50);
-    }  else {
+    } else {
       // 1. Capture the current command text before the loop index 'i' changes
-      const currentCommand = commands[i]; 
+      const currentCommand = commands[i];
 
       // 2. Create the icon
-      const icon = document.createElement('i');
-      icon.className = 'bi bi-copy';
-      icon.style.marginLeft = '10px';
-      icon.style.cursor = 'pointer';
+      const icon = document.createElement("i");
+      icon.className = "bi bi-copy";
+      icon.style.marginLeft = "10px";
+      icon.style.cursor = "pointer";
 
       // 3. Add the click event listener to copy the text
-      icon.addEventListener('click', () => {
+      icon.addEventListener("click", () => {
         navigator.clipboard.writeText(currentCommand);
-        
+
         // Optional: Visual feedback (changes icon to a checkmark for 1 second)
-        icon.className = 'bi bi-check'; 
+        icon.className = "bi bi-check";
         setTimeout(() => {
-             icon.className = 'bi bi-copy';
+          icon.className = "bi bi-copy";
         }, 1000);
       });
 

@@ -25,7 +25,10 @@ function addPage(name) {
   const fileName = `${name}.tsx`;
   const pagesDir = path.resolve("site");
   if (!fs.existsSync(pagesDir)) fs.mkdirSync(pagesDir);
-  fs.writeFileSync(path.join(pagesDir, fileName), `export default function ${name}() { return <div>${name}</div>; }`);
+  fs.writeFileSync(
+    path.join(pagesDir, fileName),
+    `export default function ${name}() { return <div>${name}</div>; }`,
+  );
   console.log(`Created page: ${fileName}`);
 }
 
@@ -33,6 +36,9 @@ function addPlugin(name) {
   const fileName = `${name}.lua`;
   const pluginDir = path.resolve("src/plugin/plugins");
   if (!fs.existsSync(pluginDir)) fs.mkdirSync(pluginDir, { recursive: true });
-  fs.writeFileSync(path.join(pluginDir, fileName), `return function(hook, ctx)\n  print("[Plugin ${name}] hook", hook)\nend`);
+  fs.writeFileSync(
+    path.join(pluginDir, fileName),
+    `return function(hook, ctx)\n  print("[Plugin ${name}] hook", hook)\nend`,
+  );
   console.log(`Created plugin: ${fileName}`);
 }

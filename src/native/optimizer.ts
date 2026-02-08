@@ -19,20 +19,20 @@ export async function optimize(opts: OptimizerOptions): Promise<{
 
   // Placeholder: simulated optimization results
   const originalSize = 1024 * 100; // 100KB
-  const optimizedSize = 1024 * 75;  // 75KB (25% reduction)
+  const optimizedSize = 1024 * 75; // 75KB (25% reduction)
 
   return {
     originalSize,
     optimizedSize,
     savings: originalSize - optimizedSize,
-    files: opts.files
+    files: opts.files,
   };
 }
 
 export async function optimizeImages(
   inputDir: string,
   outputDir: string,
-  options: { format?: "webp" | "avif"; quality?: number } = {}
+  options: { format?: "webp" | "avif"; quality?: number } = {},
 ) {
   console.log(`[OPTIMIZER] Image optimization: ${inputDir} -> ${outputDir}`);
   // Placeholder: would use native image processing
@@ -40,8 +40,5 @@ export async function optimizeImages(
 
 export async function minifyHTML(html: string): Promise<string> {
   // Simple minification placeholder
-  return html
-    .replace(/\s+/g, " ")
-    .replace(/>\s+</g, "><")
-    .trim();
+  return html.replace(/\s+/g, " ").replace(/>\s+</g, "><").trim();
 }

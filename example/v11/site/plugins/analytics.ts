@@ -28,7 +28,11 @@ class Analytics {
   private generateSessionId(): string {
     const timestamp = Date.now();
 
-    if (typeof window !== "undefined" && window.crypto && window.crypto.getRandomValues) {
+    if (
+      typeof window !== "undefined" &&
+      window.crypto &&
+      window.crypto.getRandomValues
+    ) {
       const array = new Uint32Array(2);
       window.crypto.getRandomValues(array);
       const randomPart =

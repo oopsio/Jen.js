@@ -2,7 +2,7 @@ import { h } from "preact";
 
 /**
  * Blog Post Page - Dynamic Zero-JS Route
- * 
+ *
  * Features:
  * - export const hydrate = false (pure static HTML)
  * - Dynamic routes using [slug] parameter
@@ -44,7 +44,7 @@ const blogPosts: Record<string, any> = {
         <li>Building interactive components with Islands</li>
         <li>Deploying static sites</li>
       </ul>
-    `
+    `,
   },
   "islands-explained": {
     title: "Islands Architecture Explained",
@@ -52,7 +52,8 @@ const blogPosts: Record<string, any> = {
     author: "John Smith",
     date: "2026-02-02",
     readTime: "8 min read",
-    excerpt: "Deep dive into the Islands architecture and how it improves web performance.",
+    excerpt:
+      "Deep dive into the Islands architecture and how it improves web performance.",
     content: `
       <p>The Islands architecture is a modern approach to building web applications that balances interactivity with performance.</p>
 
@@ -85,7 +86,7 @@ const blogPosts: Record<string, any> = {
 
       <h2>Getting Started with Islands</h2>
       <p>With Jen.js, using Islands is simple. Just mark your interactive components and Jen.js handles the rest!</p>
-    `
+    `,
   },
   "zero-js-pages": {
     title: "The Power of Zero-JS Pages",
@@ -129,14 +130,14 @@ const blogPosts: Record<string, any> = {
         <li><a href="/blog/islands-explained">Islands Architecture Explained</a></li>
         <li><a href="/about">About Jen.js</a></li>
       </ul>
-    `
-  }
+    `,
+  },
 };
 
 // Loader fetches the blog post data
 export async function loader(ctx: any) {
   const post = blogPosts[ctx.params.slug];
-  
+
   if (!post) {
     throw new Error(`Blog post not found: ${ctx.params.slug}`);
   }
@@ -152,7 +153,13 @@ export default function BlogPost({ data }: { data: any }) {
 
   return (
     <article style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem" }}>
-      <header style={{ marginBottom: "2rem", borderBottom: "2px solid #2563eb", paddingBottom: "1rem" }}>
+      <header
+        style={{
+          marginBottom: "2rem",
+          borderBottom: "2px solid #2563eb",
+          paddingBottom: "1rem",
+        }}
+      >
         <h1>{post.title}</h1>
         <div style={{ color: "#666", fontSize: "0.9rem" }}>
           <span>By {post.author}</span>
@@ -168,35 +175,57 @@ export default function BlogPost({ data }: { data: any }) {
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </section>
 
-      <section style={{ background: "#f9fafb", padding: "1rem", borderRadius: "8px", marginBottom: "2rem" }}>
+      <section
+        style={{
+          background: "#f9fafb",
+          padding: "1rem",
+          borderRadius: "8px",
+          marginBottom: "2rem",
+        }}
+      >
         <h3 style={{ marginTop: 0 }}>About This Page</h3>
         <p>
-          This blog post is a <strong>Zero-JS page</strong>. It contains no client-side JavaScript,
-          just pure HTML and CSS. This makes it incredibly fast and accessible.
+          This blog post is a <strong>Zero-JS page</strong>. It contains no
+          client-side JavaScript, just pure HTML and CSS. This makes it
+          incredibly fast and accessible.
         </p>
         <p>
-          Try it: Open your DevTools and disable JavaScript. This page will still work perfectly!
+          Try it: Open your DevTools and disable JavaScript. This page will
+          still work perfectly!
         </p>
       </section>
 
       <nav style={{ borderTop: "1px solid #ccc", paddingTop: "1rem" }}>
         <h3>Other Posts</h3>
         <ul style={{ lineHeight: "1.8" }}>
-          {Object.values(blogPosts).map((p: any) => (
-            p.slug !== post.slug && (
-              <li key={p.slug}>
-                <a href={`/blog/${p.slug}`} style={{ color: "#2563eb", textDecoration: "underline" }}>
-                  {p.title}
-                </a>
-              </li>
-            )
-          ))}
+          {Object.values(blogPosts).map(
+            (p: any) =>
+              p.slug !== post.slug && (
+                <li key={p.slug}>
+                  <a
+                    href={`/blog/${p.slug}`}
+                    style={{ color: "#2563eb", textDecoration: "underline" }}
+                  >
+                    {p.title}
+                  </a>
+                </li>
+              ),
+          )}
         </ul>
       </nav>
 
-      <footer style={{ marginTop: "2rem", paddingTop: "1rem", borderTop: "1px solid #ccc", color: "#666" }}>
+      <footer
+        style={{
+          marginTop: "2rem",
+          paddingTop: "1rem",
+          borderTop: "1px solid #ccc",
+          color: "#666",
+        }}
+      >
         <p>
-          <a href="/" style={{ color: "#2563eb", textDecoration: "underline" }}>← Back to Home</a>
+          <a href="/" style={{ color: "#2563eb", textDecoration: "underline" }}>
+            ← Back to Home
+          </a>
         </p>
       </footer>
     </article>

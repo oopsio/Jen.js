@@ -7,7 +7,8 @@ const VALID_ROUTE_PATTERN = /^[a-zA-Z0-9_\-/]+$/; // Only alphanumeric, undersco
 
 function isValidRouteName(name: string): boolean {
   if (!name || name.length > 255) return false;
-  if (name.includes("..") || name.includes("\\") || name.startsWith("/")) return false;
+  if (name.includes("..") || name.includes("\\") || name.startsWith("/"))
+    return false;
   return VALID_ROUTE_PATTERN.test(name);
 }
 
@@ -18,12 +19,15 @@ export async function tryHandleApiRoute(opts: {
 }) {
   const { req, res, siteDir } = opts;
 
-  const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
+  const url = new URL(
+    req.url ?? "/",
+    `http://${req.headers.host ?? "localhost"}`,
+  );
   if (!url.pathname.startsWith("/api/")) return false;
 
   // /api/hello -> site/api/(hello).ts
   let name = url.pathname.slice("/api/".length) || "home";
-  
+
   // Security: Validate route name to prevent path traversal
   if (!isValidRouteName(name)) {
     res.statusCode = 400;
@@ -31,9 +35,9 @@ export async function tryHandleApiRoute(opts: {
     res.end(JSON.stringify({ error: "Invalid API route format" }));
     return true;
   }
-  
+
   const file = join(process.cwd(), siteDir, "api", `(${name}).ts`);
-  
+
   // Ensure the resolved path is within the api directory (prevent directory traversal)
   const apiDir = normalize(join(process.cwd(), siteDir, "api"));
   if (!normalize(file).startsWith(apiDir)) {
@@ -56,7 +60,9 @@ export async function tryHandleApiRoute(opts: {
   if (typeof handler !== "function") {
     res.statusCode = 500;
     res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: "API route missing default export function" }));
+    res.end(
+      JSON.stringify({ error: "API route missing default export function" }),
+    );
     return true;
   }
 
@@ -68,7 +74,7 @@ export async function tryHandleApiRoute(opts: {
     url,
     method: req.method ?? "GET",
     query: Object.fromEntries(url.searchParams.entries()),
-    body
+    body,
   };
 
   const out = await handler(ctx);
@@ -102,15 +108,17 @@ async function readBody(req: IncomingMessage) {
 
   const chunks: Buffer[] = [];
   let totalSize = 0;
-  
+
   for await (const chunk of req) {
     totalSize += chunk.length;
     if (totalSize > MAX_BODY_SIZE) {
-      throw new Error(`Request body exceeds maximum size of ${MAX_BODY_SIZE} bytes`);
+      throw new Error(
+        `Request body exceeds maximum size of ${MAX_BODY_SIZE} bytes`,
+      );
     }
     chunks.push(Buffer.from(chunk));
   }
-  
+
   if (chunks.length === 0) return null;
 
   const raw = Buffer.concat(chunks).toString("utf8");

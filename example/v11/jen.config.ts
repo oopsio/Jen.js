@@ -7,12 +7,12 @@ const config: FrameworkConfig = {
   routes: {
     fileExtensions: [".tsx", ".jsx", ".ts", ".js"],
     routeFilePattern: /^\((.+)\)\.(t|j)sx?$/,
-    enableIndexFallback: true
+    enableIndexFallback: true,
   },
 
   rendering: {
     defaultMode: "ssr",
-    defaultRevalidateSeconds: 60
+    defaultRevalidateSeconds: 60,
   },
 
   inject: {
@@ -31,22 +31,22 @@ const config: FrameworkConfig = {
         window.__APP_VERSION__ = "1.0.0";
         // Add your tracking code here
       </script>`,
-    ]
+    ],
   },
 
   css: {
-    globalScss: "site/styles/global.scss"
+    globalScss: "site/styles/global.scss",
   },
 
   assets: {
     publicDir: "site/assets",
-    cacheControl: "public, max-age=31536000, immutable"
+    cacheControl: "public, max-age=31536000, immutable",
   },
 
   server: {
     port: 3000,
-    hostname: "0.0.0.0"
-  }
+    hostname: "0.0.0.0",
+  },
 };
 
 export default config;

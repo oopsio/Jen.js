@@ -18,7 +18,7 @@ async function main() {
   // Transpile config
   const configPath = join(blogDir, "jen.config.ts");
   const outdir = join(blogDir, ".esbuild");
-  
+
   console.log("[BUILD] Transpiling config...");
   await esbuild.build({
     entryPoints: [configPath],
@@ -27,7 +27,7 @@ async function main() {
     platform: "node",
     target: "es2022",
     bundle: false,
-    logLevel: "silent"
+    logLevel: "silent",
   });
 
   // Load config
@@ -36,17 +36,19 @@ async function main() {
   const config = (await import(configUrl)).default;
 
   // Load framework build function
-  const buildPath = pathToFileURL(join(rootDir, "build/src/build/build.js")).href;
+  const buildPath = pathToFileURL(
+    join(rootDir, "build/src/build/build.js"),
+  ).href;
   const { buildSite } = await import(buildPath);
 
   console.log("[BUILD] Building site...");
   try {
     await buildSite({
-      config
+      config,
     });
   } catch (err) {
     // Ignore dynamic route errors (expected for SSG)
-    if (err.code === 'ENOENT' && err.path?.includes(':')) {
+    if (err.code === "ENOENT" && err.path?.includes(":")) {
       console.log("[BUILD] ⚠️  Skipped dynamic routes (expected for SSG)");
     } else {
       throw err;
@@ -56,7 +58,7 @@ async function main() {
   console.log("✅ Blog built successfully!");
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error("[BUILD] ❌ Error:", err.message);
   process.exit(1);
 });

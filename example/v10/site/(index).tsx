@@ -30,12 +30,19 @@ export default function Home({ data }: { data: HomeData }) {
         <h2>Latest Post</h2>
         {data.latestPost && (
           <article className="post-card featured">
-            <h3><a href={`/blog/${data.latestPost.slug}`}>{data.latestPost.title}</a></h3>
+            <h3>
+              <a href={`/blog/${data.latestPost.slug}`}>
+                {data.latestPost.title}
+              </a>
+            </h3>
             <p className="meta">
-              By {data.latestPost.author} • {data.latestPost.date} • {data.latestPost.views} views
+              By {data.latestPost.author} • {data.latestPost.date} •{" "}
+              {data.latestPost.views} views
             </p>
             <p>{data.latestPost.excerpt}</p>
-            <a href={`/blog/${data.latestPost.slug}`} className="read-more">Read More →</a>
+            <a href={`/blog/${data.latestPost.slug}`} className="read-more">
+              Read More →
+            </a>
           </article>
         )}
       </section>
@@ -45,12 +52,16 @@ export default function Home({ data }: { data: HomeData }) {
         <div className="posts-grid">
           {data.posts.map((post) => (
             <article key={post.id} className="post-card">
-              <h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
+              <h3>
+                <a href={`/blog/${post.slug}`}>{post.title}</a>
+              </h3>
               <p className="meta">
                 {post.date} • {post.views} views
               </p>
               <p>{post.excerpt}</p>
-              <a href={`/blog/${post.slug}`} className="read-more">Read →</a>
+              <a href={`/blog/${post.slug}`} className="read-more">
+                Read →
+              </a>
             </article>
           ))}
         </div>
@@ -72,9 +83,15 @@ export function Head({ data }: { data: HomeData }) {
   return (
     <>
       <title>Blog - Insights & Tutorials</title>
-      <meta name="description" content="Read our latest blog posts about web development, design, and technology." />
+      <meta
+        name="description"
+        content="Read our latest blog posts about web development, design, and technology."
+      />
       <meta property="og:title" content="Blog" />
-      <meta property="og:description" content="Read our latest blog posts about web development, design, and technology." />
+      <meta
+        property="og:description"
+        content="Read our latest blog posts about web development, design, and technology."
+      />
     </>
   );
 }
@@ -89,7 +106,7 @@ export async function loader(ctx: LoaderContext): Promise<HomeData> {
       excerpt: "Learn how to build your first app with Jen.js framework.",
       author: "Sarah Chen",
       date: "2026-01-26",
-      views: 1523
+      views: 1523,
     },
     {
       id: "2",
@@ -98,7 +115,7 @@ export async function loader(ctx: LoaderContext): Promise<HomeData> {
       excerpt: "Best practices for building scalable applications.",
       author: "Alex Rivera",
       date: "2026-01-25",
-      views: 892
+      views: 892,
     },
     {
       id: "3",
@@ -107,13 +124,13 @@ export async function loader(ctx: LoaderContext): Promise<HomeData> {
       excerpt: "Master TypeScript patterns for better code.",
       author: "Jordan Park",
       date: "2026-01-24",
-      views: 654
+      views: 654,
     },
   ];
 
   return {
     posts: posts.slice(1),
     totalPosts: posts.length,
-    latestPost: posts[0]
+    latestPost: posts[0],
   };
 }

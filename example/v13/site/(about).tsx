@@ -7,9 +7,15 @@ export default function About() {
         <nav>
           <h1>Jen.js SSG</h1>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
           <button className="btn-primary">Get Started</button>
         </nav>
@@ -87,14 +93,20 @@ export default function About() {
           </ul>
 
           <h2>Performance</h2>
-          <p>
-            Jen.js prioritizes performance at every step:
-          </p>
+          <p>Jen.js prioritizes performance at every step:</p>
           <ul style={{ marginBottom: "2rem", paddingLeft: "2rem" }}>
-            <li><strong>Fast builds:</strong> &lt; 30s for 1000+ pages</li>
-            <li><strong>Tiny runtime:</strong> &lt; 1KB hydration script</li>
-            <li><strong>Smart caching:</strong> Immutable asset headers</li>
-            <li><strong>Critical CSS:</strong> Above-fold content optimized</li>
+            <li>
+              <strong>Fast builds:</strong> &lt; 30s for 1000+ pages
+            </li>
+            <li>
+              <strong>Tiny runtime:</strong> &lt; 1KB hydration script
+            </li>
+            <li>
+              <strong>Smart caching:</strong> Immutable asset headers
+            </li>
+            <li>
+              <strong>Critical CSS:</strong> Above-fold content optimized
+            </li>
           </ul>
         </section>
       </main>
@@ -110,7 +122,10 @@ export function Head() {
   return (
     <>
       <title>About - Jen.js SSG</title>
-      <meta name="description" content="Learn about Jen.js, a production-ready static site generator with minified output, critical CSS optimization, and interactive islands." />
+      <meta
+        name="description"
+        content="Learn about Jen.js, a production-ready static site generator with minified output, critical CSS optimization, and interactive islands."
+      />
     </>
   );
 }

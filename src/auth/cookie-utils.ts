@@ -18,7 +18,7 @@ export interface CookieOptions {
 export function createSecureCookie(
   name: string,
   value: string,
-  options: CookieOptions = {}
+  options: CookieOptions = {},
 ): string {
   const defaults: CookieOptions = {
     httpOnly: true, // Prevent XSS token theft
@@ -67,7 +67,8 @@ export function parseCookies(cookieHeader: string): Record<string, string> {
     const trimmedValue = rest.join("=").trim();
 
     if (trimmedName && trimmedValue) {
-      cookies[decodeURIComponent(trimmedName)] = decodeURIComponent(trimmedValue);
+      cookies[decodeURIComponent(trimmedName)] =
+        decodeURIComponent(trimmedValue);
     }
   });
 
@@ -79,7 +80,7 @@ export function parseCookies(cookieHeader: string): Record<string, string> {
  */
 export function validateSessionCookie(
   header: string,
-  expectedName: string = "sessionId"
+  expectedName: string = "sessionId",
 ): boolean {
   if (!header) return false;
 

@@ -1,12 +1,18 @@
-import { resolve, join } from 'path';
-import { mkdirSync, writeFileSync } from 'fs';
-import { normalizePath } from '../../utils/path.js';
-import { info, success, error as logError, time, formatSize } from '../../utils/log.js';
-import { loadConfig } from '../../config.js';
-import { createResolver } from '../../resolver/index.js';
-import { createModuleGraphBuilder } from '../../core/graph.js';
-import { createBundler } from '../../core/bundler.js';
-import { BuildCache } from '../../cache/index.js';
+import { resolve, join } from "path";
+import { mkdirSync, writeFileSync } from "fs";
+import { normalizePath } from "../../utils/path.js";
+import {
+  info,
+  success,
+  error as logError,
+  time,
+  formatSize,
+} from "../../utils/log.js";
+import { loadConfig } from "../../config.js";
+import { createResolver } from "../../resolver/index.js";
+import { createModuleGraphBuilder } from "../../core/graph.js";
+import { createBundler } from "../../core/bundler.js";
+import { BuildCache } from "../../cache/index.js";
 
 interface BuildOptions {
   entry?: string;
@@ -15,7 +21,10 @@ interface BuildOptions {
   sourcemap?: boolean;
 }
 
-export async function build(entryArg: string | undefined, options: BuildOptions = {}): Promise<void> {
+export async function build(
+  entryArg: string | undefined,
+  options: BuildOptions = {},
+): Promise<void> {
   try {
     const root = process.cwd();
     const config = await loadConfig(root);
@@ -40,20 +49,20 @@ export async function build(entryArg: string | undefined, options: BuildOptions 
 
     info(`Building ${config.entry}`);
     info(`Output: ${config.outDir}`);
-    if (config.minify) info('Minification: enabled');
+    if (config.minify) info("Minification: enabled");
 
     // Create output directory
     mkdirSync(outputDir, { recursive: true });
 
     // Initialize components
-    const cache = new BuildCache('.jenpack-cache');
+    const cache = new BuildCache(".jenpack-cache");
     const resolver = createResolver(root, {
       alias: config.alias,
       external: config.external,
     });
 
     const graphBuilder = createModuleGraphBuilder(resolver);
-    const timer = time('Build');
+    const timer = time("Build");
 
     try {
       // Build module graph
@@ -65,24 +74,30 @@ export async function build(entryArg: string | undefined, options: BuildOptions 
       const result = await bundler.bundle();
 
       // Write output
-      const chunksDir = join(outputDir, 'chunks');
+      const chunksDir = join(outputDir, "chunks");
       mkdirSync(chunksDir, { recursive: true });
 
       for (const chunk of result.chunks) {
-        const fileName = chunk.name.endsWith('.js') ? chunk.name : `${chunk.name}.js`;
+        const fileName = chunk.name.endsWith(".js")
+          ? chunk.name
+          : `${chunk.name}.js`;
         const filePath = join(chunksDir, fileName);
-        writeFileSync(filePath, chunk.code, 'utf8');
+        writeFileSync(filePath, chunk.code, "utf8");
 
-        const size = Buffer.byteLength(chunk.code, 'utf8');
+        const size = Buffer.byteLength(chunk.code, "utf8");
         success(`  ${fileName} (${formatSize(size)})`);
       }
 
       // Write manifest
-      const manifestPath = join(outputDir, 'manifest.json');
-      writeFileSync(manifestPath, JSON.stringify(result.manifest, null, 2), 'utf8');
+      const manifestPath = join(outputDir, "manifest.json");
+      writeFileSync(
+        manifestPath,
+        JSON.stringify(result.manifest, null, 2),
+        "utf8",
+      );
 
       // Write assets
-      const assetsDir = join(outputDir, 'assets');
+      const assetsDir = join(outputDir, "assets");
       mkdirSync(assetsDir, { recursive: true });
 
       for (const [id, path] of result.assets) {

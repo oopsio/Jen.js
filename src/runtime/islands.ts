@@ -29,7 +29,7 @@ export interface IslandProps {
  */
 export function Island<P extends Record<string, any>>(
   Component: any,
-  strategy: HydrationStrategy
+  strategy: HydrationStrategy,
 ) {
   // Mark component metadata for server-side detection
   Component.__island = true;
@@ -56,7 +56,7 @@ export function createIslandMarker(
   id: string,
   componentPath: string,
   strategy: HydrationStrategy,
-  props: any
+  props: any,
 ): string {
   const propsJson = JSON.stringify(props).replace(/</g, "\\u003c");
   return `<!--__ISLAND_${strategy.toUpperCase()}__:${id}:${componentPath}:${propsJson}-->`;

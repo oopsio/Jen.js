@@ -11,5 +11,5 @@ export const log = {
   },
   error(msg: string) {
     console.error(`[${ts()}] [ERROR] ${msg}`);
-  }
+  },
 };

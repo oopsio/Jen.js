@@ -26,7 +26,7 @@ export interface RouteMiddlewareContext {
  * Call ctx.redirect() or ctx.json() to short-circuit.
  */
 export type RouteMiddleware = (
-  ctx: RouteMiddlewareContext
+  ctx: RouteMiddlewareContext,
 ) => Promise<void> | void;
 
 /**
@@ -81,7 +81,7 @@ export function createRouteMiddlewareContext(opts: {
  */
 export async function executeRouteMiddleware(
   middlewares: RouteMiddleware[],
-  ctx: RouteMiddlewareContext
+  ctx: RouteMiddlewareContext,
 ): Promise<void> {
   for (const mw of middlewares) {
     try {

@@ -1,7 +1,13 @@
 // Site build utilities
 // Migrated from Python src/python/build.py
 
-import { copyFileSync, rmSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import {
+  copyFileSync,
+  rmSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
 import { join } from "node:path";
 import { log } from "../shared/log.js";
 

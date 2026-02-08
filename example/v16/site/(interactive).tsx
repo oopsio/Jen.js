@@ -10,7 +10,14 @@ import { Island } from "../../../src/runtime/islands.js";
 const CounterLoadImpl = ({ initial = 0 }: { initial: number }) => {
   const [count, setCount] = useState(initial);
   return (
-    <div style={{ padding: "1rem", border: "1px solid #2563eb", borderRadius: "8px", background: "#eff6ff" }}>
+    <div
+      style={{
+        padding: "1rem",
+        border: "1px solid #2563eb",
+        borderRadius: "8px",
+        background: "#eff6ff",
+      }}
+    >
       <h3>Counter (load strategy)</h3>
       <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{count}</p>
       <button
@@ -21,7 +28,7 @@ const CounterLoadImpl = ({ initial = 0 }: { initial: number }) => {
           color: "white",
           border: "none",
           borderRadius: "4px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         +1
@@ -36,16 +43,25 @@ const TimerIdleImpl = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSeconds(s => s + 1);
+      setSeconds((s) => s + 1);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div style={{ padding: "1rem", border: "1px solid #16a34a", borderRadius: "8px", background: "#f0fdf4" }}>
+    <div
+      style={{
+        padding: "1rem",
+        border: "1px solid #16a34a",
+        borderRadius: "8px",
+        background: "#f0fdf4",
+      }}
+    >
       <h3>Timer (idle strategy)</h3>
       <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{seconds}s</p>
-      <p style={{ fontSize: "0.9rem", color: "#666" }}>Hydrated when browser idle</p>
+      <p style={{ fontSize: "0.9rem", color: "#666" }}>
+        Hydrated when browser idle
+      </p>
     </div>
   );
 };
@@ -62,10 +78,17 @@ const FormVisibleImpl = () => {
   };
 
   return (
-    <div style={{ padding: "1rem", border: "1px solid #dc2626", borderRadius: "8px", background: "#fee2e2" }}>
+    <div
+      style={{
+        padding: "1rem",
+        border: "1px solid #dc2626",
+        borderRadius: "8px",
+        background: "#fee2e2",
+      }}
+    >
       <h3>Newsletter (visible strategy)</h3>
       <form onSubmit={handleSubmit}>
-        <input 
+        <input
           type="email"
           placeholder="your@email.com"
           value={message}
@@ -74,7 +97,7 @@ const FormVisibleImpl = () => {
             padding: "0.5rem",
             width: "200px",
             border: "1px solid #ccc",
-            borderRadius: "4px"
+            borderRadius: "4px",
           }}
         />
         <button
@@ -86,14 +109,20 @@ const FormVisibleImpl = () => {
             color: "white",
             border: "none",
             borderRadius: "4px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Subscribe
         </button>
       </form>
-      {submitted && <p style={{ color: "#991b1b", fontWeight: "bold" }}>✅ Thanks for subscribing!</p>}
-      <p style={{ fontSize: "0.9rem", color: "#666" }}>Hydrated when scrolled into view</p>
+      {submitted && (
+        <p style={{ color: "#991b1b", fontWeight: "bold" }}>
+          ✅ Thanks for subscribing!
+        </p>
+      )}
+      <p style={{ fontSize: "0.9rem", color: "#666" }}>
+        Hydrated when scrolled into view
+      </p>
     </div>
   );
 };
@@ -118,16 +147,17 @@ export default function Interactive() {
       <section style={{ marginBottom: "2rem" }}>
         <h2>Island Hydration Strategies</h2>
         <p>
-          Jen.js supports three strategies for hydrating islands. Each strategy is optimized
-          for different use cases:
+          Jen.js supports three strategies for hydrating islands. Each strategy
+          is optimized for different use cases:
         </p>
       </section>
 
       <section style={{ marginBottom: "2rem" }}>
         <h3>1. Load Strategy (Immediate)</h3>
         <p>
-          The <strong>load</strong> strategy hydrates components immediately when the page loads.
-          Use this for critical, above-the-fold interactive components.
+          The <strong>load</strong> strategy hydrates components immediately
+          when the page loads. Use this for critical, above-the-fold interactive
+          components.
         </p>
         <CounterLoad initial={0} />
       </section>
@@ -135,9 +165,9 @@ export default function Interactive() {
       <section style={{ marginBottom: "2rem" }}>
         <h3>2. Idle Strategy (Deferred)</h3>
         <p>
-          The <strong>idle</strong> strategy hydrates components when the browser is idle
-          (using requestIdleCallback). Use this for non-critical features that don't need
-          immediate interactivity.
+          The <strong>idle</strong> strategy hydrates components when the
+          browser is idle (using requestIdleCallback). Use this for non-critical
+          features that don't need immediate interactivity.
         </p>
         <p style={{ fontSize: "0.9rem", color: "#666" }}>
           ℹ️ This timer is hydrated when the browser is idle, not immediately.
@@ -148,17 +178,29 @@ export default function Interactive() {
       <section style={{ marginBottom: "2rem" }}>
         <h3>3. Visible Strategy (Lazy)</h3>
         <p>
-          The <strong>visible</strong> strategy hydrates components when they scroll into view
-          (using IntersectionObserver). Use this for below-the-fold components like modals,
-          popovers, etc.
+          The <strong>visible</strong> strategy hydrates components when they
+          scroll into view (using IntersectionObserver). Use this for
+          below-the-fold components like modals, popovers, etc.
         </p>
         <p style={{ fontSize: "0.9rem", color: "#666" }}>
           ℹ️ Scroll down to see the newsletter form hydrate!
         </p>
-        
+
         {/* Add some space to force scrolling */}
-        <div style={{ height: "400px", background: "#f9fafb", borderRadius: "8px", padding: "2rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <p style={{ textAlign: "center", color: "#999" }}>↓ Scroll down to hydrate the newsletter form ↓</p>
+        <div
+          style={{
+            height: "400px",
+            background: "#f9fafb",
+            borderRadius: "8px",
+            padding: "2rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <p style={{ textAlign: "center", color: "#999" }}>
+            ↓ Scroll down to hydrate the newsletter form ↓
+          </p>
         </div>
 
         <FormVisible />
@@ -177,8 +219,15 @@ export default function Interactive() {
 
       <section style={{ marginBottom: "2rem" }}>
         <h2>How to Use</h2>
-        <pre style={{ background: "#f0f0f0", padding: "1rem", borderRadius: "4px", overflow: "auto" }}>
-{`import { Island } from "jenjs";
+        <pre
+          style={{
+            background: "#f0f0f0",
+            padding: "1rem",
+            borderRadius: "4px",
+            overflow: "auto",
+          }}
+        >
+          {`import { Island } from "jenjs";
 
 // Define component
 const MyComponent = ({ prop }) => { /* ... */ };
@@ -206,9 +255,17 @@ export default function Page() {
         </ul>
       </section>
 
-      <footer style={{ borderTop: "1px solid #ccc", paddingTop: "1rem", color: "#666" }}>
+      <footer
+        style={{
+          borderTop: "1px solid #ccc",
+          paddingTop: "1rem",
+          color: "#666",
+        }}
+      >
         <p>
-          <a href="/" style={{ color: "#2563eb", textDecoration: "underline" }}>← Back to Home</a>
+          <a href="/" style={{ color: "#2563eb", textDecoration: "underline" }}>
+            ← Back to Home
+          </a>
         </p>
       </footer>
     </div>

@@ -13,7 +13,9 @@ export default function Counter({ initial = 0 }) {
       }}
     >
       <h2>Interactive Counter (Client Component)</h2>
-      <p>Current count: <strong>{count}</strong></p>
+      <p>
+        Current count: <strong>{count}</strong>
+      </p>
       <button
         onClick={() => setCount(count + 1)}
         style={{

@@ -22,7 +22,7 @@ export async function bundle(opts: BundlerOptions) {
     sourcemap: opts.sourcemap ?? false,
     platform: "browser",
     target: "es2022",
-    logLevel: "info"
+    logLevel: "info",
   });
 
   return result;

@@ -11,7 +11,9 @@ export function parseCookies(req: IncomingMessage): Record<string, string> {
   return out;
 }
 
-export function headersToObject(headers: IncomingMessage["headers"]): Record<string, string> {
+export function headersToObject(
+  headers: IncomingMessage["headers"],
+): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [k, v] of Object.entries(headers)) {
     if (Array.isArray(v)) out[k] = v.join(", ");
@@ -19,4 +21,3 @@ export function headersToObject(headers: IncomingMessage["headers"]): Record<str
   }
   return out;
 }
-  

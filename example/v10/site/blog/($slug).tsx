@@ -13,7 +13,13 @@ interface PostData {
   relatedPosts: Array<{ slug: string; title: string }>;
 }
 
-export default function BlogPost({ data, params }: { data: PostData; params: any }) {
+export default function BlogPost({
+  data,
+  params,
+}: {
+  data: PostData;
+  params: any;
+}) {
   return (
     <main className="blog-post">
       <article>
@@ -28,9 +34,11 @@ export default function BlogPost({ data, params }: { data: PostData; params: any
         </header>
 
         <div className="post-content">
-          {data.content.split('\n').map((paragraph, i) => (
-            paragraph.trim() && <p key={i}>{paragraph}</p>
-          ))}
+          {data.content
+            .split("\n")
+            .map(
+              (paragraph, i) => paragraph.trim() && <p key={i}>{paragraph}</p>,
+            )}
         </div>
 
         <footer className="post-footer">
@@ -40,9 +48,15 @@ export default function BlogPost({ data, params }: { data: PostData; params: any
 
           <div className="sharing">
             <h3>Share this post:</h3>
-            <a href="#" className="share-twitter">Twitter</a>
-            <a href="#" className="share-linkedin">LinkedIn</a>
-            <a href="#" className="share-facebook">Facebook</a>
+            <a href="#" className="share-twitter">
+              Twitter
+            </a>
+            <a href="#" className="share-linkedin">
+              LinkedIn
+            </a>
+            <a href="#" className="share-facebook">
+              Facebook
+            </a>
           </div>
         </footer>
       </article>
@@ -69,7 +83,9 @@ export default function BlogPost({ data, params }: { data: PostData; params: any
       </section>
 
       <nav className="post-nav">
-        <a href="/blog" className="back">← Back to Blog</a>
+        <a href="/blog" className="back">
+          ← Back to Blog
+        </a>
       </nav>
     </main>
   );
@@ -113,9 +129,15 @@ Finally, deploy using the bundling system to create a production-ready distribut
       readTime: 5,
       category: "Tutorial",
       relatedPosts: [
-        { slug: "building-production-apps", title: "Building Production-Grade Apps" },
-        { slug: "typescript-best-practices", title: "TypeScript Best Practices" }
-      ]
+        {
+          slug: "building-production-apps",
+          title: "Building Production-Grade Apps",
+        },
+        {
+          slug: "typescript-best-practices",
+          title: "TypeScript Best Practices",
+        },
+      ],
     },
     "building-production-apps": {
       id: "2",
@@ -137,8 +159,11 @@ Finally, optimize your build with bundling and minification to reduce file sizes
       readTime: 8,
       category: "Best Practices",
       relatedPosts: [
-        { slug: "typescript-best-practices", title: "TypeScript Best Practices" }
-      ]
+        {
+          slug: "typescript-best-practices",
+          title: "TypeScript Best Practices",
+        },
+      ],
     },
     "typescript-best-practices": {
       id: "3",
@@ -160,13 +185,16 @@ Avoid using 'any' - use 'unknown' when you truly don't know the type, then narro
       readTime: 6,
       category: "TypeScript",
       relatedPosts: [
-        { slug: "getting-started-with-jen-js", title: "Getting Started with Jen.js" }
-      ]
-    }
+        {
+          slug: "getting-started-with-jen-js",
+          title: "Getting Started with Jen.js",
+        },
+      ],
+    },
   };
 
   const post = posts[slug];
-  
+
   if (!post) {
     return {
       id: "404",
@@ -174,11 +202,11 @@ Avoid using 'any' - use 'unknown' when you truly don't know the type, then narro
       title: "Post Not Found",
       content: "The post you're looking for doesn't exist.",
       author: "System",
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       views: 0,
       readTime: 0,
       category: "Error",
-      relatedPosts: []
+      relatedPosts: [],
     };
   }
 

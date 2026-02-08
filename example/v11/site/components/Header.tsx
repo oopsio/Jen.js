@@ -18,35 +18,47 @@ const Header: FunctionComponent<HeaderProps> = ({ title, description }) => {
 
         <ul className="flex gap-6">
           <li>
-            <a href="/" className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
+            <a
+              href="/"
+              className="font-medium text-gray-700 hover:text-primary-600 transition-colors"
+            >
               Home
             </a>
           </li>
           <li>
-            <a href="/about" className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
+            <a
+              href="/about"
+              className="font-medium text-gray-700 hover:text-primary-600 transition-colors"
+            >
               About
             </a>
           </li>
           <li>
-            <a href="/docs" className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
+            <a
+              href="/docs"
+              className="font-medium text-gray-700 hover:text-primary-600 transition-colors"
+            >
               Docs
             </a>
           </li>
           <li>
-            <a href="/contact" className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
+            <a
+              href="/contact"
+              className="font-medium text-gray-700 hover:text-primary-600 transition-colors"
+            >
               Contact
             </a>
           </li>
         </ul>
 
-        <button className="btn-primary">
-          Get Started
-        </button>
+        <button className="btn-primary">Get Started</button>
       </nav>
 
       {description && (
         <div className="border-t border-gray-100 bg-gray-50 px-4 py-3">
-          <p className="container mx-auto text-sm text-gray-600">{description}</p>
+          <p className="container mx-auto text-sm text-gray-600">
+            {description}
+          </p>
         </div>
       )}
     </header>

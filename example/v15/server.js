@@ -25,7 +25,7 @@ async function main() {
     bundle: true,
     minify: true,
     loader: { ".ts": "ts" },
-    logLevel: "silent"
+    logLevel: "silent",
   });
 
   const configFile = join(outdir, "jen.config.js");
@@ -35,12 +35,14 @@ async function main() {
   const { createApp } = await import(appPath);
 
   // Load banner
-  const bannerPath = pathToFileURL(join(rootDir, "build/src/cli/banner.js")).href;
+  const bannerPath = pathToFileURL(
+    join(rootDir, "build/src/cli/banner.js"),
+  ).href;
   const { printBanner } = await import(bannerPath);
 
   const app = await createApp({
     config,
-    mode: isDev ? "dev" : "prod"
+    mode: isDev ? "dev" : "prod",
   });
 
   const server = createServer(async (req, res) => {

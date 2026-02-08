@@ -54,6 +54,6 @@ export function serializeManifest(components) {
       path: c.path,
       name: c.name,
       props: c.props || {},
-    }))
+    })),
   );
 }

@@ -43,20 +43,22 @@ async function main() {
   });
 
   // Create HTTP server
-  const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
-    try {
-      await app.handle(req, res);
-    } catch (err: any) {
-      res.statusCode = 500;
-      res.setHeader("content-type", "text/plain; charset=utf-8");
-      res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
-      console.error("[SERVER] Error in request:", err);
-    }
-  });
+  const server = createServer(
+    async (req: IncomingMessage, res: ServerResponse) => {
+      try {
+        await app.handle(req, res);
+      } catch (err: any) {
+        res.statusCode = 500;
+        res.setHeader("content-type", "text/plain; charset=utf-8");
+        res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
+        console.error("[SERVER] Error in request:", err);
+      }
+    },
+  );
 
   server.listen(config.server.port, config.server.hostname, () => {
     console.log(
-      `[SERVER] ✅ Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`
+      `[SERVER] ✅ Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`,
     );
   });
 

@@ -8,39 +8,48 @@ const features = [
   {
     icon: "⚡",
     title: "Lightning Fast",
-    description: "Built on modern JavaScript with optimized SSR and static generation for instant load times.",
+    description:
+      "Built on modern JavaScript with optimized SSR and static generation for instant load times.",
   },
   {
     icon: "🎨",
     title: "Beautiful UI",
-    description: "Tailwind CSS pre-configured with custom components and responsive design built-in.",
+    description:
+      "Tailwind CSS pre-configured with custom components and responsive design built-in.",
   },
   {
     icon: "🔌",
     title: "Plugin System",
-    description: "Extensible architecture with analytics, theme management, and notifications out of the box.",
+    description:
+      "Extensible architecture with analytics, theme management, and notifications out of the box.",
   },
   {
     icon: "📱",
     title: "Responsive",
-    description: "Mobile-first design approach ensuring your app works perfectly on any device.",
+    description:
+      "Mobile-first design approach ensuring your app works perfectly on any device.",
   },
   {
     icon: "🔒",
     title: "Type Safe",
-    description: "Full TypeScript support with strict mode enabled for maximum development confidence.",
+    description:
+      "Full TypeScript support with strict mode enabled for maximum development confidence.",
   },
   {
     icon: "🚀",
     title: "Production Ready",
-    description: "Complete with build optimization, asset hashing, and performance monitoring.",
+    description:
+      "Complete with build optimization, asset hashing, and performance monitoring.",
   },
 ];
 
 export default function Index() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header title="Jen.js" description="Modern web applications built with TypeScript and Preact" />
+      <Header
+        title="Jen.js"
+        description="Modern web applications built with TypeScript and Preact"
+      />
 
       <main className="flex-grow">
         <Hero
@@ -57,7 +66,8 @@ export default function Index() {
               Ready to get started?
             </h2>
             <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-              This boilerplate comes fully configured with Tailwind CSS, custom plugins, and everything you need to launch your next project.
+              This boilerplate comes fully configured with Tailwind CSS, custom
+              plugins, and everything you need to launch your next project.
             </p>
             <button className="bg-white text-primary-600 font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors duration-200">
               Create Your Project
@@ -72,7 +82,9 @@ export default function Index() {
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
               <div className="card">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">🎯 Pre-configured Stack</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  🎯 Pre-configured Stack
+                </h3>
                 <ul className="space-y-2 text-gray-600">
                   <li>✓ Tailwind CSS with custom utilities</li>
                   <li>✓ TypeScript with strict mode</li>
@@ -83,7 +95,9 @@ export default function Index() {
               </div>
 
               <div className="card">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">🔧 Built-in Plugins</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  🔧 Built-in Plugins
+                </h3>
                 <ul className="space-y-2 text-gray-600">
                   <li>✓ Analytics tracking</li>
                   <li>✓ Theme management (light/dark)</li>
@@ -94,7 +108,9 @@ export default function Index() {
               </div>
 
               <div className="card">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">💎 Premium Components</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  💎 Premium Components
+                </h3>
                 <ul className="space-y-2 text-gray-600">
                   <li>✓ Responsive header & navigation</li>
                   <li>✓ Hero sections</li>
@@ -105,7 +121,9 @@ export default function Index() {
               </div>
 
               <div className="card">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">📚 Custom Styling</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  📚 Custom Styling
+                </h3>
                 <ul className="space-y-2 text-gray-600">
                   <li>✓ SCSS preprocessor</li>
                   <li>✓ CSS variables for theming</li>
@@ -128,10 +146,19 @@ export function Head() {
   return (
     <>
       <title>Jen.js Boilerplate - Build Amazing Web Apps</title>
-      <meta name="description" content="A full-featured boilerplate for Jen.js with Tailwind CSS, custom styling, plugins, and modern TypeScript development." />
-      <meta name="keywords" content="Jen.js, TypeScript, Preact, SSR, SSG, Web Framework" />
+      <meta
+        name="description"
+        content="A full-featured boilerplate for Jen.js with Tailwind CSS, custom styling, plugins, and modern TypeScript development."
+      />
+      <meta
+        name="keywords"
+        content="Jen.js, TypeScript, Preact, SSR, SSG, Web Framework"
+      />
       <meta property="og:title" content="Jen.js Boilerplate" />
-      <meta property="og:description" content="Everything you need to build modern web applications" />
+      <meta
+        property="og:description"
+        content="Everything you need to build modern web applications"
+      />
       <meta property="og:type" content="website" />
     </>
   );
