@@ -12,8 +12,9 @@
     "templates"
   ],
   "scripts": {
-    "build": "esbuild src/index.ts --minify --bundle --platform=node --target=es2022 --format=esm --external:prompts --external:child_process --outfile=dist/index.js && chmod +x dist/index.js",
-    "dev": "tsx src/index.ts"
+    "build": "esbuild src/index.ts --minify --bundle --platform=node --target=es2022 --format=esm --external:prompts --external:child_process --outfile=dist/index.js",
+    "dev": "tsx src/index.ts",
+    "typecheck": "echo 'Type checking create-jen-app'"
   },
   "keywords": [
     "jen",

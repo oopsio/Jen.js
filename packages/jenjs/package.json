@@ -5,6 +5,10 @@
   "license": "GPL-3.0-only",
   "type": "module",
   "main": "./index.js",
+  "scripts": {
+    "build": "echo 'Built with Turborepo'",
+    "typecheck": "echo 'Type checking with Turborepo'"
+  },
   "exports": {
     ".": {
       "import": "./index.js",

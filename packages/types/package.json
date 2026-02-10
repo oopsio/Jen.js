@@ -19,6 +19,7 @@
     ".npmignore"
   ],
   "scripts": {
+    "typecheck": "dtslint .",
     "test": "dtslint ."
   },
   "repository": {

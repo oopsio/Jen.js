@@ -1,3 +1,8 @@
+packages:
+  - 'packages/*'
+  - '!example'
+  - '!docs'
+  - '!website'
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
