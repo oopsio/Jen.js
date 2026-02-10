@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { basename, dirname } from "node:path";
+import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
 
 const cache = new Map<string, { js: string; etag: string }>();
 
@@ -92,6 +93,7 @@ export function buildHydrationModule(routeIdOrPath: string) {
       "preact/jsx-runtime",
       "preact-render-to-string",
     ],
+    plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
   }).outputFiles?.[0]?.text;
 
   const out =

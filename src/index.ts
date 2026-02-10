@@ -73,6 +73,16 @@ export * from "./runtime/hydrate.js";
 export * from "./runtime/hmr.js";
 export * from "./runtime/islands.js";
 export * from "./runtime/island-hydration-client.js";
+export { createVueCompiler, type VueCompileOptions, type VueCompileResult } from "./compilers/vue.js";
+export { createSvelteCompiler, type SvelteCompileOptions, type SvelteCompileResult } from "./compilers/svelte.js";
+export {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+  invalidateVueCache,
+  invalidateSvelteCache,
+  clearAllCompilerCaches,
+} from "./compilers/esbuild-plugins.js";
+export { jenImport, clearImportCache, invalidateImportCache, jen } from "./import/jen-import.js";
 export * from "./server/app.js";
 // Use new api-routes.ts for HTTP method handlers (replaces old api.js behavior)
 export { tryHandleApiRoute as tryHandleApiRoute_v2 } from "./server/api-routes.js";

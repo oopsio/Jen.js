@@ -19,6 +19,10 @@ import {
   runtimeHydrateModule,
   invalidateCache,
 } from "./runtimeServe.js";
+import {
+  invalidateVueCache,
+  invalidateSvelteCache,
+} from "../compilers/esbuild-plugins.js";
 
 // Local middleware type for app routing
 type Middleware = (ctx: any, next: () => Promise<void>) => Promise<void>;
@@ -76,10 +80,12 @@ export async function createApp(opts: {
               );
             }
           } else {
-            // Invalidate hydration cache for changed file
+            // Invalidate caches for changed file
             invalidateCache(fullPath);
+            if (ext === ".vue") invalidateVueCache(fullPath);
+            if (ext === ".svelte") invalidateSvelteCache(fullPath);
 
-            // Full reload for JS/TS/Other
+            // Full reload for JS/TS/Vue/Svelte/Other
             for (const client of hmrClients) {
               client.write(`event: reload\ndata: {}\n\n`);
             }

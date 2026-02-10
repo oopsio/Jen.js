@@ -9,7 +9,9 @@ import {
   readFileSync
 } from "node:fs";
 import { join } from "node:path";
+import esbuild from "esbuild";
 import { createScssCompiler } from "../css/compiler.js";
+import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
 
 import type { FrameworkConfig } from "../core/config.js";
 import { scanRoutes } from "../core/routes/scan.js";
@@ -68,6 +70,31 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   }
 
   copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
+
+  // Handle Vue/Svelte components in site folder
+  const siteSourceDir = join(process.cwd(), config.siteDir);
+  const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
+    (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
+  );
+
+  if (vueFiles.length > 0) {
+    log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
+    try {
+      await esbuild.build({
+        entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
+        outdir: join(dist, "components"),
+        format: "esm",
+        target: "es2022",
+        bundle: false,
+        plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+        external: ["preact", "vue", "svelte"],
+        logLevel: "info",
+      });
+      log.info("Vue/Svelte components bundled successfully.");
+    } catch (err: any) {
+      log.warn(`Failed to bundle Vue/Svelte components: ${err.message}`);
+    }
+  }
 
   // styles.css
   const scssPath = join(process.cwd(), config.css.globalScss);

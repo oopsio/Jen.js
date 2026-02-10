@@ -14,6 +14,7 @@ import { pathToFileURL } from "node:url";
 import { join, dirname, basename } from "node:path";
 import { mkdirSync, existsSync } from "node:fs";
 import esbuild from "esbuild";
+import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
 
 function escapeHtml(s: string) {
   return s
@@ -49,7 +50,12 @@ export async function renderRouteToHtml(opts: {
 
   // Transpile route file if needed
   let moduleUrl = route.filePath;
-  if (route.filePath.endsWith(".tsx") || route.filePath.endsWith(".ts")) {
+  const ext = route.filePath.slice(-4).toLowerCase();
+  const requiresTranspile = [".tsx", ".ts", ".vue", ".svelte"].some((e) =>
+    route.filePath.toLowerCase().endsWith(e),
+  );
+
+  if (requiresTranspile) {
     const outfile = getCachePath(route.filePath);
     await esbuild.build({
       entryPoints: [route.filePath],
@@ -60,6 +66,7 @@ export async function renderRouteToHtml(opts: {
       bundle: true, // Bundle to resolve local imports (simple)
       external: ["preact", "preact-render-to-string", "jenjs"], // Keep framework externals
       write: true,
+      plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
     });
     moduleUrl = outfile;
   }

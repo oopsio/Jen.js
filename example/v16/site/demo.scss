@@ -1,0 +1,68 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.demo-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+
+  h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-top: 0;
+  }
+
+  p {
+    color: #666;
+    line-height: 1.6;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      padding: 0.5rem 0;
+      color: #666;
+
+      &:before {
+        content: "• ";
+        color: #007bff;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  &.info {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 4px;
+    border-bottom: none;
+
+    p {
+      margin: 0;
+      color: #555;
+    }
+  }
+}
+
+.code-block {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: "Courier New", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 1rem 0;
+
+  &:hover {
+    background-color: #fafafa;
+  }
+}

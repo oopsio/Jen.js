@@ -1,0 +1,17 @@
+{
+  "name": "jen-v17-vue-svelte-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Vue + Svelte integration example for jen.js",
+  "scripts": {
+    "dev": "tsx ../../server.ts dev",
+    "start": "tsx ../../server.ts start",
+    "build": "tsx ../../build.ts"
+  },
+  "keywords": ["jen", "vue", "svelte", "preact"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}

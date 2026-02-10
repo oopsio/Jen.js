@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jen.js Documentation</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="background-grid"></div>
+
+  <header class="navbar">
+    <div class="nav-content">
+      <div class="logo-area">
+        <button id="mobile-menu-btn" aria-label="Menu"><i class="bi bi-list"></i></button>
+        <a href="#" class="brand">
+          <div class="brand-icon">J</div>
+          <span>Jen.js</span>
+        </a>
+        <span class="badge">v1.0.0</span>
+      </div>
+
+      <div class="search-bar">
+        <i class="bi bi-search"></i>
+        <input type="text" id="search-input" placeholder="Search documentation...">
+        <div class="shortcut">Ctrl K</div>
+      </div>
+
+      <div class="nav-actions">
+        <a href="https://github.com/kessud2021/Jen.js" target="_blank" class="nav-icon" aria-label="GitHub">
+          <i class="bi bi-github"></i>
+        </a>
+        <button id="theme-toggle" class="nav-icon" aria-label="Toggle Theme">
+          <i class="bi bi-moon-stars-fill"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar" id="sidebar">
+      <nav id="nav-tree"></nav>
+    </aside>
+
+    <main class="content-wrapper">
+      <div id="breadcrumbs" class="breadcrumbs"></div>
+
+      <article id="markdown-viewer" class="markdown-body">
+      </article>
+
+      <div class="page-nav" id="page-nav"></div>
+
+      <footer class="doc-footer">
+        <p>Built for Jen.js • <a href="#">Edit this page</a></p>
+        <p>© 2026 Jen.js Team</p>
+      </footer>
+    </main>
+
+    <aside class="toc">
+      <div class="toc-container">
+        <span class="toc-title">On this page</span>
+        <ul id="toc-list"></ul>
+      </div>
+    </aside>
+  </div>
+
+  <div id="search-modal" class="search-modal hidden">
+    <div class="search-box">
+      <input type="text" id="modal-search-input" placeholder="Search docs...">
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+
+  <script type="module" src="main.js"></script>
+</body>
+
+</html>
