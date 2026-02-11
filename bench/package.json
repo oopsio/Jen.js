@@ -1,0 +1,19 @@
+{
+  "name": "@jen.js/benchmarks",
+  "version": "1.0.0",
+  "description": "Performance benchmarks for Jen.js framework",
+  "private": true,
+  "scripts": {
+    "bench": "vitest run --include='**/*.bench.ts'",
+    "bench:watch": "vitest --include='**/*.bench.ts'",
+    "bench:compare": "node compare.js",
+    "bench:regression": "node regression.js",
+    "bench:report": "node generate-report.js"
+  },
+  "keywords": [
+    "benchmark",
+    "performance",
+    "vitest",
+    "jen.js"
+  ]
+}
