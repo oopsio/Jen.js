@@ -1,0 +1,25 @@
+{
+  "name": "jen.js-website",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Official website for Jen.js framework",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^3.1.8",
+    "@astrojs/preact": "^3.5.4",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.8.0",
+    "preact": "^10.24.1",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  }
+}
