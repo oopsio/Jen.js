@@ -1,0 +1,22 @@
+# Benchmark Results
+results.json
+results.*.json
+*.bench.log
+
+# HTML Reports
+report.html
+report/
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+
+# Analysis Output
+analysis/
+profiles/
+flamegraph/
+
+# System Files
+.DS_Store
+Thumbs.db

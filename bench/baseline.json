@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2026-02-11T00:00:00Z",
+  "metadata": {
+    "nodeVersion": "18.0.0",
+    "framework": "Jen.js",
+    "environment": "benchmark"
+  },
+  "benchmarks": {
+    "build": {
+      "SSG Build - Simple Site": {
+        "avg": 1.23,
+        "min": 1.0,
+        "max": 1.5,
+        "iterations": 100
+      },
+      "SSG Build - Complex Routes": {
+        "avg": 5.67,
+        "min": 5.2,
+        "max": 6.1,
+        "iterations": 100
+      },
+      "Asset Hashing - 1000 Files": {
+        "avg": 12.34,
+        "min": 11.8,
+        "max": 12.9,
+        "iterations": 100
+      },
+      "CSS Minification - Large Stylesheet": {
+        "avg": 0.45,
+        "min": 0.42,
+        "max": 0.48,
+        "iterations": 100
+      },
+      "Image Optimization - 100 Images": {
+        "avg": 2.34,
+        "min": 2.1,
+        "max": 2.6,
+        "iterations": 100
+      }
+    },
+    "routing": {
+      "Route Setup - 100 Routes": {
+        "avg": 0.12,
+        "min": 0.1,
+        "max": 0.15,
+        "iterations": 100
+      },
+      "Simple Route Matching - Static": {
+        "avg": 0.05,
+        "min": 0.04,
+        "max": 0.06,
+        "iterations": 100
+      },
+      "Dynamic Route Matching - Single Param": {
+        "avg": 0.08,
+        "min": 0.07,
+        "max": 0.09,
+        "iterations": 100
+      },
+      "Parameter Extraction - Multiple": {
+        "avg": 0.15,
+        "min": 0.13,
+        "max": 0.17,
+        "iterations": 100
+      },
+      "Route Caching - 10000 Lookups": {
+        "avg": 3.45,
+        "min": 3.2,
+        "max": 3.7,
+        "iterations": 100
+      }
+    },
+    "ssr": {
+      "Render Simple Component": {
+        "avg": 0.02,
+        "min": 0.01,
+        "max": 0.03,
+        "iterations": 100
+      },
+      "Render Complex Component Tree - 100 Nodes": {
+        "avg": 0.45,
+        "min": 0.4,
+        "max": 0.5,
+        "iterations": 100
+      },
+      "Render List - 1000 Items": {
+        "avg": 4.56,
+        "min": 4.2,
+        "max": 4.9,
+        "iterations": 100
+      },
+      "Response Compression - HTML Content": {
+        "avg": 1.23,
+        "min": 1.0,
+        "max": 1.4,
+        "iterations": 100
+      }
+    },
+    "middleware": {
+      "Single Middleware Execution": {
+        "avg": 0.01,
+        "min": 0.01,
+        "max": 0.02,
+        "iterations": 100
+      },
+      "Middleware Chain - 5 Middlewares": {
+        "avg": 0.05,
+        "min": 0.04,
+        "max": 0.06,
+        "iterations": 100
+      },
+      "Middleware Chain - 20 Middlewares": {
+        "avg": 0.2,
+        "min": 0.18,
+        "max": 0.22,
+        "iterations": 100
+      },
+      "Rate Limiting Middleware - 1000 Requests": {
+        "avg": 5.67,
+        "min": 5.2,
+        "max": 6.1,
+        "iterations": 100
+      }
+    },
+    "config": {
+      "Parse JSON Config - 1000 Lines": {
+        "avg": 0.34,
+        "min": 0.3,
+        "max": 0.38,
+        "iterations": 100
+      },
+      "Load Environment Variables - 100 Vars": {
+        "avg": 0.02,
+        "min": 0.01,
+        "max": 0.03,
+        "iterations": 100
+      },
+      "Build Route Map - 500 Routes": {
+        "avg": 1.23,
+        "min": 1.0,
+        "max": 1.4,
+        "iterations": 100
+      },
+      "Compile Asset Manifest - 1000 Assets": {
+        "avg": 2.34,
+        "min": 2.1,
+        "max": 2.6,
+        "iterations": 100
+      }
+    }
+  },
+  "thresholds": {
+    "regression": 0.05,
+    "improvement": 0.1,
+    "warning": 0.03
+  }
+}
