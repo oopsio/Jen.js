@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JenPress</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    :root {
+      /* Vercel Light Mode */
+      --bg: #ffffff;
+      --fg: #000000;
+      --fg-secondary: #666666;
+      --fg-tertiary: #999999;
+      --border: #e1e4e8;
+      --border-light: #f0f0f0;
+      --code-bg: #f5f5f5;
+      --accent: #0070f3;
+      --accent-hover: #0051b3;
+    }
+
+    .app.dark {
+      /* Vercel Dark Mode */
+      --bg: #111111;
+      --fg: #ffffff;
+      --fg-secondary: #999999;
+      --fg-tertiary: #666666;
+      --border: #333333;
+      --border-light: #222222;
+      --code-bg: #1a1a1a;
+      --accent: #0070f3;
+      --accent-hover: #0051b3;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      background: var(--bg);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    #app {
+      min-height: 100vh;
+      background: var(--bg);
+    }
+
+    /* Code styling */
+    code {
+      font-family: 'Geist Mono', 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background: var(--code-bg) !important;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1rem 0;
+      line-height: 1.5;
+      font-family: 'Geist Mono', 'Courier New', monospace;
+      border: 1px solid var(--border);
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      font-size: 0.9em;
+      font-family: 'Geist Mono', 'Courier New', monospace;
+      color: var(--fg) !important;
+    }
+
+    /* Code block wrapper */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1rem 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: var(--border-light);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--fg-secondary);
+      font-family: 'Geist Mono', 'Courier New', monospace;
+    }
+
+    .code-block-lang {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .code-block-icon {
+      font-size: 1rem;
+    }
+
+    .code-block-copy {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--fg-secondary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      opacity: 0.6;
+    }
+
+    .code-block-copy:hover {
+      opacity: 1;
+      background: var(--code-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .code-block-copy.copied {
+      color: #10b981;
+      border-color: #10b981;
+    }
+
+    /* Shiki syntax highlighting override */
+    .shiki {
+      background: var(--code-bg) !important;
+      overflow-x: auto;
+      margin: 0 !important;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .shiki code {
+      background: none !important;
+    }
+
+    /* Light mode specific */
+    :root .shiki {
+      background: #f5f5f5 !important;
+    }
+
+    /* Dark mode specific */
+    .app.dark .shiki {
+      background: #0d1117 !important;
+    }
+
+    /* Inline code */
+    p code,
+    li code,
+    blockquote code {
+      background: var(--code-bg);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      color: var(--fg);
+    }
+
+    /* Links */
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+      margin: 1rem 0;
+      padding-left: 2rem;
+    }
+
+    li {
+      margin: 0.5rem 0;
+    }
+
+    /* Blockquotes */
+    blockquote {
+      border-left: 4px solid var(--border);
+      padding-left: 1rem;
+      margin: 1rem 0;
+      color: var(--fg-secondary);
+      font-style: italic;
+    }
+
+    /* Custom Components */
+    .tabs-wrapper {
+      margin: 1rem 0;
+    }
+
+    .tab-trigger {
+      cursor: pointer;
+    }
+
+    .tab-trigger[data-active="true"] {
+      border-bottom-color: #0070f3 !important;
+      color: #0070f3 !important;
+    }
+
+    .tab-content[data-active="true"] {
+      display: block !important;
+    }
+
+    .accordion-wrapper {
+      margin: 1rem 0;
+    }
+
+    .accordion-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .accordion-trigger {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .accordion-trigger i {
+      transition: transform 0.2s;
+    }
+
+    .accordion-item[data-open="true"] .accordion-trigger i {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      display: none;
+    }
+
+    .accordion-item[data-open="true"] .accordion-content {
+      display: block !important;
+    }
+
+    /* Tables */
+    .md-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+
+    .md-table thead {
+      background: var(--code-bg);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .md-table th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--fg);
+      border-right: 1px solid var(--border);
+    }
+
+    .md-table th:last-child {
+      border-right: none;
+    }
+
+    .md-table td {
+      padding: 0.75rem 1rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .md-table td:last-child {
+      border-right: none;
+    }
+
+    .md-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .md-table tbody tr:hover {
+      background: var(--border-light);
+    }
+
+    /* Callouts/Admonitions */
+    .callout {
+      margin: 1.5rem 0;
+      border-radius: 6px;
+      border-left: 4px solid var(--border);
+      padding: 1rem;
+      background: var(--border-light);
+      overflow: hidden;
+    }
+
+    .callout.callout-note {
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .callout.callout-warning {
+      border-left-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .callout.callout-tip {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .callout.callout-danger {
+      border-left-color: #ef4444;
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .callout.callout-info {
+      border-left-color: #8b5cf6;
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .callout-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .callout-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .callout-title {
+      color: var(--fg);
+    }
+
+    .callout-content {
+      margin-left: 2.25rem;
+      color: var(--fg-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .callout-content p {
+      margin: 0.5rem 0;
+    }
+
+    .callout-content code {
+      background: rgba(0, 0, 0, 0.1);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+    }
+
+    /* Headings with better hierarchy */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem 0;
+      color: var(--fg);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 1.5rem 0 0.75rem 0;
+      color: var(--fg);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 1.25rem 0 0.5rem 0;
+      color: var(--fg);
+    }
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem 0;
+      color: var(--fg);
+    }
+
+    h5, h6 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0.75rem 0 0.5rem 0;
+      color: var(--fg);
+    }
+
+    /* Paragraphs with better spacing */
+    p {
+      margin: 1rem 0;
+      line-height: 1.7;
+      color: var(--fg);
+    }
+
+    /* Lists improvements */
+    ul, ol {
+      margin: 1.5rem 0;
+      padding-left: 2rem;
+      color: var(--fg);
+    }
+
+    li {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+
+    /* Horizontal rule */
+    hr {
+      margin: 2rem 0;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/client/app.tsx"></script>
+</body>
+
+</html>
