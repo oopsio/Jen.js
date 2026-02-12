@@ -1,0 +1,25 @@
+
+> jen-release-16-example@1.0.0 build B:\Jen.js\example\v16
+> node build.js
+
+node:internal/modules/esm/resolve:274
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'B:\Jen.js\build.js' imported from B:\Jen.js\example\v16\build.js
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:757:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:734:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:317:38)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:685:36)
+    at TracingChannel.tracePromise (node:diagnostics_channel:350:14)
+    at ModuleLoader.import (node:internal/modules/esm/loader:684:21)
+    at defaultImportModuleDynamicallyForModule (node:internal/modules/esm/utils:229:31) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///B:/Jen.js/build.js'
+}
+
+Node.js v24.11.0
+ ELIFECYCLE  Command failed with exit code 1.
