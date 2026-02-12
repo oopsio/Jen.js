@@ -272,7 +272,7 @@
     "request-promise-core": "1.1.2",
     "resolve-from": "5.0.0",
     "sass": "1.54.0",
-    "satori": "0.15.2",
+    "satori": "0.19.2",
     "seedrandom": "3.0.5",
     "semver": "7.3.7",
     "serve-handler": "6.1.6",
