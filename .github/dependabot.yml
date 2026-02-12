@@ -1,0 +1,66 @@
+
+version: 2
+updates:
+  # Root package.json
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+
+  # Website package.json
+  - package-ecosystem: "npm"
+    directory: "/website"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+
+  # Rust (Cargo.toml)
+  - package-ecosystem: "cargo"
+    directory: "/native/rust"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+
+  # Packages monorepo (each has its own package.json)
+  - package-ecosystem: "npm"
+    directory: "/packages/core"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/compiler"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/runtime"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 20
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps"
