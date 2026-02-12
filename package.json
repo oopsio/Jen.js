@@ -173,7 +173,7 @@
     "@babel/parser": "7.27.0",
     "@babel/plugin-syntax-explicit-resource-management": "7.25.7",
     "@babel/plugin-transform-object-rest-spread": "7.25.9",
-    "@babel/preset-react": "7.26.3",
+    "@babel/preset-react": "7.28.5",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.1",
     "@eslint/compat": "1.4.0",
