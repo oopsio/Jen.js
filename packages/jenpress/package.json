@@ -45,7 +45,7 @@
     "markdown-it-table-of-contents": "^1.1.0",
     "preact": "^10.28.3",
     "preact-render-to-string": "^6.5.13",
-    "shiki": "^1.0.0",
+    "shiki": "^3.22.0",
     "tsx": "^4.21.0",
     "vite": "^7.3.1"
   },
