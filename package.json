@@ -29,7 +29,7 @@
     "mongodb": "^7.0.0",
     "mysql2": "^3.16.2",
     "pg": "^8.17.2",
-    "preact": "^10.25.4",
+    "preact": "^10.28.3",
     "preact-render-to-string": "^6.5.13",
     "sass": "^1.97.3",
     "sirv": "^3.0.1",

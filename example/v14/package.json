@@ -6,7 +6,7 @@
     "dev": "node server.js dev"
   },
   "dependencies": {
-    "preact": "^10.25.4",
+    "preact": "^10.28.3",
     "preact-render-to-string": "^6.5.13",
     "sirv": "^3.0.1",
     "esbuild": "^0.27.3"
