@@ -8,7 +8,7 @@
     "analyze": "jenpack analyze src/index.tsx"
   },
   "dependencies": {
-    "preact": "^10.17.0"
+    "preact": "^10.28.3"
   },
   "devDependencies": {
     "@jen/jenpack": "workspace:*",

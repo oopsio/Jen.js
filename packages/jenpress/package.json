@@ -43,7 +43,7 @@
     "gray-matter": "^4.0.3",
     "markdown-it": "^14.0.0",
     "markdown-it-table-of-contents": "^1.1.0",
-    "preact": "^10.25.4",
+    "preact": "^10.28.3",
     "preact-render-to-string": "^6.5.13",
     "shiki": "^1.0.0",
     "tsx": "^4.21.0",
