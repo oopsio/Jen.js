@@ -27,7 +27,7 @@
     "esbuild": "^0.27.3",
     "glob": "^13.0.3",
     "mongodb": "^7.0.0",
-    "mysql2": "^3.16.2",
+    "mysql2": "^3.17.1",
     "pg": "^8.17.2",
     "preact": "^10.28.3",
     "preact-render-to-string": "^6.5.13",
