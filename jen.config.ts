@@ -55,7 +55,7 @@ const config: FrameworkConfig = {
   },
 
   server: {
-    port: 3000,
+    port: 5173,
     hostname: "0.0.0.0",
   },
 
@@ -74,7 +74,7 @@ const config: FrameworkConfig = {
   dev: {
     enableSSR: true,
     liveReload: true,
-    port: 3000,
+    port: 5173,
   },
 
   seo: {

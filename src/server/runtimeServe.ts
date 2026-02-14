@@ -21,6 +21,7 @@ import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { basename, dirname } from "node:path";
+import { pathToFileURL } from "node:url";
 import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
 
 const cache = new Map<string, { js: string; etag: string }>();
@@ -88,42 +89,53 @@ export function buildHydrationModule(routeIdOrPath: string) {
   const dir = dirname(filePath);
   const proxyContent = `export { default } from "./${fileName}";`;
 
-  const js = buildSync({
-    stdin: {
-      contents: proxyContent,
-      resolveDir: dir,
-      sourcefile: "hydration-proxy.tsx",
-      loader: "tsx",
-    },
-    format: "esm",
-    platform: "browser",
-    bundle: true,
-    write: false,
-    sourcemap: "inline",
-    jsx: "automatic",
-    jsxImportSource: "preact",
-    define: {
-      "process.env.NODE_ENV": JSON.stringify("development"),
-    },
-    external: [
-      "preact",
-      "preact/hooks",
-      "preact/jsx-runtime",
-      "preact-render-to-string",
-    ],
-    plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-  }).outputFiles?.[0]?.text;
-
-  const out =
-    `
+  try {
+    const jsOutput = buildSync({
+      stdin: {
+        contents: proxyContent,
+        resolveDir: dir,
+        sourcefile: "hydration-proxy.tsx",
+        loader: "tsx",
+      },
+      format: "esm",
+      platform: "browser",
+      bundle: true,
+      write: false,
+      sourcemap: "inline",
+      jsx: "automatic",
+      jsxImportSource: "preact",
+      define: {
+        "process.env.NODE_ENV": JSON.stringify("development"),
+      },
+      external: [
+        "preact",
+        "preact/hooks",
+        "preact/jsx-runtime",
+        "preact-render-to-string",
+      ],
+      // Plugins not supported in buildSync, only in build()
+      // plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+    }).outputFiles?.[0]?.text;
+    
+    if (!jsOutput) {
+      console.error("[HYDRATION] Failed to build module for:", filePath);
+      return `export default function Page(){ return null }`;
+    }
+    
+    const out =
+      `
 import { h } from "https://esm.sh/preact@10.25.4";
 import { Fragment } from "https://esm.sh/preact@10.25.4";
 import { jsx, jsxs } from "https://esm.sh/preact@10.25.4/jsx-runtime";
-` + js;
+` + jsOutput;
 
-  const etag = etagOf(out);
-  cache.set(key, { js: out, etag });
-  return out;
+    const etag = etagOf(out);
+    cache.set(key, { js: out, etag });
+    return out;
+  } catch (err) {
+    console.error("[HYDRATION] Build error for", filePath, ":", err);
+    return `export default function Page(){ return null }`;
+  }
 }
 
 export function getHydrationEtag(filePath: string) {

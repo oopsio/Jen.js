@@ -79,7 +79,7 @@ async function transpileApiRoute(filePath: string): Promise<string> {
     format: "esm",
     platform: "node",
     target: "es2022",
-    bundle: false,
+    bundle: true,
     external: ["preact", "preact-render-to-string", "jenjs"],
     write: true,
   });

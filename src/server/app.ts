@@ -31,7 +31,8 @@ import { Kernel } from "../middleware/kernel.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
 import { headersToObject, parseCookies } from "../core/http.js";
-import { tryHandleApiRoute } from "./api.js";
+import { tryHandleApiRoute } from "./api-routes.js";
+import { resolve } from "node:path";
 import {
   buildHydrationModule,
   runtimeHydrateModule,
@@ -317,13 +318,25 @@ initializeIslands();
       if (mode === "dev" && ctx.url.pathname.endsWith(".css")) {
         let scssFile: string | null = null;
 
+        const basePath = resolve(process.cwd());
+        
         if (ctx.url.pathname === "/styles.css") {
-          scssFile = join(process.cwd(), config.css.globalScss);
+          // Global SCSS
+          if (config.css?.globalScss) {
+            // Already includes siteDir if needed, but add it if it doesn't
+            const scssPath = config.css.globalScss.startsWith(config.siteDir)
+              ? config.css.globalScss
+              : join(config.siteDir, config.css.globalScss);
+            scssFile = join(basePath, scssPath);
+            console.log('[DEBUG CSS] Looking for global SCSS:', scssFile, 'exists:', existsSync(scssFile));
+          } else {
+            console.log('[DEBUG CSS] No config.css.globalScss found');
+          }
         } else {
           // Map /foo.css -> siteDir/foo.scss
           const rel = ctx.url.pathname.slice(1);
           const tryPath = join(
-            process.cwd(),
+            basePath,
             config.siteDir,
             rel.replace(/\.css$/, ".scss"),
           );

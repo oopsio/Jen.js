@@ -6,7 +6,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "strict": true,
-    "outDir": "build",
+    "outDir": "dist",
     "skipLibCheck": true,
     "types": ["node"],
     "baseUrl": ".",

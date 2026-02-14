@@ -26,6 +26,7 @@
     "@vue/compiler-sfc": "^3.4.0",
     "esbuild": "^0.27.3",
     "glob": "^13.0.3",
+    "html-minifier-terser": "^7.2.0",
     "mongodb": "^7.1.0",
     "mysql2": "^3.17.1",
     "pg": "^8.18.0",
@@ -35,7 +36,8 @@
     "sirv": "^3.0.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "svelte": "^5.50.2"
+    "svelte": "^5.50.2",
+    "vite": "^7.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
