@@ -13,26 +13,27 @@ type QueryExecutor = (sql: string, params: any[]) => Promise<any[]>;
 const ALLOWED_IDENTIFIERS = new Set<string>();
 
 /**
- * Safely quote SQL identifier to prevent injection
- * Only accepts alphanumeric, underscore, hyphen
- */
+  * Safely quote SQL identifier to prevent injection
+  * Only accepts alphanumeric, underscore, dollar sign
+  * Note: Hyphen is NOT allowed as it can cause confusion with operators
+  */
 function quoteIdentifier(id: string): string {
-  if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) {
+  if (!id || !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(id)) {
     throw new Error(
-      `Invalid SQL identifier: ${id}. Only alphanumeric, underscore, and hyphen allowed.`,
+      `Invalid SQL identifier: ${id}. Only alphanumeric, underscore, and dollar sign allowed. Must start with letter, underscore, or dollar.`,
     );
   }
   return `\`${id}\``; // Use backticks for MySQL, adjust for other databases
 }
 
 /**
- * Validate and register allowed table/collection names for security
- */
+  * Validate and register allowed table/collection names for security
+  */
 export function registerAllowedTable(tableName: string): void {
-  if (/^[a-zA-Z0-9_-]+$/.test(tableName)) {
+  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(tableName)) {
     ALLOWED_IDENTIFIERS.add(tableName);
   } else {
-    throw new Error(`Invalid table name: ${tableName}`);
+    throw new Error(`Invalid table name: ${tableName}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
   }
 }
 
@@ -105,18 +106,20 @@ export class SQLDriver implements IDBDriver {
     const params: any[] = [];
 
     if (q.where && Object.keys(q.where).length > 0) {
-      const conditions: string[] = [];
-      for (const key in q.where) {
-        const val = (q.where as any)[key];
-        // Security: Validate column name
-        if (!/^[a-zA-Z0-9_-]+$/.test(key)) {
-          throw new Error(`Invalid column name: ${key}`);
-        }
-        conditions.push(`${quoteIdentifier(key)} = ?`);
-        params.push(val);
-      }
-      sql += ` WHERE ${conditions.join(" AND ")}`;
-    }
+       const conditions: string[] = [];
+       const whereRecord = q.where as Record<string, any>;
+       for (const key in whereRecord) {
+         // Security: Validate column name
+         if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+           throw new Error(`Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
+         }
+         // Safely access where property
+         const val = whereRecord[key];
+         conditions.push(`${quoteIdentifier(key)} = ?`);
+         params.push(val);
+       }
+       sql += ` WHERE ${conditions.join(" AND ")}`;
+     }
 
     if (q.options?.limit) {
       // Security: Validate limit is a positive integer
@@ -144,8 +147,8 @@ export class SQLDriver implements IDBDriver {
 
     // Security: Validate all column names
     for (const key of keys) {
-      if (!/^[a-zA-Z0-9_-]+$/.test(key)) {
-        throw new Error(`Invalid column name: ${key}`);
+      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+        throw new Error(`Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
       }
     }
 
@@ -181,11 +184,16 @@ export class SQLDriver implements IDBDriver {
       );
     }
 
+    // Validate that filter is not empty to prevent accidental full table delete
+    if (!filter || Object.keys(filter).length === 0) {
+      throw new Error("Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.");
+    }
+
     const { sql, params } = this.translateQuery({
       find: collection,
       where: filter,
     });
-    const deleteSql = sql.replace("SELECT *", "DELETE");
+    const deleteSql = sql.replace("SELECT \\*", "DELETE");
     await this.executor(deleteSql, params);
     return 1; // Unknown count without driver specific result
   }

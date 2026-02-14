@@ -78,15 +78,28 @@ export function extractIslandsFromHtml(html: string): DetectedIsland[] {
     const componentPath = match[3];
     const propsStr = match[4].replace(/\\u003c/g, "<");
 
+    // Validate island ID and component path
+    if (!id || !componentPath) {
+      console.warn('Invalid island marker: missing id or componentPath');
+      continue;
+    }
+
     try {
+      // Validate props is valid JSON
+      const props = JSON.parse(propsStr);
+      if (typeof props !== 'object' || props === null) {
+        console.warn(`Invalid props for island ${id}: expected object, got ${typeof props}`);
+        continue;
+      }
+
       islands.push({
         id,
         component: componentPath,
         strategy,
-        props: JSON.parse(propsStr),
+        props,
       });
-    } catch {
-      // Skip malformed islands
+    } catch (err) {
+      console.warn(`Failed to parse props for island ${id}:`, err instanceof Error ? err.message : String(err));
     }
   }
 

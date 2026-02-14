@@ -54,21 +54,30 @@ export function createSecureCookie(
 }
 
 /**
- * Parse cookies from request header
- */
+  * Parse cookies from request header
+  */
 export function parseCookies(cookieHeader: string): Record<string, string> {
   const cookies: Record<string, string> = {};
 
-  if (!cookieHeader) return cookies;
+  if (!cookieHeader || !cookieHeader.trim()) return cookies;
 
   cookieHeader.split(";").forEach((cookie) => {
-    const [name, ...rest] = cookie.split("=");
-    const trimmedName = name.trim();
-    const trimmedValue = rest.join("=").trim();
+    const trimmed = cookie.trim();
+    if (!trimmed) return;
 
-    if (trimmedName && trimmedValue) {
-      cookies[decodeURIComponent(trimmedName)] =
-        decodeURIComponent(trimmedValue);
+    const eqIndex = trimmed.indexOf("=");
+    if (eqIndex === -1) return;
+
+    const name = trimmed.substring(0, eqIndex).trim();
+    const value = trimmed.substring(eqIndex + 1).trim();
+
+    if (name && value) {
+      try {
+        cookies[decodeURIComponent(name)] = decodeURIComponent(value);
+      } catch (err) {
+        // Skip cookies with invalid URI encoding
+        console.warn(`Failed to decode cookie ${name}:`, err instanceof Error ? err.message : String(err));
+      }
     }
   });
 

@@ -100,50 +100,37 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
     let url = "/" + (relDir ? relDir + "/" : "") + urlSeg;
     url = url.replaceAll("//", "/");
 
-    // Convert dynamic segment names:
-    // (id).tsx => /:id
-    // (...rest).tsx => /*rest
-    if (routeSeg !== "home") {
-      // if file is (id).tsx, treat as dynamic param
-      if (
-        !routeSeg.startsWith("...") &&
-        /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(routeSeg)
-      ) {
-        // if directory already contains literal segments, keep them
-        // BUT if the routeSeg looks like a normal name, we still treat it as literal.
-        // We only treat it as param when the directory name includes [param] style? no.
-        // User requested (name).tsx routing; so we treat special "id" as param only if prefixed with "$"
-      }
-    }
+    // Dynamic route segment detection:
+    // Routes are determined by the filename within parentheses
+    // - (home).tsx => / (root) or /{dir}/ (in subdirectory)
+    // - ($paramName).tsx => /:paramName (dynamic param, requires $ prefix)
+    // - (...restName).tsx => /*restName (catch-all, requires ... prefix)
+    // - Any other (name).tsx => /name (literal segment)
 
-    // Special dynamic rule:
-    // (id).tsx is dynamic if the name starts with "$"
-    // ( $id ) not possible, so we use: (id) is literal by default
-    // But user requested dynamic params via (id).tsx — so enable it:
-    // If name is "id" or ends with "Id"? no. We'll do: if name starts with ":" not possible.
-    // We'll do: if name starts with "_" treat literal, else dynamic if name is all lowercase and short? nope.
-    // OK: Always treat (id) as dynamic param ONLY when it's inside a folder called "param".
-    // Not acceptable.
-
-    // So: simplest: treat any (something) as literal, EXCEPT if file is exactly (id).tsx or (slug).tsx or (...rest).tsx
-    // We'll implement: if name is "id" or "slug" or "post" or "user" etc? no.
-
-    // Real solution: if name starts with "$" in file: ($id).tsx
-    // But you said route in (name).tsx only. We'll allow ($id).tsx while keeping pattern.
-    // If name starts with "$" => param.
     const rawName = name;
-    if (rawName.startsWith("$")) {
+
+    // Handle special prefixes for dynamic routing
+    if (rawName.startsWith("$") && !rawName.startsWith("...")) {
+      // ($paramName) syntax for dynamic parameters
       const param = rawName.slice(1);
+      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(param)) {
+        throw new Error(`Invalid parameter name: ${param} in route file ${rel}`);
+      }
       url = "/" + (relDir ? relDir + "/" : "") + ":" + param;
       url = url.replaceAll("//", "/");
-    }
-    if (rawName.startsWith("...")) {
-      url = "/" + (relDir ? relDir + "/" : "") + "*" + rawName.slice(3);
+    } else if (rawName.startsWith("...")) {
+      // (...restName) syntax for catch-all routes
+      const restName = rawName.slice(3);
+      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(restName)) {
+        throw new Error(`Invalid rest parameter name: ${restName} in route file ${rel}`);
+      }
+      url = "/" + (relDir ? relDir + "/" : "") + "*" + restName;
       url = url.replaceAll("//", "/");
+    } else if (rawName === "home") {
+      // (home) is special - becomes root of its directory
+      url = relDir === "" ? "/" : "/" + relDir;
     }
-
-    if (rawName === "home" && relDir === "") url = "/";
-    if (rawName === "home" && relDir !== "") url = "/" + relDir;
+    // else: (anything else) treated as literal segment
 
     const { src, paramNames } = buildRoutePattern(url);
 

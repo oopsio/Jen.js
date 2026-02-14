@@ -38,8 +38,8 @@ function getCachePath(filePath: string) {
 export async function renderRouteToHtml(opts: {
   config: FrameworkConfig;
   route: RouteEntry;
-  req: any; // IncomingMessage
-  res: any; // ServerResponse
+  req?: any; // IncomingMessage (optional for SSG)
+  res?: any; // ServerResponse (optional for SSG)
   url: URL;
   params: Record<string, string>;
   query: Record<string, string>;
@@ -72,52 +72,66 @@ export async function renderRouteToHtml(opts: {
   }
 
   // Cache busting for dynamic import
-  const mod: RouteModule = await import(
-    pathToFileURL(moduleUrl).href + "?t=" + Date.now()
-  );
-
-  // Execute route middleware if present
-  const middlewareCtx = createRouteMiddlewareContext({
-    req: opts.req,
-    res: opts.res,
-    url,
-    params,
-    query,
-    headers,
-    cookies,
-  });
-
-  const middlewares: RouteMiddleware[] = [];
-  if (mod.middleware) {
-    if (Array.isArray(mod.middleware)) {
-      middlewares.push(...mod.middleware);
-    } else {
-      middlewares.push(mod.middleware);
-    }
-  }
-
+  let mod: RouteModule;
   try {
-    await executeRouteMiddleware(middlewares, middlewareCtx);
-  } catch (err: any) {
-    if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
-      // Already sent response
-      throw err;
-    }
-    throw err;
+    mod = await import(
+      pathToFileURL(moduleUrl).href + "?t=" + Date.now()
+    );
+  } catch (err) {
+    throw new Error(`Failed to import route module ${route.filePath}: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  const loaderCtx: LoaderContext = {
-    url,
-    params,
-    query,
-    headers,
-    cookies,
-    data: middlewareCtx.data, // Pass middleware data to loader
-  };
+  // Execute route middleware if present (only in server context)
+  let middlewareData: Record<string, any> = {};
+
+  if (opts.req && opts.res) {
+     const middlewareCtx = createRouteMiddlewareContext({
+       req: opts.req,
+       res: opts.res,
+       url,
+       params,
+       query,
+       headers,
+       cookies,
+     });
+
+     const middlewares: RouteMiddleware[] = [];
+     if (mod.middleware) {
+       if (Array.isArray(mod.middleware)) {
+         middlewares.push(...mod.middleware);
+       } else {
+         middlewares.push(mod.middleware);
+       }
+     }
+
+     try {
+       await executeRouteMiddleware(middlewares, middlewareCtx);
+       middlewareData = middlewareCtx.data || {};
+     } catch (err: any) {
+       if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
+         // Already sent response
+         throw err;
+       }
+       throw err;
+     }
+   }
+
+   const loaderCtx: LoaderContext = {
+     url,
+     params,
+     query,
+     headers,
+     cookies,
+     data: middlewareData, // Pass middleware data to loader
+   };
 
   let data: any = null;
   if (typeof mod.loader === "function") {
     data = await mod.loader(loaderCtx);
+  }
+
+  if (!mod.default) {
+    throw new Error(`Route module ${route.filePath} does not export a default component`);
   }
 
   const Page = mod.default;
@@ -154,7 +168,9 @@ export async function renderRouteToHtml(opts: {
       const headNode = h(mod.Head as any, { data, params, query });
       const headHtml = renderToString(headNode);
       headParts.push(headHtml);
-    } catch {}
+    } catch (err) {
+      console.error(`Failed to render Head component for ${route.filePath}:`, err instanceof Error ? err.message : String(err));
+    }
   }
 
   headParts.push(`<link rel="stylesheet" href="/styles.css">`);
@@ -170,24 +186,26 @@ ${headParts.join("\n")}
 
   // Only inject hydration script if enabled
   if (shouldHydrate) {
-    // Serialize framework data WITHOUT HTML escaping quotes
-    // Only escape </script to prevent script injection
+    // Serialize framework data with proper escaping
+    // Escape </script to prevent script injection
     const frameworkDataStr = JSON.stringify(
       { data, params, query },
       null,
       2,
-    ).replace(/<\/script/g, "<\\/script");
+    ).replace(/<\/script/gi, "<\\/script");
+
+    const hydrateFile = `/__hydrate?file=${encodeURIComponent(route.filePath)}`;
 
     html += `
-<script id="__FRAMEWORK_DATA__" type="application/json">
-${frameworkDataStr}
-</script>
-<script type="module">
+  <script id="__FRAMEWORK_DATA__" type="application/json">
+  ${frameworkDataStr}
+  </script>
+  <script type="module">
   import { hydrateClient } from "/__runtime/hydrate.js";
   import { initializeIslands } from "/__runtime/island-hydration-client.js";
-  hydrateClient(${JSON.stringify(`/__hydrate?file=${encodeURIComponent(route.filePath)}`)});
+  hydrateClient(${JSON.stringify(hydrateFile)});
   initializeIslands();
-</script>`;
+  </script>`;
   }
 
   html += `

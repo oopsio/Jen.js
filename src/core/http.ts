@@ -6,7 +6,11 @@ export function parseCookies(req: IncomingMessage): Record<string, string> {
   const out: Record<string, string> = {};
   for (const part of cookie.split(";")) {
     const [k, ...rest] = part.trim().split("=");
-    out[k] = decodeURIComponent(rest.join("=") || "");
+    const trimmedName = k.trim();
+    const trimmedValue = rest.join("=").trim();
+    if (trimmedName && trimmedValue) {
+      out[trimmedName] = decodeURIComponent(trimmedValue);
+    }
   }
   return out;
 }
