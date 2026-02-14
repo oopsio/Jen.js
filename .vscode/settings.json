@@ -4,14 +4,6 @@
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "files.exclude": {
-    "node_modules": true,
-    "dist": true
-  },
-  "files.watcherExclude": {
-    "node_modules": true,
-    "dist": true
-  },
   "search.exclude": {
     "node_modules": true,
     "dist": true

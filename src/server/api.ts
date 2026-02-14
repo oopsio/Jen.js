@@ -19,6 +19,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { readFileSync, existsSync } from "node:fs";
 import { join, normalize } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const MAX_BODY_SIZE = 1024 * 1024; // 1MB
 const VALID_ROUTE_PATTERN = /^[a-zA-Z0-9_\-/]+$/; // Only alphanumeric, underscore, hyphen, forward slash
@@ -72,7 +73,8 @@ export async function tryHandleApiRoute(opts: {
     return true;
   }
 
-  const mod = await import(file);
+  // Use pathToFileURL to handle Windows paths correctly
+  const mod = await import(pathToFileURL(file).href + `?t=${Date.now()}`);
 
   const handler = mod?.default;
   if (typeof handler !== "function") {
