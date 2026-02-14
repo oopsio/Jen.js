@@ -6,6 +6,7 @@ packages:
   - "bench/**"
   - "preactsc/**"
   - "docs/**"
+  - "my-app/**"
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
