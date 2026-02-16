@@ -80,7 +80,7 @@ importers:
         version: 3.8.1
       turbo:
         specifier: ^2.8.7
-        version: 2.8.7
+        version: 2.8.9
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -100,7 +100,7 @@ importers:
     devDependencies:
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(@types/node@20.19.33)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+        version: 7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
 
   example/v10:
     dependencies:
@@ -2092,6 +2092,12 @@ packages:
 
   '@types/node@25.2.3':
     resolution: {integrity: sha512-m0jEgYlYz+mDJZ2+F4v8D1AyQb+QzsNqRuI7xg1VQX/KlKS0qT9r1Mo16yo5F/MtifXFgaofIFsdFMox2SxIbQ==}
+
+  '@types/normalize-package-data@2.4.4':
+    resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/trusted-types@2.0.7':
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
   '@types/unist@2.0.11':
     resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==}
@@ -5652,6 +5658,7 @@ packages:
   tar@7.5.7:
     resolution: {integrity: sha512-fov56fJiRuThVFXD6o6/Q354S7pnWMJIVlDBYijsTNx6jKSE4pvrDTs6lUnmGvNyfJwFQQwWy3owKz1ucIhveQ==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   temp-dir@1.0.0:
     resolution: {integrity: sha512-xZFXEGbG7SNC3itwBzI3RYjq/cEhBkx2hJuKGIUOcEULmkQExXiHat2z/qkISYsuR+IKumhEfKKbV5qXmhICFQ==}
@@ -5798,38 +5805,38 @@ packages:
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
-  turbo-darwin-64@2.8.7:
-    resolution: {integrity: sha512-Xr4TO/oDDwoozbDtBvunb66g//WK8uHRygl72vUthuwzmiw48pil4IuoG/QbMHd9RE8aBnVmzC0WZEWk/WWt3A==}
+  turbo-darwin-64@2.8.9:
+    resolution: {integrity: sha512-KnCw1ZI9KTnEAhdI9avZrnZ/z4wsM++flMA1w8s8PKOqi5daGpFV36qoPafg4S8TmYMe52JPWEoFr0L+lQ5JIw==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.8.7:
-    resolution: {integrity: sha512-p8Xbmb9kZEY/NoshQUcFmQdO80s2PCGoLYj5DbpxjZr3diknipXxzOK7pcmT7l2gNHaMCpFVWLkiFY9nO3EU5w==}
+  turbo-darwin-arm64@2.8.9:
+    resolution: {integrity: sha512-CbD5Y2NKJKBXTOZ7z7Cc7vGlFPZkYjApA7ri9lH4iFwKV1X7MoZswh9gyRLetXYWImVX1BqIvP8KftulJg/wIA==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.8.7:
-    resolution: {integrity: sha512-nwfEPAH3m5y/nJeYly3j1YJNYU2EG5+2ysZUxvBNM+VBV2LjQaLxB9CsEIpIOKuWKCjnFHKIADTSDPZ3D12J5Q==}
+  turbo-linux-64@2.8.9:
+    resolution: {integrity: sha512-OXC9HdCtsHvyH+5KUoH8ds+p5WU13vdif0OPbsFzZca4cUXMwKA3HWwUuCgQetk0iAE4cscXpi/t8A263n3VTg==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.8.7:
-    resolution: {integrity: sha512-mgA/M6xiJzyxtXV70TtWGDPh+I6acOKmeQGtOzbFQZYEf794pu5jax26bCk5skAp1gqZu3vacPr6jhYHoHU9IQ==}
+  turbo-linux-arm64@2.8.9:
+    resolution: {integrity: sha512-yI5n8jNXiFA6+CxnXG0gO7h5ZF1+19K8uO3/kXPQmyl37AdiA7ehKJQOvf9OPAnmkGDHcF2HSCPltabERNRmug==}
     cpu: [arm64]
     os: [linux]
 
-  turbo-windows-64@2.8.7:
-    resolution: {integrity: sha512-sHTYMaXuCcyHnGUQgfUUt7S8407TWoP14zc/4N2tsM0wZNK6V9h4H2t5jQPtqKEb6Fg8313kygdDgEwuM4vsHg==}
+  turbo-windows-64@2.8.9:
+    resolution: {integrity: sha512-/OztzeGftJAg258M/9vK2ZCkUKUzqrWXJIikiD2pm8TlqHcIYUmepDbyZSDfOiUjMy6NzrLFahpNLnY7b5vNgg==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.8.7:
-    resolution: {integrity: sha512-WyGiOI2Zp3AhuzVagzQN+T+iq0fWx0oGxDfAWT3ZiLEd4U0cDUkwUZDKVGb3rKqPjDL6lWnuxKKu73ge5xtovQ==}
+  turbo-windows-arm64@2.8.9:
+    resolution: {integrity: sha512-xZ2VTwVTjIqpFZKN4UBxDHCPM3oJ2J5cpRzCBSmRpJ/Pn33wpiYjs+9FB2E03svKaD04/lSSLlEUej0UYsugfg==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.8.7:
-    resolution: {integrity: sha512-RBLh5caMAu1kFdTK1jgH2gH/z+jFsvX5rGbhgJ9nlIAWXSvxlzwId05uDlBA1+pBd3wO/UaKYzaQZQBXDd7kcA==}
+  turbo@2.8.9:
+    resolution: {integrity: sha512-G+Mq8VVQAlpz/0HTsxiNNk/xywaHGl+dk1oiBREgOEVCCDjXInDlONWUn5srRnC9s5tdHTFD1bx1N19eR4hI+g==}
     hasBin: true
 
   type-check@0.4.0:
@@ -8040,6 +8047,10 @@ snapshots:
   '@types/node@25.2.3':
     dependencies:
       undici-types: 7.16.0
+
+  '@types/normalize-package-data@2.4.4': {}
+
+  '@types/trusted-types@2.0.7': {}
 
   '@types/unist@2.0.11': {}
 
@@ -12661,32 +12672,32 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  turbo-darwin-64@2.8.7:
+  turbo-darwin-64@2.8.9:
     optional: true
 
-  turbo-darwin-arm64@2.8.7:
+  turbo-darwin-arm64@2.8.9:
     optional: true
 
-  turbo-linux-64@2.8.7:
+  turbo-linux-64@2.8.9:
     optional: true
 
-  turbo-linux-arm64@2.8.7:
+  turbo-linux-arm64@2.8.9:
     optional: true
 
-  turbo-windows-64@2.8.7:
+  turbo-windows-64@2.8.9:
     optional: true
 
-  turbo-windows-arm64@2.8.7:
+  turbo-windows-arm64@2.8.9:
     optional: true
 
-  turbo@2.8.7:
+  turbo@2.8.9:
     optionalDependencies:
-      turbo-darwin-64: 2.8.7
-      turbo-darwin-arm64: 2.8.7
-      turbo-linux-64: 2.8.7
-      turbo-linux-arm64: 2.8.7
-      turbo-windows-64: 2.8.7
-      turbo-windows-arm64: 2.8.7
+      turbo-darwin-64: 2.8.9
+      turbo-darwin-arm64: 2.8.9
+      turbo-linux-64: 2.8.9
+      turbo-linux-arm64: 2.8.9
+      turbo-windows-64: 2.8.9
+      turbo-windows-arm64: 2.8.9
 
   type-check@0.4.0:
     dependencies:
@@ -12912,24 +12923,6 @@ snapshots:
   vite@6.4.1(@types/node@20.19.33)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
       esbuild: 0.25.12
-      fdir: 6.5.0(picomatch@4.0.3)
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rollup: 4.57.1
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      '@types/node': 20.19.33
-      fsevents: 2.3.3
-      jiti: 2.6.1
-      lightningcss: 1.30.2
-      sass: 1.97.3
-      terser: 5.46.0
-      tsx: 4.21.0
-      yaml: 2.8.2
-
-  vite@7.3.1(@types/node@20.19.33)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2):
-    dependencies:
-      esbuild: 0.27.3
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
       postcss: 8.5.6
