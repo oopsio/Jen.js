@@ -23,7 +23,7 @@ import esbuild from "esbuild";
 
 const __filename = fileURLToPath(import.meta.url);
 const currentDir = dirname(__filename);
-const rootDir = join(currentDir, "../../../..");
+const rootDir = join(currentDir, ".");
 
 // Embedded Minifier Logic
 const Minifier = {
@@ -69,7 +69,7 @@ async function main() {
   const config = (await import(pathToFileURL(configFile).href)).default;
 
   const buildPath = pathToFileURL(
-    join(rootDir, "build/src/build/build.js"),
+    join(rootDir, "lib/build/build.js"),
   ).href;
   const { buildSite } = await import(buildPath);
 

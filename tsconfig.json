@@ -11,6 +11,7 @@
     "types": ["node"],
     "baseUrl": ".",
     "allowJs": true,
+    "declaration": true,
     "paths": {
       "@src/*": ["src/*"]
     }

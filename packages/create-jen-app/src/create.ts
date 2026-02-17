@@ -1,4 +1,4 @@
-/*
+/* 
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -19,17 +19,18 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import prompts from "prompts";
+import pc from "picocolors";
 import {
-  printBanner,
-  printSection,
-  printSuccess,
-  printNext,
-  colors,
-  symbols,
-  printStep,
-  printInfo,
-} from "./colors.js";
+  intro,
+  outro,
+  text,
+  confirm,
+  select,
+  cancel,
+  isCancel,
+  note,
+  spinner,
+} from "@clack/prompts";
 import { copyTemplateFiles, createProjectFiles } from "./generator.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -42,122 +43,150 @@ interface ProjectOptions {
   gitInit: boolean;
 }
 
+function validateProjectName(val: string) {
+  if (!val) return "Project name is required";
+  if (!/^[a-zA-Z0-9._-]+$/.test(val)) {
+    return "Project name can only contain alphanumeric characters, dots, dashes and underscores";
+  }
+  return undefined;
+}
+
 export async function createJenApp() {
-  printBanner();
+  intro(pc.cyan(pc.bold("Jen.js")) + pc.dim(" - create app"));
 
   // Get project name from CLI args or prompt
   let projectName = process.argv[2];
 
+  // @ts-nocheck
+
   if (!projectName) {
-    const response = await prompts({
-      type: "text",
-      name: "projectName",
+    const res = await text({
       message: "Project name",
-      initial: "my-jen-app",
-      validate: (val: string) => {
-        if (!val) return "Project name is required";
-        if (!/^[a-zA-Z0-9._-]+$/.test(val)) {
-          return "Project name can only contain alphanumeric characters, dots, dashes and underscores";
-        }
-        return true;
-      },
+      placeholder: "my-jen-app",
+      defaultValue: "my-jen-app",
+      validate: validateProjectName,
     });
-    projectName = response.projectName;
+
+    if (isCancel(res)) {
+      cancel(pc.dim("Cancelled"));
+      process.exit(0);
+    }
+
+    projectName = res;
   }
 
   const projectDir = path.resolve(process.cwd(), projectName);
 
   // Check if directory exists
   if (fs.existsSync(projectDir)) {
-    const overwrite = await prompts({
-      type: "confirm",
-      name: "overwrite",
-      message: `${colors.warning(projectName)} already exists. Overwrite?`,
-      initial: false,
+    const overwrite = await confirm({
+      message: `${pc.yellow(projectName)} already exists. Overwrite?`,
+      initialValue: false,
     });
 
-    if (!overwrite.overwrite) {
-      console.log(`${colors.dim("Cancelled")}`);
+    if (isCancel(overwrite)) {
+      cancel(pc.dim("Cancelled"));
       process.exit(0);
     }
 
-    fs.rmSync(projectDir, { recursive: true });
+    if (!overwrite) {
+      cancel(pc.dim("Cancelled"));
+      process.exit(0);
+    }
+
+    fs.rmSync(projectDir, { recursive: true, force: true });
   }
 
-  printSection(`${symbols.sparkles} Configuring your project`);
+  note("Configuring your project", pc.magenta("Setup"));
 
   // Template selection
-  const templateResponse = await prompts({
-    type: "select",
-    name: "template",
+  const template = await select({
     message: "Select a template",
-    choices: [
+    options: [
       {
-        title: `${colors.accent("Static")} - Pure SSG with components`,
+        label: `${pc.cyan("Static")} - Pure SSG with components`,
         value: "static",
-        description: "Fast, lightweight static sites",
+        hint: "Fast, lightweight static sites",
       },
     ],
   });
 
+  if (isCancel(template)) {
+    cancel(pc.dim("Cancelled"));
+    process.exit(0);
+  }
+
   // TypeScript
-  const tsResponse = await prompts({
-    type: "confirm",
-    name: "typescript",
+  const typescript = await confirm({
     message: "Use TypeScript?",
-    initial: true,
+    initialValue: true,
   });
+
+  if (isCancel(typescript)) {
+    cancel(pc.dim("Cancelled"));
+    process.exit(0);
+  }
 
   // Deps installation
-  const depsResponse = await prompts({
-    type: "confirm",
-    name: "installDeps",
+  const installDeps = await confirm({
     message: "Install dependencies?",
-    initial: true,
+    initialValue: true,
   });
 
+  if (isCancel(installDeps)) {
+    cancel(pc.dim("Cancelled"));
+    process.exit(0);
+  }
+
   // Git initialization
-  const gitResponse = await prompts({
-    type: "confirm",
-    name: "gitInit",
+  const gitInit = await confirm({
     message: "Initialize git repository?",
-    initial: true,
+    initialValue: true,
   });
+
+  if (isCancel(gitInit)) {
+    cancel(pc.dim("Cancelled"));
+    process.exit(0);
+  }
 
   const options: ProjectOptions = {
     projectName,
-    template: templateResponse.template,
-    typescript: tsResponse.typescript,
-    installDeps: depsResponse.installDeps,
-    gitInit: gitResponse.gitInit,
+    template,
+    typescript,
+    installDeps,
+    gitInit,
   };
 
-  printSection(`${symbols.rocket} Creating project`);
+  note("Creating project files", pc.green("Generator"));
+
+  // Spinner for progress
+  const s = spinner();
 
   // Create project structure
-  printStep(1, 4, "Setting up directories");
+  s.start("Setting up directories");
   fs.mkdirSync(projectDir, { recursive: true });
-  printSuccess("Directories created");
+  s.stop(pc.green("Directories created"));
 
   // Copy template files
-  printStep(2, 4, "Copying template files");
+  s.start("Copying template files");
   const templateDir = path.join(__dirname, "..", "templates", options.template);
   if (fs.existsSync(templateDir)) {
     copyTemplateFiles(templateDir, projectDir);
   }
-  printSuccess("Template files copied");
+  s.stop(pc.green("Template files copied"));
 
   // Create project files
-  printStep(3, 4, "Generating configuration files");
+  s.start("Generating configuration files");
   createProjectFiles(projectDir, options);
-  printSuccess("Configuration files generated");
+  s.stop(pc.green("Configuration files generated"));
 
   // Git init
   if (options.gitInit) {
-    printStep(4, 4, "Initializing git repository");
+    s.start("Initializing git repository");
     try {
       const { execSync } = await import("child_process");
       execSync("git init", { cwd: projectDir, stdio: "pipe" });
+
       fs.writeFileSync(
         path.join(projectDir, ".gitignore"),
         `node_modules/
@@ -169,25 +198,24 @@ dist/
 *.log
 `,
       );
-      printSuccess("Git repository initialized");
+
+      s.stop(pc.green("Git repository initialized"));
     } catch {
-      printInfo("Git initialization skipped");
+      s.stop(pc.yellow("Git initialization skipped"));
     }
   }
 
-  // Success message
-  console.log(
-    `\n${colors.accent(colors.bold("✨ Your Jen.js app is ready!"))}`,
-  );
+  outro(pc.green(pc.bold("✨ Your Jen.js app is ready!")));
 
   const nextSteps = [
-    `${colors.cyan(`cd ${projectName}`)}`,
-    options.installDeps
-      ? `${colors.cyan("npm run dev")} ${colors.dim("to start development server")}`
-      : `${colors.cyan("npm install")} then ${colors.cyan("npm run dev")}`,
+    pc.cyan(`cd ${projectName}`),
+    installDeps
+      ? pc.cyan("npm run dev") + pc.dim("  # start dev server")
+      : pc.cyan("npm install") + pc.dim("  # then npm run dev"),
   ];
 
-  printNext(nextSteps);
+  console.log("\n" + pc.bold("Next steps:"));
+  for (const step of nextSteps) console.log("  " + pc.dim("• ") + step);
 
-  console.log(`\n${colors.dim("Happy coding! 🎉")}\n`);
+  console.log("\n" + pc.dim("Happy coding! 🎉") + "\n");
 }

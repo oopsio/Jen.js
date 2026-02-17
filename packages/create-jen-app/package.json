@@ -34,6 +34,10 @@
   "homepage": "https://github.com/kessud2021/Jen.js#readme",
   "license": "GPL-3.0-only",
   "dependencies": {
+    "@clack/core": "^1.0.1",
+    "@clack/prompts": "^1.0.1",
+    "@types/prompts": "^2.4.9",
+    "picocolors": "^1.1.1",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
