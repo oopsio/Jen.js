@@ -1,6 +1,6 @@
 # Jen.js
 
-[![Production](https://github.com/oopsio/Jen.js/actions/workflows/deploy.yml/badge.svg)](https://github.com/oopsio/Jen.js/actions/workflows/deploy.yml) [![CodeQL](https://github.com/oopsio/Jen.js/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/oopsio/Jen.js/actions/workflows/github-code-scanning/codeql) ![GitHub Release](https://img.shields.io/github/v/release/oopsio/Jen.js) ![NPM Version](https://img.shields.io/npm/v/%40jenjs%2Fmaster?style=flat&logo=npm) ![GitHub License](https://img.shields.io/github/license/oopsio/Jen.js?color=green) ![NPM Version](https://img.shields.io/npm/v/%40jenjs%2Fmaster?logo=npm&logoColor=fff&labelColor=CB3837&color=CB3837)
+[![Production](https://github.com/oopsio/Jen.js/actions/workflows/deploy.yml/badge.svg)](https://github.com/oopsio/Jen.js/actions/workflows/deploy.yml) [![CodeQL](https://github.com/oopsio/Jen.js/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/oopsio/Jen.js/actions/workflows/github-code-scanning/codeql)  ![NPM Version](https://img.shields.io/npm/v/%40jenjs%2Fmaster?logo=npm&logoColor=fff&labelColor=CB3837&color=CB3837)
 ![Preact](https://img.shields.io/badge/Based%20on%20Preact-673AB8?logo=preact&logoColor=fff)
 
 
