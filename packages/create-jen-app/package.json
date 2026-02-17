@@ -1,6 +1,6 @@
 {
   "name": "create-jen-app",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Create a beautiful Jen.js application with a single command",
   "type": "module",
   "bin": {
