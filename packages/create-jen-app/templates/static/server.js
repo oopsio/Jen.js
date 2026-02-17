@@ -62,6 +62,8 @@ async function main() {
     platform: "node",
     target: "es2022",
     minify: true,
+    jsx: "automatic",
+    jsxImportSource: "preact",
     bundle: true,
     loader: { ".ts": "ts" },
     logLevel: "silent",
