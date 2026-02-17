@@ -1,0 +1,78 @@
+/* Vercel-ish (Geist style) */
+
+$bg: #000;
+$fg: #fff;
+$muted: rgba(255, 255, 255, 0.7);
+$muted2: rgba(255, 255, 255, 0.5);
+$border: rgba(255, 255, 255, 0.12);
+$card: rgba(255, 255, 255, 0.04);
+
+body {
+  background: $bg;
+  color: $fg;
+  font-family: "Geist", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  margin: 0;
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+
+  h1 {
+    font-size: 3.25rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    margin: 0;
+  }
+
+  p {
+    margin-top: 0.75rem;
+    font-size: 1.1rem;
+    color: $muted;
+    line-height: 1.6;
+  }
+
+  .card {
+    margin-top: 2rem;
+    padding: 1.75rem;
+    border-radius: 14px;
+    background: $card;
+    border: 1px solid $border;
+    backdrop-filter: blur(12px);
+
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02),
+      0 20px 50px rgba(0, 0, 0, 0.6);
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      color: $muted2;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.45rem;
+      border-radius: 8px;
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
