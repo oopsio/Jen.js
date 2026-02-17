@@ -23,7 +23,7 @@ import esbuild from "esbuild";
 
 const __filename = fileURLToPath(import.meta.url);
 const currentDir = dirname(__filename);
-const rootDir = join(currentDir, "../../../..");
+const rootDir = join(currentDir, ".");
 
 const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";
@@ -70,12 +70,12 @@ async function main() {
   const configFile = join(outdir, "jen.config.js");
   const config = (await import(pathToFileURL(configFile).href)).default;
 
-  const appPath = pathToFileURL(join(rootDir, "build/src/server/app.js")).href;
+  const appPath = pathToFileURL(join(rootDir, "lib/server/app.js")).href;
   const { createApp } = await import(appPath);
 
   // Load banner
   const bannerPath = pathToFileURL(
-    join(rootDir, "build/src/cli/banner.js"),
+    join(rootDir, "lib/cli/banner.js"),
   ).href;
   const { printBanner } = await import(bannerPath);
 
