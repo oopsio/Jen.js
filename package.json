@@ -19,7 +19,8 @@
     "dev:unix": "bash scripts/dev.sh",
     "dev:windows": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1",
     "build:unix": "bash scripts/build.sh",
-    "build:windows": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1"
+    "build:windows": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1",
+    "prepare": "husky"
   },
   "dependencies": {
     "@types/glob": "^9.0.0",
