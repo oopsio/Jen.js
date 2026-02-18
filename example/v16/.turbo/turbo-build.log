@@ -22,4 +22,3 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'B:\Jen.js\build.js' imported f
 }
 
 Node.js v24.11.0
- ELIFECYCLE  Command failed with exit code 1.
