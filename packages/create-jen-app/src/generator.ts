@@ -58,28 +58,27 @@ export function createProjectFiles(dir: string, options: ProjectOptions) {
 
   // Merge with user project name
   const packageJson = {
-    ...templatePackageJson,
-    name: options.projectName.toLowerCase().replace(/\s+/g, "-"),
-    version: "0.1.0",
-    type: "module",
-    scripts: {
-      ...templatePackageJson.scripts,
-      dev: "jen dev",
-      build: "jen build",
-      start: "jen start",
-      ...(options.typescript && { typecheck: "tsc --noEmit" }),
-    },
-    dependencies: {
-      ...templatePackageJson.dependencies,
-      "@jenjs/master": "^1.2.5",
-    },
-    devDependencies: {
-      ...templatePackageJson.devDependencies,
-      ...(options.typescript && {
-        "@types/node": "^22.10.0",
-        typescript: "^5.7.2",
-      }),
-    },
+  name: options.projectName.toLowerCase().replace(/\s+/g, "-"),
+  version: "1.0.0",
+  type: "module",
+  scripts: {
+    dev: "node server.js dev",
+    build: "node build.js",
+  },
+  dependencies: {
+    "@jenjs/master": "^1.2.5",
+    esbuild: "^0.25.0",
+    preact: "^10.25.4",
+    "preact-render-to-string": "^6.5.13",
+    sirv: "^3.0.1",
+  },
+  devDependencies: {
+    ...(options.typescript && {
+      "@types/node": "^22.10.0",
+      typescript: "^5.7.2",
+    }),
+  },
+
   };
 
   fs.writeFileSync(

@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
-    "outDir": "build",
+    "outDir": "dist",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
