@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use Jen.js in your research or project, please cite it using this metadata."
+title: "Jen.js"
+type: software
+abstract: "Jen.js is a Node.js framework focused on developer productivity, featuring MVC patterns, built-in tooling, and modern project scaffolding."
+authors:
+  - name: "oopsio"
+repository-code: "https://github.com/oopsio/jenjs"
+url: "https://jenjs.dev"
+license: MIT
+keywords:
+  - nodejs
+  - framework
+  - mvc
+  - backend
+  - web
+  - typescript
+  - javascript
+  - cli
+  - prisma
+  - sqlite
+  - fastify
+version: "0.1.0"
+date-released: "2026-02-18"
+preferred-citation:
+  type: software
+  title: "Jen.js"
+  authors:
+    - name: "oopsio"
+  year: 2026
+  url: "https://jenjs.dev"
+  repository-code: "https://github.com/oopsio/jenjs"
+  license: MIT
