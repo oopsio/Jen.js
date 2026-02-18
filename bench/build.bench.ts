@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,13 +21,13 @@
  * Measures SSG build, bundling, and asset optimization performance
  */
 
-import { describe, bench, beforeAll, afterAll } from 'vitest';
-import { join } from 'path';
-import { rm, mkdir } from 'fs/promises';
+import { describe, bench, beforeAll, afterAll } from "vitest";
+import { join } from "path";
+import { rm, mkdir } from "fs/promises";
 
-const benchDir = join(process.cwd(), '.bench-tmp');
+const benchDir = join(process.cwd(), ".bench-tmp");
 
-describe('Build Performance', () => {
+describe("Build Performance", () => {
   beforeAll(async () => {
     await mkdir(benchDir, { recursive: true });
   });
@@ -36,14 +36,14 @@ describe('Build Performance', () => {
     await rm(benchDir, { recursive: true, force: true });
   });
 
-  bench('SSG Build - Simple Site', async () => {
+  bench("SSG Build - Simple Site", async () => {
     // Simulated SSG build
     const pages = Array(100)
       .fill(null)
       .map((_, i) => ({
         path: `/page-${i}`,
         title: `Page ${i}`,
-        content: 'Lorem ipsum dolor sit amet'.repeat(10),
+        content: "Lorem ipsum dolor sit amet".repeat(10),
       }));
 
     const built = pages.map((page) => ({
@@ -54,27 +54,27 @@ describe('Build Performance', () => {
     return built.length;
   });
 
-  bench('SSG Build - Complex Routes', async () => {
+  bench("SSG Build - Complex Routes", async () => {
     // Simulated complex routing
     const routes = [
-      '/users/:id',
-      '/posts/:id/comments/:cid',
-      '/api/[...rest]',
-      '/dashboard/[slug]/[section]',
+      "/users/:id",
+      "/posts/:id/comments/:cid",
+      "/api/[...rest]",
+      "/dashboard/[slug]/[section]",
     ];
 
     const buildRoutes = routes.flatMap((route) =>
       Array(50)
         .fill(null)
-        .map((_, i) => route.replace(':id', `${i}`))
+        .map((_, i) => route.replace(":id", `${i}`)),
     );
 
     return buildRoutes.length;
   });
 
-  bench('Asset Hashing - 1000 Files', async () => {
+  bench("Asset Hashing - 1000 Files", async () => {
     // Simulated asset hashing
-    const crypto = require('crypto');
+    const crypto = require("crypto");
     const files = Array(1000)
       .fill(null)
       .map((_, i) => ({
@@ -85,12 +85,12 @@ describe('Build Performance', () => {
     return files
       .map((file) => ({
         ...file,
-        hash: crypto.createHash('sha256').update(file.content).digest('hex'),
+        hash: crypto.createHash("sha256").update(file.content).digest("hex"),
       }))
       .filter((f) => f.hash).length;
   });
 
-  bench('CSS Minification - Large Stylesheet', async () => {
+  bench("CSS Minification - Large Stylesheet", async () => {
     const css = `
       body { margin: 0; padding: 0; }
       .container { max-width: 1200px; margin: 0 auto; }
@@ -100,15 +100,15 @@ describe('Build Performance', () => {
 
     // Simulated minification
     const minified = css
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/\n/g, '')
-      .replace(/\s+/g, ' ')
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/\n/g, "")
+      .replace(/\s+/g, " ")
       .trim();
 
     return minified.length;
   });
 
-  bench('Image Optimization - 100 Images', async () => {
+  bench("Image Optimization - 100 Images", async () => {
     // Simulated image optimization
     const images = Array(100)
       .fill(null)
@@ -126,15 +126,15 @@ describe('Build Performance', () => {
       .reduce((sum, img) => sum + (img.size - img.compressed), 0);
   });
 
-  bench('Code Splitting - Entry Point Analysis', async () => {
+  bench("Code Splitting - Entry Point Analysis", async () => {
     // Simulated code splitting
     const modules = {
-      'src/index.ts': ['src/components/Button.tsx', 'src/hooks/useAuth.ts'],
-      'src/pages/dashboard.tsx': [
-        'src/components/Chart.tsx',
-        'src/lib/analytics.ts',
+      "src/index.ts": ["src/components/Button.tsx", "src/hooks/useAuth.ts"],
+      "src/pages/dashboard.tsx": [
+        "src/components/Chart.tsx",
+        "src/lib/analytics.ts",
       ],
-      'src/pages/admin.tsx': ['src/components/AdminPanel.tsx'],
+      "src/pages/admin.tsx": ["src/components/AdminPanel.tsx"],
     };
 
     const chunks = Object.entries(modules).map(([entry, deps]) => ({
@@ -146,20 +146,20 @@ describe('Build Performance', () => {
     return chunks.reduce((sum, chunk) => sum + chunk.size, 0);
   });
 
-  bench('Incremental Build - Changed File', async () => {
+  bench("Incremental Build - Changed File", async () => {
     // Simulated incremental build
     const allFiles = Array(500).fill(null);
     const changedFiles = Array(1).fill(null);
 
     // Only rebuild changed + dependents
     const filesToRebuild = allFiles.filter(
-      (_, i) => i < changedFiles.length || Math.random() < 0.1
+      (_, i) => i < changedFiles.length || Math.random() < 0.1,
     );
 
     return filesToRebuild.length;
   });
 
-  bench('Source Map Generation', async () => {
+  bench("Source Map Generation", async () => {
     // Simulated source map generation
     const code = `
       function fibonacci(n) {
@@ -168,37 +168,37 @@ describe('Build Performance', () => {
       }
     `.repeat(50);
 
-    const lines = code.split('\n');
+    const lines = code.split("\n");
     const mappings = lines.map((line, i) => ({
       generated: { line: i, column: 0 },
-      source: 'source.ts',
+      source: "source.ts",
       original: { line: i, column: 0 },
     }));
 
     return JSON.stringify(mappings).length;
   });
 
-  bench('Bundle Analysis - Dependency Graph', async () => {
+  bench("Bundle Analysis - Dependency Graph", async () => {
     // Simulated dependency graph analysis
     const deps = {
       react: 127043,
-      'react-dom': 244053,
+      "react-dom": 244053,
       preact: 32300,
-      'preact-render-to-string': 8900,
-      'styled-jsx': 15234,
+      "preact-render-to-string": 8900,
+      "styled-jsx": 15234,
     };
 
     const graph = Object.entries(deps).map(([name, size]) => ({
       name,
       size,
       gzip: Math.floor(size * 0.35),
-      brotli: Math.floor(size * 0.30),
+      brotli: Math.floor(size * 0.3),
     }));
 
     return graph.reduce((sum, dep) => sum + dep.size, 0);
   });
 
-  bench('Build Metadata Serialization', async () => {
+  bench("Build Metadata Serialization", async () => {
     // Simulated build metadata
     const metadata = {
       buildTime: Date.now(),

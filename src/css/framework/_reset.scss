@@ -1,9 +1,14 @@
 /* src/css/framework/_reset.scss */
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 
 body {
   margin: 0;
@@ -15,10 +20,28 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-img, svg, video, canvas { max-width: 100%; height: auto; }
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
 
-button, input, textarea, select { font: inherit; color: inherit; }
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
 
-a { color: inherit; text-decoration: none; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-pre, code { font-family: $font-mono; }
+pre,
+code {
+  font-family: $font-mono;
+}

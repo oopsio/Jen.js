@@ -1,6 +1,7 @@
 ﻿# AGENTS.md - Jen.js Framework Codebase
 
 ## Build & Test Commands
+
 - `npm run dev` - Start dev server (runs `node server.ts dev`)
 - `npm run start` - Start production server (runs `node server.ts start`)
 - `npm run build` - Build static site (runs `node build.js`, output to `dist/`)
@@ -13,9 +14,11 @@
 - No test suite configured; linting available via `eslint.config.ts`
 
 ## Architecture
+
 **Jen.js** is a TypeScript-first framework for building static and server-rendered applications with Preact.
 
 **Core modules (src/):**
+
 - `src/build/` - SSG pipeline, asset hashing, minification, islands hydration
 - `src/server/` - HTTP server app, runtime serving, API routes
 - `src/core/` - Config, routing, paths, types, middleware hooks
@@ -33,12 +36,14 @@
 **Key entry points:** `server.ts` (HTTP), `build.ts` (SSG), `bundle.js` (bundling), `jen.config.ts` (site config), `src/index.ts` (framework exports)
 
 **Repository layout:**
+
 - `packages/` - Monorepo packages (`create-jen-app`, `jenjs`, `jenjs-ghpackages`)
 - `jenpack/` and `preactsc/` - Packaging/build tooling and examples
 - `native/` - Rust/C++/stylepack native implementations
 - `example/` and `website/` - Example versions and website assets
 
 ## Code Style
+
 - **TypeScript** strict mode (ES2022 target/module, moduleResolution Bundler)
 - **Preact** + JSX (via `preact` JSX runtime)
 - **Path aliases:** `@src/*` maps to `src/*`, use for cross-module imports

@@ -4,13 +4,13 @@
   height: 10px;
   border-radius: 999px;
   border: 1px solid $border;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   overflow: hidden;
 }
 
 .progress-bar {
   height: 100%;
   width: var(--value, 0%);
-  background: rgba(124,58,237,.95);
-  transition: width .18s ease;
+  background: rgba(124, 58, 237, 0.95);
+  transition: width 0.18s ease;
 }

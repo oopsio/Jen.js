@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,19 +21,19 @@
  * Measures config loading, initialization, and startup time
  */
 
-import { describe, bench } from 'vitest';
+import { describe, bench } from "vitest";
 
-describe('Configuration & Startup Performance', () => {
-  bench('Parse JSON Config - 1000 Lines', () => {
+describe("Configuration & Startup Performance", () => {
+  bench("Parse JSON Config - 1000 Lines", () => {
     const config = {
-      name: 'jen.js',
-      version: '1.0.0',
+      name: "jen.js",
+      version: "1.0.0",
       routes: Array(100)
         .fill(null)
         .map((_, i) => ({
           path: `/route-${i}`,
           component: `Component${i}`,
-          layout: 'default',
+          layout: "default",
         })),
       middlewares: Array(50)
         .fill(null)
@@ -47,7 +47,7 @@ describe('Configuration & Startup Performance', () => {
     return JSON.stringify(config).length;
   });
 
-  bench('Load Environment Variables - 100 Vars', () => {
+  bench("Load Environment Variables - 100 Vars", () => {
     const envVars: Record<string, string> = {};
 
     for (let i = 0; i < 100; i++) {
@@ -57,16 +57,16 @@ describe('Configuration & Startup Performance', () => {
     return Object.keys(envVars).length;
   });
 
-  bench('Validate Config Schema - 50 Routes', () => {
+  bench("Validate Config Schema - 50 Routes", () => {
     const config = {
       routes: Array(50)
         .fill(null)
         .map((_, i) => ({
           path: `/route-${i}`,
           component: `Component${i}`,
-          layout: 'default',
+          layout: "default",
           protected: i % 3 === 0,
-          roles: ['admin'],
+          roles: ["admin"],
         })),
     };
 
@@ -80,7 +80,7 @@ describe('Configuration & Startup Performance', () => {
     return validCount;
   });
 
-  bench('Initialize Plugin System - 20 Plugins', () => {
+  bench("Initialize Plugin System - 20 Plugins", () => {
     const plugins = Array(20)
       .fill(null)
       .map((_, i) => ({
@@ -98,7 +98,7 @@ describe('Configuration & Startup Performance', () => {
     return initialized;
   });
 
-  bench('Load Middleware Stack - 15 Middlewares', () => {
+  bench("Load Middleware Stack - 15 Middlewares", () => {
     const middlewares = Array(15)
       .fill(null)
       .map((_, i) => ({
@@ -113,7 +113,7 @@ describe('Configuration & Startup Performance', () => {
     return sorted.length;
   });
 
-  bench('Build Route Map - 500 Routes', () => {
+  bench("Build Route Map - 500 Routes", () => {
     const routes = Array(500)
       .fill(null)
       .map((_, i) => ({
@@ -126,7 +126,7 @@ describe('Configuration & Startup Performance', () => {
     return routeMap.size;
   });
 
-  bench('Compile Asset Manifest - 1000 Assets', () => {
+  bench("Compile Asset Manifest - 1000 Assets", () => {
     const assets = Array(1000)
       .fill(null)
       .map((_, i) => ({
@@ -136,19 +136,19 @@ describe('Configuration & Startup Performance', () => {
       }));
 
     const manifest = Object.fromEntries(
-      assets.map((asset) => [asset.path, asset.hash])
+      assets.map((asset) => [asset.path, asset.hash]),
     );
 
     return Object.keys(manifest).length;
   });
 
-  bench('Initialize CSS Pipeline', () => {
+  bench("Initialize CSS Pipeline", () => {
     const cssFiles = [
-      { path: 'src/styles/global.css', content: 'body { margin: 0; }' },
-      { path: 'src/styles/components.css', content: '.btn { padding: 10px; }' },
+      { path: "src/styles/global.css", content: "body { margin: 0; }" },
+      { path: "src/styles/components.css", content: ".btn { padding: 10px; }" },
       {
-        path: 'src/styles/themes.css',
-        content: ':root { --primary: blue; }',
+        path: "src/styles/themes.css",
+        content: ":root { --primary: blue; }",
       },
     ];
 
@@ -160,23 +160,23 @@ describe('Configuration & Startup Performance', () => {
     return totalSize;
   });
 
-  bench('Initialize JavaScript Bundler', () => {
+  bench("Initialize JavaScript Bundler", () => {
     const entryPoints = [
-      'src/index.ts',
-      'src/pages/admin.tsx',
-      'src/pages/user.tsx',
+      "src/index.ts",
+      "src/pages/admin.tsx",
+      "src/pages/user.tsx",
     ];
 
     return entryPoints.length;
   });
 
-  bench('Load TypeScript Configuration', () => {
+  bench("Load TypeScript Configuration", () => {
     const tsConfig = {
       compilerOptions: {
-        target: 'ES2022',
-        module: 'ESNext',
-        lib: ['ES2022', 'DOM', 'DOM.Iterable'],
-        jsx: 'react-jsx',
+        target: "ES2022",
+        module: "ESNext",
+        lib: ["ES2022", "DOM", "DOM.Iterable"],
+        jsx: "react-jsx",
         strict: true,
         esModuleInterop: true,
         skipLibCheck: true,
@@ -187,24 +187,24 @@ describe('Configuration & Startup Performance', () => {
     return JSON.stringify(tsConfig).length;
   });
 
-  bench('Parse ESLint Configuration', () => {
+  bench("Parse ESLint Configuration", () => {
     const eslintConfig = {
-      extends: ['eslint:recommended', 'plugin:react/recommended'],
+      extends: ["eslint:recommended", "plugin:react/recommended"],
       rules: Array(50)
         .fill(null)
-        .map((_, i) => [`rule-${i}`, 'error'])
+        .map((_, i) => [`rule-${i}`, "error"])
         .reduce((acc, [rule, level]) => ({ ...acc, [rule]: level }), {}),
     };
 
     return Object.keys(eslintConfig.rules).length;
   });
 
-  bench('Initialize Database Connection Pool - 10 Connections', () => {
+  bench("Initialize Database Connection Pool - 10 Connections", () => {
     const connections = Array(10)
       .fill(null)
       .map((_, i) => ({
         id: i,
-        host: 'localhost',
+        host: "localhost",
         port: 5432,
         connected: true,
       }));
@@ -212,17 +212,17 @@ describe('Configuration & Startup Performance', () => {
     return connections.filter((c) => c.connected).length;
   });
 
-  bench('Load Cache Configuration', () => {
+  bench("Load Cache Configuration", () => {
     const cacheConfig = {
-      default: 'redis',
+      default: "redis",
       stores: {
         memory: {
-          driver: 'memory',
+          driver: "memory",
           max: 1000,
         },
         redis: {
-          driver: 'redis',
-          url: 'redis://localhost:6379',
+          driver: "redis",
+          url: "redis://localhost:6379",
           ttl: 3600,
         },
       },
@@ -231,21 +231,21 @@ describe('Configuration & Startup Performance', () => {
     return Object.keys(cacheConfig.stores).length;
   });
 
-  bench('Initialize Logging System', () => {
+  bench("Initialize Logging System", () => {
     const loggers = [
-      { name: 'app', level: 'info' },
-      { name: 'database', level: 'debug' },
-      { name: 'request', level: 'info' },
-      { name: 'error', level: 'error' },
+      { name: "app", level: "info" },
+      { name: "database", level: "debug" },
+      { name: "request", level: "info" },
+      { name: "error", level: "error" },
     ];
 
     return loggers.length;
   });
 
-  bench('Load Security Configuration', () => {
+  bench("Load Security Configuration", () => {
     const securityConfig = {
       cors: {
-        origins: ['http://localhost:3000', 'https://example.com'],
+        origins: ["http://localhost:3000", "https://example.com"],
         credentials: true,
       },
       rateLimit: {
@@ -255,14 +255,14 @@ describe('Configuration & Startup Performance', () => {
       },
       csrf: {
         enabled: true,
-        headerName: 'x-csrf-token',
+        headerName: "x-csrf-token",
       },
     };
 
     return JSON.stringify(securityConfig).length;
   });
 
-  bench('Merge Config Objects - 5 Levels Deep', () => {
+  bench("Merge Config Objects - 5 Levels Deep", () => {
     const config1 = { a: 1, b: { c: 2 } };
     const config2 = { b: { d: 3 }, e: 4 };
     const config3 = { a: 10, f: { g: 5 } };
@@ -277,11 +277,11 @@ describe('Configuration & Startup Performance', () => {
     return Object.keys(merged).length;
   });
 
-  bench('Feature Flag Resolution - 100 Flags', () => {
+  bench("Feature Flag Resolution - 100 Flags", () => {
     const flags = Object.fromEntries(
       Array(100)
         .fill(null)
-        .map((_, i) => [`FEATURE_${i}`, i % 2 === 0])
+        .map((_, i) => [`FEATURE_${i}`, i % 2 === 0]),
     );
 
     let enabledCount = 0;
@@ -292,21 +292,21 @@ describe('Configuration & Startup Performance', () => {
     return enabledCount;
   });
 
-  bench('Load Runtime Environment Detection', () => {
+  bench("Load Runtime Environment Detection", () => {
     const env = {
-      nodeEnv: 'production',
+      nodeEnv: "production",
       isDev: false,
       isProd: true,
       isTest: false,
-      platform: 'linux',
-      arch: 'x64',
-      nodeVersion: '18.0.0',
+      platform: "linux",
+      arch: "x64",
+      nodeVersion: "18.0.0",
     };
 
     return Object.keys(env).length;
   });
 
-  bench('Initialize Plugin Hooks - 10 Hooks with 5 Plugins Each', () => {
+  bench("Initialize Plugin Hooks - 10 Hooks with 5 Plugins Each", () => {
     const hooks = Array(10)
       .fill(null)
       .map((_, hookIdx) => ({
@@ -329,14 +329,14 @@ describe('Configuration & Startup Performance', () => {
     return handlerCount;
   });
 
-  bench('Load Build Output Configuration', () => {
+  bench("Load Build Output Configuration", () => {
     const buildConfig = {
-      outDir: 'dist',
-      publicPath: '/static/',
+      outDir: "dist",
+      publicPath: "/static/",
       assets: {
-        js: '[name].[hash].js',
-        css: '[name].[hash].css',
-        image: 'images/[name].[hash][ext]',
+        js: "[name].[hash].js",
+        css: "[name].[hash].css",
+        image: "images/[name].[hash][ext]",
       },
       minify: {
         enabled: true,
@@ -348,11 +348,11 @@ describe('Configuration & Startup Performance', () => {
     return JSON.stringify(buildConfig).length;
   });
 
-  bench('Validate Dependencies - 100 Packages', () => {
+  bench("Validate Dependencies - 100 Packages", () => {
     const dependencies = Object.fromEntries(
       Array(100)
         .fill(null)
-        .map((_, i) => [`package-${i}`, '1.0.0'])
+        .map((_, i) => [`package-${i}`, "1.0.0"]),
     );
 
     return Object.keys(dependencies).length;

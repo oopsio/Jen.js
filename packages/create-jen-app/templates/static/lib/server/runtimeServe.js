@@ -21,11 +21,11 @@ import { existsSync } from "node:fs";
 import { basename, dirname } from "node:path";
 const cache = new Map();
 function etagOf(s) {
-    return createHash("sha1").update(s).digest("hex");
+  return createHash("sha1").update(s).digest("hex");
 }
 export function runtimeHydrateModule() {
-    // Browser-safe runtime (ESM) using CDN preact (fast + zero bundler)
-    return `
+  // Browser-safe runtime (ESM) using CDN preact (fast + zero bundler)
+  return `
 import { hydrate } from "https://esm.sh/preact@10.25.4";
 import { h } from "https://esm.sh/preact@10.25.4";
 
@@ -51,75 +51,75 @@ export async function hydrateClient(entryPath) {
 `;
 }
 export function invalidateCache(filePath) {
-    cache.delete(filePath);
+  cache.delete(filePath);
 }
 export function buildHydrationModule(routeIdOrPath) {
-    // routeIdOrPath is now a route ID like "route_index" or "route_blog_slug"
-    // or a fallback filePath for backwards compatibility
-    let filePath = routeIdOrPath;
-    // For now, keep simple direct file path support
-    // In production, we'd resolve routeId -> filePath via config
-    if (!existsSync(filePath)) {
-        return `export default function Page(){ return null }`;
+  // routeIdOrPath is now a route ID like "route_index" or "route_blog_slug"
+  // or a fallback filePath for backwards compatibility
+  let filePath = routeIdOrPath;
+  // For now, keep simple direct file path support
+  // In production, we'd resolve routeId -> filePath via config
+  if (!existsSync(filePath)) {
+    return `export default function Page(){ return null }`;
+  }
+  const key = filePath;
+  // Simple dev cache: check if file content changed?
+  // Actually, for dev speed, we trust explicit invalidation or just rebuild on request.
+  // Since buildSync is fast for single files, let's just rebuild if not in cache.
+  // The cache is populated. If invalidation happens, it's removed.
+  if (cache.has(key)) {
+    return cache.get(key).js;
+  }
+  // Use a proxy entry to allow tree-shaking of server-only exports (like loader)
+  const fileName = basename(filePath);
+  const dir = dirname(filePath);
+  const proxyContent = `export { default } from "./${fileName}";`;
+  try {
+    const jsOutput = buildSync({
+      stdin: {
+        contents: proxyContent,
+        resolveDir: dir,
+        sourcefile: "hydration-proxy.tsx",
+        loader: "tsx",
+      },
+      format: "esm",
+      platform: "browser",
+      bundle: true,
+      write: false,
+      sourcemap: "inline",
+      jsx: "automatic",
+      jsxImportSource: "preact",
+      define: {
+        "process.env.NODE_ENV": JSON.stringify("development"),
+      },
+      external: [
+        "preact",
+        "preact/hooks",
+        "preact/jsx-runtime",
+        "preact-render-to-string",
+      ],
+      // Plugins not supported in buildSync, only in build()
+      // plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+    }).outputFiles?.[0]?.text;
+    if (!jsOutput) {
+      console.error("[HYDRATION] Failed to build module for:", filePath);
+      return `export default function Page(){ return null }`;
     }
-    const key = filePath;
-    // Simple dev cache: check if file content changed?
-    // Actually, for dev speed, we trust explicit invalidation or just rebuild on request.
-    // Since buildSync is fast for single files, let's just rebuild if not in cache.
-    // The cache is populated. If invalidation happens, it's removed.
-    if (cache.has(key)) {
-        return cache.get(key).js;
-    }
-    // Use a proxy entry to allow tree-shaking of server-only exports (like loader)
-    const fileName = basename(filePath);
-    const dir = dirname(filePath);
-    const proxyContent = `export { default } from "./${fileName}";`;
-    try {
-        const jsOutput = buildSync({
-            stdin: {
-                contents: proxyContent,
-                resolveDir: dir,
-                sourcefile: "hydration-proxy.tsx",
-                loader: "tsx",
-            },
-            format: "esm",
-            platform: "browser",
-            bundle: true,
-            write: false,
-            sourcemap: "inline",
-            jsx: "automatic",
-            jsxImportSource: "preact",
-            define: {
-                "process.env.NODE_ENV": JSON.stringify("development"),
-            },
-            external: [
-                "preact",
-                "preact/hooks",
-                "preact/jsx-runtime",
-                "preact-render-to-string",
-            ],
-            // Plugins not supported in buildSync, only in build()
-            // plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-        }).outputFiles?.[0]?.text;
-        if (!jsOutput) {
-            console.error("[HYDRATION] Failed to build module for:", filePath);
-            return `export default function Page(){ return null }`;
-        }
-        const out = `
+    const out =
+      `
 import { h } from "https://esm.sh/preact@10.25.4";
 import { Fragment } from "https://esm.sh/preact@10.25.4";
 import { jsx, jsxs } from "https://esm.sh/preact@10.25.4/jsx-runtime";
 ` + jsOutput;
-        const etag = etagOf(out);
-        cache.set(key, { js: out, etag });
-        return out;
-    }
-    catch (err) {
-        console.error("[HYDRATION] Build error for", filePath, ":", err);
-        return `export default function Page(){ return null }`;
-    }
+    const etag = etagOf(out);
+    cache.set(key, { js: out, etag });
+    return out;
+  } catch (err) {
+    console.error("[HYDRATION] Build error for", filePath, ":", err);
+    return `export default function Page(){ return null }`;
+  }
 }
 export function getHydrationEtag(filePath) {
-    const v = cache.get(filePath);
-    return v?.etag ?? null;
+  const v = cache.get(filePath);
+  return v?.etag ?? null;
 }

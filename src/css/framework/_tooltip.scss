@@ -20,7 +20,9 @@
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .12s ease;
+  transition: opacity 0.12s ease;
 }
 
-.tooltip:hover::after { opacity: 1; }
+.tooltip:hover::after {
+  opacity: 1;
+}

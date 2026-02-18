@@ -46,13 +46,13 @@ async function minifyHTMLFile(filePath) {
   // Remove __FRAMEWORK_DATA__ JSON script if present
   html = html.replace(
     /<script id="__FRAMEWORK_DATA__" type="application\/json">[\s\S]*?<\/script>/g,
-    ""
+    "",
   );
 
   // Remove any <script type="module"> that contains hydrateClient and initializeIslands
   html = html.replace(
     /<script\s+type=["']module["'][^>]*>[\s\S]*?hydrateClient\([\s\S]*?\)[\s\S]*?initializeIslands\(\)[\s\S]*?<\/script>/g,
-    ""
+    "",
   );
 
   // Minify remaining HTML
@@ -90,7 +90,9 @@ async function main() {
   const configFile = join(outdir, "jen.config.js");
   const config = (await import(pathToFileURL(configFile).href)).default;
 
-  const buildPath = pathToFileURL(join(rootDir, "build/src/build/build.js")).href;
+  const buildPath = pathToFileURL(
+    join(rootDir, "build/src/build/build.js"),
+  ).href;
   const { buildSite } = await import(buildPath);
 
   // Build the site
@@ -104,7 +106,9 @@ async function main() {
     console.log(`✅ Minified & cleaned: ${filePath}`);
   }
 
-  console.log("✅ Site built, scripts removed, and HTML minified successfully!");
+  console.log(
+    "✅ Site built, scripts removed, and HTML minified successfully!",
+  );
 }
 
 main().catch(console.error);

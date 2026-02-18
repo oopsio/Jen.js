@@ -11,13 +11,13 @@ JenPress is a modern documentation SSG with VitePress-like features built on Jen
 
 JenPress supports GitHub-flavored markdown tables:
 
-| Feature | Support | Status |
-|---------|---------|--------|
-| Markdown Tables | ✅ | Fully Supported |
-| Callouts/Admonitions | ✅ | Fully Supported |
-| Code Highlighting | ✅ | With Shiki |
-| Dark Mode | ✅ | Built-in |
-| Search | ✅ | In Development |
+| Feature              | Support | Status          |
+| -------------------- | ------- | --------------- |
+| Markdown Tables      | ✅      | Fully Supported |
+| Callouts/Admonitions | ✅      | Fully Supported |
+| Code Highlighting    | ✅      | With Shiki      |
+| Dark Mode            | ✅      | Built-in        |
+| Search               | ✅      | In Development  |
 
 ## Callouts & Admonitions
 
@@ -48,7 +48,7 @@ function hello(name) {
   console.log(`Hello, ${name}!`);
 }
 
-hello('JenPress');
+hello("JenPress");
 ```
 
 ```typescript
@@ -59,7 +59,7 @@ interface Config {
 }
 
 const config: Config = {
-  title: 'My Docs',
+  title: "My Docs",
 };
 ```
 
@@ -82,18 +82,20 @@ All heading levels (h1-h6) are supported and automatically generate outline item
 ### Lists
 
 Unordered lists:
+
 - Item one
 - Item two
 - Item three
 
 Ordered lists:
+
 1. First item
 2. Second item
 3. Third item
 
 ### Text Formatting
 
-You can use **bold**, *italic*, and ***bold italic*** text.
+You can use **bold**, _italic_, and **_bold italic_** text.
 
 You can also use `inline code` within sentences.
 
@@ -134,6 +136,7 @@ JenPress includes built-in dark mode support. Click the moon/sun icon in the top
 ## Responsive Design
 
 The layout is fully responsive:
+
 - On desktop: Sidebar + Content + Outline
 - On tablet: Collapsible sidebar + Content + Collapsed outline
 - On mobile: Full-width content with hamburger menu for navigation

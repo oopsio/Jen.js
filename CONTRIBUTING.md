@@ -7,6 +7,7 @@ Please read this guide before opening a pull request.
 ## Ways to Contribute
 
 You can help by:
+
 - Fixing bugs
 - Improving documentation
 - Adding examples
@@ -37,6 +38,7 @@ If you are unsure about an approach, open an issue or discussion first.
 ## Pull Requests
 
 When opening a pull request:
+
 - Clearly describe what the change does
 - Reference any related issues
 - Explain why the change is needed
@@ -48,6 +50,7 @@ Draft pull requests are welcome if you want early feedback.
 
 Documentation improvements are highly appreciated.
 This includes:
+
 - Fixing typos or unclear wording
 - Adding examples
 - Clarifying APIs or behavior

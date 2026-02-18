@@ -12,12 +12,12 @@ JenPress provides a simple API for configuration and theming.
 Configure your JenPress site:
 
 ```typescript
-import { defineConfig } from '@jenjs/jenpress';
+import { defineConfig } from "@jenjs/jenpress";
 
 export default defineConfig({
-  title: 'My Docs',
-  description: 'Documentation site',
-  base: '/',
+  title: "My Docs",
+  description: "Documentation site",
+  base: "/",
 });
 ```
 

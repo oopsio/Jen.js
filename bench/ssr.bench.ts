@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@
  * Measures SSR, hydration, and streaming performance
  */
 
-import { describe, bench } from 'vitest';
+import { describe, bench } from "vitest";
 
 // Simple Preact-like component for benchmarking
 interface VNode {
@@ -33,8 +33,8 @@ interface VNode {
 class Component {
   render(props: Record<string, any>): VNode {
     return {
-      type: 'div',
-      props: { class: 'component' },
+      type: "div",
+      props: { class: "component" },
       children: [],
     };
   }
@@ -49,84 +49,88 @@ function createVNode(
 }
 
 function renderToString(vnode: VNode): string {
-  if (typeof vnode.type === 'string') {
-    const children = (vnode.children || []).map(renderToString).join('');
+  if (typeof vnode.type === "string") {
+    const children = (vnode.children || []).map(renderToString).join("");
     const propsStr = Object.entries(vnode.props || {})
       .map(([k, v]) => `${k}="${v}"`)
-      .join(' ');
+      .join(" ");
     return `<${vnode.type} ${propsStr}>${children}</${vnode.type}>`;
   }
-  return '';
+  return "";
 }
 
-describe('Server-Side Rendering (SSR)', () => {
-  bench('Render Simple Component', () => {
-    const vnode = createVNode('div', { class: 'app' }, createVNode('h1', {}, createVNode('span', {}, createVNode('text', {}))));
+describe("Server-Side Rendering (SSR)", () => {
+  bench("Render Simple Component", () => {
+    const vnode = createVNode(
+      "div",
+      { class: "app" },
+      createVNode("h1", {}, createVNode("span", {}, createVNode("text", {}))),
+    );
 
     return renderToString(vnode).length;
   });
 
-  bench('Render Complex Component Tree - 100 Nodes', () => {
-    let tree = createVNode('div', { id: 'root' });
+  bench("Render Complex Component Tree - 100 Nodes", () => {
+    let tree = createVNode("div", { id: "root" });
 
     for (let i = 0; i < 100; i++) {
-      tree = createVNode('div', { key: i }, tree);
+      tree = createVNode("div", { key: i }, tree);
     }
 
     return renderToString(tree).length;
   });
 
-  bench('Render List - 1000 Items', () => {
+  bench("Render List - 1000 Items", () => {
     const items = Array(1000)
       .fill(null)
       .map((_, i) =>
-        createVNode('li', { key: i }, createVNode('span', { class: 'item' }))
+        createVNode("li", { key: i }, createVNode("span", { class: "item" })),
       );
 
-    const list = createVNode('ul', {}, ...items);
+    const list = createVNode("ul", {}, ...items);
     return renderToString(list).length;
   });
 
-  bench('Render with Props - 500 Components', () => {
+  bench("Render with Props - 500 Components", () => {
     const components = Array(500)
       .fill(null)
       .map((_, i) =>
-        createVNode('Component', {
+        createVNode("Component", {
           id: i,
           name: `Component ${i}`,
           active: i % 2 === 0,
           data: { value: Math.random() },
-        })
+        }),
       );
 
-    const html = components.map((c) => renderToString(c)).join('');
+    const html = components.map((c) => renderToString(c)).join("");
     return html.length;
   });
 
-  bench('Render Conditional Content', () => {
+  bench("Render Conditional Content", () => {
     const items = Array(100)
       .fill(null)
       .map((_, i) => {
         const shouldShow = i % 2 === 0;
-        return createVNode('div', { hidden: !shouldShow });
+        return createVNode("div", { hidden: !shouldShow });
       });
 
     return items.filter((item) => !item.props.hidden).length;
   });
 
-  bench('HTML Escaping - String Content', () => {
+  bench("HTML Escaping - String Content", () => {
     const dangerousContent = '<script>alert("xss")</script>';
     const escaped = dangerousContent
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
 
     return escaped.length;
   });
 
-  bench('Hydration Markers - 1000 Components', () => {
+  bench("Hydration Markers - 1000 Components", () => {
     const markers = Array(1000)
       .fill(null)
       .map((_, i) => ({
@@ -138,9 +142,9 @@ describe('Server-Side Rendering (SSR)', () => {
     return JSON.stringify(markers).length;
   });
 
-  bench('Streaming Response - Chunk Generation', () => {
+  bench("Streaming Response - Chunk Generation", () => {
     const chunkSize = 8192;
-    const html = '<html>'.concat('div'.repeat(1000));
+    const html = "<html>".concat("div".repeat(1000));
     const chunks = [];
 
     for (let i = 0; i < html.length; i += chunkSize) {
@@ -150,7 +154,7 @@ describe('Server-Side Rendering (SSR)', () => {
     return chunks.length;
   });
 
-  bench('Response Compression - HTML Content', () => {
+  bench("Response Compression - HTML Content", () => {
     const html = `
       <!DOCTYPE html>
       <html>
@@ -171,19 +175,19 @@ describe('Server-Side Rendering (SSR)', () => {
     return compressed;
   });
 
-  bench('Inline Styles vs CSS Classes - 500 Elements', () => {
+  bench("Inline Styles vs CSS Classes - 500 Elements", () => {
     const inlineStyle = Array(500)
       .fill(null)
       .map(
         (_, i) =>
-          `<div style="color: red; padding: 10px; margin: 5px;">${i}</div>`
+          `<div style="color: red; padding: 10px; margin: 5px;">${i}</div>`,
       )
-      .join('');
+      .join("");
 
     return inlineStyle.length;
   });
 
-  bench('Script Injection - Hydration Data', () => {
+  bench("Script Injection - Hydration Data", () => {
     const hydrationData = {
       __PREACT_STATE__: {
         components: Array(100)
@@ -199,7 +203,7 @@ describe('Server-Side Rendering (SSR)', () => {
     return scriptTag.length;
   });
 
-  bench('Meta Tags Generation', () => {
+  bench("Meta Tags Generation", () => {
     const metaTags = [
       '<meta charset="utf-8">',
       '<meta name="viewport" content="width=device-width, initial-scale=1">',
@@ -211,45 +215,45 @@ describe('Server-Side Rendering (SSR)', () => {
       '<link rel="stylesheet" href="/styles.css">',
     ];
 
-    return metaTags.join('\n').length;
+    return metaTags.join("\n").length;
   });
 
-  bench('Head Injection - Open Graph', () => {
+  bench("Head Injection - Open Graph", () => {
     const ogData = {
-      title: 'Article Title',
-      description: 'Article description',
-      image: 'https://example.com/image.png',
-      url: 'https://example.com/article',
-      type: 'article',
+      title: "Article Title",
+      description: "Article description",
+      image: "https://example.com/image.png",
+      url: "https://example.com/article",
+      type: "article",
     };
 
     const tags = Object.entries(ogData)
       .map(([key, value]) => `<meta property="og:${key}" content="${value}">`)
-      .join('\n');
+      .join("\n");
 
     return tags.length;
   });
 
-  bench('Lazy Loading Markers - 500 Components', () => {
+  bench("Lazy Loading Markers - 500 Components", () => {
     const markers = Array(500)
       .fill(null)
       .map((_, i) => ({
         id: `lazy-${i}`,
         component: `LazyComponent${i}`,
-        priority: i < 5 ? 'high' : 'low',
+        priority: i < 5 ? "high" : "low",
       }));
 
     return JSON.stringify(markers).length;
   });
 
-  bench('Template String Interpolation - 100 Variables', () => {
+  bench("Template String Interpolation - 100 Variables", () => {
     const vars = Object.fromEntries(
       Array(100)
         .fill(null)
-        .map((_, i) => [`var${i}`, `value${i}`])
+        .map((_, i) => [`var${i}`, `value${i}`]),
     );
 
-    let template = 'Template: ';
+    let template = "Template: ";
     for (const [key, value] of Object.entries(vars)) {
       template += `${key}=${value} `;
     }
@@ -257,15 +261,15 @@ describe('Server-Side Rendering (SSR)', () => {
     return template.length;
   });
 
-  bench('Fragment Rendering - 1000 Fragments', () => {
+  bench("Fragment Rendering - 1000 Fragments", () => {
     const fragments = Array(1000)
       .fill(null)
       .map((_, i) => `<fragment-${i}></fragment-${i}>`);
 
-    return fragments.join('').length;
+    return fragments.join("").length;
   });
 
-  bench('Error Boundary Rendering', () => {
+  bench("Error Boundary Rendering", () => {
     const errorHtml = `
       <div class="error-boundary">
         <h1>Something went wrong</h1>
@@ -277,11 +281,11 @@ describe('Server-Side Rendering (SSR)', () => {
     return errorHtml.length;
   });
 
-  bench('Static Asset Preloading - 50 Assets', () => {
+  bench("Static Asset Preloading - 50 Assets", () => {
     const assets = Array(50)
       .fill(null)
       .map((_, i) => `<link rel="preload" href="/asset-${i}.js" as="script">`);
 
-    return assets.join('\n').length;
+    return assets.join("\n").length;
   });
 });

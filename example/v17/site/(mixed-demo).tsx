@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@ import { useState } from "preact/hooks";
 
 /**
  * Mixed Demo - Shows Preact, Vue, and Svelte working together
- * 
+ *
  * This route demonstrates that you can use Preact routes
  * alongside Vue (.vue) and Svelte (.svelte) routes.
  */
@@ -41,7 +41,7 @@ export default function MixedDemo() {
         h(
           "p",
           null,
-          "This page is written in Preact (.tsx), while other pages use Vue (.vue) and Svelte (.svelte). They work seamlessly together."
+          "This page is written in Preact (.tsx), while other pages use Vue (.vue) and Svelte (.svelte). They work seamlessly together.",
         ),
       ]),
 
@@ -50,7 +50,7 @@ export default function MixedDemo() {
         h(
           "p",
           null,
-          "This demo page is a Preact component showing that traditional Preact routes still work perfectly."
+          "This demo page is a Preact component showing that traditional Preact routes still work perfectly.",
         ),
 
         h("div", { class: "demo-box" }, [
@@ -61,7 +61,7 @@ export default function MixedDemo() {
               onClick: () => setMessage("Message updated from Preact hooks!"),
               class: "button",
             },
-            "Click me (Preact Hooks)"
+            "Click me (Preact Hooks)",
           ),
         ]),
       ]),
@@ -104,7 +104,7 @@ export default function MixedDemo() {
 │   ├── VueCard.vue
 │   ├── SvelteTimer.svelte
 │   └── SvelteList.svelte
-└── styles.scss`
+└── styles.scss`,
           ),
         ]),
       ]),
@@ -153,15 +153,13 @@ export default function MixedDemo() {
           h(
             "a",
             { href: "/(svelte-demo)", class: "button secondary" },
-            "Svelte →"
+            "Svelte →",
           ),
         ]),
       ]),
     ]),
 
-    h("footer", null, [
-      h("p", null, "jen.js v17 • Mixed Framework Demo"),
-    ]),
+    h("footer", null, [h("p", null, "jen.js v17 • Mixed Framework Demo")]),
   ]);
 }
 

@@ -42,7 +42,12 @@ html {
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
   background-color: var(--bg-light);
@@ -54,7 +59,12 @@ body {
 // Typography
 // ============================================================================
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 0.5rem;
@@ -191,7 +201,8 @@ nav {
 // Buttons
 // ============================================================================
 
-button, .btn {
+button,
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -261,7 +272,9 @@ button, .btn {
 // Forms
 // ============================================================================
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
   font-size: 1rem;
   padding: 0.75rem 1rem;
@@ -314,23 +327,49 @@ label {
     flex-direction: column;
   }
 
-  &.gap-1 { gap: 0.25rem; }
-  &.gap-2 { gap: 0.5rem; }
-  &.gap-4 { gap: 1rem; }
-  &.gap-6 { gap: 1.5rem; }
-  &.gap-8 { gap: 2rem; }
+  &.gap-1 {
+    gap: 0.25rem;
+  }
+  &.gap-2 {
+    gap: 0.5rem;
+  }
+  &.gap-4 {
+    gap: 1rem;
+  }
+  &.gap-6 {
+    gap: 1.5rem;
+  }
+  &.gap-8 {
+    gap: 2rem;
+  }
 }
 
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
 
-.mt-4 { margin-top: 1rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mt-8 { margin-top: 2rem; }
-.mb-8 { margin-bottom: 2rem; }
+.mt-4 {
+  margin-top: 1rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.mt-8 {
+  margin-top: 2rem;
+}
+.mb-8 {
+  margin-bottom: 2rem;
+}
 
-.opacity-50 { opacity: 0.5; }
-.opacity-75 { opacity: 0.75; }
+.opacity-50 {
+  opacity: 0.5;
+}
+.opacity-75 {
+  opacity: 0.75;
+}
 
 // ============================================================================
 // Responsive Utilities

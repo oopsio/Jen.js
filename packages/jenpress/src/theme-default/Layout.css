@@ -15,7 +15,8 @@
   min-height: 100vh;
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Navigation */
@@ -198,7 +199,7 @@
   background: var(--color-bg-alt);
   padding: 0.2em 0.4em;
   border-radius: 3px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 0.875em;
 }
 

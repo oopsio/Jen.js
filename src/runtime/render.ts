@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -32,7 +32,10 @@ import { pathToFileURL } from "node:url";
 import { join, dirname, basename } from "node:path";
 import { mkdirSync, existsSync } from "node:fs";
 import esbuild from "esbuild";
-import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../compilers/esbuild-plugins.js";
 
 function escapeHtml(s: string) {
   return s
@@ -92,56 +95,56 @@ export async function renderRouteToHtml(opts: {
   // Cache busting for dynamic import
   let mod: RouteModule;
   try {
-    mod = await import(
-      pathToFileURL(moduleUrl).href + "?t=" + Date.now()
-    );
+    mod = await import(pathToFileURL(moduleUrl).href + "?t=" + Date.now());
   } catch (err) {
-    throw new Error(`Failed to import route module ${route.filePath}: ${err instanceof Error ? err.message : String(err)}`);
+    throw new Error(
+      `Failed to import route module ${route.filePath}: ${err instanceof Error ? err.message : String(err)}`,
+    );
   }
 
   // Execute route middleware if present (only in server context)
   let middlewareData: Record<string, any> = {};
 
   if (opts.req && opts.res) {
-     const middlewareCtx = createRouteMiddlewareContext({
-       req: opts.req,
-       res: opts.res,
-       url,
-       params,
-       query,
-       headers,
-       cookies,
-     });
+    const middlewareCtx = createRouteMiddlewareContext({
+      req: opts.req,
+      res: opts.res,
+      url,
+      params,
+      query,
+      headers,
+      cookies,
+    });
 
-     const middlewares: RouteMiddleware[] = [];
-     if (mod.middleware) {
-       if (Array.isArray(mod.middleware)) {
-         middlewares.push(...mod.middleware);
-       } else {
-         middlewares.push(mod.middleware);
-       }
-     }
+    const middlewares: RouteMiddleware[] = [];
+    if (mod.middleware) {
+      if (Array.isArray(mod.middleware)) {
+        middlewares.push(...mod.middleware);
+      } else {
+        middlewares.push(mod.middleware);
+      }
+    }
 
-     try {
-       await executeRouteMiddleware(middlewares, middlewareCtx);
-       middlewareData = middlewareCtx.data || {};
-     } catch (err: any) {
-       if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
-         // Already sent response
-         throw err;
-       }
-       throw err;
-     }
-   }
+    try {
+      await executeRouteMiddleware(middlewares, middlewareCtx);
+      middlewareData = middlewareCtx.data || {};
+    } catch (err: any) {
+      if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
+        // Already sent response
+        throw err;
+      }
+      throw err;
+    }
+  }
 
-   const loaderCtx: LoaderContext = {
-     url,
-     params,
-     query,
-     headers,
-     cookies,
-     data: middlewareData, // Pass middleware data to loader
-   };
+  const loaderCtx: LoaderContext = {
+    url,
+    params,
+    query,
+    headers,
+    cookies,
+    data: middlewareData, // Pass middleware data to loader
+  };
 
   let data: any = null;
   if (typeof mod.loader === "function") {
@@ -149,7 +152,9 @@ export async function renderRouteToHtml(opts: {
   }
 
   if (!mod.default) {
-    throw new Error(`Route module ${route.filePath} does not export a default component`);
+    throw new Error(
+      `Route module ${route.filePath} does not export a default component`,
+    );
   }
 
   const Page = mod.default;
@@ -187,7 +192,10 @@ export async function renderRouteToHtml(opts: {
       const headHtml = renderToString(headNode);
       headParts.push(headHtml);
     } catch (err) {
-      console.error(`Failed to render Head component for ${route.filePath}:`, err instanceof Error ? err.message : String(err));
+      console.error(
+        `Failed to render Head component for ${route.filePath}:`,
+        err instanceof Error ? err.message : String(err),
+      );
     }
   }
 

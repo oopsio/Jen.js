@@ -1,29 +1,28 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Import data from data.js
-import { docsData } from './data.js';
+import { docsData } from "./data.js";
 import "./marked.min.js";
 import "https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-sans/style.css";
 import "https://cdn.jsdelivr.net/npm/geist@1.0.0/dist/fonts/geist-mono/style.css";
 import "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css";
 import "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css";
-
 
 import "./prism.min.js";
 import "./prism-typescript.min.js";
@@ -36,18 +35,18 @@ import "./prism-tsx.min.js";
 // =========================================================================
 
 // State
-let currentTheme = localStorage.getItem('theme') || 'dark';
+let currentTheme = localStorage.getItem("theme") || "dark";
 
 // DOM Elements
-const sidebar = document.getElementById('nav-tree');
-const markdownViewer = document.getElementById('markdown-viewer');
-const tocList = document.getElementById('toc-list');
-const breadcrumbs = document.getElementById('breadcrumbs');
-const pageNav = document.getElementById('page-nav');
-const searchInput = document.getElementById('search-input');
-const modalSearchInput = document.getElementById('modal-search-input');
-const searchModal = document.getElementById('search-modal');
-const searchResults = document.getElementById('search-results');
+const sidebar = document.getElementById("nav-tree");
+const markdownViewer = document.getElementById("markdown-viewer");
+const tocList = document.getElementById("toc-list");
+const breadcrumbs = document.getElementById("breadcrumbs");
+const pageNav = document.getElementById("page-nav");
+const searchInput = document.getElementById("search-input");
+const modalSearchInput = document.getElementById("modal-search-input");
+const searchModal = document.getElementById("search-modal");
+const searchResults = document.getElementById("search-results");
 
 // Initialize
 function init() {
@@ -55,40 +54,44 @@ function init() {
   renderSidebar();
 
   // Route handling
-  const path = window.location.hash.slice(1) || 'introduction';
+  const path = window.location.hash.slice(1) || "introduction";
   loadPage(path);
 
   // Event Listeners
-  window.addEventListener('hashchange', () => loadPage(window.location.hash.slice(1)));
+  window.addEventListener("hashchange", () =>
+    loadPage(window.location.hash.slice(1)),
+  );
 
-  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+  document
+    .getElementById("theme-toggle")
+    .addEventListener("click", toggleTheme);
 
   // Search Shortcuts
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
       e.preventDefault();
-      searchModal.classList.remove('hidden');
+      searchModal.classList.remove("hidden");
       modalSearchInput.focus();
     }
-    if (e.key === 'Escape') searchModal.classList.add('hidden');
+    if (e.key === "Escape") searchModal.classList.add("hidden");
   });
 
-  searchInput.addEventListener('focus', () => {
-    searchModal.classList.remove('hidden');
+  searchInput.addEventListener("focus", () => {
+    searchModal.classList.remove("hidden");
     modalSearchInput.focus();
   });
 
-  searchModal.addEventListener('click', (e) => {
-    if (e.target === searchModal) searchModal.classList.add('hidden');
+  searchModal.addEventListener("click", (e) => {
+    if (e.target === searchModal) searchModal.classList.add("hidden");
   });
 
-  modalSearchInput.addEventListener('input', handleSearch);
+  modalSearchInput.addEventListener("input", handleSearch);
 
   // Mobile Menu
-  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileBtn = document.getElementById("mobile-menu-btn");
   if (mobileBtn) {
-    mobileBtn.addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('open');
+    mobileBtn.addEventListener("click", () => {
+      document.getElementById("sidebar").classList.toggle("open");
     });
   }
 }
@@ -101,7 +104,7 @@ function renderSidebar() {
   const categories = {};
 
   // Group pages by category
-  Object.keys(docsData).forEach(key => {
+  Object.keys(docsData).forEach((key) => {
     const page = docsData[key];
     if (!categories[page.category]) categories[page.category] = [];
     categories[page.category].push({ key, title: page.title });
@@ -116,19 +119,23 @@ function renderSidebar() {
     "Configuration",
     "API Reference",
     "Advanced",
-    "Troubleshooting"
+    "Troubleshooting",
   ];
 
-  let html = '';
-  categoryOrder.forEach(cat => {
+  let html = "";
+  categoryOrder.forEach((cat) => {
     if (categories[cat]) {
       html += `<div class="nav-group">
                 <div class="nav-group-title">${cat}</div>
-                ${categories[cat].map(p => `
+                ${categories[cat]
+                  .map(
+                    (p) => `
                     <a href="#${p.key}" class="nav-link" id="link-${p.key}">
                         ${p.title}
                     </a>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
             </div>`;
     }
   });
@@ -137,14 +144,16 @@ function renderSidebar() {
 }
 
 function loadPage(key) {
-  if (!docsData[key]) key = 'introduction';
+  if (!docsData[key]) key = "introduction";
 
   const page = docsData[key];
 
   // Update Sidebar Active State
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document
+    .querySelectorAll(".nav-link")
+    .forEach((l) => l.classList.remove("active"));
   const activeLink = document.getElementById(`link-${key}`);
-  if (activeLink) activeLink.classList.add('active');
+  if (activeLink) activeLink.classList.add("active");
 
   // Breadcrumbs
   breadcrumbs.innerHTML = `
@@ -168,15 +177,15 @@ function loadPage(key) {
   generatePageNav(key);
 
   // Close Mobile Menu if open
-  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById("sidebar").classList.remove("open");
 
   // Scroll to top
   window.scrollTo(0, 0);
 }
 
 function generateTOC() {
-  const headers = markdownViewer.querySelectorAll('h2, h3');
-  let html = '';
+  const headers = markdownViewer.querySelectorAll("h2, h3");
+  let html = "";
 
   headers.forEach((h, index) => {
     const id = `header-${index}`;
@@ -197,7 +206,7 @@ function generatePageNav(currentKey) {
   const prev = index > 0 ? keys[index - 1] : null;
   const next = index < keys.length - 1 ? keys[index + 1] : null;
 
-  let html = '';
+  let html = "";
 
   if (prev) {
     html += `
@@ -229,30 +238,36 @@ function generatePageNav(currentKey) {
 function handleSearch(e) {
   const term = e.target.value.toLowerCase();
   if (term.length < 2) {
-    searchResults.innerHTML = '';
+    searchResults.innerHTML = "";
     return;
   }
 
-  const results = Object.keys(docsData).filter(key => {
+  const results = Object.keys(docsData).filter((key) => {
     const page = docsData[key];
-    return page.title.toLowerCase().includes(term) || page.content.toLowerCase().includes(term);
+    return (
+      page.title.toLowerCase().includes(term) ||
+      page.content.toLowerCase().includes(term)
+    );
   });
 
-  searchResults.innerHTML = results.map(key => {
-    const page = docsData[key];
-    // Simple snippet extraction
-    const snippetIndex = page.content.toLowerCase().indexOf(term);
-    const snippet = snippetIndex > -1
-      ? page.content.substring(snippetIndex, snippetIndex + 60) + '...'
-      : page.content.substring(0, 60) + '...';
+  searchResults.innerHTML = results
+    .map((key) => {
+      const page = docsData[key];
+      // Simple snippet extraction
+      const snippetIndex = page.content.toLowerCase().indexOf(term);
+      const snippet =
+        snippetIndex > -1
+          ? page.content.substring(snippetIndex, snippetIndex + 60) + "..."
+          : page.content.substring(0, 60) + "...";
 
-    return `
+      return `
             <div class="search-result-item" onclick="window.location.hash='${key}'; document.getElementById('search-modal').classList.add('hidden')">
                 <span class="result-title">${page.title}</span>
-                <span class="result-preview">${snippet.replace(/[#*`]/g, '')}</span>
+                <span class="result-preview">${snippet.replace(/[#*`]/g, "")}</span>
             </div>
         `;
-  }).join('');
+    })
+    .join("");
 }
 
 // ------------------------------------------
@@ -260,15 +275,17 @@ function handleSearch(e) {
 // ------------------------------------------
 
 function toggleTheme() {
-  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  currentTheme = currentTheme === "dark" ? "light" : "dark";
   setTheme(currentTheme);
 }
 
 function setTheme(theme) {
-  localStorage.setItem('theme', theme);
+  localStorage.setItem("theme", theme);
   document.documentElement.className = theme;
-  const icon = document.querySelector('#theme-toggle i');
-  if (icon) icon.className = theme === 'dark' ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
+  const icon = document.querySelector("#theme-toggle i");
+  if (icon)
+    icon.className =
+      theme === "dark" ? "bi bi-moon-stars-fill" : "bi bi-sun-fill";
 }
 
 // Run

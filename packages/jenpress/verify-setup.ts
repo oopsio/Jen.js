@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,92 +21,94 @@
  * Run: npx tsx verify-setup.ts
  */
 
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-import { existsSync } from 'fs';
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+import { existsSync } from "fs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 async function verify() {
-  console.log('\n📚 JenPress Setup Verification\n');
-  
+  console.log("\n📚 JenPress Setup Verification\n");
+
   const checks = [
     {
-      name: 'package.json exists',
-      check: () => existsSync(resolve(__dirname, 'package.json')),
+      name: "package.json exists",
+      check: () => existsSync(resolve(__dirname, "package.json")),
     },
     {
-      name: 'src/ directory exists',
-      check: () => existsSync(resolve(__dirname, 'src')),
+      name: "src/ directory exists",
+      check: () => existsSync(resolve(__dirname, "src")),
     },
     {
-      name: 'bin/jenpress.js exists',
-      check: () => existsSync(resolve(__dirname, 'bin/jenpress.js')),
+      name: "bin/jenpress.js exists",
+      check: () => existsSync(resolve(__dirname, "bin/jenpress.js")),
     },
     {
-      name: 'tsconfig.json exists',
-      check: () => existsSync(resolve(__dirname, 'tsconfig.json')),
+      name: "tsconfig.json exists",
+      check: () => existsSync(resolve(__dirname, "tsconfig.json")),
     },
     {
-      name: 'example-docs/ exists',
-      check: () => existsSync(resolve(__dirname, 'example-docs')),
+      name: "example-docs/ exists",
+      check: () => existsSync(resolve(__dirname, "example-docs")),
     },
   ];
-  
+
   // File structure checks
-  console.log('Checking file structure:');
+  console.log("Checking file structure:");
   let allPass = true;
   for (const { name, check } of checks) {
     const passed = check();
-    console.log(`  ${passed ? '✅' : '❌'} ${name}`);
+    console.log(`  ${passed ? "✅" : "❌"} ${name}`);
     if (!passed) allPass = false;
   }
-  
+
   // Import checks
-  console.log('\nChecking TypeScript imports:');
+  console.log("\nChecking TypeScript imports:");
   try {
-    const config = await import('./src/node/config.ts');
-    console.log('  ✅ Config module imports');
-    
-    const testConfig = config.defineConfig({ title: 'Test' });
-    console.log('  ✅ defineConfig() works');
-    
-    if (testConfig.title === 'Test' && testConfig.srcDir === 'docs') {
-      console.log('  ✅ Config has proper defaults');
+    const config = await import("./src/node/config.ts");
+    console.log("  ✅ Config module imports");
+
+    const testConfig = config.defineConfig({ title: "Test" });
+    console.log("  ✅ defineConfig() works");
+
+    if (testConfig.title === "Test" && testConfig.srcDir === "docs") {
+      console.log("  ✅ Config has proper defaults");
     }
   } catch (error) {
     console.log(`  ❌ Config import failed: ${error.message}`);
     allPass = false;
   }
-  
+
   try {
-    const vitePlugin = await import('./src/node/vite-plugin.ts');
-    console.log('  ✅ Vite plugin module imports');
+    const vitePlugin = await import("./src/node/vite-plugin.ts");
+    console.log("  ✅ Vite plugin module imports");
   } catch (error) {
     console.log(`  ❌ Vite plugin import failed: ${error.message}`);
     allPass = false;
   }
-  
+
   try {
-    const markdown = await import('./src/node/markdown/parser.ts');
-    console.log('  ✅ Markdown parser module imports');
+    const markdown = await import("./src/node/markdown/parser.ts");
+    console.log("  ✅ Markdown parser module imports");
   } catch (error) {
     console.log(`  ❌ Markdown parser import failed: ${error.message}`);
     allPass = false;
   }
-  
+
   // Summary
-  console.log('\n' + (allPass ? '✅ All checks passed!' : '❌ Some checks failed'));
-  console.log('\nNext steps:');
-  console.log('  1. Install dependencies: pnpm install');
-  console.log('  2. Start dev server: pnpm dev');
-  console.log('  3. Build site: pnpm build');
-  console.log('  4. Serve build: pnpm serve\n');
-  
+  console.log(
+    "\n" + (allPass ? "✅ All checks passed!" : "❌ Some checks failed"),
+  );
+  console.log("\nNext steps:");
+  console.log("  1. Install dependencies: pnpm install");
+  console.log("  2. Start dev server: pnpm dev");
+  console.log("  3. Build site: pnpm build");
+  console.log("  4. Serve build: pnpm serve\n");
+
   process.exit(allPass ? 0 : 1);
 }
 
 verify().catch((error) => {
-  console.error('Verification failed:', error);
+  console.error("Verification failed:", error);
   process.exit(1);
 });

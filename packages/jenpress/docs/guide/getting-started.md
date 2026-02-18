@@ -44,7 +44,9 @@ JenPress supports standard Markdown:
 
 ```markdown
 # H1
+
 ## H2
+
 ### H3
 ```
 
@@ -86,14 +88,14 @@ echo "Hello, JenPress!"
 ### Inline Formatting
 
 - **Bold text** with `**text**`
-- *Italic text* with `*text*`
+- _Italic text_ with `*text*`
 - `Inline code` with backticks
 - [Links](https://example.com) with `[text](url)`
 
 ### Blockquotes
 
 > This is a blockquote.
-> 
+>
 > It can span multiple lines.
 
 ## Configuration
@@ -101,16 +103,16 @@ echo "Hello, JenPress!"
 Create `jenpress.config.ts` to customize your site:
 
 ```typescript
-import { defineConfig } from '@jenjs/jenpress';
+import { defineConfig } from "@jenjs/jenpress";
 
 export default defineConfig({
-  title: 'My Documentation',
-  description: 'Built with JenPress',
-  
+  title: "My Documentation",
+  description: "Built with JenPress",
+
   themeConfig: {
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/docs/guide/getting-started.md' },
+      { text: "Home", link: "/" },
+      { text: "Guide", link: "/docs/guide/getting-started.md" },
     ],
   },
 });

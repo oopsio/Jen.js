@@ -1,3 +1,21 @@
+/*
+ * This file is part of Jen.js.
+ * Copyright (C) 2026 oopsio
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 // schema-docs.mjs
 import fs from "fs";
 import path from "path";
@@ -11,13 +29,25 @@ const markup = fs.readFileSync(filePath, "utf-8");
 
 // === DSL Parser ===
 function parseDSL(markup) {
-  const lines = markup.split("\n").map(l => l.replace(/\r/g, "")).filter(l => l.trim());
+  const lines = markup
+    .split("\n")
+    .map((l) => l.replace(/\r/g, ""))
+    .filter((l) => l.trim());
   const defs = {};
   const stack = [];
   const variables = {};
 
   const metaKeys = ["title", "description", "examples"];
-  const validationKeys = ["minLength", "maxLength", "minimum", "maximum", "pattern", "minItems", "maxItems", "uniqueItems"];
+  const validationKeys = [
+    "minLength",
+    "maxLength",
+    "minimum",
+    "maximum",
+    "pattern",
+    "minItems",
+    "maxItems",
+    "uniqueItems",
+  ];
 
   let currentObj = null;
 
@@ -27,26 +57,34 @@ function parseDSL(markup) {
 
     // Variable
     if (line.startsWith("$")) {
-      const [name, val] = line.split("=").map(s => s.trim());
+      const [name, val] = line.split("=").map((s) => s.trim());
       variables[name] = val.replace(/^"|"$/g, "");
       continue;
     }
 
     const indent = line.search(/\S/);
-    const [keyRaw, valRaw] = line.split(":").map(s => s.trim());
+    const [keyRaw, valRaw] = line.split(":").map((s) => s.trim());
     const key = keyRaw.endsWith("?") ? keyRaw.slice(0, -1) : keyRaw;
     const optional = keyRaw.endsWith("?");
 
     // New object
     if (!valRaw) {
-      currentObj = { type: "object", properties: {}, required: [], title: "", description: "", examples: [] };
+      currentObj = {
+        type: "object",
+        properties: {},
+        required: [],
+        title: "",
+        description: "",
+        examples: [],
+      };
       defs[key] = currentObj;
       stack.push({ indent, obj: currentObj });
       continue;
     }
 
     // Property / metadata
-    while (stack.length && stack[stack.length - 1].indent >= indent) stack.pop();
+    while (stack.length && stack[stack.length - 1].indent >= indent)
+      stack.pop();
     const parent = stack.length ? stack[stack.length - 1].obj : currentObj;
 
     // Metadata
@@ -88,20 +126,36 @@ function parseDSL(markup) {
     }
     // Union array (("a"|"b")[])
     else if (val.endsWith("[]") && val.startsWith("(") && val.includes("|")) {
-      const union = val.slice(1, -3).split("|").map(s => s.trim().replace(/"/g, ""));
+      const union = val
+        .slice(1, -3)
+        .split("|")
+        .map((s) => s.trim().replace(/"/g, ""));
       prop.type = "array";
       prop.items = { enum: union };
     }
     // Union type
     else if (val.startsWith("(") && val.endsWith(")")) {
-      prop.enum = val.slice(1, -1).split("|").map(s => s.trim().replace(/"/g, ""));
+      prop.enum = val
+        .slice(1, -1)
+        .split("|")
+        .map((s) => s.trim().replace(/"/g, ""));
     }
     // Reference
     else if (/^[A-Z]/.test(val)) {
       prop.$ref = `#/definitions/${val}`;
     }
     // Primitive type
-    else if (["string", "number", "integer", "boolean", "null", "object", "array"].includes(val)) {
+    else if (
+      [
+        "string",
+        "number",
+        "integer",
+        "boolean",
+        "null",
+        "object",
+        "array",
+      ].includes(val)
+    ) {
       prop.type = val;
     }
     // fallback
@@ -113,7 +167,10 @@ function parseDSL(markup) {
     if (!optional) parent.required.push(key);
   }
 
-  return { $schema: "http://json-schema.org/draft-07/schema#", definitions: defs };
+  return {
+    $schema: "http://json-schema.org/draft-07/schema#",
+    definitions: defs,
+  };
 }
 
 // === HTML Generator ===
@@ -133,21 +190,35 @@ pre{background:#f7f7f7;padding:8px;border-radius:4px;font-size:13px;overflow-x:a
 
     html += `<table><tr><th>Property</th><th>Type</th><th>Required</th><th>Constraints / Description</th></tr>`;
     for (const [propName, val] of Object.entries(obj.properties)) {
-      const typeStr = val.type || (val.enum ? val.enum.join(" | ") : val.$ref || "");
+      const typeStr =
+        val.type || (val.enum ? val.enum.join(" | ") : val.$ref || "");
       const req = obj.required.includes(propName) ? "Yes" : "No";
       let desc = "";
-      for (const k of ["minimum", "maximum", "minLength", "maxLength", "pattern", "uniqueItems", "minItems", "maxItems"]) {
+      for (const k of [
+        "minimum",
+        "maximum",
+        "minLength",
+        "maxLength",
+        "pattern",
+        "uniqueItems",
+        "minItems",
+        "maxItems",
+      ]) {
         if (val[k] !== undefined) desc += `${k}:${val[k]} `;
       }
       html += `<tr><td>${propName}</td><td>${typeStr}</td><td>${req}</td><td>${desc}</td></tr>`;
     }
     html += `</table>`;
 
-    if (obj.examples && obj.examples.length) html += `<h3>Examples</h3><pre>${JSON.stringify(obj.examples, null, 2)}</pre>`;
+    if (obj.examples && obj.examples.length)
+      html += `<h3>Examples</h3><pre>${JSON.stringify(obj.examples, null, 2)}</pre>`;
   }
 
   html += `</body></html>`;
-  return html.replace(/\n/g, "").replace(/\s{2,}/g, " ").replace(/>\s+</g, "><");
+  return html
+    .replace(/\n/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/>\s+</g, "><");
 }
 
 // === Run ===
@@ -158,4 +229,6 @@ const base = path.basename(filePath, path.extname(filePath));
 fs.writeFileSync(`${base}.json`, JSON.stringify(schema, null, 2));
 fs.writeFileSync(`${base}.html`, html);
 
-console.log(`✅ Generated ${base}.json and ${base}.html (fully valid JSON Schema, minified HTML)`); 
+console.log(
+  `✅ Generated ${base}.json and ${base}.html (fully valid JSON Schema, minified HTML)`,
+);

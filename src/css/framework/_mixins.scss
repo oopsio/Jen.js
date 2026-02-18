@@ -7,12 +7,19 @@
 }
 
 @mixin interactive {
-  transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease, opacity .12s ease;
-  &:active { transform: translateY(1px); }
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease,
+    opacity 0.12s ease;
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
-@mixin glass($alpha: .6) {
-  background: rgba(15,22,32,$alpha);
+@mixin glass($alpha: 0.6) {
+  background: rgba(15, 22, 32, $alpha);
   backdrop-filter: blur(14px);
   border: 1px solid $border;
 }

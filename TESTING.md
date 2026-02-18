@@ -44,15 +44,15 @@ tests/
 
 ## Test Coverage
 
-| Category | Tests | Focus Areas |
-|----------|-------|-------------|
-| **Core** | 3 files | Config, paths, type validation |
-| **Runtime** | 1 file | Hydration, island management |
-| **Server** | 1 file | HTTP handling, middleware, routing |
-| **Build** | 1 file | Asset hashing, minification, SSG |
-| **API** | 1 file | Routes, requests, responses |
-| **Middleware** | 1 file | Pipeline execution, error handling |
-| **Shared** | 1 file | Logging levels, formatting |
+| Category       | Tests   | Focus Areas                        |
+| -------------- | ------- | ---------------------------------- |
+| **Core**       | 3 files | Config, paths, type validation     |
+| **Runtime**    | 1 file  | Hydration, island management       |
+| **Server**     | 1 file  | HTTP handling, middleware, routing |
+| **Build**      | 1 file  | Asset hashing, minification, SSG   |
+| **API**        | 1 file  | Routes, requests, responses        |
+| **Middleware** | 1 file  | Pipeline execution, error handling |
+| **Shared**     | 1 file  | Logging levels, formatting         |
 
 **Total: 30+ unit tests**
 
@@ -91,12 +91,14 @@ describe("Feature", () => {
 ## Running Tests
 
 ### Development
+
 ```bash
 npm run test        # Watch mode, re-runs on file changes
 npm run test:ui     # Open browser dashboard
 ```
 
 ### CI/CD
+
 ```bash
 npm run test:run    # Single run, process exit with code
 npm run test:run -- --coverage  # With coverage report
@@ -124,7 +126,7 @@ npm run test:run -- --coverage  # With coverage report
 ✅ **Coverage Reports** - HTML, JSON, terminal output  
 ✅ **Global APIs** - No import needed for describe/it/expect  
 ✅ **Mocking** - vi.mock(), vi.spyOn() utilities  
-✅ **UI Dashboard** - Visual test runner with npm run test:ui  
+✅ **UI Dashboard** - Visual test runner with npm run test:ui
 
 ---
 

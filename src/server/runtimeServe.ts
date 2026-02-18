@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -22,7 +22,10 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { basename, dirname } from "node:path";
 import { pathToFileURL } from "node:url";
-import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../compilers/esbuild-plugins.js";
 
 const cache = new Map<string, { js: string; etag: string }>();
 
@@ -116,12 +119,12 @@ export function buildHydrationModule(routeIdOrPath: string) {
       // Plugins not supported in buildSync, only in build()
       // plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
     }).outputFiles?.[0]?.text;
-    
+
     if (!jsOutput) {
       console.error("[HYDRATION] Failed to build module for:", filePath);
       return `export default function Page(){ return null }`;
     }
-    
+
     const out =
       `
 import { h } from "https://esm.sh/preact@10.25.4";

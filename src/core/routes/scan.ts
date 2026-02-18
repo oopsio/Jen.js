@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -132,7 +132,9 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
       // ($paramName) syntax for dynamic parameters
       const param = rawName.slice(1);
       if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(param)) {
-        throw new Error(`Invalid parameter name: ${param} in route file ${rel}`);
+        throw new Error(
+          `Invalid parameter name: ${param} in route file ${rel}`,
+        );
       }
       url = "/" + (relDir ? relDir + "/" : "") + ":" + param;
       url = url.replaceAll("//", "/");
@@ -140,7 +142,9 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
       // (...restName) syntax for catch-all routes
       const restName = rawName.slice(3);
       if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(restName)) {
-        throw new Error(`Invalid rest parameter name: ${restName} in route file ${rel}`);
+        throw new Error(
+          `Invalid rest parameter name: ${restName} in route file ${rel}`,
+        );
       }
       url = "/" + (relDir ? relDir + "/" : "") + "*" + restName;
       url = url.replaceAll("//", "/");

@@ -3,11 +3,13 @@
   width: 18px;
   height: 18px;
   border-radius: 999px;
-  border: 2px solid rgba(255,255,255,.2);
-  border-top-color: rgba(255,255,255,.9);
-  animation: spin .75s linear infinite;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  animation: spin 0.75s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

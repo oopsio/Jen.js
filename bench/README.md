@@ -15,12 +15,14 @@ This directory contains performance benchmarks for key Jen.js subsystems:
 ## Running Benchmarks
 
 ### Run All Benchmarks
+
 ```bash
 npm run bench
 npm run perf:bench
 ```
 
 ### Run Specific Benchmark
+
 ```bash
 # Build benchmarks
 npm run bench -- build.bench
@@ -39,6 +41,7 @@ npm run bench -- config.bench
 ```
 
 ### Run with Options
+
 ```bash
 # Run with warmup iterations
 npm run bench -- --warmup=100
@@ -54,11 +57,13 @@ npm run bench -- --reporter=verbose
 ```
 
 ### Compare Against Baseline
+
 ```bash
 npm run bench:compare
 ```
 
 ### Check for Performance Regressions
+
 ```bash
 npm run bench:regression
 ```
@@ -68,16 +73,16 @@ npm run bench:regression
 Each benchmark file follows this pattern:
 
 ```typescript
-import { describe, bench } from 'vitest';
+import { describe, bench } from "vitest";
 
-describe('Feature Name', () => {
-  bench('Operation Description', () => {
+describe("Feature Name", () => {
+  bench("Operation Description", () => {
     // Setup
     const data = setupTestData();
-    
+
     // The operation being benchmarked
     const result = performOperation(data);
-    
+
     // Return a value to prevent optimization
     return result;
   });
@@ -101,18 +106,19 @@ Lower numbers = better performance.
 
 Target performance metrics for Jen.js:
 
-| Operation | Target | Notes |
-|-----------|--------|-------|
-| Route matching (100 routes) | <1ms | O(n) worst case |
-| SSG build (100 pages) | <100ms | Incremental capable |
-| Middleware chain (20 middlewares) | <5ms | Per request |
-| Config loading | <50ms | One-time |
-| Asset hashing (1000 files) | <500ms | Parallelizable |
-| SSR render (1000 nodes) | <50ms | Per route |
+| Operation                         | Target | Notes               |
+| --------------------------------- | ------ | ------------------- |
+| Route matching (100 routes)       | <1ms   | O(n) worst case     |
+| SSG build (100 pages)             | <100ms | Incremental capable |
+| Middleware chain (20 middlewares) | <5ms   | Per request         |
+| Config loading                    | <50ms  | One-time            |
+| Asset hashing (1000 files)        | <500ms | Parallelizable      |
+| SSR render (1000 nodes)           | <50ms  | Per route           |
 
 ## Benchmark Categories
 
 ### Build Performance (build.bench.ts)
+
 - SSG building (simple and complex routes)
 - Asset hashing and optimization
 - CSS minification
@@ -123,6 +129,7 @@ Target performance metrics for Jen.js:
 - Bundle analysis
 
 ### Routing (routing.bench.ts)
+
 - Static route matching
 - Dynamic route matching (single & multiple params)
 - Catch-all routes
@@ -137,6 +144,7 @@ Target performance metrics for Jen.js:
 - Link generation
 
 ### Server-Side Rendering (ssr.bench.ts)
+
 - Component rendering (simple and complex trees)
 - List rendering (1000+ items)
 - Props passing (500+ components)
@@ -153,6 +161,7 @@ Target performance metrics for Jen.js:
 - Error boundary rendering
 
 ### Middleware (middleware.bench.ts)
+
 - Middleware chain execution (5-20 middlewares)
 - Request logging
 - Authentication (token validation)
@@ -168,6 +177,7 @@ Target performance metrics for Jen.js:
 - Request cloning
 
 ### Configuration (config.bench.ts)
+
 - JSON config parsing (1000+ lines)
 - Environment variables (100 variables)
 - Config schema validation (50 routes)
@@ -191,6 +201,7 @@ Target performance metrics for Jen.js:
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 - name: Run benchmarks
   run: npm run bench
@@ -200,7 +211,9 @@ Target performance metrics for Jen.js:
 ```
 
 ### Performance Reports
+
 Benchmarks generate reports in:
+
 - `bench/results.json` - Raw results
 - `bench/report.html` - HTML report (viewable in browser)
 - `bench/comparison.md` - Markdown comparison
@@ -208,6 +221,7 @@ Benchmarks generate reports in:
 ## Optimization Tips
 
 ### For Build Performance
+
 - Use incremental builds
 - Enable asset hashing
 - Optimize images before build
@@ -215,24 +229,28 @@ Benchmarks generate reports in:
 - Generate source maps only in dev
 
 ### For Routing Performance
+
 - Pre-compile route patterns
 - Use route caching
 - Batch parameter extraction
 - Optimize middleware chain order
 
 ### For SSR Performance
+
 - Minimize component tree depth
 - Use lazy loading strategically
 - Batch DOM operations
 - Compress responses with gzip/brotli
 
 ### For Middleware Performance
+
 - Order middlewares by frequency
 - Cache expensive operations
 - Use connection pooling
 - Avoid synchronous operations
 
 ### For Config Performance
+
 - Cache parsed configs
 - Lazy load plugins
 - Validate once at startup
@@ -241,18 +259,21 @@ Benchmarks generate reports in:
 ## Profiling
 
 ### CPU Profiling
+
 ```bash
 NODE_OPTIONS=--prof npm run bench
 node --prof-process isolate-*.log > profile.txt
 ```
 
 ### Memory Profiling
+
 ```bash
 node --inspect-brk node_modules/vitest/vitest.mjs run bench/
 # Open chrome://inspect
 ```
 
 ### Flamegraph
+
 ```bash
 npm run bench -- --reporter=verbose > bench.log
 # Use online flamegraph tools
@@ -284,16 +305,19 @@ npm run bench -- --reporter=verbose > bench.log
 ## Troubleshooting
 
 ### High Variance in Results
+
 - Increase iteration count
 - Close other applications
 - Use isolated environment
 
 ### Outliers in Results
+
 - Check for GC pauses
 - Monitor CPU throttling
 - Use `--isolate-gc` flag
 
 ### Unexpected Slowdowns
+
 - Check Node.js version
 - Verify dependencies haven't changed
 - Profile with CPU/memory profilers

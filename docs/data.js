@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,7 @@ export const docsData = {
   // =========================================================================
   // 1. INTRODUCTION
   // =========================================================================
-  "introduction": {
+  introduction: {
     title: "Introduction",
     category: "Introduction",
     content: `
@@ -36,7 +36,7 @@ Jen.js is a TypeScript-first web framework designed for building static and serv
 * **Built-in Database**: Includes JDB (an embedded JSON database) and SQL adapters.
 * **Middleware Pipeline**: robust, Express-style middleware architecture.
 * **TypeScript**: Written in TypeScript with strict mode enabled by default.
-`
+`,
   },
   "tech-stack": {
     title: "Technology Stack",
@@ -54,13 +54,13 @@ Jen.js is built on top of modern, battle-tested technologies.
 | **Styling** | Sass/SCSS | Built-in support for Dart Sass compilation. |
 | **Runtime** | Node.js 18+ | Required for the dev server and SSR. |
 | **Database** | JDB / SQL | Embedded JSON DB or standard SQL adapters. |
-`
+`,
   },
 
   // =========================================================================
   // 2. GETTING STARTED
   // =========================================================================
-  "installation": {
+  installation: {
     title: "Installation",
     category: "Getting Started",
     content: `
@@ -75,7 +75,7 @@ Run the following command in your terminal:
 \`\`\`bash
 npm install
 \`\`\`
-`
+`,
   },
   "project-structure": {
     title: "Project Structure",
@@ -97,7 +97,7 @@ project/
 ├── jen.config.ts                # Framework configuration
 └── dist/                        # Production build output
 \`\`\`
-`
+`,
   },
   "first-page": {
     title: "Creating a Page",
@@ -130,7 +130,7 @@ Run the development server to see it live:
 \`\`\`bash
 npm run dev
 \`\`\`
-`
+`,
   },
   "cli-commands": {
     title: "CLI Commands",
@@ -147,7 +147,7 @@ Common commands used during development and deployment.
 | \`npm run start\` | Starts the production server (Node.js). |
 | \`npm run typecheck\` | Runs the TypeScript compiler to check for errors. |
 | \`npm run clean\` | Removes previous build artifacts. |
-`
+`,
   },
 
   // =========================================================================
@@ -186,7 +186,7 @@ export async function loader(ctx) {
 Files inside \`site/pages/api/\` become API endpoints.
 
 * \`site/pages/api/users.ts\` → \`/api/users\`
-`
+`,
   },
   "rendering-modes": {
     title: "Rendering Modes",
@@ -217,7 +217,7 @@ Pages are static but revalidate after a set time.
 export const mode = "isr";
 export const revalidateSeconds = 3600; // 1 hour
 \`\`\`
-`
+`,
   },
   "islands-arch": {
     title: "Islands Architecture",
@@ -252,7 +252,7 @@ export default function Page() {
 * \`load\`: Hydrates immediately when the page loads.
 * \`visible\`: Hydrates only when the component scrolls into view.
 * \`idle\`: Hydrates when the browser main thread is idle.
-`
+`,
   },
   "data-loading": {
     title: "Data Loading",
@@ -280,7 +280,7 @@ export default function Blog({ posts }) {
   );
 }
 \`\`\`
-`
+`,
   },
 
   // =========================================================================
@@ -305,7 +305,7 @@ Jen.js is split into three main subsystems:
 3.  **Loader**: The route's data loader is executed.
 4.  **Render**: The component is rendered to an HTML string.
 5.  **Hydration**: If Islands are present, hydration scripts are injected.
-`
+`,
   },
   "req-resp-flow": {
     title: "Request/Response Flow",
@@ -325,7 +325,7 @@ When a request hits the Jen.js server:
     * Render Preact Component.
     * Inject Island Scripts.
     * Send HTML Response.
-`
+`,
   },
 
   // =========================================================================
@@ -361,7 +361,7 @@ export default {
   }
 } satisfies FrameworkConfig;
 \`\`\`
-`
+`,
   },
   "env-vars": {
     title: "Environment Variables",
@@ -384,7 +384,7 @@ Access them in your code via \`process.env\`:
 \`\`\`typescript
 const dbUrl = process.env.DATABASE_URL;
 \`\`\`
-`
+`,
   },
 
   // =========================================================================
@@ -407,7 +407,7 @@ import { buildSite } from "jen";
 
 await buildSite({ config: myConfig });
 \`\`\`
-`
+`,
   },
   "api-routing": {
     title: "Routing API",
@@ -427,7 +427,7 @@ Matches a URL string against the route array and returns the matching route + pa
 const route = matchRoute("/users/123", routes);
 console.log(route.params); // { id: "123" }
 \`\`\`
-`
+`,
   },
   "api-middleware": {
     title: "Middleware API",
@@ -452,7 +452,7 @@ await pipeline.execute(context);
 * \`rateLimit(options)\`: Limits request frequency.
 * \`logger()\`: Logs requests to the console.
 * \`securityHeaders()\`: Adds Helmet-style security headers.
-`
+`,
   },
   "api-db": {
     title: "Database API",
@@ -476,7 +476,7 @@ const users = db.collection("users");
 * **Insert**: \`users.insertOne({ name: "Alice" })\`
 * **Update**: \`users.updateOne({ id: "1" }, { $set: { name: "Bob" } })\`
 * **Delete**: \`users.deleteOne({ id: "1" })\`
-`
+`,
   },
   "api-auth": {
     title: "Authentication API",
@@ -504,7 +504,7 @@ Server-side session management backed by Redis or Memory.
 const session = new Session({ store: redis });
 await session.create({ user: "alice" });
 \`\`\`
-`
+`,
   },
   "api-caching": {
     title: "Caching API",
@@ -524,7 +524,7 @@ Abstract interface for caching strategies.
 
 * **MemoryCache**: Uses RAM. Good for development.
 * **RedisCache**: Uses Redis. Required for production clusters.
-`
+`,
   },
   "api-utils": {
     title: "Utilities API",
@@ -545,7 +545,7 @@ import { log } from "jen";
 log.info("Server started");
 log.error("Database connection failed");
 \`\`\`
-`
+`,
   },
 
   // =========================================================================
@@ -571,7 +571,7 @@ export const middleware = async (ctx) => {
 ### Catch-All Routes
 
 Create a file named \`[[...slug]].tsx\` to match all remaining paths. This is useful for implementing CMS-driven routing.
-`
+`,
   },
   "adv-db": {
     title: "Advanced Database",
@@ -595,9 +595,9 @@ try {
 ### Migrations
 
 Define \`up\` and \`down\` functions to manage schema changes over time.
-`
+`,
   },
-  "performance": {
+  performance: {
     title: "Performance",
     category: "Advanced",
     content: `
@@ -611,9 +611,9 @@ HTML, CSS, and JS are minified during the build process using \`esbuild\`.
 
 ### Critical CSS
 If enabled in config, Jen.js extracts the CSS required for the initial fold and inlines it in the \`<head>\` to reduce First Contentful Paint (FCP).
-`
+`,
   },
-  "deployment": {
+  deployment: {
     title: "Deployment",
     category: "Advanced",
     content: `
@@ -631,7 +631,7 @@ COPY . .
 RUN npm ci && npm run build
 CMD ["npm", "start"]
 \`\`\`
-`
+`,
   },
 
   // =========================================================================
@@ -651,7 +651,7 @@ CMD ["npm", "start"]
 ### SCSS Compilation Failed
 * Check that \`site/assets/style.scss\` exists.
 * Verify that all \`@import\` paths inside the SCSS file are correct.
-`
+`,
   },
   "ts-runtime": {
     title: "Runtime Issues",
@@ -667,7 +667,7 @@ CMD ["npm", "start"]
 This occurs when the server HTML differs from the client's initial render.
 * **Cause**: Using \`Math.random()\` or \`Date.now()\` directly in the component body.
 * **Fix**: Move non-deterministic logic into the \`loader\` or \`useEffect\`.
-`
+`,
   },
   "ts-dev": {
     title: "Dev Server Issues",
@@ -687,6 +687,6 @@ server: {
 ### Hot Reload Not Working
 * Ensure \`dev.liveReload\` is set to \`true\` in config.
 * Check the browser console for HMR connection errors (WebSocket).
-`
-  }
+`,
+  },
 };

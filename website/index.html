@@ -1,47 +1,655 @@
-<!DOCTYPE html><html lang="en" class="scroll-smooth"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="TypeScript-first web framework for building static and server-rendered applications with Preact"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"><title>Jen.js · Jen.js</title><link rel="stylesheet" href="/_astro/index.CIHLrh0z.css"><script type="module">const t=document.getElementById("dark-mode-toggle"),e=document.documentElement,a=localStorage.getItem("theme")==="dark"||!localStorage.getItem("theme")&&window.matchMedia("(prefers-color-scheme: dark)").matches;a&&e.classList.add("dark");t?.addEventListener("click",()=>{e.classList.toggle("dark"),localStorage.setItem("theme",e.classList.contains("dark")?"dark":"light")});
-</script></head> <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300"> <header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="flex items-center justify-between h-16"> <!-- Logo --> <a href="/" class="flex items-center gap-3 font-bold text-xl hover:opacity-80 transition-opacity"> <i class="bi bi-lightning-charge text-sky-600 text-2xl"></i> <span class="text-slate-900 dark:text-white">Jen.js</span> </a> <!-- Navigation Links --> <nav class="hidden md:flex items-center gap-8"> <a href="/" class="text-sm font-medium transition-colors text-sky-600 dark:text-sky-400">
-Home
-</a> <a href="/docs" class="text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50">
-Docs
-</a> <a href="/api" class="text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50">
-API
-</a> <a href="/examples" class="text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50">
-Examples
-</a> </nav> <!-- Right Actions --> <div class="flex items-center gap-4"> <button id="dark-mode-toggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Toggle dark mode"> <i class="bi bi-moon-stars text-slate-600 dark:text-slate-400 text-xl"></i> </button> <a href="https://github.com/oopsio/Jen.js" target="_blank" rel="noopener" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"> <i class="bi bi-github text-lg"></i> <span>GitHub</span> </a> </div> </div> </div> </header> <main class="min-h-screen">   <section class="relative overflow-hidden"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 -z-10"></div> <div class="absolute inset-0 overflow-hidden -z-10"> <div class="absolute -top-40 -right-40 w-80 h-80 bg-sky-200 dark:bg-sky-900/30 rounded-full blur-3xl opacity-30"></div> <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-30"></div> </div> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32"> <div class="grid lg:grid-cols-2 gap-12 items-center"> <div class="space-y-8 animate-fade-in"> <div> <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight"> <span class="bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
-Build faster
-</span> <span class="block text-slate-900 dark:text-white">
-Ship more
-</span> </h1> <p class="text-xl text-slate-600 dark:text-slate-300 mt-6 leading-relaxed max-w-xl">
-Jen.js is a TypeScript-first web framework for building lightning-fast static and server-rendered applications with Preact.
-</p> </div> <div class="flex flex-wrap gap-4 pt-4"> <a href="/docs" class="inline-flex items-center gap-2 px-8 py-4 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-glow transition-all duration-200"> <i class="bi bi-arrow-right text-lg"></i>
-Get Started
-</a> <a href="https://github.com/oopsio/Jen.js" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-8 py-4 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition-colors duration-200"> <i class="bi bi-github text-lg"></i>
-GitHub
-</a> </div> <div class="flex gap-8 pt-4 text-sm text-slate-600 dark:text-slate-400"> <div class="flex items-center gap-2"> <i class="bi bi-check2-circle text-sky-600 text-lg"></i> <span>TypeScript First</span> </div> <div class="flex items-center gap-2"> <i class="bi bi-check2-circle text-sky-600 text-lg"></i> <span>Lightning Fast</span> </div> <div class="flex items-center gap-2"> <i class="bi bi-check2-circle text-sky-600 text-lg"></i> <span>Zero Config</span> </div> </div> </div> <!-- Code Block --> <div class="relative"> <div class="absolute inset-0 bg-gradient-to-r from-sky-400/20 to-purple-400/20 rounded-2xl blur-2xl"></div> <div class="relative bg-slate-900 dark:bg-slate-950 rounded-2xl border border-slate-800 dark:border-slate-700 overflow-hidden shadow-2xl"> <div class="bg-slate-800 dark:bg-slate-900 px-6 py-4 border-b border-slate-700 dark:border-slate-800 flex items-center gap-2"> <div class="w-3 h-3 rounded-full bg-red-500"></div> <div class="w-3 h-3 rounded-full bg-yellow-500"></div> <div class="w-3 h-3 rounded-full bg-green-500"></div> <span class="ml-auto text-slate-400 text-sm font-mono">site/(home).tsx</span> </div> <pre class="p-6 text-sm font-mono text-slate-200 overflow-x-auto"><code>export default function Home() {
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="TypeScript-first web framework for building static and server-rendered applications with Preact"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <title>Jen.js · Jen.js</title>
+    <link rel="stylesheet" href="/_astro/index.CIHLrh0z.css" />
+    <script type="module">
+      const t = document.getElementById("dark-mode-toggle"),
+        e = document.documentElement,
+        a =
+          localStorage.getItem("theme") === "dark" ||
+          (!localStorage.getItem("theme") &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+      a && e.classList.add("dark");
+      t?.addEventListener("click", () => {
+        (e.classList.toggle("dark"),
+          localStorage.setItem(
+            "theme",
+            e.classList.contains("dark") ? "dark" : "light",
+          ));
+      });
+    </script>
+  </head>
+  <body
+    class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300"
+  >
+    <header
+      class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60"
+    >
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <a
+            href="/"
+            class="flex items-center gap-3 font-bold text-xl hover:opacity-80 transition-opacity"
+          >
+            <i class="bi bi-lightning-charge text-sky-600 text-2xl"></i>
+            <span class="text-slate-900 dark:text-white">Jen.js</span>
+          </a>
+          <!-- Navigation Links -->
+          <nav class="hidden md:flex items-center gap-8">
+            <a
+              href="/"
+              class="text-sm font-medium transition-colors text-sky-600 dark:text-sky-400"
+            >
+              Home
+            </a>
+            <a
+              href="/docs"
+              class="text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50"
+            >
+              Docs
+            </a>
+            <a
+              href="/api"
+              class="text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50"
+            >
+              API
+            </a>
+            <a
+              href="/examples"
+              class="text-sm font-medium transition-colors text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50"
+            >
+              Examples
+            </a>
+          </nav>
+          <!-- Right Actions -->
+          <div class="flex items-center gap-4">
+            <button
+              id="dark-mode-toggle"
+              class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              <i
+                class="bi bi-moon-stars text-slate-600 dark:text-slate-400 text-xl"
+              ></i>
+            </button>
+            <a
+              href="https://github.com/oopsio/Jen.js"
+              target="_blank"
+              rel="noopener"
+              class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+            >
+              <i class="bi bi-github text-lg"></i> <span>GitHub</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="min-h-screen">
+      <section class="relative overflow-hidden">
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-sky-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 -z-10"
+        ></div>
+        <div class="absolute inset-0 overflow-hidden -z-10">
+          <div
+            class="absolute -top-40 -right-40 w-80 h-80 bg-sky-200 dark:bg-sky-900/30 rounded-full blur-3xl opacity-30"
+          ></div>
+          <div
+            class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 dark:bg-purple-900/30 rounded-full blur-3xl opacity-30"
+          ></div>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8 animate-fade-in">
+              <div>
+                <h1
+                  class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight"
+                >
+                  <span
+                    class="bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent"
+                  >
+                    Build faster
+                  </span>
+                  <span class="block text-slate-900 dark:text-white">
+                    Ship more
+                  </span>
+                </h1>
+                <p
+                  class="text-xl text-slate-600 dark:text-slate-300 mt-6 leading-relaxed max-w-xl"
+                >
+                  Jen.js is a TypeScript-first web framework for building
+                  lightning-fast static and server-rendered applications with
+                  Preact.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-4 pt-4">
+                <a
+                  href="/docs"
+                  class="inline-flex items-center gap-2 px-8 py-4 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-glow transition-all duration-200"
+                >
+                  <i class="bi bi-arrow-right text-lg"></i>
+                  Get Started
+                </a>
+                <a
+                  href="https://github.com/oopsio/Jen.js"
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center gap-2 px-8 py-4 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition-colors duration-200"
+                >
+                  <i class="bi bi-github text-lg"></i>
+                  GitHub
+                </a>
+              </div>
+              <div
+                class="flex gap-8 pt-4 text-sm text-slate-600 dark:text-slate-400"
+              >
+                <div class="flex items-center gap-2">
+                  <i class="bi bi-check2-circle text-sky-600 text-lg"></i>
+                  <span>TypeScript First</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="bi bi-check2-circle text-sky-600 text-lg"></i>
+                  <span>Lightning Fast</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="bi bi-check2-circle text-sky-600 text-lg"></i>
+                  <span>Zero Config</span>
+                </div>
+              </div>
+            </div>
+            <!-- Code Block -->
+            <div class="relative">
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-sky-400/20 to-purple-400/20 rounded-2xl blur-2xl"
+              ></div>
+              <div
+                class="relative bg-slate-900 dark:bg-slate-950 rounded-2xl border border-slate-800 dark:border-slate-700 overflow-hidden shadow-2xl"
+              >
+                <div
+                  class="bg-slate-800 dark:bg-slate-900 px-6 py-4 border-b border-slate-700 dark:border-slate-800 flex items-center gap-2"
+                >
+                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span class="ml-auto text-slate-400 text-sm font-mono"
+                    >site/(home).tsx</span
+                  >
+                </div>
+                <pre
+                  class="p-6 text-sm font-mono text-slate-200 overflow-x-auto"
+                ><code>export default function Home() {
   return (
     &lt;main&gt;
       &lt;h1&gt;Welcome to Jen.js&lt;/h1&gt;
       &lt;p&gt;Ship faster. Build more.&lt;/p&gt;
     &lt;/main&gt;
   );
-}</code></pre> </div> </div> </div> </div> </section>  <section class="py-20 sm:py-32"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-16"> <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-Powerful Features
-</h2> <p class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-Everything you need for modern web development
-</p> </div> <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"> <div class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"></div> <i class="bi bi-lightning-charge text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">Lightning Fast</h3> <p class="text-slate-600 dark:text-slate-400">Static Site Generation by default. Pre-render pages at build time for instant page loads.</p> </div><div class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"></div> <i class="bi bi-bullseye text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">TypeScript First</h3> <p class="text-slate-600 dark:text-slate-400">Built with TypeScript strict mode. Full type safety out of the box. Better DX, fewer bugs.</p> </div><div class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"></div> <i class="bi bi-folder text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">File-Based Routing</h3> <p class="text-slate-600 dark:text-slate-400">Intuitive routing based on your file structure. No complex configuration needed.</p> </div><div class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"></div> <i class="bi bi-waves text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">Islands Architecture</h3> <p class="text-slate-600 dark:text-slate-400">Partial hydration. Only interactive components become JavaScript. Everything else is static HTML.</p> </div><div class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"></div> <i class="bi bi-plug text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">Plugin System</h3> <p class="text-slate-600 dark:text-slate-400">Extensible architecture. Build custom plugins to enhance your applications.</p> </div><div class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"> <div class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"></div> <i class="bi bi-database text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">Built-in Database</h3> <p class="text-slate-600 dark:text-slate-400">Support for SQLite, MySQL, PostgreSQL, and a built-in JSON database.</p> </div> </div> </div> </section>  <section class="py-20 sm:py-32 bg-slate-50 dark:bg-slate-900/50"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-16"> <h2 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-Choose Your Rendering Strategy
-</h2> <p class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-Pick the right mode for each route
-</p> </div> <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6"> <div class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"> <i class="bi bi-layers text-3xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="font-semibold text-lg text-slate-900 dark:text-white mb-1">SSG</h3> <p class="text-sm text-slate-600 dark:text-slate-400">Static Site Generation</p> </div><div class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"> <i class="bi bi-server text-3xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="font-semibold text-lg text-slate-900 dark:text-white mb-1">SSR</h3> <p class="text-sm text-slate-600 dark:text-slate-400">Server-Side Rendering</p> </div><div class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"> <i class="bi bi-arrow-repeat text-3xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="font-semibold text-lg text-slate-900 dark:text-white mb-1">ISR</h3> <p class="text-sm text-slate-600 dark:text-slate-400">Incremental Revalidation</p> </div><div class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"> <i class="bi bi-puzzle text-3xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <h3 class="font-semibold text-lg text-slate-900 dark:text-white mb-1">PPR</h3> <p class="text-sm text-slate-600 dark:text-slate-400">Partial Pre-Rendering</p> </div> </div> </div> </section>  <section class="py-20 sm:py-32"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-center"> <div> <i class="bi bi-check-circle text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <div class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"> 100% </div> <p class="text-slate-600 dark:text-slate-400 font-medium">Type Safe</p> </div><div> <i class="bi bi-box text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <div class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"> &lt;50KB </div> <p class="text-slate-600 dark:text-slate-400 font-medium">Framework Size</p> </div><div> <i class="bi bi-lightning text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <div class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"> 0ms </div> <p class="text-slate-600 dark:text-slate-400 font-medium">Static Load</p> </div><div> <i class="bi bi-rocket text-4xl text-sky-600 dark:text-sky-400 mb-4 block"></i> <div class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"> 1-Click </div> <p class="text-slate-600 dark:text-slate-400 font-medium">Deploy</p> </div> </div> </div> </section>  <section class="py-20 sm:py-32 bg-gradient-to-br from-sky-600 to-blue-600 dark:from-slate-900 dark:to-slate-800 border-t border-sky-700 dark:border-slate-700"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center"> <h2 class="text-4xl sm:text-5xl font-bold text-white mb-6">
-Ready to build?
-</h2> <p class="text-xl text-sky-100 dark:text-slate-300 mb-8 max-w-2xl mx-auto">
-Start building with Jen.js today and ship faster than ever before.
-</p> <div class="flex flex-wrap justify-center gap-4"> <a href="/docs" class="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-900 text-slate-900 dark:text-white font-semibold rounded-lg shadow-lg transition-all duration-200"> <i class="bi bi-book text-lg"></i>
-Read Docs
-</a> <a href="https://github.com/oopsio/Jen.js" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition-colors duration-200"> <i class="bi bi-github text-lg"></i>
-View GitHub
-</a> </div> </div> </section>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 mt-20"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8"> <!-- About --> <div> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4">Jen.js</h4> <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-TypeScript-first web framework for building fast, modern applications.
-</p> </div> <!-- Product --> <div> <h5 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Product</h5> <ul class="space-y-2"> <li><a href="/" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Home</a></li> <li><a href="/docs" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Docs</a></li> <li><a href="/examples" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Examples</a></li> <li><a href="https://github.com/oopsio/Jen.js/releases" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Releases</a></li> </ul> </div> <!-- Community --> <div> <h5 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Community</h5> <ul class="space-y-2"> <li><a href="https://github.com/oopsio/Jen.js" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">GitHub</a></li> <li><a href="https://github.com/oopsio/Jen.js/issues" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Issues</a></li> <li><a href="https://github.com/oopsio/Jen.js/discussions" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Discussions</a></li> <li><a href="https://github.com/oopsio/Jen.js/blob/main/CONTRIBUTING.md" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Contributing</a></li> </ul> </div> <!-- Legal --> <div> <h5 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Legal</h5> <ul class="space-y-2"> <li><a href="https://github.com/oopsio/Jen.js/blob/main/LICENSE" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">License</a></li> <li><a href="https://github.com/oopsio/Jen.js/security/policy" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Security</a></li> <li><a href="https://github.com/oopsio/Jen.js/blob/main/CODE_OF_CONDUCT.md" target="_blank" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">Code of Conduct</a></li> </ul> </div> </div> <div class="pt-8 border-t border-slate-200 dark:border-slate-700"> <p class="text-sm text-slate-600 dark:text-slate-400 text-center">
-&copy; 2024 Jen.js. Licensed under GNU GPL 3.0.
-</p> </div> </div> </footer>  </body> </html>
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="py-20 sm:py-32">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2
+              class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4"
+            >
+              Powerful Features
+            </h2>
+            <p
+              class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
+            >
+              Everything you need for modern web development
+            </p>
+          </div>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+              class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"
+              ></div>
+              <i
+                class="bi bi-lightning-charge text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+              >
+                Lightning Fast
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                Static Site Generation by default. Pre-render pages at build
+                time for instant page loads.
+              </p>
+            </div>
+            <div
+              class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"
+              ></div>
+              <i
+                class="bi bi-bullseye text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+              >
+                TypeScript First
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                Built with TypeScript strict mode. Full type safety out of the
+                box. Better DX, fewer bugs.
+              </p>
+            </div>
+            <div
+              class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"
+              ></div>
+              <i
+                class="bi bi-folder text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+              >
+                File-Based Routing
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                Intuitive routing based on your file structure. No complex
+                configuration needed.
+              </p>
+            </div>
+            <div
+              class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"
+              ></div>
+              <i
+                class="bi bi-waves text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+              >
+                Islands Architecture
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                Partial hydration. Only interactive components become
+                JavaScript. Everything else is static HTML.
+              </p>
+            </div>
+            <div
+              class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"
+              ></div>
+              <i
+                class="bi bi-plug text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+              >
+                Plugin System
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                Extensible architecture. Build custom plugins to enhance your
+                applications.
+              </p>
+            </div>
+            <div
+              class="group relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 hover:border-sky-500 dark:hover:border-sky-600 hover:shadow-lg dark:hover:shadow-glow transition-all duration-200"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-sky-50 to-transparent dark:from-sky-500/10 dark:to-transparent opacity-0 group-hover:opacity-100 rounded-2xl transition-opacity duration-200 -z-10"
+              ></div>
+              <i
+                class="bi bi-database text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-white mb-2"
+              >
+                Built-in Database
+              </h3>
+              <p class="text-slate-600 dark:text-slate-400">
+                Support for SQLite, MySQL, PostgreSQL, and a built-in JSON
+                database.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="py-20 sm:py-32 bg-slate-50 dark:bg-slate-900/50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2
+              class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white mb-4"
+            >
+              Choose Your Rendering Strategy
+            </h2>
+            <p
+              class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
+            >
+              Pick the right mode for each route
+            </p>
+          </div>
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div
+              class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"
+            >
+              <i
+                class="bi bi-layers text-3xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="font-semibold text-lg text-slate-900 dark:text-white mb-1"
+              >
+                SSG
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                Static Site Generation
+              </p>
+            </div>
+            <div
+              class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"
+            >
+              <i
+                class="bi bi-server text-3xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="font-semibold text-lg text-slate-900 dark:text-white mb-1"
+              >
+                SSR
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                Server-Side Rendering
+              </p>
+            </div>
+            <div
+              class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"
+            >
+              <i
+                class="bi bi-arrow-repeat text-3xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="font-semibold text-lg text-slate-900 dark:text-white mb-1"
+              >
+                ISR
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                Incremental Revalidation
+              </p>
+            </div>
+            <div
+              class="text-center p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-500 dark:hover:border-sky-600 transition-colors duration-200"
+            >
+              <i
+                class="bi bi-puzzle text-3xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <h3
+                class="font-semibold text-lg text-slate-900 dark:text-white mb-1"
+              >
+                PPR
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400">
+                Partial Pre-Rendering
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="py-20 sm:py-32">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div>
+              <i
+                class="bi bi-check-circle text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <div
+                class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"
+              >
+                100%
+              </div>
+              <p class="text-slate-600 dark:text-slate-400 font-medium">
+                Type Safe
+              </p>
+            </div>
+            <div>
+              <i
+                class="bi bi-box text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <div
+                class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"
+              >
+                &lt;50KB
+              </div>
+              <p class="text-slate-600 dark:text-slate-400 font-medium">
+                Framework Size
+              </p>
+            </div>
+            <div>
+              <i
+                class="bi bi-lightning text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <div
+                class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"
+              >
+                0ms
+              </div>
+              <p class="text-slate-600 dark:text-slate-400 font-medium">
+                Static Load
+              </p>
+            </div>
+            <div>
+              <i
+                class="bi bi-rocket text-4xl text-sky-600 dark:text-sky-400 mb-4 block"
+              ></i>
+              <div
+                class="text-4xl font-bold bg-gradient-to-r from-sky-600 to-purple-600 dark:from-sky-400 dark:to-purple-400 bg-clip-text text-transparent mb-2"
+              >
+                1-Click
+              </div>
+              <p class="text-slate-600 dark:text-slate-400 font-medium">
+                Deploy
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="py-20 sm:py-32 bg-gradient-to-br from-sky-600 to-blue-600 dark:from-slate-900 dark:to-slate-800 border-t border-sky-700 dark:border-slate-700"
+      >
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-4xl sm:text-5xl font-bold text-white mb-6">
+            Ready to build?
+          </h2>
+          <p
+            class="text-xl text-sky-100 dark:text-slate-300 mb-8 max-w-2xl mx-auto"
+          >
+            Start building with Jen.js today and ship faster than ever before.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a
+              href="/docs"
+              class="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 dark:bg-slate-950 dark:hover:bg-slate-900 text-slate-900 dark:text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
+            >
+              <i class="bi bi-book text-lg"></i>
+              Read Docs
+            </a>
+            <a
+              href="https://github.com/oopsio/Jen.js"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-2 px-8 py-4 border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition-colors duration-200"
+            >
+              <i class="bi bi-github text-lg"></i>
+              View GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer
+      class="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 mt-20"
+    >
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <!-- About -->
+          <div>
+            <h4
+              class="text-sm font-semibold text-slate-900 dark:text-white mb-4"
+            >
+              Jen.js
+            </h4>
+            <p
+              class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+            >
+              TypeScript-first web framework for building fast, modern
+              applications.
+            </p>
+          </div>
+          <!-- Product -->
+          <div>
+            <h5
+              class="text-sm font-semibold text-slate-900 dark:text-white mb-3"
+            >
+              Product
+            </h5>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="/"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/docs"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Docs</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/examples"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Examples</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/releases"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Releases</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Community -->
+          <div>
+            <h5
+              class="text-sm font-semibold text-slate-900 dark:text-white mb-3"
+            >
+              Community
+            </h5>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/issues"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Issues</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/discussions"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Discussions</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Contributing</a
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- Legal -->
+          <div>
+            <h5
+              class="text-sm font-semibold text-slate-900 dark:text-white mb-3"
+            >
+              Legal
+            </h5>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/blob/main/LICENSE"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >License</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/security/policy"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Security</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/oopsio/Jen.js/blob/main/CODE_OF_CONDUCT.md"
+                  target="_blank"
+                  class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >Code of Conduct</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="pt-8 border-t border-slate-200 dark:border-slate-700">
+          <p class="text-sm text-slate-600 dark:text-slate-400 text-center">
+            &copy; 2024 Jen.js. Licensed under GNU GPL 3.0.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

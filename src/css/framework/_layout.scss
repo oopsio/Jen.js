@@ -1,5 +1,7 @@
 /* src/css/framework/_layout.scss */
-.container { @include container; }
+.container {
+  @include container;
+}
 
 .stack {
   display: flex;
@@ -13,14 +15,31 @@
   gap: $space-3;
 }
 
-.grid { @include grid(12, 16px); }
+.grid {
+  @include grid(12, 16px);
+}
 
-.col-12 { grid-column: span 12; }
-.col-8 { grid-column: span 8; }
-.col-6 { grid-column: span 6; }
-.col-4 { grid-column: span 4; }
-.col-3 { grid-column: span 3; }
+.col-12 {
+  grid-column: span 12;
+}
+.col-8 {
+  grid-column: span 8;
+}
+.col-6 {
+  grid-column: span 6;
+}
+.col-4 {
+  grid-column: span 4;
+}
+.col-3 {
+  grid-column: span 3;
+}
 
 @media (max-width: 900px) {
-  .col-8, .col-6, .col-4, .col-3 { grid-column: span 12; }
+  .col-8,
+  .col-6,
+  .col-4,
+  .col-3 {
+    grid-column: span 12;
+  }
 }

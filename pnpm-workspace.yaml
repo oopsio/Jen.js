@@ -8,6 +8,6 @@ packages:
   - "docs/**"
   - "my-app/**"
 onlyBuiltDependencies:
-  - '@parcel/watcher'
+  - "@parcel/watcher"
   - esbuild
   - sqlite3
