@@ -58,26 +58,31 @@ export function createProjectFiles(dir: string, options: ProjectOptions) {
 
   // Merge with user project name
   const packageJson = {
-  name: options.projectName.toLowerCase().replace(/\s+/g, "-"),
-  version: "1.0.0",
-  type: "module",
-  scripts: {
-    dev: "node server.js dev",
-    build: "node build.js",
+  
+  "name": "jen-app",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js dev",
+    "build": "node build.js"
   },
-  dependencies: {
+  "dependencies": {
     "@jenjs/master": "^1.2.5",
-    esbuild: "^0.25.0",
-    preact: "^10.25.4",
+    "@vue/compiler-sfc": "^3.5.28",
+    "esbuild": "^0.25.0",
+    "glob": "^13.0.5",
+    "preact": "^10.25.4",
     "preact-render-to-string": "^6.5.13",
-    sirv: "^3.0.1",
+    "sass": "^1.97.3",
+    "sirv": "^3.0.1",
+    "svelte": "^5.51.3"
   },
-  devDependencies: {
-    ...(options.typescript && {
-      "@types/node": "^22.10.0",
-      typescript: "^5.7.2",
-    }),
-  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+
+
 
   };
 
