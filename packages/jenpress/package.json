@@ -1,6 +1,6 @@
 {
   "name": "@jenjs/jenpress",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A VitePress competitor - Markdown-first documentation SSG built with Jen.js, Vite, and Preact",
   "license": "GPL-3.0-only",
   "type": "module",
