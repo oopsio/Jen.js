@@ -1,23 +1,23 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import MarkdownIt from 'markdown-it';
-import { highlightSync } from './highlight.js';
+import MarkdownIt from "markdown-it";
+import { highlightSync } from "./highlight.js";
 
 export interface ParsedMarkdown {
   html: string;
@@ -37,7 +37,7 @@ const md = new MarkdownIt({
 });
 
 // Add table support
-import markdownItTable from 'markdown-it-table-of-contents';
+import markdownItTable from "markdown-it-table-of-contents";
 try {
   md.use(markdownItTable);
 } catch (e) {
@@ -45,18 +45,18 @@ try {
 }
 
 // Custom rule for component syntax
-md.inline.ruler.push('component', (state, silent) => {
+md.inline.ruler.push("component", (state, silent) => {
   const max = state.posMax;
   const pos = state.pos;
 
   if (pos + 2 > max) return false;
-  if (state.src[pos] !== '<') return false;
+  if (state.src[pos] !== "<") return false;
 
   const match = state.src.slice(pos).match(/^<([A-Z][a-zA-Z0-9]*)\s*\/>/);
   if (!match) return false;
 
   if (!silent) {
-    const token = state.push('component', 'div', 0);
+    const token = state.push("component", "div", 0);
     token.meta = { componentName: match[1] };
     token.content = match[0];
   }
@@ -66,71 +66,75 @@ md.inline.ruler.push('component', (state, silent) => {
 });
 
 // Custom rule for callouts/admonitions (> [!NOTE], > [!WARNING], etc.)
-md.block.ruler.before('blockquote', 'callout', (state, startLine, endLine, silent) => {
-  const pos = state.bMarks[startLine] + state.tShift[startLine];
-  const max = state.eMarks[startLine];
+md.block.ruler.before(
+  "blockquote",
+  "callout",
+  (state, startLine, endLine, silent) => {
+    const pos = state.bMarks[startLine] + state.tShift[startLine];
+    const max = state.eMarks[startLine];
 
-  if (pos + 2 > max) return false;
-  if (state.src[pos] !== '>') return false;
-  if (state.src[pos + 1] !== ' ') return false;
+    if (pos + 2 > max) return false;
+    if (state.src[pos] !== ">") return false;
+    if (state.src[pos + 1] !== " ") return false;
 
-  const text = state.src.slice(pos + 2, max);
-  const calloutMatch = text.match(/^\[!([A-Z]+)\]\s*(.*)/);
-  if (!calloutMatch) return false;
+    const text = state.src.slice(pos + 2, max);
+    const calloutMatch = text.match(/^\[!([A-Z]+)\]\s*(.*)/);
+    if (!calloutMatch) return false;
 
-  if (silent) return true;
+    if (silent) return true;
 
-  const calloutType = calloutMatch[1].toLowerCase();
-  const calloutTitle = calloutMatch[2] || calloutType.toUpperCase();
-  
-  let nextLine = startLine + 1;
-  const calloutLines: string[] = [calloutMatch[2] || ''];
+    const calloutType = calloutMatch[1].toLowerCase();
+    const calloutTitle = calloutMatch[2] || calloutType.toUpperCase();
 
-  // Collect all subsequent blockquote lines
-  while (nextLine < endLine) {
-    const pos = state.bMarks[nextLine] + state.tShift[nextLine];
-    const max = state.eMarks[nextLine];
+    let nextLine = startLine + 1;
+    const calloutLines: string[] = [calloutMatch[2] || ""];
 
-    if (pos + 2 > max) break;
-    if (state.src[pos] !== '>') break;
-    if (state.src[pos + 1] !== ' ') break;
+    // Collect all subsequent blockquote lines
+    while (nextLine < endLine) {
+      const pos = state.bMarks[nextLine] + state.tShift[nextLine];
+      const max = state.eMarks[nextLine];
 
-    calloutLines.push(state.src.slice(pos + 2, max));
-    nextLine++;
-  }
+      if (pos + 2 > max) break;
+      if (state.src[pos] !== ">") break;
+      if (state.src[pos + 1] !== " ") break;
 
-  const token = state.push('callout_open', 'div', 1);
-  token.meta = { type: calloutType, title: calloutTitle };
-  token.attrSet('class', `callout callout-${calloutType}`);
-  token.markup = '>';
+      calloutLines.push(state.src.slice(pos + 2, max));
+      nextLine++;
+    }
 
-  const tokenContent = state.push('inline', '', 0);
-  tokenContent.content = calloutLines.join('\n');
+    const token = state.push("callout_open", "div", 1);
+    token.meta = { type: calloutType, title: calloutTitle };
+    token.attrSet("class", `callout callout-${calloutType}`);
+    token.markup = ">";
 
-  state.push('callout_close', 'div', -1);
+    const tokenContent = state.push("inline", "", 0);
+    tokenContent.content = calloutLines.join("\n");
 
-  state.line = nextLine;
-  return true;
-});
+    state.push("callout_close", "div", -1);
+
+    state.line = nextLine;
+    return true;
+  },
+);
 
 // Custom renderers for callouts
-md.renderer.rules['callout_open'] = (tokens, idx) => {
+md.renderer.rules["callout_open"] = (tokens, idx) => {
   const token = tokens[idx];
-  const type = token.meta?.type || 'note';
+  const type = token.meta?.type || "note";
   const title = token.meta?.title || type.toUpperCase();
   const icons: Record<string, string> = {
-    note: '📝',
-    warning: '⚠️',
-    tip: '💡',
-    danger: '🚨',
-    info: 'ℹ️',
+    note: "📝",
+    warning: "⚠️",
+    tip: "💡",
+    danger: "🚨",
+    info: "ℹ️",
   };
-  const icon = icons[type] || '📝';
+  const icon = icons[type] || "📝";
   return `<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${title}</span></div><div class="callout-content">`;
 };
 
-md.renderer.rules['callout_close'] = () => {
-  return '</div></div>';
+md.renderer.rules["callout_close"] = () => {
+  return "</div></div>";
 };
 
 export function parseMarkdown(content: string): ParsedMarkdown {
@@ -151,7 +155,7 @@ export function parseMarkdown(content: string): ParsedMarkdown {
     html,
     frontmatter,
     metadata: {
-      title: frontmatter.title || 'Untitled',
+      title: frontmatter.title || "Untitled",
       description: frontmatter.description,
       ...frontmatter,
     },
@@ -160,7 +164,7 @@ export function parseMarkdown(content: string): ParsedMarkdown {
 
 function parseFrontmatter(content: string): Record<string, any> {
   const result: Record<string, any> = {};
-  const lines = content.split('\n');
+  const lines = content.split("\n");
 
   for (const line of lines) {
     if (!line.trim()) continue;
@@ -170,12 +174,12 @@ function parseFrontmatter(content: string): Record<string, any> {
       let value: any = match[2].trim();
 
       // Simple type conversion
-      if (value === 'true') value = true;
-      else if (value === 'false') value = false;
-      else if (!isNaN(Number(value)) && value !== '') value = Number(value);
+      if (value === "true") value = true;
+      else if (value === "false") value = false;
+      else if (!isNaN(Number(value)) && value !== "") value = Number(value);
       else if (value.startsWith('"') && value.endsWith('"')) {
         value = value.slice(1, -1);
-      } else if (value.startsWith('[') && value.endsWith(']')) {
+      } else if (value.startsWith("[") && value.endsWith("]")) {
         value = JSON.parse(value);
       }
 

@@ -15,16 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-import { SSGPipeline } from './ssg-pipeline.js';
-import { log } from '../shared/log.js';
+import { SSGPipeline } from "./ssg-pipeline.js";
+import { log } from "../shared/log.js";
 export class ProductionBuilder {
-    /**
-     * Run the production build sequence
-     */
-    static async build(opts) {
-        log.info('--- PRODUCTION BUILD START ---');
-        const pipeline = new SSGPipeline(opts.config);
-        await pipeline.run();
-        log.info('--- PRODUCTION BUILD COMPLETE ---');
-    }
+  /**
+   * Run the production build sequence
+   */
+  static async build(opts) {
+    log.info("--- PRODUCTION BUILD START ---");
+    const pipeline = new SSGPipeline(opts.config);
+    await pipeline.run();
+    log.info("--- PRODUCTION BUILD COMPLETE ---");
+  }
 }

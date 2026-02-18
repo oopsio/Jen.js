@@ -33,17 +33,20 @@ release-16/
 ### 1. **Islands** 🏝️
 
 **Pages Using Islands**:
+
 - `site/(home).tsx` - Counter with `client:load` strategy
 - `site/(interactive).tsx` - Multiple islands (load, idle, visible)
 - `site/(login).tsx` - Login form island
 
 **Key Concepts**:
+
 - Mark components as islands
 - Three hydration strategies (load, idle, visible)
 - Server renders HTML, client hydrates selectively
 - Rest of page stays static
 
 **Files to Study**:
+
 1. `site/(home).tsx` - Start here, simplest example
 2. `site/(interactive).tsx` - Multiple strategies
 3. `site/(login).tsx` - Form interaction
@@ -51,20 +54,24 @@ release-16/
 ### 2. **Route Middleware** 🔐
 
 **Pages Using Middleware**:
+
 - `site/(protected-dashboard).tsx` - Authentication + authorization
 - `site/(login).tsx` - Also has middleware logic
 
 **Key Concepts**:
+
 - Middleware runs before rendering
 - Can redirect or short-circuit
 - Attach data for loader/page
 - Perfect for auth, logging, data fetching
 
 **Files to Study**:
+
 1. `site/(protected-dashboard).tsx` - Auth example
 2. `site/(login).tsx` - Form submission
 
 **Example Flow**:
+
 ```
 Request to /dashboard
   ↓
@@ -80,6 +87,7 @@ Page renders with user data
 ### 3. **API Routes** 🌐
 
 **API Endpoints**:
+
 - `GET /api/hello` - Simple endpoint
 - `GET /api/users` - List users
 - `POST /api/users` - Create user
@@ -88,11 +96,13 @@ Page renders with user data
 - `DELETE /api/users/[id]` - Delete user
 
 **Files to Study**:
+
 1. `site/api/(hello).ts` - Start here, simplest API
 2. `site/api/users.ts` - GET/POST handlers
 3. `site/api/users/[id].ts` - Dynamic routes, all CRUD methods
 
 **Testing APIs**:
+
 ```bash
 # Hello
 curl http://localhost:3000/api/hello?name=Alice
@@ -108,23 +118,27 @@ curl -X DELETE http://localhost:3000/api/users/1
 ### 4. **Zero-JS Pages** 📄
 
 **Zero-JS Pages**:
+
 - `site/(about).tsx` - Pure static about page
 - `site/(blog)/[slug].tsx` - Dynamic blog posts
 - `site/(docs).tsx` - Documentation
 
 **Key Concepts**:
+
 - `export const hydrate = false`
 - No client-side JavaScript
 - Works with loaders and middleware
 - Perfect for static content
 
 **Benefits**:
+
 - Blazing fast (no JS parsing)
 - Works without JavaScript
 - Better SEO
 - Smaller bundle size
 
 **Files to Study**:
+
 1. `site/(about).tsx` - Simplest zero-JS example
 2. `site/(docs).tsx` - More complex zero-JS
 3. `site/(blog)/[slug].tsx` - Dynamic + zero-JS
@@ -132,6 +146,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or pnpm
 
@@ -152,6 +167,7 @@ npm run dev
 ```
 
 Navigate to:
+
 - http://localhost:3000 - Home (Islands)
 - http://localhost:3000/about - Zero-JS page
 - http://localhost:3000/interactive - Multiple islands
@@ -170,6 +186,7 @@ npm run start  # Run production server
 ## 📚 Learning Path
 
 ### Beginner
+
 1. **Understand Islands**
    - Visit http://localhost:3000
    - Open DevTools Network tab
@@ -186,6 +203,7 @@ npm run start  # Run production server
    - `site/(about).tsx` - Simple zero-JS
 
 ### Intermediate
+
 1. **Multiple Islands**
    - Visit http://localhost:3000/interactive
    - See different hydration strategies
@@ -202,6 +220,7 @@ npm run start  # Run production server
    - Review code: `site/api/users.ts` and `site/api/users/[id].ts`
 
 ### Advanced
+
 1. **Combine Features**
    - Protected page with islands
    - Zero-JS with middleware
@@ -215,6 +234,7 @@ npm run start  # Run production server
 ## 🔬 Code Examples
 
 ### Simple Island
+
 ```tsx
 // site/(home).tsx
 import { Island } from "jenjs";
@@ -232,6 +252,7 @@ export default function Home() {
 ```
 
 ### Route Middleware
+
 ```tsx
 // site/(protected-dashboard).tsx
 export const middleware = async (ctx) => {
@@ -249,6 +270,7 @@ export default function Dashboard({ data }) {
 ```
 
 ### API Route
+
 ```tsx
 // site/api/users.ts
 export const GET = async (ctx) => {
@@ -264,6 +286,7 @@ export const POST = async (ctx) => {
 ```
 
 ### Zero-JS Page
+
 ```tsx
 // site/(about).tsx
 export const hydrate = false;
@@ -278,11 +301,13 @@ export default function About() {
 ### Manual Testing
 
 **Islands**:
+
 1. Open http://localhost:3000
 2. Click counter - should increment
 3. Check DevTools console - no errors
 
 **Middleware**:
+
 1. Open http://localhost:3000/dashboard
 2. Should redirect to /login
 3. Submit login form
@@ -290,12 +315,14 @@ export default function About() {
 5. Visit /dashboard again - should work
 
 **API Routes**:
+
 ```bash
 curl http://localhost:3000/api/users
 curl http://localhost:3000/api/users/1
 ```
 
 **Zero-JS**:
+
 1. Open http://localhost:3000/about
 2. DevTools Network - no hydration script
 3. DevTools Console - disable JavaScript
@@ -304,12 +331,14 @@ curl http://localhost:3000/api/users/1
 ### Browser Compatibility
 
 ✅ **Tested on**:
+
 - Chrome/Edge (latest)
 - Firefox (latest)
 - Safari (latest)
 - Mobile browsers (iOS Safari, Chrome Mobile)
 
 ⚠️ **Note**: Some hydration strategies require modern browsers:
+
 - `idle` requires `requestIdleCallback`
 - `visible` requires `IntersectionObserver`
 - Fallback to `load` in older browsers
@@ -318,15 +347,15 @@ curl http://localhost:3000/api/users/1
 
 ### Typical Page Loads
 
-| Page | Type | JS Bundle | Load Time |
-|------|------|-----------|-----------|
-| Home | Islands | ~3KB | ~500ms |
-| Interactive | Multiple islands | ~5KB | ~800ms |
-| About | Zero-JS | 0KB | ~100ms |
-| Blog | Zero-JS + Middleware | ~1KB | ~150ms |
-| Dashboard | Middleware + Islands | ~4KB | ~700ms |
+| Page        | Type                 | JS Bundle | Load Time |
+| ----------- | -------------------- | --------- | --------- |
+| Home        | Islands              | ~3KB      | ~500ms    |
+| Interactive | Multiple islands     | ~5KB      | ~800ms    |
+| About       | Zero-JS              | 0KB       | ~100ms    |
+| Blog        | Zero-JS + Middleware | ~1KB      | ~150ms    |
+| Dashboard   | Middleware + Islands | ~4KB      | ~700ms    |
 
-*Metrics are approximate and depend on network/hardware*
+_Metrics are approximate and depend on network/hardware_
 
 ## 🛠️ Customization
 
@@ -336,7 +365,9 @@ curl http://localhost:3000/api/users/1
 // site/api/new-island.ts
 import { Island } from "jenjs";
 
-const MyComponent = () => { /* ... */ };
+const MyComponent = () => {
+  /* ... */
+};
 export const MyIsland = Island(MyComponent, "load");
 ```
 
@@ -365,21 +396,25 @@ export default function MyPage() {
 ## 🐛 Troubleshooting
 
 ### Islands not working?
+
 - Check browser console for errors
 - Verify hydration strategy matches usage
 - Ensure component props are JSON serializable
 
 ### Middleware not running?
+
 - Verify middleware export
 - Check redirect/json short-circuits
 - Use browser dev tools to inspect request
 
 ### API routes not responding?
+
 - Check HTTP method (GET, POST, etc.)
 - Verify route path
 - Check request/response format
 
 ### Zero-JS pages showing hydration script?
+
 - Verify `export const hydrate = false`
 - Check file is exported from route component
 - Rebuild and clear cache
@@ -394,11 +429,13 @@ export default function MyPage() {
 ## 🎓 Learning Resources
 
 ### Concepts
+
 - Read about [Islands Architecture](https://jasonformat.com/islands-architecture/)
 - Learn about [Server Components](https://vercel.com/blog/server-components)
 - Understand [Hydration](https://web.dev/rendering-on-the-web/)
 
 ### Related Frameworks
+
 - [Astro](https://astro.build/) - Islands pioneer
 - [Fresh](https://fresh.deno.dev/) - Islands + Deno
 - [Next.js 13](https://nextjs.org/) - Server Components

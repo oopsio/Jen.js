@@ -8,17 +8,17 @@ This release brings improvements to routing, plugins, dev server performance, an
 
 ## Highlights
 
-* Improved file-based routing for dynamic pages
-* Plugin system now supports more lifecycle hooks
-* Multi-driver database support optimized (SQLite, PostgreSQL, MySQL, jDB)
-* Faster dev server startup and smoother HMR
-* Updated examples and documentation
+- Improved file-based routing for dynamic pages
+- Plugin system now supports more lifecycle hooks
+- Multi-driver database support optimized (SQLite, PostgreSQL, MySQL, jDB)
+- Faster dev server startup and smoother HMR
+- Updated examples and documentation
 
 ## Bug Fixes
 
-* Fixed API route issues on SSR
-* Corrected hydration inconsistencies
-* Resolved TypeScript strict-mode errors
+- Fixed API route issues on SSR
+- Corrected hydration inconsistencies
+- Resolved TypeScript strict-mode errors
 
 ## Upgrade
 

@@ -1,6 +1,6 @@
 name: Greetings
 
-on: 
+on:
   - pull_request_target
   - issues
 

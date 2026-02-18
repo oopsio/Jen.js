@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -26,7 +26,9 @@ export async function hydrateClient(entryPath: string) {
     const mod = await import(entryPath);
 
     if (!mod.default) {
-      console.error(`Failed to hydrate: route module does not export default component`);
+      console.error(
+        `Failed to hydrate: route module does not export default component`,
+      );
       return;
     }
 
@@ -45,6 +47,9 @@ export async function hydrateClient(entryPath: string) {
 
     hydrate(app, root);
   } catch (err) {
-    console.error("Hydration failed:", err instanceof Error ? err.message : String(err));
+    console.error(
+      "Hydration failed:",
+      err instanceof Error ? err.message : String(err),
+    );
   }
 }

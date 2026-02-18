@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -24,12 +24,15 @@ import {
   copyFileSync,
   readdirSync,
   statSync,
-  readFileSync
+  readFileSync,
 } from "node:fs";
 import { join } from "node:path";
 import esbuild from "esbuild";
 import { createScssCompiler } from "../css/compiler.js";
-import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../compilers/esbuild-plugins.js";
 
 import type { FrameworkConfig } from "../core/config.js";
 import { scanRoutes } from "../core/routes/scan.js";
@@ -73,7 +76,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       params: {},
       query: {},
       headers: {},
-      cookies: {}
+      cookies: {},
     });
 
     const outPath =
@@ -120,9 +123,9 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     const compiler = createScssCompiler();
     const result = compiler.compile({
       inputPath: scssPath,
-      minified: true
+      minified: true,
     });
-    
+
     if (result.error) {
       log.error(`SCSS Compilation Failed: ${result.error}`);
       writeFileSync(join(dist, "styles.css"), "/* SCSS Compilation Failed */");

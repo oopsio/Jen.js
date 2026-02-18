@@ -1,20 +1,12 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
+/* * This file is part of Jen.js. * Copyright (C) 2026 oopsio * * This program
+is free software: you can redistribute it and/or modify * it under the terms of
+the GNU General Public License as published by * the Free Software Foundation,
+either version 3 of the License, or * (at your option) any later version. * *
+This program is distributed in the hope that it will be useful, * but WITHOUT
+ANY WARRANTY; without even the implied warranty of * MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the * GNU General Public License for more details.
+* * You should have received a copy of the GNU General Public License * along
+with this program. If not, see <https://www.gnu.org/licenses/>. */
 
 <template>
   <div class="vue-demo">
@@ -51,66 +43,33 @@
         <h3>VueCounter.vue</h3>
         <div class="code-block">
           <code>
-&lt;template&gt;
-  &lt;div class="vue-counter"&gt;
-    &lt;h3&gt;Vue Counter&lt;/h3&gt;
-    &lt;div class="counter-display"&gt;
-      &lt;span class="count"&gt;{{ count }}&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="button-group"&gt;
-      &lt;button @click="decrement"&gt;−&lt;/button&gt;
-      &lt;button @click="increment"&gt;+&lt;/button&gt;
-      &lt;button @click="reset"&gt;Reset&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script setup lang="ts"&gt;
-import { ref } from 'vue';
-
-const count = ref(0);
-const increment = () => count.value++;
-const decrement = () => count.value--;
-const reset = () => count.value = 0;
-&lt;/script&gt;
-
-&lt;style scoped&gt;
-.vue-counter {
-  padding: 1.5rem;
-  border-radius: 8px;
-}
-.count {
-  font-size: 3rem;
-  font-weight: bold;
-}
-&lt;/style&gt;
+            &lt;template&gt; &lt;div class="vue-counter"&gt; &lt;h3&gt;Vue
+            Counter&lt;/h3&gt; &lt;div class="counter-display"&gt; &lt;span
+            class="count"&gt;{{ count }}&lt;/span&gt; &lt;/div&gt; &lt;div
+            class="button-group"&gt; &lt;button
+            @click="decrement"&gt;−&lt;/button&gt; &lt;button
+            @click="increment"&gt;+&lt;/button&gt; &lt;button
+            @click="reset"&gt;Reset&lt;/button&gt; &lt;/div&gt; &lt;/div&gt;
+            &lt;/template&gt; &lt;script setup lang="ts"&gt; import { ref } from
+            'vue'; const count = ref(0); const increment = () => count.value++;
+            const decrement = () => count.value--; const reset = () =>
+            count.value = 0; &lt;/script&gt; &lt;style scoped&gt; .vue-counter {
+            padding: 1.5rem; border-radius: 8px; } .count { font-size: 3rem;
+            font-weight: bold; } &lt;/style&gt;
           </code>
         </div>
 
         <h3>VueCard.vue</h3>
         <div class="code-block">
           <code>
-&lt;template&gt;
-  &lt;div class="vue-card"&gt;
-    &lt;div class="card-header" v-if="title"&gt;
-      &lt;h4&gt;{{ title }}&lt;/h4&gt;
-    &lt;/div&gt;
-    &lt;div class="card-body"&gt;
-      &lt;slot /&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
-
-&lt;script setup lang="ts"&gt;
-defineProps&lt;{ title?: string }&gt;();
-&lt;/script&gt;
-
-&lt;style scoped&gt;
-.vue-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-&lt;/style&gt;
+            &lt;template&gt; &lt;div class="vue-card"&gt; &lt;div
+            class="card-header" v-if="title"&gt; &lt;h4&gt;{{
+              title
+            }}&lt;/h4&gt; &lt;/div&gt; &lt;div class="card-body"&gt; &lt;slot
+            /&gt; &lt;/div&gt; &lt;/div&gt; &lt;/template&gt; &lt;script setup
+            lang="ts"&gt; defineProps&lt;{ title?: string }&gt;();
+            &lt;/script&gt; &lt;style scoped&gt; .vue-card { border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); } &lt;/style&gt;
           </code>
         </div>
       </section>
@@ -123,16 +82,16 @@ defineProps&lt;{ title?: string }&gt;();
             component setup
           </li>
           <li>
-            <strong>TypeScript</strong> - Add
-            <code>lang="ts"</code> to script tags
+            <strong>TypeScript</strong> - Add <code>lang="ts"</code> to script
+            tags
           </li>
           <li>
-            <strong>Reactive State</strong> - Use
-            <code>ref()</code> and <code>reactive()</code>
+            <strong>Reactive State</strong> - Use <code>ref()</code> and
+            <code>reactive()</code>
           </li>
           <li>
-            <strong>Scoped Styles</strong> - Add
-            <code>scoped</code> to style tags for component isolation
+            <strong>Scoped Styles</strong> - Add <code>scoped</code> to style
+            tags for component isolation
           </li>
           <li>
             <strong>Slots</strong> - Use <code>&lt;slot /&gt;</code> for content
@@ -145,9 +104,7 @@ defineProps&lt;{ title?: string }&gt;();
         <h2>Next Steps</h2>
         <p>
           <a href="/" class="button">← Back to Home</a>
-          <a href="/(svelte-demo)" class="button secondary"
-            >Svelte Demo →</a
-          >
+          <a href="/(svelte-demo)" class="button secondary">Svelte Demo →</a>
         </p>
       </section>
     </div>
@@ -159,8 +116,8 @@ defineProps&lt;{ title?: string }&gt;();
 </template>
 
 <script setup lang="ts">
-import VueCounter from './components/VueCounter.vue';
-import VueCard from './components/VueCard.vue';
+import VueCounter from "./components/VueCounter.vue";
+import VueCard from "./components/VueCard.vue";
 </script>
 
 <style scoped>

@@ -1,20 +1,33 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 // ==== CONFIG ====
 const projectName = "Jen.js"; // change to your project name
-const author = "oopsio";    // change to your name
+const author = "oopsio"; // change to your name
 
 // Supported extensions and their comment style
 const commentStyles = {
-  '.c': 'block', '.cc': 'block', '.cpp': 'block',
-  '.h': 'block', '.hh': 'block', '.cs': 'block',
-  '.ts': 'block', '.tsx': 'block', '.js': 'block',
-  '.jsx': 'block', '.mjs': 'block', '.mts': 'block',
-  '.py': 'hash', '.rb': 'hash', '.rs': 'hash',
-  '.lua': 'hash', '.php': 'hash',
-  '.svelte': 'block', '.vue': 'block', '.astro': 'block',
-  '.coffee': 'block'
+  ".c": "block",
+  ".cc": "block",
+  ".cpp": "block",
+  ".h": "block",
+  ".hh": "block",
+  ".cs": "block",
+  ".ts": "block",
+  ".tsx": "block",
+  ".js": "block",
+  ".jsx": "block",
+  ".mjs": "block",
+  ".mts": "block",
+  ".py": "hash",
+  ".rb": "hash",
+  ".rs": "hash",
+  ".lua": "hash",
+  ".php": "hash",
+  ".svelte": "block",
+  ".vue": "block",
+  ".astro": "block",
+  ".coffee": "block",
 };
 
 // ==== HEADER GENERATOR ====
@@ -36,12 +49,20 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.`;
 
   switch (style) {
-    case 'block':
-      return `/*\n${text.split('\n').map(l => ' * ' + l).join('\n')}\n */\n\n`;
-    case 'hash':
-      return text.split('\n').map(l => '# ' + l).join('\n') + '\n\n';
+    case "block":
+      return `/*\n${text
+        .split("\n")
+        .map((l) => " * " + l)
+        .join("\n")}\n */\n\n`;
+    case "hash":
+      return (
+        text
+          .split("\n")
+          .map((l) => "# " + l)
+          .join("\n") + "\n\n"
+      );
     default:
-      return '';
+      return "";
   }
 }
 
@@ -52,17 +73,20 @@ function walk(dir) {
     const fullPath = path.join(dir, entry.name);
 
     // Skip node_modules, dist, and hidden/system folders
-    if (entry.isDirectory() && !['node_modules', 'dist', '.git'].includes(entry.name)) {
+    if (
+      entry.isDirectory() &&
+      !["node_modules", "dist", ".git"].includes(entry.name)
+    ) {
       walk(fullPath);
     } else if (entry.isFile()) {
       const ext = path.extname(entry.name).toLowerCase();
       if (commentStyles[ext]) {
-        const content = fs.readFileSync(fullPath, 'utf-8');
+        const content = fs.readFileSync(fullPath, "utf-8");
 
         // Skip if file already has GPL header
-        if (!content.includes('GNU General Public License')) {
+        if (!content.includes("GNU General Public License")) {
           const header = makeHeader(commentStyles[ext]);
-          fs.writeFileSync(fullPath, header + content, 'utf-8');
+          fs.writeFileSync(fullPath, header + content, "utf-8");
           console.log(`Added header to: ${fullPath}`);
         }
       }
@@ -71,4 +95,4 @@ function walk(dir) {
 }
 
 // ==== RUN ====
-walk('./'); // run in current working directory
+walk("./"); // run in current working directory

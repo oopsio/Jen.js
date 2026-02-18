@@ -86,6 +86,7 @@ npm run start
 ### Tailwind CSS
 
 The Tailwind configuration is in `tailwind.config.js`. Customize:
+
 - Colors (primary and accent color schemes included)
 - Fonts (Inter font pre-configured)
 - Animations (fadeIn, slideUp, pulseGlow)
@@ -94,6 +95,7 @@ The Tailwind configuration is in `tailwind.config.js`. Customize:
 ### Global Styles
 
 Edit `site/styles/global.scss` to customize:
+
 - CSS variables for theming
 - Base element styles
 - Component styles (cards, buttons, forms)
@@ -103,6 +105,7 @@ Edit `site/styles/global.scss` to customize:
 ### Components
 
 All components are in `site/components/` and can be easily modified:
+
 - `Header.tsx` - Navigation and branding
 - `Hero.tsx` - Large banner sections
 - `FeatureGrid.tsx` - Feature showcase grid
@@ -113,29 +116,32 @@ All components are in `site/components/` and can be easily modified:
 Extend functionality using plugins in `site/plugins/`:
 
 #### Analytics Plugin
+
 ```typescript
-import { analytics } from './plugins/analytics.ts';
+import { analytics } from "./plugins/analytics.ts";
 
 // Track page views automatically
 // Track custom events
-analytics.trackEvent('user_signup', { method: 'email' });
+analytics.trackEvent("user_signup", { method: "email" });
 ```
 
 #### Theme Plugin
-```typescript
-import { themeManager } from './plugins/theme.ts';
 
-themeManager.setTheme('dark');
+```typescript
+import { themeManager } from "./plugins/theme.ts";
+
+themeManager.setTheme("dark");
 themeManager.toggleTheme();
 ```
 
 #### Notifications Plugin
-```typescript
-import { notifications } from './plugins/notification.ts';
 
-notifications.success('Changes saved!');
-notifications.error('Something went wrong');
-notifications.warning('Please review this');
+```typescript
+import { notifications } from "./plugins/notification.ts";
+
+notifications.success("Changes saved!");
+notifications.error("Something went wrong");
+notifications.warning("Please review this");
 ```
 
 ## 🔧 Configuration
@@ -144,11 +150,11 @@ notifications.warning('Please review this');
 
 ```typescript
 const config: FrameworkConfig = {
-  siteDir: "site",           // Directory containing your pages
-  distDir: "dist",           // Output directory
+  siteDir: "site", // Directory containing your pages
+  distDir: "dist", // Output directory
   rendering: {
-    defaultMode: "ssr",      // or "ssg" for static generation
-    defaultRevalidateSeconds: 60
+    defaultMode: "ssr", // or "ssg" for static generation
+    defaultRevalidateSeconds: 60,
   },
   // ... more options
 };
@@ -157,6 +163,7 @@ const config: FrameworkConfig = {
 ### Adding New Pages
 
 Create files in the `site/` directory following the naming pattern:
+
 - `(index).tsx` → `/`
 - `about.tsx` → `/about`
 - `contact.tsx` → `/contact`
@@ -193,6 +200,7 @@ export function Head() {
 ## 🚀 Deployment
 
 The boilerplate can be deployed to:
+
 - **Vercel** - Automatic from GitHub
 - **Netlify** - Drop-in deployment
 - **Docker** - Container-based deployment
@@ -209,6 +217,7 @@ Have improvements? Feel free to submit pull requests or open issues!
 ## 🆘 Support
 
 For help with Jen.js:
+
 - Check the [Jen.js Documentation](https://github.com/kessud2021/Jen.js)
 - Review example projects in the `example/` directory
 - Submit issues on GitHub

@@ -31,6 +31,7 @@ jenpack dev src/index.tsx
 ```
 
 Options:
+
 - `--port <port>` - Server port (default: 3000)
 - `--host <host>` - Server host (default: 0.0.0.0)
 
@@ -43,6 +44,7 @@ jenpack build src/index.tsx --out dist
 ```
 
 Options:
+
 - `--out <dir>` - Output directory (default: dist)
 - `--minify` - Enable minification (default: true)
 - `--sourcemap` - Generate source maps (default: true)
@@ -56,6 +58,7 @@ jenpack analyze src/index.tsx
 ```
 
 Shows:
+
 - Module dependency tree
 - Bundle sizes
 - Dependency counts per module
@@ -73,22 +76,22 @@ jenpack clean
 Create a `jenpack.config.ts` file in your project root:
 
 ```typescript
-import { defineConfig } from '@jen/jenpack';
+import { defineConfig } from "@jen/jenpack";
 
 export default defineConfig({
-  entry: 'src/index.tsx',
-  outDir: 'dist',
-  publicDir: 'public',
-  jsxImportSource: 'preact',
+  entry: "src/index.tsx",
+  outDir: "dist",
+  publicDir: "public",
+  jsxImportSource: "preact",
   minify: true,
   sourcemap: true,
   define: {
     __DEV__: 'process.env.NODE_ENV === "development"',
   },
   alias: {
-    '@': './src',
+    "@": "./src",
   },
-  external: ['preact', 'preact/hooks'],
+  external: ["preact", "preact/hooks"],
 });
 ```
 

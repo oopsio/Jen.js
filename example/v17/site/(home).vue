@@ -1,20 +1,12 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
+/* * This file is part of Jen.js. * Copyright (C) 2026 oopsio * * This program
+is free software: you can redistribute it and/or modify * it under the terms of
+the GNU General Public License as published by * the Free Software Foundation,
+either version 3 of the License, or * (at your option) any later version. * *
+This program is distributed in the hope that it will be useful, * but WITHOUT
+ANY WARRANTY; without even the implied warranty of * MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the * GNU General Public License for more details.
+* * You should have received a copy of the GNU General Public License * along
+with this program. If not, see <https://www.gnu.org/licenses/>. */
 
 <template>
   <div class="home-page">
@@ -75,9 +67,7 @@
       <section class="section">
         <h2>🎯 Navigation</h2>
         <div class="grid">
-          <router-link to="/vue-demo" class="button"
-            >Vue Demo →</router-link
-          >
+          <router-link to="/vue-demo" class="button">Vue Demo →</router-link>
           <router-link to="/svelte-demo" class="button"
             >Svelte Demo →</router-link
           >
@@ -105,24 +95,12 @@
         <h2>🚀 Quick Start</h2>
         <div class="code-block">
           <code>
-# Create Vue component
-cat > site/components/Button.vue &lt;&lt; EOF
-&lt;template&gt;
-  &lt;button @click="$emit('click')"&gt;
-    &lt;slot /&gt;
-  &lt;/button&gt;
-&lt;/template&gt;
-
-&lt;script setup lang="ts"&gt;
-const emit = defineEmits&lt;{ click: [] }&gt;();
-&lt;/script&gt;
-EOF
-
-# Start dev server
-npm run dev
-
-# Build for production
-npm run build
+            # Create Vue component cat > site/components/Button.vue &lt;&lt; EOF
+            &lt;template&gt; &lt;button @click="$emit('click')"&gt; &lt;slot
+            /&gt; &lt;/button&gt; &lt;/template&gt; &lt;script setup
+            lang="ts"&gt; const emit = defineEmits&lt;{ click: [] }&gt;();
+            &lt;/script&gt; EOF # Start dev server npm run dev # Build for
+            production npm run build
           </code>
         </div>
       </section>

@@ -32,26 +32,33 @@ tests/
 ## Test Categories
 
 ### Core Tests (`tests/core/`)
+
 - **config.test.ts**: Configuration loading, merging, validation
 - **paths.test.ts**: Path resolution, aliases, relative/absolute paths
 - **types.test.ts**: Type validation, component props, routes, middleware
 
 ### Runtime Tests (`tests/runtime/`)
+
 - **hydrate.test.ts**: Island hydration, state preservation, error handling
 
 ### Server Tests (`tests/server/`)
+
 - **app.test.ts**: HTTP server, routing, middleware pipeline, responses
 
 ### Build Tests (`tests/build/`)
+
 - **pipeline.test.ts**: Asset hashing, minification, islands extraction, output
 
 ### API Tests (`tests/api/`)
+
 - **routes.test.ts**: Route registration, request/response handling, validation
 
 ### Middleware Tests (`tests/middleware/`)
+
 - **pipeline.test.ts**: Middleware execution, built-in middleware, error handling
 
 ### Shared Tests (`tests/shared/`)
+
 - **log.test.ts**: Logging levels, formatting, output, filtering
 
 ## Writing New Tests
@@ -82,15 +89,15 @@ describe("Feature Name", () => {
 ### Common Assertions
 
 ```typescript
-expect(value).toBe(expected);           // Strict equality
-expect(value).toEqual(expected);        // Deep equality
-expect(value).toContain(item);          // Array/string contains
-expect(value).toMatch(/pattern/);       // Regex match
-expect(fn).toThrow();                   // Function throws
-expect(value).toBeDefined();            // Not undefined
-expect(value).toBeNull();               // Null value
-expect(value).toBeTruthy();             // Truthy value
-expect(array).toHaveLength(n);          // Array length
+expect(value).toBe(expected); // Strict equality
+expect(value).toEqual(expected); // Deep equality
+expect(value).toContain(item); // Array/string contains
+expect(value).toMatch(/pattern/); // Regex match
+expect(fn).toThrow(); // Function throws
+expect(value).toBeDefined(); // Not undefined
+expect(value).toBeNull(); // Null value
+expect(value).toBeTruthy(); // Truthy value
+expect(array).toHaveLength(n); // Array length
 ```
 
 ## Coverage
@@ -102,6 +109,7 @@ npm run test:run -- --coverage
 ```
 
 Coverage reports are generated in:
+
 - Terminal output
 - `coverage/index.html` (HTML report)
 - `coverage/coverage-final.json` (JSON report)
@@ -138,6 +146,7 @@ spy.mockImplementation(() => "mocked");
 Vitest config: `vitest.config.ts`
 
 Key settings:
+
 - **environment**: Node.js (for testing server code)
 - **globals**: True (no need to import describe/it/expect)
 - **include**: Tests in `tests/**/*.test.ts` or `tests/**/*.spec.ts`
@@ -146,6 +155,7 @@ Key settings:
 ## CI/CD Integration
 
 Tests run automatically on:
+
 - Local development (`npm run test`)
 - Pre-commit hooks (recommended)
 - CI pipelines (use `npm run test:run`)
@@ -163,20 +173,24 @@ Tests run automatically on:
 ## Troubleshooting
 
 ### Tests not found
+
 - Check file naming: `*.test.ts` or `*.spec.ts`
 - Verify `vitest.config.ts` includes pattern
 
 ### TypeScript errors
+
 - Ensure `tsconfig.json` includes test files
 - Check path aliases are configured correctly
 
 ### Import resolution
+
 - Use `@src/*` for framework imports
 - Use relative imports for local modules
 
 ## Contributing
 
 When adding features:
+
 1. Write tests first (TDD approach)
 2. Implement feature
 3. Verify all tests pass

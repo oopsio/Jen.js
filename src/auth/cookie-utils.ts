@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -72,8 +72,8 @@ export function createSecureCookie(
 }
 
 /**
-  * Parse cookies from request header
-  */
+ * Parse cookies from request header
+ */
 export function parseCookies(cookieHeader: string): Record<string, string> {
   const cookies: Record<string, string> = {};
 
@@ -94,7 +94,10 @@ export function parseCookies(cookieHeader: string): Record<string, string> {
         cookies[decodeURIComponent(name)] = decodeURIComponent(value);
       } catch (err) {
         // Skip cookies with invalid URI encoding
-        console.warn(`Failed to decode cookie ${name}:`, err instanceof Error ? err.message : String(err));
+        console.warn(
+          `Failed to decode cookie ${name}:`,
+          err instanceof Error ? err.message : String(err),
+        );
       }
     }
   });

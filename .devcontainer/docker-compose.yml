@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Main development container
@@ -8,26 +8,26 @@ services:
       dockerfile: .devcontainer/Dockerfile
     container_name: jen-js-dev
     image: jen-js:latest
-    
+
     # Mount the entire workspace
     volumes:
       - ..:/workspace
-      - /workspace/node_modules  # Keep node_modules in container to avoid sync issues
-      - /workspace/.pnpm-store  # Cache pnpm store for faster installs
-      - /workspace/.turbo  # Cache turbo for faster builds
-      - /workspace/.jen  # Cache jen build artifacts
-      - /workspace/dist  # Cache dist directory
-      - ${HOME}/.ssh:/home/node/.ssh:ro  # SSH keys for git operations
-      - ${HOME}/.gitconfig:/home/node/.gitconfig:ro  # Git config
-    
+      - /workspace/node_modules # Keep node_modules in container to avoid sync issues
+      - /workspace/.pnpm-store # Cache pnpm store for faster installs
+      - /workspace/.turbo # Cache turbo for faster builds
+      - /workspace/.jen # Cache jen build artifacts
+      - /workspace/dist # Cache dist directory
+      - ${HOME}/.ssh:/home/node/.ssh:ro # SSH keys for git operations
+      - ${HOME}/.gitconfig:/home/node/.gitconfig:ro # Git config
+
     # Port mappings
     ports:
-      - "5173:5173"  # Vite dev server
-      - "3000:3000"  # Alternative port
-      - "8080:8080"  # Build/SSG server
-      - "8787:8787"  # Workers/Edge
-      - "4173:4173"  # Vite preview
-    
+      - "5173:5173" # Vite dev server
+      - "3000:3000" # Alternative port
+      - "8080:8080" # Build/SSG server
+      - "8787:8787" # Workers/Edge
+      - "4173:4173" # Vite preview
+
     # Environment configuration
     environment:
       - NODE_ENV=development
@@ -39,17 +39,17 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - ASTRO_TELEMETRY_DISABLED=1
       - NODE_MAX_OLD_SPACE_SIZE=4096
-    
+
     # Working directory
     working_dir: /workspace
-    
+
     # Default command
     command: /bin/bash
-    
+
     # Keep the container running
     stdin_open: true
     tty: true
-    
+
     # Health check
     healthcheck:
       test: ["CMD", "node", "--version"]
@@ -57,17 +57,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
-    
+
     # Resource limits (adjust as needed)
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 4G
         reservations:
-          cpus: '1'
+          cpus: "1"
           memory: 2G
-    
+
     # Network configuration
     networks:
       - jen-network

@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -25,15 +25,15 @@ let highlighterPromise: Promise<any> | null = null;
 
 async function getHighlighter() {
   if (highlighter) return highlighter;
-  
+
   if (highlighterPromise) return highlighterPromise;
 
   highlighterPromise = (async () => {
     try {
-      const { codeToHtml } = await import('shiki');
+      const { codeToHtml } = await import("shiki");
       return { codeToHtml };
     } catch (error) {
-      console.warn('Shiki not available, using fallback highlighting');
+      console.warn("Shiki not available, using fallback highlighting");
       return null;
     }
   })();
@@ -73,9 +73,13 @@ const LANGUAGE_ICONS: Record<string, string> = {
   text: '<i class="bi bi-file-text"></i>',
 };
 
-export async function highlightCode(code: string, lang: string = 'text', isDark: boolean = false): Promise<string> {
+export async function highlightCode(
+  code: string,
+  lang: string = "text",
+  isDark: boolean = false,
+): Promise<string> {
   const hl = await getHighlighter();
-  
+
   if (!hl) {
     // Fallback: plain code with HTML escaping
     return `<pre><code class="language-${lang}">${escapeHtml(code)}</code></pre>`;
@@ -83,13 +87,14 @@ export async function highlightCode(code: string, lang: string = 'text', isDark:
 
   try {
     const highlighted = await hl.codeToHtml(code, {
-      lang: lang || 'text',
-      theme: isDark ? 'github-dark' : 'github-light',
+      lang: lang || "text",
+      theme: isDark ? "github-dark" : "github-light",
     });
-    
-    const icon = LANGUAGE_ICONS[lang.toLowerCase()] || '<i class="bi bi-file-text"></i>';
-    const langDisplay = lang || 'text';
-    
+
+    const icon =
+      LANGUAGE_ICONS[lang.toLowerCase()] || '<i class="bi bi-file-text"></i>';
+    const langDisplay = lang || "text";
+
     return `<div class="code-block-wrapper">
       <div class="code-block-header">
         <span class="code-block-lang"><span class="code-block-icon">${icon}</span>${langDisplay}</span>
@@ -105,13 +110,13 @@ export async function highlightCode(code: string, lang: string = 'text', isDark:
 
 function escapeHtml(text: string): string {
   const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
   };
-  return text.replace(/[&<>"']/g, char => map[char]);
+  return text.replace(/[&<>"']/g, (char) => map[char]);
 }
 
 export function escapeHtmlSync(text: string): string {

@@ -1,11 +1,35 @@
+/*
+ * This file is part of Jen.js.
+ * Copyright (C) 2026 oopsio
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 export * from "./api/(hello).js";
 export * from "./auth/index.js";
 export * from "./auth/jwt.js";
 export * from "./auth/session.js";
 export * from "./auth/cookie-utils.js";
-export { buildSite as legacyBuildSite, type BuildOptions, } from "./build-tools/build-site.js";
+export {
+  buildSite as legacyBuildSite,
+  type BuildOptions,
+} from "./build-tools/build-site.js";
 export * from "./build/build.js";
-export { ProductionBuilder, type ProductionBuildConfig, } from "./build/production-build.js";
+export {
+  ProductionBuilder,
+  type ProductionBuildConfig,
+} from "./build/production-build.js";
 export { SSGPipeline } from "./build/ssg-pipeline.js";
 export * from "./build/island-hydration.js";
 export { AssetManifest } from "./build/asset-manifest.js";
@@ -13,16 +37,35 @@ export { AssetHasher } from "./build/asset-hashing.js";
 export { PageRenderer, type PageRenderContext } from "./build/page-renderer.js";
 export { Minifier, type MinifyOptions } from "./build/minifier.js";
 export type { Island, IslandRegistry } from "./build/island-hydration.js";
-export { createIslandRegistry, markIsland, extractIslandsFromHtml, injectIslandScript, } from "./build/island-hydration.js";
+export {
+  createIslandRegistry,
+  markIsland,
+  extractIslandsFromHtml,
+  injectIslandScript,
+} from "./build/island-hydration.js";
 export * from "./cache/index.js";
 export * from "./cache/memory.js";
 export * from "./cache/redis.js";
 export * from "./cli/templates/ssg/jen.config.js";
 export * from "./cli/templates/ssr/jen.config.js";
 export * from "./cli/banner.js";
-export { createVueCompiler, type VueCompileOptions, type VueCompileResult } from "./compilers/vue.js";
-export { createSvelteCompiler, type SvelteCompileOptions, type SvelteCompileResult } from "./compilers/svelte.js";
-export { vueEsbuildPlugin, svelteEsbuildPlugin, invalidateVueCache, invalidateSvelteCache, clearAllCompilerCaches, } from "./compilers/esbuild-plugins.js";
+export {
+  createVueCompiler,
+  type VueCompileOptions,
+  type VueCompileResult,
+} from "./compilers/vue.js";
+export {
+  createSvelteCompiler,
+  type SvelteCompileOptions,
+  type SvelteCompileResult,
+} from "./compilers/svelte.js";
+export {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+  invalidateVueCache,
+  invalidateSvelteCache,
+  clearAllCompilerCaches,
+} from "./compilers/esbuild-plugins.js";
 export * from "./core/config.js";
 export * from "./core/http.js";
 export * from "./core/paths.js";
@@ -40,7 +83,12 @@ export * from "./graphql/index.js";
 export * from "./graphql/schema.js";
 export * from "./graphql/resolvers.js";
 export * from "./i18n/index.js";
-export { jenImport, clearImportCache, invalidateImportCache, jen } from "./import/jen-import.js";
+export {
+  jenImport,
+  clearImportCache,
+  invalidateImportCache,
+  jen,
+} from "./import/jen-import.js";
 export * from "./jdb/index.js";
 export * from "./jdb/engine.js";
 export * from "./jdb/types.js";
@@ -75,7 +123,11 @@ export * from "./runtime/islands.js";
 export * from "./runtime/island-hydration-client.js";
 export * from "./server/app.js";
 export { tryHandleApiRoute as tryHandleApiRoute_v2 } from "./server/api-routes.js";
-export type { ApiHandler, ApiRouteContext, ApiRouteModule, } from "./server/api-routes.js";
+export type {
+  ApiHandler,
+  ApiRouteContext,
+  ApiRouteModule,
+} from "./server/api-routes.js";
 export { tryHandleApiRoute } from "./server/api.js";
 export * from "./server/runtimeServe.js";
 export * from "./shared/log.js";

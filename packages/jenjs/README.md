@@ -21,4 +21,3 @@ npm run build
 ## License
 
 GNU GPL 3.0 © Jen.js contributors
-

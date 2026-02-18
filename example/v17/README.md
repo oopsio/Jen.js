@@ -65,6 +65,7 @@ npm run dev
 ```
 
 The server will watch for changes to:
+
 - `.vue` files (Vue components)
 - `.svelte` files (Svelte components)
 - `.tsx` files (Preact components)
@@ -79,6 +80,7 @@ npm run build
 ```
 
 Outputs to `dist/` directory:
+
 - Static HTML files
 - Compiled component code
 - Optimized CSS
@@ -89,22 +91,26 @@ Outputs to `dist/` directory:
 ### 🏠 Home Page (`/(home).vue`)
 
 Vue component showcasing:
+
 - Framework overview
 - Navigation to demos
 - Feature highlights
 - Quick start guide
 
 **Components used:**
+
 - `<template>`, `<script setup>`, `<style scoped>`
 - Vue 3 reactive features
 
 ### 🖖 Vue Demo (`/(vue-demo).vue`)
 
 Demonstrates Vue 3 SFC features:
+
 - `VueCounter` - Reactive state with ref()
 - `VueCard` - Slots and props
 
 **Features:**
+
 - Template directives (v-if, v-for)
 - Event handlers (@click)
 - Computed properties
@@ -113,10 +119,12 @@ Demonstrates Vue 3 SFC features:
 ### ⚡ Svelte Demo (`/(svelte-demo).svelte`)
 
 Demonstrates Svelte 4 features:
+
 - `SvelteTimer` - Reactive state and lifecycle
 - `SvelteList` - Two-way binding with bind:
 
 **Features:**
+
 - Reactive assignments
 - Component lifecycle (onMount)
 - Two-way binding
@@ -126,6 +134,7 @@ Demonstrates Svelte 4 features:
 ### 🎭 Mixed Demo (`/(mixed-demo).tsx`)
 
 Shows all three frameworks working together:
+
 - Preact route with hooks
 - Links to Vue and Svelte pages
 - Architecture overview
@@ -135,6 +144,7 @@ Shows all three frameworks working together:
 ### Vue Components
 
 #### VueCounter.vue
+
 ```vue
 <template>
   <div>
@@ -144,19 +154,21 @@ Shows all three frameworks working together:
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 const count = ref(0);
 const increment = () => count.value++;
 </script>
 ```
 
 **Features:**
+
 - Reactive state with `ref()`
 - Template interpolation
 - Event handlers
 - Scoped styles
 
 #### VueCard.vue
+
 ```vue
 <template>
   <div class="vue-card">
@@ -173,6 +185,7 @@ defineProps<{ title?: string }>();
 ```
 
 **Features:**
+
 - Component props with TypeScript
 - Slot content projection
 - Header/body layout
@@ -180,6 +193,7 @@ defineProps<{ title?: string }>();
 ### Svelte Components
 
 #### SvelteTimer.svelte
+
 ```svelte
 <script lang="ts">
   let seconds = 0;
@@ -198,12 +212,14 @@ defineProps<{ title?: string }>();
 ```
 
 **Features:**
+
 - Reactive state (auto-subscriptions)
 - Event handlers (on:click)
 - Conditional rendering
 - Function composition
 
 #### SvelteList.svelte
+
 ```svelte
 <script lang="ts">
   export let items: Item[] = [];
@@ -219,6 +235,7 @@ defineProps<{ title?: string }>();
 ```
 
 **Features:**
+
 - Exported props
 - Reactive arrays
 - Block statements (#each)
@@ -229,12 +246,14 @@ defineProps<{ title?: string }>();
 ### Editing Components
 
 1. **Edit a Vue component:**
+
    ```bash
    # Edit site/components/VueCounter.vue
    # Browser auto-reloads
    ```
 
 2. **Edit a Svelte component:**
+
    ```bash
    # Edit site/components/SvelteTimer.svelte
    # Browser auto-reloads
@@ -249,6 +268,7 @@ defineProps<{ title?: string }>();
 ### Adding New Components
 
 **Vue Component:**
+
 ```bash
 cat > site/components/MyComponent.vue << 'EOF'
 <template>
@@ -269,6 +289,7 @@ EOF
 ```
 
 **Svelte Component:**
+
 ```bash
 cat > site/components/MyComponent.svelte << 'EOF'
 <script lang="ts">
@@ -287,6 +308,7 @@ EOF
 ```
 
 **Preact Component:**
+
 ```bash
 cat > site/components/MyComponent.tsx << 'EOF'
 import { h } from 'preact';
@@ -332,6 +354,7 @@ dist/
 All components support TypeScript:
 
 **Vue:**
+
 ```vue
 <script setup lang="ts">
 interface Props {
@@ -339,11 +362,12 @@ interface Props {
   count?: number;
 }
 
-withDefaults(defineProps<Props>(), { count: 0 })
+withDefaults(defineProps<Props>(), { count: 0 });
 </script>
 ```
 
 **Svelte:**
+
 ```svelte
 <script lang="ts">
 interface Item {

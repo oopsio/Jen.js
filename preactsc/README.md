@@ -15,19 +15,25 @@ Visit `http://localhost:3000`
 ## CLI
 
 ### `preactsc dev <entry.server.jsx>`
+
 Start dev server with hot reload.
+
 ```bash
 preactsc dev src/App.server.jsx
 ```
 
 ### `preactsc build <entry.server.jsx> --out <dir>`
+
 Build for production.
+
 ```bash
 preactsc build src/App.server.jsx --out dist
 ```
 
 ### `preactsc start <outdir>`
+
 Run production build.
+
 ```bash
 preactsc start dist
 ```
@@ -64,11 +70,7 @@ import { useState } from "preact/hooks";
 
 export default function Counter({ initial }) {
   const [count, setCount] = useState(initial);
-  return (
-    <button onClick={() => setCount(count + 1)}>
-      Count: {count}
-    </button>
-  );
+  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;
 }
 ```
 

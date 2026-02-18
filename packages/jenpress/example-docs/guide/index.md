@@ -34,24 +34,24 @@ my-docs/
 Create a `jenpress.config.ts` file:
 
 ```typescript
-import { defineConfig } from '@jenjs/jenpress';
+import { defineConfig } from "@jenjs/jenpress";
 
 export default defineConfig({
-  title: 'My Documentation',
-  description: 'Built with JenPress',
-  base: '/',
-  
+  title: "My Documentation",
+  description: "Built with JenPress",
+  base: "/",
+
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/guide/' },
-      { text: 'API', link: '/api/' },
+      { text: "Guide", link: "/guide/" },
+      { text: "API", link: "/api/" },
     ],
     sidebar: [
       {
-        text: 'Getting Started',
+        text: "Getting Started",
         items: [
-          { text: 'Introduction', link: '/guide/' },
-          { text: 'Installation', link: '/guide/getting-started' },
+          { text: "Introduction", link: "/guide/" },
+          { text: "Installation", link: "/guide/getting-started" },
         ],
       },
     ],

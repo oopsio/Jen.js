@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -58,32 +58,28 @@ export function createProjectFiles(dir: string, options: ProjectOptions) {
 
   // Merge with user project name
   const packageJson = {
-  
-  "name": "jen-app",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "node server.js dev",
-    "build": "node build.js"
-  },
-  "dependencies": {
-    "@jenjs/master": "^1.2.5",
-    "@vue/compiler-sfc": "^3.5.28",
-    "esbuild": "^0.25.0",
-    "glob": "^13.0.5",
-    "preact": "^10.25.4",
-    "preact-render-to-string": "^6.5.13",
-    "sass": "^1.97.3",
-    "sirv": "^3.0.1",
-    "svelte": "^5.51.3"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.0",
-    "typescript": "^5.7.2"
-  }
-
-
-
+    name: "jen-app",
+    version: "1.0.0",
+    type: "module",
+    scripts: {
+      dev: "node server.js dev",
+      build: "node build.js",
+    },
+    dependencies: {
+      "@jenjs/master": "^1.2.5",
+      "@vue/compiler-sfc": "^3.5.28",
+      esbuild: "^0.25.0",
+      glob: "^13.0.5",
+      preact: "^10.25.4",
+      "preact-render-to-string": "^6.5.13",
+      sass: "^1.97.3",
+      sirv: "^3.0.1",
+      svelte: "^5.51.3",
+    },
+    devDependencies: {
+      "@types/node": "^22.10.0",
+      typescript: "^5.7.2",
+    },
   };
 
   fs.writeFileSync(

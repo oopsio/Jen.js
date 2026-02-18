@@ -156,34 +156,37 @@ All components use standard HTML tag syntax in markdown:
 
 ### Supported Props
 
-| Component | Props | Examples |
-|-----------|-------|----------|
-| Button | `variant`, `size`, `href`, `disabled` | `<Button variant="outline" size="lg">Click</Button>` |
-| Card | - | `<Card>content</Card>` |
-| Alert | `variant` | `<Alert variant="success">Message</Alert>` |
-| Badge | `variant` | `<Badge variant="destructive">Critical</Badge>` |
-| Tabs | `defaultvalue` | `<Tabs defaultvalue="tab-1">...</Tabs>` |
-| TabTrigger | `value` | `<TabTrigger value="tab-1">Label</TabTrigger>` |
-| TabContent | `value` | `<TabContent value="tab-1">content</TabContent>` |
-| Accordion | `type` | `<Accordion type="single">...</Accordion>` |
-| AccordionItem | `value` | `<AccordionItem value="item-1">...</AccordionItem>` |
-| Callout | `type`, `title` | `<Callout type="tip" title="Hint">content</Callout>` |
+| Component     | Props                                 | Examples                                             |
+| ------------- | ------------------------------------- | ---------------------------------------------------- |
+| Button        | `variant`, `size`, `href`, `disabled` | `<Button variant="outline" size="lg">Click</Button>` |
+| Card          | -                                     | `<Card>content</Card>`                               |
+| Alert         | `variant`                             | `<Alert variant="success">Message</Alert>`           |
+| Badge         | `variant`                             | `<Badge variant="destructive">Critical</Badge>`      |
+| Tabs          | `defaultvalue`                        | `<Tabs defaultvalue="tab-1">...</Tabs>`              |
+| TabTrigger    | `value`                               | `<TabTrigger value="tab-1">Label</TabTrigger>`       |
+| TabContent    | `value`                               | `<TabContent value="tab-1">content</TabContent>`     |
+| Accordion     | `type`                                | `<Accordion type="single">...</Accordion>`           |
+| AccordionItem | `value`                               | `<AccordionItem value="item-1">...</AccordionItem>`  |
+| Callout       | `type`, `title`                       | `<Callout type="tip" title="Hint">content</Callout>` |
 
 ## Color Variants
 
 ### Button Variants
+
 - `default` - Blue primary
 - `outline` - Border only
 - `ghost` - No background
 - `destructive` - Red warning
 
 ### Alert Variants
+
 - `default` - Blue info
 - `success` - Green
 - `warning` - Amber/Yellow
 - `destructive` - Red error
 
 ### Badge Variants
+
 - `default` - Blue
 - `secondary` - Grey
 - `success` - Green

@@ -1,5 +1,7 @@
 /* src/css/framework/_base.scss */
-::selection { background: rgba(124,58,237,.35); }
+::selection {
+  background: rgba(124, 58, 237, 0.35);
+}
 
 hr {
   border: none;
@@ -14,7 +16,7 @@ hr {
   padding: 2px 8px;
   border-radius: $radius-sm;
   border: 1px solid $border;
-  background: rgba(255,255,255,.04);
+  background: rgba(255, 255, 255, 0.04);
   font-family: $font-mono;
   font-size: 12px;
 }

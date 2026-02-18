@@ -22,8 +22,8 @@
   --selection: #e5e5e5;
   /* Gray selection instead of blue */
 
-  --font-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'Geist Mono', monospace;
+  --font-sans: "Geist Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "Geist Mono", monospace;
 
   --nav-height: 64px;
   --sidebar-width: 260px;
@@ -74,7 +74,9 @@ body {
   font-family: var(--font-sans);
   margin: 0;
   line-height: 1.6;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -97,7 +99,8 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: linear-gradient(var(--border) 1px, transparent 1px),
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
   background-size: 50px 50px;
   opacity: 0.05;

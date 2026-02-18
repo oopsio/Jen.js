@@ -5,7 +5,7 @@
   border-radius: $radius-lg;
   overflow: hidden;
   border: 1px solid $border;
-  background: rgba(255,255,255,.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .table th,
@@ -15,6 +15,11 @@
   text-align: left;
 }
 
-.table th { color: $muted; font-weight: 650; }
+.table th {
+  color: $muted;
+  font-weight: 650;
+}
 
-.table tr:hover td { background: rgba(255,255,255,.03); }
+.table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}

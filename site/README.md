@@ -40,6 +40,7 @@ site/main/
 ## 🎨 Features
 
 ### Landing Page
+
 - Hero section with gradient text
 - Feature cards showcasing key benefits
 - Rendering modes comparison
@@ -48,6 +49,7 @@ site/main/
 - Call-to-action sections
 
 ### Documentation Site
+
 - **Sidebar Navigation** - Auto-linked navigation
 - **MDX Support** - Markdown with embedded components
 - **Table of Contents** - On-page navigation for long docs
@@ -55,6 +57,7 @@ site/main/
 - **Code Blocks** - Syntax highlighting ready
 
 ### Design System
+
 - **Geist-inspired** - Clean, minimal aesthetic
 - **Dark Mode Ready** - CSS variables for light/dark themes
 - **Responsive** - Mobile-first approach
@@ -63,6 +66,7 @@ site/main/
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
+
 - Node.js 18.0 or higher
 - npm, pnpm, or yarn
 
@@ -85,9 +89,11 @@ npm run preview
 ## 📄 Pages Included
 
 ### Landing Page (`/`)
+
 The main entry point with hero section, features, and CTAs.
 
 ### Documentation
+
 - `/docs` - Introduction
 - `/docs/installation` - Installation guide
 - `/docs/quick-start` - Quick start tutorial
@@ -96,7 +102,9 @@ The main entry point with hero section, features, and CTAs.
 - `/docs/islands-architecture` - Islands pattern guide
 
 ### API Reference (`/api`)
+
 Complete Jen.js API documentation including:
+
 - LoaderContext
 - RouteModule
 - Island Function
@@ -107,7 +115,9 @@ Complete Jen.js API documentation including:
 - i18n
 
 ### Examples (`/examples`)
+
 Example projects and code snippets including:
+
 - Blog template
 - Documentation site
 - Portfolio
@@ -192,6 +202,7 @@ import Base from '../layouts/Base.astro';
 ## 🎨 Customization
 
 ### Colors
+
 Edit CSS variables in `src/styles/global.css`:
 
 ```css
@@ -204,9 +215,11 @@ Edit CSS variables in `src/styles/global.css`:
 ```
 
 ### Typography
+
 Modify fonts and sizes in `src/styles/global.css`.
 
 ### Branding
+
 Update the logo and colors in `src/components/Navbar.astro`.
 
 ## 📚 Documentation Sidebar
@@ -216,6 +229,7 @@ Edit `src/components/Sidebar.astro` to add/remove documentation pages.
 ## 🔍 SEO
 
 Each page includes:
+
 - `<title>` tag
 - `<meta name="description">`
 - Semantic HTML

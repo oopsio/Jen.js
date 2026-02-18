@@ -47,15 +47,15 @@ docs/
 ### 2. Create jenpress.config.ts (optional)
 
 ```typescript
-import { defineConfig } from '@jenjs/jenpress';
+import { defineConfig } from "@jenjs/jenpress";
 
 export default defineConfig({
-  title: 'My Docs',
-  description: 'Documentation for my project',
+  title: "My Docs",
+  description: "Documentation for my project",
   themeConfig: {
     nav: [
-      { text: 'Guide', link: '/guide/' },
-      { text: 'API', link: '/api/' },
+      { text: "Guide", link: "/guide/" },
+      { text: "API", link: "/api/" },
     ],
   },
 });
@@ -120,7 +120,7 @@ export default {
   title: string;
   description: string;
   base: string; // default: '/'
-  
+
   themeConfig: {
     nav: Array<{ text: string; link: string }>;
     sidebar: Array<{
@@ -130,7 +130,7 @@ export default {
     logo: string;
     repo: string;
   };
-  
+
   markdown: {
     lineNumbers: boolean;
     breaks: boolean;

@@ -12,6 +12,7 @@ If you believe you have found a security issue, please report it responsibly.
 - Do not disclose the vulnerability publicly
 
 Instead, contact the maintainers privately with:
+
 - A description of the issue
 - Steps to reproduce (if possible)
 - Potential impact

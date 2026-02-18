@@ -1,33 +1,33 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createServer } from 'vite';
-import { createVitePressPlugin } from './vite-plugin.js';
-import { loadConfig } from './config.js';
-import { resolve } from 'path';
-import type { SiteConfig } from './config.ts';
+import { createServer } from "vite";
+import { createVitePressPlugin } from "./vite-plugin.js";
+import { loadConfig } from "./config.js";
+import { resolve } from "path";
+import type { SiteConfig } from "./config.ts";
 
 export async function createDevServer(cwd: string, config: SiteConfig) {
   const server = await createServer({
     root: cwd,
     server: {
       port: 5173,
-      host: 'localhost',
+      host: "localhost",
       middlewareMode: false,
       watch: {
         ignored: [`**/.jenpress-cache/**`],
@@ -36,10 +36,10 @@ export async function createDevServer(cwd: string, config: SiteConfig) {
     plugins: [
       createVitePressPlugin({ srcDir: cwd, docsDir: config.srcDir }),
       {
-        name: 'spa-fallback',
+        name: "spa-fallback",
         configResolved() {},
-        apply: 'serve',
-        enforce: 'pre',
+        apply: "serve",
+        enforce: "pre",
         async transform(code: string, id: string) {
           return null;
         },
@@ -52,14 +52,17 @@ export async function createDevServer(cwd: string, config: SiteConfig) {
                 next();
                 return;
               }
-              
-              const url = req.url.split('?')[0]; // Remove query string for matching
-              const isStaticFile = /\.(js|css|json|png|jpg|gif|svg|ico|woff|woff2|ttf|eot|md)$/.test(url);
-              const isNodeModules = url.includes('node_modules');
+
+              const url = req.url.split("?")[0]; // Remove query string for matching
+              const isStaticFile =
+                /\.(js|css|json|png|jpg|gif|svg|ico|woff|woff2|ttf|eot|md)$/.test(
+                  url,
+                );
+              const isNodeModules = url.includes("node_modules");
               const isDotFile = /\/\./.test(url);
-              
+
               if (!isStaticFile && !isNodeModules && !isDotFile) {
-                req.url = '/index.html';
+                req.url = "/index.html";
               }
               next();
             });
@@ -68,11 +71,11 @@ export async function createDevServer(cwd: string, config: SiteConfig) {
       },
     ],
     optimizeDeps: {
-      include: ['preact', 'preact-render-to-string'],
+      include: ["preact", "preact-render-to-string"],
     },
     resolve: {
       alias: {
-        '@': resolve(cwd, 'src'),
+        "@": resolve(cwd, "src"),
       },
     },
   });
@@ -85,7 +88,7 @@ export async function startDevServer(cwd: string) {
   const server = await createDevServer(cwd, config);
 
   await server.listen();
-  
+
   console.log(`\n  ➜  Local: http://localhost:5173`);
 
   return { server, config };

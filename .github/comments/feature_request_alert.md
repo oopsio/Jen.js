@@ -1,6 +1,7 @@
 Thank you for suggesting a new feature.
 
 To help us evaluate and implement it:
+
 - Include a clear description of the feature
 - Explain why it is needed
 - Suggest a possible implementation if you can

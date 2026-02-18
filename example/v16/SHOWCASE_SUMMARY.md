@@ -6,12 +6,12 @@ This example site demonstrates **all 4 new Jen.js Release 16 features** in a com
 
 ### ✅ Features Showcase
 
-| Feature | Example Page | Key File |
-|---------|--------------|----------|
-| **Islands** | Home page + Interactive | `site/(home).tsx`, `site/(interactive).tsx` |
-| **Middleware** | Protected Dashboard | `site/(protected-dashboard).tsx` |
-| **API Routes** | User management | `site/api/users.ts`, `site/api/users/[id].ts` |
-| **Zero-JS** | About, Docs, Blog | `site/(about).tsx`, `site/(docs).tsx`, `site/(blog)/[slug].tsx` |
+| Feature        | Example Page            | Key File                                                        |
+| -------------- | ----------------------- | --------------------------------------------------------------- |
+| **Islands**    | Home page + Interactive | `site/(home).tsx`, `site/(interactive).tsx`                     |
+| **Middleware** | Protected Dashboard     | `site/(protected-dashboard).tsx`                                |
+| **API Routes** | User management         | `site/api/users.ts`, `site/api/users/[id].ts`                   |
+| **Zero-JS**    | About, Docs, Blog       | `site/(about).tsx`, `site/(docs).tsx`, `site/(blog)/[slug].tsx` |
 
 ## 🎯 Quick Start
 
@@ -28,68 +28,85 @@ npm run dev
 ## 📍 What to Visit
 
 ### 1. Home Page (Islands)
+
 **URL**: http://localhost:3000  
 **What You'll See**:
+
 - Interactive counter (hydrated on client)
 - Explanation of Islands
 - Navigation to other examples
 
 **Try This**:
+
 - Click counter button
 - Check DevTools Network tab
 - See only 1 hydration script loaded
 
 ### 2. Interactive Page (Multiple Islands)
+
 **URL**: http://localhost:3000/interactive  
 **What You'll See**:
+
 - Counter with `load` strategy (immediate)
 - Timer with `idle` strategy (deferred)
 - Newsletter form with `visible` strategy (lazy)
 
 **Try This**:
+
 - Click counter immediately (hydrated on load)
 - Scroll down to see newsletter form hydrate
 - Timer hydrates when browser is idle
 
 ### 3. About Page (Zero-JS)
+
 **URL**: http://localhost:3000/about  
 **What You'll See**:
+
 - Pure HTML page
 - No JavaScript bundle
 
 **Try This**:
+
 - Check DevTools Network - no hydration script
 - DevTools Console: disable JavaScript
 - Reload - page still works!
 
 ### 4. Protected Dashboard (Middleware + Auth)
+
 **URL**: http://localhost:3000/dashboard  
 **What You'll See**:
+
 - Redirects to login (middleware blocks it)
 - After login, shows protected content
 - User data from middleware
 
 **Try This**:
+
 1. Visit /dashboard - redirected to /login
 2. Submit login form (any email/password works)
 3. Gets redirected to /dashboard
 4. Now you see your protected dashboard
 
 ### 5. Blog (Dynamic Zero-JS Routes)
+
 **URL**: http://localhost:3000/blog/hello-world  
 **What You'll See**:
+
 - Blog post (pure HTML, no JS)
 - Dynamic route parameter [slug]
 - Multiple blog posts available
 
 **Available Posts**:
+
 - `/blog/hello-world`
 - `/blog/islands-explained`
 - `/blog/zero-js-pages`
 
 ### 6. Documentation (Zero-JS Reference)
+
 **URL**: http://localhost:3000/docs  
 **What You'll See**:
+
 - Complete feature reference
 - Code examples
 - Best practices
@@ -97,12 +114,14 @@ npm run dev
 ## 🔌 API Endpoints
 
 ### Basic
+
 ```bash
 curl http://localhost:3000/api/hello
 curl http://localhost:3000/api/hello?name=Alice
 ```
 
 ### Users (CRUD)
+
 ```bash
 # List all
 curl http://localhost:3000/api/users
@@ -128,39 +147,42 @@ curl -X DELETE http://localhost:3000/api/users/1
 
 ### Pages (Routes)
 
-| File | Type | Features |
-|------|------|----------|
-| `(home).tsx` | Islands | Simple counter, intro |
-| `(about).tsx` | Zero-JS | Pure HTML example |
-| `(interactive).tsx` | Islands | Multiple strategies |
-| `(login).tsx` | Islands | Form + middleware |
-| `(protected-dashboard).tsx` | Middleware | Auth + data passing |
-| `(blog)/[slug].tsx` | Zero-JS + Dynamic | Blog posts |
-| `(docs).tsx` | Zero-JS | Documentation |
+| File                        | Type              | Features              |
+| --------------------------- | ----------------- | --------------------- |
+| `(home).tsx`                | Islands           | Simple counter, intro |
+| `(about).tsx`               | Zero-JS           | Pure HTML example     |
+| `(interactive).tsx`         | Islands           | Multiple strategies   |
+| `(login).tsx`               | Islands           | Form + middleware     |
+| `(protected-dashboard).tsx` | Middleware        | Auth + data passing   |
+| `(blog)/[slug].tsx`         | Zero-JS + Dynamic | Blog posts            |
+| `(docs).tsx`                | Zero-JS           | Documentation         |
 
 ### API Routes
 
-| File | Methods | Purpose |
-|------|---------|---------|
-| `api/(hello).ts` | GET, POST | Simple demo |
-| `api/users.ts` | GET, POST | List & create |
+| File                | Methods          | Purpose          |
+| ------------------- | ---------------- | ---------------- |
+| `api/(hello).ts`    | GET, POST        | Simple demo      |
+| `api/users.ts`      | GET, POST        | List & create    |
 | `api/users/[id].ts` | GET, PUT, DELETE | Single user CRUD |
 
 ## 🎓 Learning Order
 
 ### Beginner (15 mins)
+
 1. Read this file
 2. Visit home page - understand Islands
 3. Visit about page - understand Zero-JS
 4. Read `EXAMPLE_INDEX.md`
 
 ### Intermediate (1 hour)
+
 1. Visit interactive page - see multiple strategies
 2. Try login/dashboard - understand middleware
 3. Test API endpoints with curl
 4. Review page source code
 
 ### Advanced (2+ hours)
+
 1. Modify example code
 2. Add new routes
 3. Create new API endpoints
@@ -169,6 +191,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 ## 🧪 Test Scenarios
 
 ### Test Islands
+
 **Objective**: Verify islands hydrate selectively
 
 1. Home page - counter works immediately ✅
@@ -177,6 +200,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 4. DevTools Network - see hydration script ✅
 
 ### Test Middleware
+
 **Objective**: Verify middleware blocks/allows access
 
 1. Visit /dashboard - redirected to /login ✅
@@ -185,6 +209,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 4. Clear cookies - redirected again ✅
 
 ### Test API Routes
+
 **Objective**: Verify CRUD operations
 
 1. GET /api/users - returns list ✅
@@ -194,6 +219,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 5. DELETE /api/users/1 - deletes user ✅
 
 ### Test Zero-JS
+
 **Objective**: Verify no JavaScript execution
 
 1. About page - no hydration script ✅
@@ -205,16 +231,16 @@ curl -X DELETE http://localhost:3000/api/users/1
 
 ### Page Sizes (Approximate)
 
-| Page | Type | HTML | JS | Total |
-|------|------|------|-------|-------|
-| Home | Islands | 5KB | 3KB | 8KB |
-| Interactive | Islands | 8KB | 5KB | 13KB |
-| About | Zero-JS | 4KB | 0KB | 4KB |
-| Blog | Zero-JS | 6KB | 1KB | 7KB |
-| Docs | Zero-JS | 12KB | 0KB | 12KB |
-| Dashboard | Middleware | 6KB | 4KB | 10KB |
+| Page        | Type       | HTML | JS  | Total |
+| ----------- | ---------- | ---- | --- | ----- |
+| Home        | Islands    | 5KB  | 3KB | 8KB   |
+| Interactive | Islands    | 8KB  | 5KB | 13KB  |
+| About       | Zero-JS    | 4KB  | 0KB | 4KB   |
+| Blog        | Zero-JS    | 6KB  | 1KB | 7KB   |
+| Docs        | Zero-JS    | 12KB | 0KB | 12KB  |
+| Dashboard   | Middleware | 6KB  | 4KB | 10KB  |
 
-*Sizes are uncompressed. Gzip reduces by ~70%*
+_Sizes are uncompressed. Gzip reduces by ~70%_
 
 ### Load Times (Development)
 
@@ -222,17 +248,20 @@ curl -X DELETE http://localhost:3000/api/users/1
 - Islands pages: ~500-1000ms
 - API endpoints: ~10-50ms
 
-*Times vary by system, network, and browser*
+_Times vary by system, network, and browser_
 
 ## 🔧 Development Tips
 
 ### Hot Reload
+
 Changes to route files auto-reload in dev server. Try:
+
 1. Edit `site/(home).tsx`
 2. Browser refreshes automatically
 3. Changes visible immediately
 
 ### TypeScript Checking
+
 ```bash
 npm run typecheck
 ```
@@ -240,6 +269,7 @@ npm run typecheck
 Verify all code is type-safe.
 
 ### Building for Production
+
 ```bash
 npm run build
 npm run start
@@ -250,18 +280,21 @@ Creates optimized static site in `dist/`.
 ## 🎯 What to Learn
 
 ### Architecture Concepts
+
 - Islands vs traditional SPA
 - Server-side rendering with hydration
 - Zero-JavaScript pages
 - Route middleware pattern
 
 ### Code Patterns
+
 - How to mark components as islands
 - How to implement middleware
 - How to structure API routes
 - How to create zero-JS pages
 
 ### Best Practices
+
 - When to use each feature
 - Performance optimization
 - Security considerations
@@ -294,11 +327,12 @@ Creates optimized static site in `dist/`.
 ✅ How to combine features  
 ✅ Performance best practices  
 ✅ Code organization patterns  
-✅ TypeScript with Preact  
+✅ TypeScript with Preact
 
 ## 🚀 Next Steps
 
 ### Learn More
+
 1. Study the code
 2. Modify existing pages
 3. Create new routes
@@ -306,12 +340,14 @@ Creates optimized static site in `dist/`.
 5. Experiment with strategies
 
 ### Go Deeper
+
 1. Read [Islands Architecture](https://jasonformat.com/islands-architecture/)
 2. Learn [Preact](https://preactjs.com/)
 3. Master [TypeScript](https://www.typescriptlang.org/)
 4. Understand [SSR](https://web.dev/rendering-on-the-web/)
 
 ### Build Your Own
+
 1. Start with this example
 2. Customize for your needs
 3. Add your features

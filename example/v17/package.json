@@ -8,7 +8,12 @@
     "start": "tsx ../../server.ts start",
     "build": "tsx ../../build.ts"
   },
-  "keywords": ["jen", "vue", "svelte", "preact"],
+  "keywords": [
+    "jen",
+    "vue",
+    "svelte",
+    "preact"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {

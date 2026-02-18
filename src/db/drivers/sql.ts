@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -31,10 +31,10 @@ type QueryExecutor = (sql: string, params: any[]) => Promise<any[]>;
 const ALLOWED_IDENTIFIERS = new Set<string>();
 
 /**
-  * Safely quote SQL identifier to prevent injection
-  * Only accepts alphanumeric, underscore, dollar sign
-  * Note: Hyphen is NOT allowed as it can cause confusion with operators
-  */
+ * Safely quote SQL identifier to prevent injection
+ * Only accepts alphanumeric, underscore, dollar sign
+ * Note: Hyphen is NOT allowed as it can cause confusion with operators
+ */
 function quoteIdentifier(id: string): string {
   if (!id || !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(id)) {
     throw new Error(
@@ -45,13 +45,15 @@ function quoteIdentifier(id: string): string {
 }
 
 /**
-  * Validate and register allowed table/collection names for security
-  */
+ * Validate and register allowed table/collection names for security
+ */
 export function registerAllowedTable(tableName: string): void {
   if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(tableName)) {
     ALLOWED_IDENTIFIERS.add(tableName);
   } else {
-    throw new Error(`Invalid table name: ${tableName}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
+    throw new Error(
+      `Invalid table name: ${tableName}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
+    );
   }
 }
 
@@ -124,20 +126,22 @@ export class SQLDriver implements IDBDriver {
     const params: any[] = [];
 
     if (q.where && Object.keys(q.where).length > 0) {
-       const conditions: string[] = [];
-       const whereRecord = q.where as Record<string, any>;
-       for (const key in whereRecord) {
-         // Security: Validate column name
-         if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
-           throw new Error(`Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
-         }
-         // Safely access where property
-         const val = whereRecord[key];
-         conditions.push(`${quoteIdentifier(key)} = ?`);
-         params.push(val);
-       }
-       sql += ` WHERE ${conditions.join(" AND ")}`;
-     }
+      const conditions: string[] = [];
+      const whereRecord = q.where as Record<string, any>;
+      for (const key in whereRecord) {
+        // Security: Validate column name
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+          throw new Error(
+            `Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
+          );
+        }
+        // Safely access where property
+        const val = whereRecord[key];
+        conditions.push(`${quoteIdentifier(key)} = ?`);
+        params.push(val);
+      }
+      sql += ` WHERE ${conditions.join(" AND ")}`;
+    }
 
     if (q.options?.limit) {
       // Security: Validate limit is a positive integer
@@ -166,7 +170,9 @@ export class SQLDriver implements IDBDriver {
     // Security: Validate all column names
     for (const key of keys) {
       if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
-        throw new Error(`Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
+        throw new Error(
+          `Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
+        );
       }
     }
 
@@ -204,7 +210,9 @@ export class SQLDriver implements IDBDriver {
 
     // Validate that filter is not empty to prevent accidental full table delete
     if (!filter || Object.keys(filter).length === 0) {
-      throw new Error("Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.");
+      throw new Error(
+        "Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.",
+      );
     }
 
     const { sql, params } = this.translateQuery({

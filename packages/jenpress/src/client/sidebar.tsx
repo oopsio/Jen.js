@@ -1,23 +1,23 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { h } from "preact";
+import { useState } from "preact/hooks";
 
 export interface SidebarItem {
   text: string;
@@ -32,7 +32,9 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ items, currentPath, onNavigate }: SidebarProps) {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(),
+  );
 
   const toggleSection = (text: string) => {
     const next = new Set(expandedSections);
@@ -54,16 +56,19 @@ export function Sidebar({ items, currentPath, onNavigate }: SidebarProps) {
       const isExpanded = expandedSections.has(item.text);
 
       return (
-        <div key={item.text} style={{ ...styles.item, marginLeft: `${depth * 12}px` }}>
+        <div
+          key={item.text}
+          style={{ ...styles.item, marginLeft: `${depth * 12}px` }}
+        >
           {hasChildren ? (
             <button
               style={{
                 ...styles.sectionButton,
-                fontWeight: isExpanded ? '600' : '500',
+                fontWeight: isExpanded ? "600" : "500",
               }}
               onClick={() => toggleSection(item.text)}
             >
-              <span style={styles.toggle}>{isExpanded ? '▼' : '▶'}</span>
+              <span style={styles.toggle}>{isExpanded ? "▼" : "▶"}</span>
               {item.text}
             </button>
           ) : item.link ? (
@@ -102,64 +107,64 @@ export function Sidebar({ items, currentPath, onNavigate }: SidebarProps) {
 
 const styles = {
   sidebar: {
-    width: '250px',
-    borderRight: '1px solid var(--border)',
-    paddingRight: '1rem',
-    height: 'calc(100vh - 60px)',
-    overflowY: 'auto',
-    position: 'sticky' as const,
-    top: '60px',
-    backgroundColor: 'var(--bg)',
-    color: 'var(--fg)',
+    width: "250px",
+    borderRight: "1px solid var(--border)",
+    paddingRight: "1rem",
+    height: "calc(100vh - 60px)",
+    overflowY: "auto",
+    position: "sticky" as const,
+    top: "60px",
+    backgroundColor: "var(--bg)",
+    color: "var(--fg)",
   } as any,
   nav: {
-    padding: '1rem 0',
+    padding: "1rem 0",
   },
   item: {
-    marginBottom: '0.5rem',
+    marginBottom: "0.5rem",
   },
   sectionButton: {
-    background: 'none',
-    border: 'none',
-    padding: '0.5rem',
-    cursor: 'pointer',
-    font: 'inherit',
-    color: 'var(--fg)',
-    textAlign: 'left' as const,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    borderRadius: '4px',
-    transition: 'background-color 0.2s, color 0.2s',
+    background: "none",
+    border: "none",
+    padding: "0.5rem",
+    cursor: "pointer",
+    font: "inherit",
+    color: "var(--fg)",
+    textAlign: "left" as const,
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    borderRadius: "4px",
+    transition: "background-color 0.2s, color 0.2s",
   } as any,
   toggle: {
-    fontSize: '0.75rem',
-    width: '1rem',
-    textAlign: 'center' as const,
+    fontSize: "0.75rem",
+    width: "1rem",
+    textAlign: "center" as const,
   },
   link: {
-    display: 'block',
-    padding: '0.5rem',
-    color: '#0070f3',
-    textDecoration: 'none',
-    borderRadius: '4px',
-    transition: 'background-color 0.2s',
-    borderLeft: '3px solid transparent',
-    paddingLeft: 'calc(0.5rem - 3px)',
+    display: "block",
+    padding: "0.5rem",
+    color: "#0070f3",
+    textDecoration: "none",
+    borderRadius: "4px",
+    transition: "background-color 0.2s",
+    borderLeft: "3px solid transparent",
+    paddingLeft: "calc(0.5rem - 3px)",
   },
   activeLink: {
-    backgroundColor: 'var(--border-light)',
-    borderLeftColor: '#0070f3',
-    fontWeight: '600',
-    color: '#0070f3',
+    backgroundColor: "var(--border-light)",
+    borderLeftColor: "#0070f3",
+    fontWeight: "600",
+    color: "#0070f3",
   },
   groupTitle: {
-    padding: '0.5rem',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    color: 'var(--fg-secondary)',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
+    padding: "0.5rem",
+    fontSize: "0.875rem",
+    fontWeight: "600",
+    color: "var(--fg-secondary)",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.05em",
   } as any,
 };

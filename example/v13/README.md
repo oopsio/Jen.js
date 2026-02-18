@@ -55,6 +55,7 @@ npm run build
 ```
 
 This will:
+
 - Pre-render all pages to HTML
 - Extract and inline critical CSS (< 4KB)
 - Defer non-critical CSS with preload pattern
@@ -102,17 +103,36 @@ All HTML is **fully minified**:
 
 ```html
 <!DOCTYPE html>
-<html><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>/* critical CSS inline, ~2-4KB */</style>
-<link rel="preload" href="/_assets/styles.a1b2c3d4.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="/_assets/styles.a1b2c3d4.css"></noscript>
-</head><body>
-<!-- minified content -->
-<div id="newsletter-form" data-island="Newsletter"><form>...</form><script type="application/json">{"endpoint":"/api/subscribe"}</script></div>
-<script>window.__FRAMEWORK_DATA__={"route":"/","version":"1.0.0"}</script>
-</body></html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      /* critical CSS inline, ~2-4KB */
+    </style>
+    <link
+      rel="preload"
+      href="/_assets/styles.a1b2c3d4.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link rel="stylesheet" href="/_assets/styles.a1b2c3d4.css"
+    /></noscript>
+  </head>
+  <body>
+    <!-- minified content -->
+    <div id="newsletter-form" data-island="Newsletter">
+      <form>...</form>
+      <script type="application/json">
+        { "endpoint": "/api/subscribe" }
+      </script>
+    </div>
+    <script>
+      window.__FRAMEWORK_DATA__ = { route: "/", version: "1.0.0" };
+    </script>
+  </body>
+</html>
 ```
 
 ### CSS Assets
@@ -150,7 +170,9 @@ Located in `site/components/Newsletter.tsx`:
 ```html
 <div id="newsletter-form" data-island="Newsletter">
   <form>...</form>
-  <script type="application/json">{"endpoint":"/api/subscribe"}</script>
+  <script type="application/json">
+    { "endpoint": "/api/subscribe" }
+  </script>
 </div>
 ```
 
@@ -286,6 +308,7 @@ NODE_ENV=production              # Always for builds
 ## Support
 
 For issues or questions about Jen.js, check:
+
 - Root [BUILD_CONFIG.md](../../BUILD_CONFIG.md)
 - Root [PRODUCTION_CHECKLIST.md](../../PRODUCTION_CHECKLIST.md)
 - Jen.js repository: https://github.com/kessud2021/Jen.js

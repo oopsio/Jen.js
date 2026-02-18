@@ -16,5 +16,13 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "server.ts", "build.ts", "jen.config.ts", "site/**/*.ts", "site/**/*.tsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "server.ts",
+    "build.ts",
+    "jen.config.ts",
+    "site/**/*.ts",
+    "site/**/*.tsx"
+  ]
 }

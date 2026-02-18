@@ -37,12 +37,14 @@ PowerShell -ExecutionPolicy Bypass -File scripts/build.ps1
 One-time setup script for new developers.
 
 **Does:**
+
 - ✓ Check Node.js and npm installation
 - ✓ Install dependencies
 - ✓ Run TypeScript type check
 - ✓ Display next steps
 
 **Run after:**
+
 - Fresh clone of the repository
 - After major dependency updates
 
@@ -51,12 +53,14 @@ One-time setup script for new developers.
 Start development server and watch for changes.
 
 **Does:**
+
 - ✓ Install dependencies if missing
 - ✓ Start framework dev server on http://localhost:3000
 - ✓ Watch for file changes
 - ✓ Live reload on changes
 
 **Run for:**
+
 - Daily development work
 - Testing framework changes
 - Working on example projects
@@ -66,12 +70,14 @@ Start development server and watch for changes.
 Build framework and example for production.
 
 **Does:**
+
 - ✓ Type check code
 - ✓ Build framework to `dist/`
 - ✓ Build example project to `example/release-16/dist/`
 - ✓ Show build output locations
 
 **Run before:**
+
 - Creating a release
 - Deploying to production
 - Testing production build
@@ -130,17 +136,21 @@ node build.js         # Build
 ## Troubleshooting
 
 ### Script not found (Linux/macOS)
+
 ```bash
 chmod +x scripts/setup.sh scripts/dev.sh scripts/build.sh
 ```
 
 ### PowerShell execution policy (Windows)
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### Port 3000 already in use
+
 Change port in `config.json`:
+
 ```json
 "ports": {
   "dev": 3001
@@ -148,6 +158,7 @@ Change port in `config.json`:
 ```
 
 ### Node modules corrupted
+
 ```bash
 rm -rf node_modules
 npm install
@@ -201,6 +212,7 @@ export DEBUG=jen:*
 ## Support
 
 For issues with scripts:
+
 1. Check that Node.js 18+ is installed
 2. Run `npm install` to update dependencies
 3. See troubleshooting section above

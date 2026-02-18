@@ -1,17 +1,17 @@
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@
  * Measures middleware chain execution, request/response handling
  */
 
-import { describe, bench } from 'vitest';
+import { describe, bench } from "vitest";
 
 interface Context {
   path: string;
@@ -46,7 +46,8 @@ class MiddlewareChain {
     let index = -1;
 
     const dispatch = async (i: number): Promise<void> => {
-      if (i <= index) return Promise.reject(new Error('next() called multiple times'));
+      if (i <= index)
+        return Promise.reject(new Error("next() called multiple times"));
       index = i;
 
       if (i < this.middlewares.length) {
@@ -58,8 +59,8 @@ class MiddlewareChain {
   }
 }
 
-describe('Middleware Performance', () => {
-  bench('Single Middleware Execution', async () => {
+describe("Middleware Performance", () => {
+  bench("Single Middleware Execution", async () => {
     const chain = new MiddlewareChain();
     chain.use(async (ctx, next) => {
       ctx.state.middleware1 = true;
@@ -67,8 +68,8 @@ describe('Middleware Performance', () => {
     });
 
     const ctx: Context = {
-      path: '/test',
-      method: 'GET',
+      path: "/test",
+      method: "GET",
       headers: {},
       state: {},
       statusCode: 200,
@@ -79,7 +80,7 @@ describe('Middleware Performance', () => {
     return ctx.state.middleware1 ? 1 : 0;
   });
 
-  bench('Middleware Chain - 5 Middlewares', async () => {
+  bench("Middleware Chain - 5 Middlewares", async () => {
     const chain = new MiddlewareChain();
 
     for (let i = 0; i < 5; i++) {
@@ -90,8 +91,8 @@ describe('Middleware Performance', () => {
     }
 
     const ctx: Context = {
-      path: '/test',
-      method: 'GET',
+      path: "/test",
+      method: "GET",
       headers: {},
       state: {},
       statusCode: 200,
@@ -102,7 +103,7 @@ describe('Middleware Performance', () => {
     return Object.keys(ctx.state).length;
   });
 
-  bench('Middleware Chain - 20 Middlewares', async () => {
+  bench("Middleware Chain - 20 Middlewares", async () => {
     const chain = new MiddlewareChain();
 
     for (let i = 0; i < 20; i++) {
@@ -113,8 +114,8 @@ describe('Middleware Performance', () => {
     }
 
     const ctx: Context = {
-      path: '/test',
-      method: 'GET',
+      path: "/test",
+      method: "GET",
       headers: {},
       state: {},
       statusCode: 200,
@@ -125,19 +126,19 @@ describe('Middleware Performance', () => {
     return Object.keys(ctx.state).length;
   });
 
-  bench('Request Logging Middleware', async () => {
+  bench("Request Logging Middleware", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
       const start = performance.now();
       await next();
       const duration = performance.now() - start;
-      ctx.responseHeaders['X-Response-Time'] = `${duration}ms`;
+      ctx.responseHeaders["X-Response-Time"] = `${duration}ms`;
     });
 
     const ctx: Context = {
-      path: '/test',
-      method: 'GET',
+      path: "/test",
+      method: "GET",
       headers: {},
       state: {},
       statusCode: 200,
@@ -145,24 +146,24 @@ describe('Middleware Performance', () => {
     };
 
     await chain.execute(ctx);
-    return ctx.responseHeaders['X-Response-Time'] ? 1 : 0;
+    return ctx.responseHeaders["X-Response-Time"] ? 1 : 0;
   });
 
-  bench('Authentication Middleware - Valid Token', async () => {
+  bench("Authentication Middleware - Valid Token", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
-      const token = ctx.headers['authorization'];
-      if (token && token.startsWith('Bearer ')) {
-        ctx.state.user = { id: '123', role: 'user' };
+      const token = ctx.headers["authorization"];
+      if (token && token.startsWith("Bearer ")) {
+        ctx.state.user = { id: "123", role: "user" };
         await next();
       }
     });
 
     const ctx: Context = {
-      path: '/api/users',
-      method: 'GET',
-      headers: { authorization: 'Bearer valid-token' },
+      path: "/api/users",
+      method: "GET",
+      headers: { authorization: "Bearer valid-token" },
       state: {},
       statusCode: 200,
       responseHeaders: {},
@@ -172,19 +173,21 @@ describe('Middleware Performance', () => {
     return ctx.state.user ? 1 : 0;
   });
 
-  bench('CORS Middleware - Headers Setup', async () => {
+  bench("CORS Middleware - Headers Setup", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
-      ctx.responseHeaders['Access-Control-Allow-Origin'] = '*';
-      ctx.responseHeaders['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE';
-      ctx.responseHeaders['Access-Control-Allow-Headers'] = 'Content-Type,Authorization';
+      ctx.responseHeaders["Access-Control-Allow-Origin"] = "*";
+      ctx.responseHeaders["Access-Control-Allow-Methods"] =
+        "GET,POST,PUT,DELETE";
+      ctx.responseHeaders["Access-Control-Allow-Headers"] =
+        "Content-Type,Authorization";
       await next();
     });
 
     const ctx: Context = {
-      path: '/api/data',
-      method: 'OPTIONS',
+      path: "/api/data",
+      method: "OPTIONS",
       headers: {},
       state: {},
       statusCode: 200,
@@ -195,12 +198,12 @@ describe('Middleware Performance', () => {
     return Object.keys(ctx.responseHeaders).length;
   });
 
-  bench('Rate Limiting Middleware - 1000 Requests', async () => {
+  bench("Rate Limiting Middleware - 1000 Requests", async () => {
     const chain = new MiddlewareChain();
     const rateLimits = new Map<string, number>();
 
     chain.use(async (ctx, next) => {
-      const ip = '127.0.0.1';
+      const ip = "127.0.0.1";
       const count = rateLimits.get(ip) || 0;
 
       if (count < 100) {
@@ -214,8 +217,8 @@ describe('Middleware Performance', () => {
     let successful = 0;
     for (let i = 0; i < 1000; i++) {
       const ctx: Context = {
-        path: '/api/test',
-        method: 'GET',
+        path: "/api/test",
+        method: "GET",
         headers: {},
         state: {},
         statusCode: 200,
@@ -229,36 +232,36 @@ describe('Middleware Performance', () => {
     return successful;
   });
 
-  bench('Compression Middleware - Response Compression', async () => {
+  bench("Compression Middleware - Response Compression", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
-      const acceptEncoding = ctx.headers['accept-encoding'] || '';
-      if (acceptEncoding.includes('gzip')) {
-        ctx.responseHeaders['Content-Encoding'] = 'gzip';
+      const acceptEncoding = ctx.headers["accept-encoding"] || "";
+      if (acceptEncoding.includes("gzip")) {
+        ctx.responseHeaders["Content-Encoding"] = "gzip";
       }
       await next();
     });
 
     const ctx: Context = {
-      path: '/api/data',
-      method: 'GET',
-      headers: { 'accept-encoding': 'gzip, deflate, br' },
+      path: "/api/data",
+      method: "GET",
+      headers: { "accept-encoding": "gzip, deflate, br" },
       state: {},
       statusCode: 200,
       responseHeaders: {},
     };
 
     await chain.execute(ctx);
-    return ctx.responseHeaders['Content-Encoding'] ? 1 : 0;
+    return ctx.responseHeaders["Content-Encoding"] ? 1 : 0;
   });
 
-  bench('JSON Parsing Middleware - 100KB Body', async () => {
+  bench("JSON Parsing Middleware - 100KB Body", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
-      if (ctx.headers['content-type'] === 'application/json') {
-        ctx.body = JSON.parse(ctx.body || '{}');
+      if (ctx.headers["content-type"] === "application/json") {
+        ctx.body = JSON.parse(ctx.body || "{}");
       }
       await next();
     });
@@ -274,9 +277,9 @@ describe('Middleware Performance', () => {
     });
 
     const ctx: Context = {
-      path: '/api/items',
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      path: "/api/items",
+      method: "POST",
+      headers: { "content-type": "application/json" },
       body: largeJson,
       state: {},
       statusCode: 200,
@@ -287,7 +290,7 @@ describe('Middleware Performance', () => {
     return ctx.body ? 1 : 0;
   });
 
-  bench('Error Handling Middleware', async () => {
+  bench("Error Handling Middleware", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
@@ -300,8 +303,8 @@ describe('Middleware Performance', () => {
     });
 
     const ctx: Context = {
-      path: '/api/error',
-      method: 'GET',
+      path: "/api/error",
+      method: "GET",
       headers: {},
       state: {},
       statusCode: 200,
@@ -312,23 +315,22 @@ describe('Middleware Performance', () => {
     return ctx.statusCode;
   });
 
-  bench('Security Headers Middleware', async () => {
+  bench("Security Headers Middleware", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
-      ctx.responseHeaders['X-Content-Type-Options'] = 'nosniff';
-      ctx.responseHeaders['X-Frame-Options'] = 'DENY';
-      ctx.responseHeaders['X-XSS-Protection'] = '1; mode=block';
-      ctx.responseHeaders['Strict-Transport-Security'] =
-        'max-age=31536000; includeSubDomains';
-      ctx.responseHeaders['Content-Security-Policy'] =
-        "default-src 'self'";
+      ctx.responseHeaders["X-Content-Type-Options"] = "nosniff";
+      ctx.responseHeaders["X-Frame-Options"] = "DENY";
+      ctx.responseHeaders["X-XSS-Protection"] = "1; mode=block";
+      ctx.responseHeaders["Strict-Transport-Security"] =
+        "max-age=31536000; includeSubDomains";
+      ctx.responseHeaders["Content-Security-Policy"] = "default-src 'self'";
       await next();
     });
 
     const ctx: Context = {
-      path: '/app',
-      method: 'GET',
+      path: "/app",
+      method: "GET",
       headers: {},
       state: {},
       statusCode: 200,
@@ -339,7 +341,7 @@ describe('Middleware Performance', () => {
     return Object.keys(ctx.responseHeaders).length;
   });
 
-  bench('Session Middleware - 500 Concurrent Sessions', async () => {
+  bench("Session Middleware - 500 Concurrent Sessions", async () => {
     const chain = new MiddlewareChain();
     const sessions = new Map<string, any>();
 
@@ -349,7 +351,7 @@ describe('Middleware Performance', () => {
     }
 
     chain.use(async (ctx, next) => {
-      const sessionId = ctx.headers['x-session-id'];
+      const sessionId = ctx.headers["x-session-id"];
       if (sessionId && sessions.has(sessionId)) {
         ctx.state.session = sessions.get(sessionId);
       }
@@ -357,9 +359,9 @@ describe('Middleware Performance', () => {
     });
 
     const ctx: Context = {
-      path: '/api/profile',
-      method: 'GET',
-      headers: { 'x-session-id': 'session-250' },
+      path: "/api/profile",
+      method: "GET",
+      headers: { "x-session-id": "session-250" },
       state: {},
       statusCode: 200,
       responseHeaders: {},
@@ -369,15 +371,15 @@ describe('Middleware Performance', () => {
     return ctx.state.session ? 1 : 0;
   });
 
-  bench('Caching Middleware - Cache Hit', async () => {
+  bench("Caching Middleware - Cache Hit", async () => {
     const chain = new MiddlewareChain();
     const cache = new Map<string, string>();
-    cache.set('/api/data', 'cached-response');
+    cache.set("/api/data", "cached-response");
 
     chain.use(async (ctx, next) => {
       if (cache.has(ctx.path)) {
         ctx.body = cache.get(ctx.path);
-        ctx.responseHeaders['X-Cache'] = 'HIT';
+        ctx.responseHeaders["X-Cache"] = "HIT";
       } else {
         await next();
         cache.set(ctx.path, ctx.body);
@@ -385,24 +387,24 @@ describe('Middleware Performance', () => {
     });
 
     const ctx: Context = {
-      path: '/api/data',
-      method: 'GET',
+      path: "/api/data",
+      method: "GET",
       headers: {},
-      body: 'response',
+      body: "response",
       state: {},
       statusCode: 200,
       responseHeaders: {},
     };
 
     await chain.execute(ctx);
-    return ctx.responseHeaders['X-Cache'] === 'HIT' ? 1 : 0;
+    return ctx.responseHeaders["X-Cache"] === "HIT" ? 1 : 0;
   });
 
-  bench('Request Validation Middleware', async () => {
+  bench("Request Validation Middleware", async () => {
     const chain = new MiddlewareChain();
 
     chain.use(async (ctx, next) => {
-      const required = ['path', 'method'];
+      const required = ["path", "method"];
       const valid = required.every((field) => field in ctx);
 
       if (valid) {
@@ -413,8 +415,8 @@ describe('Middleware Performance', () => {
     });
 
     const ctx: Context = {
-      path: '/api/test',
-      method: 'POST',
+      path: "/api/test",
+      method: "POST",
       headers: {},
       state: {},
       statusCode: 200,
@@ -425,11 +427,11 @@ describe('Middleware Performance', () => {
     return ctx.statusCode;
   });
 
-  bench('Request Cloning - 100 Middleware Access', async () => {
+  bench("Request Cloning - 100 Middleware Access", async () => {
     const originalCtx: Context = {
-      path: '/api/test',
-      method: 'GET',
-      headers: { 'x-custom': 'value' },
+      path: "/api/test",
+      method: "GET",
+      headers: { "x-custom": "value" },
       state: {},
       statusCode: 200,
       responseHeaders: {},
@@ -440,6 +442,6 @@ describe('Middleware Performance', () => {
       lastCtx = { ...lastCtx, state: { ...lastCtx.state } };
     }
 
-    return lastCtx.headers['x-custom'] ? 1 : 0;
+    return lastCtx.headers["x-custom"] ? 1 : 0;
   });
 });

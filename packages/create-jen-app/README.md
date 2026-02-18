@@ -30,6 +30,7 @@ When you run the command, you'll be guided through:
 ## Templates
 
 ### Static Template
+
 Perfect for marketing sites, blogs, and documentation.
 
 - ⚡ Pure static site generation
@@ -59,6 +60,7 @@ npm run typecheck  # TypeScript type checking (if enabled)
 ## Project Structure
 
 ### Static Template
+
 ```
 my-app/
 ├── site/

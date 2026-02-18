@@ -12,10 +12,12 @@ Complete example demonstrating all new Jen.js features:
 ### 1. Islands (Interactive Components)
 
 **Pages**:
+
 - `(home).tsx` - Counter with `client:load` strategy
 - `(interactive).tsx` - Multiple islands with different strategies
 
 **APIs**:
+
 ```tsx
 import { Island } from "jenjs";
 export const Counter = Island(CounterImpl, "load");
@@ -24,10 +26,12 @@ export const Counter = Island(CounterImpl, "load");
 ### 2. Route Middleware
 
 **Pages**:
+
 - `(protected-dashboard).tsx` - Protected page with auth middleware
 - `(profile).tsx` - Profile page with middleware data
 
 **APIs**:
+
 ```tsx
 export const middleware = async (ctx) => {
   if (!ctx.cookies.auth) return ctx.redirect("/login");
@@ -38,25 +42,33 @@ export const middleware = async (ctx) => {
 ### 3. API Routes
 
 **Endpoints**:
+
 - `/api/hello` - Basic GET endpoint
 - `/api/counter` - GET/POST stateless counter
 - `/api/users` - GET all users, POST new user
 - `/api/users/[id]` - GET/PUT/DELETE single user
 
 **Usage**:
+
 ```tsx
-export const GET = async (ctx) => { /* ... */ };
-export const POST = async (ctx) => { /* ... */ };
+export const GET = async (ctx) => {
+  /* ... */
+};
+export const POST = async (ctx) => {
+  /* ... */
+};
 ```
 
 ### 4. Zero-JS Pages
 
 **Pages**:
+
 - `(about).tsx` - Pure static page
 - `(blog)/[slug].tsx` - Blog posts (no JS)
 - `(docs).tsx` - Documentation (pure HTML)
 
 **Usage**:
+
 ```tsx
 export const hydrate = false;
 ```
@@ -92,17 +104,20 @@ release-16/
 ## Running the Example
 
 ### From Project Root
+
 ```bash
 npm run dev
 ```
 
 ### From Example Directory
+
 ```bash
 cd example/release-16
 node build.js  # For dev server
 ```
 
 Navigate to:
+
 - http://localhost:3000 - Islands showcase
 - http://localhost:3000/about - Zero-JS page
 - http://localhost:3000/interactive - Multiple islands
@@ -111,6 +126,7 @@ Navigate to:
 - http://localhost:3000/blog/hello-world - Blog post
 
 ### API Endpoints
+
 ```bash
 # Hello world
 curl http://localhost:3000/api/hello
@@ -138,9 +154,7 @@ import { Island } from "jenjs";
 const CounterImpl = ({ initial = 0 }) => {
   const [count, setCount] = createSignal(initial);
   return (
-    <button onClick={() => setCount(count() + 1)}>
-      Clicks: {count()}
-    </button>
+    <button onClick={() => setCount(count() + 1)}>Clicks: {count()}</button>
   );
 };
 
@@ -168,12 +182,12 @@ export const middleware = async (ctx) => {
   if (!ctx.cookies.auth) {
     return ctx.redirect("/login");
   }
-  
+
   // Attach user data
   ctx.data.user = {
     id: "123",
     name: "John Doe",
-    email: "john@example.com"
+    email: "john@example.com",
   };
 };
 
@@ -198,7 +212,7 @@ export default function Dashboard({ data }) {
 // site/api/users.ts
 let users = [
   { id: 1, name: "Alice", email: "alice@example.com" },
-  { id: 2, name: "Bob", email: "bob@example.com" }
+  { id: 2, name: "Bob", email: "bob@example.com" },
 ];
 
 export const GET = async (ctx) => {
@@ -215,19 +229,19 @@ export const POST = async (ctx) => {
 
 // site/api/users/[id].ts
 export const GET = (ctx) => {
-  const user = users.find(u => u.id === parseInt(ctx.params.id));
+  const user = users.find((u) => u.id === parseInt(ctx.params.id));
   return user ? { user } : { error: "Not found" };
 };
 
 export const PUT = async (ctx) => {
-  const user = users.find(u => u.id === parseInt(ctx.params.id));
+  const user = users.find((u) => u.id === parseInt(ctx.params.id));
   if (!user) return { error: "Not found" };
   Object.assign(user, ctx.body);
   return { user };
 };
 
 export const DELETE = async (ctx) => {
-  users = users.filter(u => u.id !== parseInt(ctx.params.id));
+  users = users.filter((u) => u.id !== parseInt(ctx.params.id));
   return { deleted: true };
 };
 ```
@@ -242,13 +256,13 @@ const blogPosts = {
   "hello-world": {
     title: "Hello World",
     date: "2026-02-03",
-    content: "Welcome to the blog!"
+    content: "Welcome to the blog!",
   },
   "jen-is-awesome": {
     title: "Jen is Awesome",
     date: "2026-02-02",
-    content: "Learn why Jen.js is the best framework..."
-  }
+    content: "Learn why Jen.js is the best framework...",
+  },
 };
 
 export async function loader(ctx) {
@@ -271,18 +285,21 @@ export default function BlogPost({ data }) {
 ## Testing the Features
 
 ### Test Islands
+
 1. Open http://localhost:3000
 2. Click the counter button
 3. See count increase (client-side interactivity)
 4. Check Network tab - only 1 hydration script loaded
 
 ### Test Middleware
+
 1. Visit http://localhost:3000/dashboard
 2. Should redirect to /login (middleware blocked it)
 3. Manually set cookie: `document.cookie = "auth=test"`
 4. Refresh - now you can see the dashboard
 
 ### Test API Routes
+
 ```bash
 # Test GET
 curl http://localhost:3000/api/users
@@ -305,6 +322,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 ```
 
 ### Test Zero-JS
+
 1. Open http://localhost:3000/about
 2. Check Network tab - no hydration script
 3. Check Elements - no `__FRAMEWORK_DATA__` script
@@ -313,21 +331,25 @@ curl -X DELETE http://localhost:3000/api/users/1
 ## Performance Notes
 
 ### Islands
+
 - `(home)` - ~2KB hydration overhead
 - `(interactive)` - Multiple islands, one hydration script
 - Network tab shows one hydration request
 
 ### Middleware
+
 - Dashboard protection happens server-side
 - No performance penalty on client
 - Middleware overhead: ~1-5ms per request
 
 ### API Routes
+
 - `/api/users` returns JSON quickly
 - Standard REST patterns
 - No SSR overhead
 
 ### Zero-JS Pages
+
 - `/about`, `/blog/*`, `/docs` have zero JS overhead
 - Pure HTML output
 - Fastest possible page loads
@@ -346,6 +368,7 @@ curl -X DELETE http://localhost:3000/api/users/1
    - Create more islands
 
 2. **Build for production**
+
    ```bash
    npm run build
    npm run start

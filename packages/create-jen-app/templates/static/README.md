@@ -1,10 +1,8 @@
-
 # Jen.js Starter Kit: Static
 
 ```sh
 npm create jen-app@latest
-````
-
+```
 
 > ⚡ **Building something cool?** This is a static Jen.js starter template with file-based routing and fast builds.
 
@@ -32,11 +30,11 @@ Inside your Jen.js project, you'll see the following folders and files:
 
 ### Key Folders
 
-* **`site/pages/`** → Your routes (file-based routing)
-* **`site/components/`** → Reusable UI components
-* **`site/layouts/`** → Layout wrappers
-* **`site/assets/`** → Public static files
-* **`site/styles/`** → Global styles
+- **`site/pages/`** → Your routes (file-based routing)
+- **`site/components/`** → Reusable UI components
+- **`site/layouts/`** → Layout wrappers
+- **`site/assets/`** → Public static files
+- **`site/styles/`** → Global styles
 
 ## 🧞 Commands
 
@@ -55,13 +53,11 @@ Jen.js outputs a fully static site into `dist/`.
 
 You can deploy it easily to:
 
-* GitHub Pages
-* Netlify
-* Vercel
-* Cloudflare Pages
+- GitHub Pages
+- Netlify
+- Vercel
+- Cloudflare Pages
 
 ## 👀 Want to learn more?
 
 Check the Jen.js documentation (coming soon) or explore the source code to see how routing, builds, and rendering work.
-
-

@@ -4,11 +4,13 @@
   padding: 10px 12px;
   border-radius: $radius-md;
   border: 1px solid $border;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   color: $text;
   @include interactive;
 
-  &:focus-visible { @include focus-ring; }
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
 .textarea {
@@ -18,10 +20,12 @@
   padding: 10px 12px;
   border-radius: $radius-md;
   border: 1px solid $border;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   color: $text;
 
-  &:focus-visible { @include focus-ring; }
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
 .select {
@@ -29,9 +33,11 @@
   padding: 10px 12px;
   border-radius: $radius-md;
   border: 1px solid $border;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   color: $text;
   cursor: pointer;
 
-  &:focus-visible { @include focus-ring; }
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
