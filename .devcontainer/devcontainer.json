@@ -1,0 +1,121 @@
+{
+  "name": "Jen.js Framework",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.vscode-typescript-tslint-plugin",
+        "pflannery.vscode-versionlens",
+        "xabikos.javascriptsnippets",
+        "o2sh.prettier-ts",
+        "pmneo.tsimporter",
+        "chrmarti.regex",
+        "ms-vscode.makefile-tools",
+        "eamodio.gitlens",
+        "github.vscode-github-actions",
+        "ms-docker.docker",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+        "typescript.updateImportsOnFileMove.enabled": "always",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.trimAutoWhitespace": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit",
+          "source.organizeImports": "explicit"
+        },
+        "files.autoSave": "onFocusChange",
+        "files.trimTrailingWhitespace": true,
+        "files.trimFinalNewlines": true,
+        "search.exclude": {
+          "node_modules": true,
+          "dist": true,
+          ".turbo": true,
+          ".jen": true,
+          ".next": true
+        },
+        "eslint.validate": [
+          "javascript",
+          "typescript",
+          "typescriptreact",
+          "javascriptreact"
+        ],
+        "prettier.requireConfig": true,
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        }
+      }
+    }
+  },
+
+  "forwardPorts": [5173, 3000, 8080, 8787, 4173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Dev Server",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Alternate Port",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Build/SSG Server",
+      "onAutoForward": "notify"
+    },
+    "8787": {
+      "label": "Workers/Edge",
+      "onAutoForward": "notify"
+    },
+    "4173": {
+      "label": "Vite Preview",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/usr/local/pnpm/bin",
+    "NODE_ENV": "development"
+  },
+
+  "remoteUser": "node",
+
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/node/.gitconfig,type=bind,consistency=cached"
+  ],
+
+  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
+
+  "postStartCommand": "bash .devcontainer/postStartCommand.sh",
+
+  "initializeCommand": "bash .devcontainer/initializeCommand.sh",
+
+  "waitFor": "postCreateCommand"
+}
