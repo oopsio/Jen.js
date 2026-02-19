@@ -34,8 +34,8 @@ export interface ComponentDef {
 const Button: ComponentDef = {
   name: "Button",
   render: (props, content) => {
-    const variant = props.variant || "default";
-    const size = props.size || "md";
+    const variant = (props.variant as string) || "default";
+    const size = (props.size as string) || "md";
     const disabled = props.disabled === "true" || props.disabled === true;
     const href = props.href;
 
@@ -106,7 +106,7 @@ const CardContent: ComponentDef = {
 const Alert: ComponentDef = {
   name: "Alert",
   render: (props, content) => {
-    const variant = props.variant || "default";
+    const variant = (props.variant as string) || "default";
 
     const variantClasses =
       {
@@ -216,7 +216,7 @@ const AccordionContent: ComponentDef = {
 const Badge: ComponentDef = {
   name: "Badge",
   render: (props, content) => {
-    const variant = props.variant || "default";
+    const variant = (props.variant as string) || "default";
 
     const variantClass =
       {
@@ -236,7 +236,7 @@ const Badge: ComponentDef = {
 const Callout: ComponentDef = {
   name: "Callout",
   render: (props, content) => {
-    const type = props.type || "info";
+    const type = (props.type as string) || "info";
     const title = props.title || type.toUpperCase();
 
     const iconMap = {

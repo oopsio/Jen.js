@@ -37,6 +37,7 @@ const md = new MarkdownIt({
 });
 
 // Add table support
+// @ts-ignore - markdown-it-table-of-contents types not available
 import markdownItTable from "markdown-it-table-of-contents";
 try {
   md.use(markdownItTable);

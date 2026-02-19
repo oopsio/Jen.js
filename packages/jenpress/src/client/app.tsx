@@ -831,5 +831,5 @@ document.addEventListener("click", (e) => {
 // Render app
 const app = document.getElementById("app");
 if (app) {
-  render(h(App), app);
+  render(<App />, app);
 }

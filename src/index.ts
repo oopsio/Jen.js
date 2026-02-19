@@ -25,8 +25,6 @@ export * from "./api/(hello).js";
 
 // Auth
 export * from "./auth/index.js";
-export * from "./auth/jwt.js";
-export * from "./auth/session.js";
 export * from "./auth/cookie-utils.js";
 
 // Build
