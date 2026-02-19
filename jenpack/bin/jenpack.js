@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
@@ -15,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
-#!/usr/bin/env node
 
 import("../dist/cli/index.js").catch((error) => {
   console.error("Fatal error:", error);

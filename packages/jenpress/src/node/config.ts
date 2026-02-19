@@ -76,7 +76,6 @@ export interface PageData {
 
 export function defineConfig(config: SiteConfig): SiteConfig {
   return {
-    title: config.title,
     description: config.description || "",
     base: config.base || "/",
     lang: config.lang || "en",

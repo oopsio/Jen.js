@@ -22,6 +22,6 @@ import { dirname, join } from "node:path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Import and run root build.js
-const rootBuildJS = join(__dirname, "../../build.js");
-await import(pathToFileURL(rootBuildJS).href);
+// Import and run root build.ts
+const rootBuildTS = join(__dirname, "../../build.ts");
+await import(pathToFileURL(rootBuildTS).href);
