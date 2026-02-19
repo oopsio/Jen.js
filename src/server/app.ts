@@ -51,8 +51,9 @@ type AppMode = "dev" | "prod";
 export async function createApp(opts: {
   config: FrameworkConfig;
   mode: AppMode;
+  viteServer?: any;
 }) {
-  const { config, mode } = opts;
+  const { config, mode, viteServer } = opts;
 
   // HMR / Live Reload Setup
   const hmrClients = new Set<ServerResponse>();

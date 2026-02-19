@@ -130,7 +130,7 @@ async function buildOnly() {
     });
     log.info("Build complete!");
   } catch (err: any) {
-    log.error("Build failed:", err.message);
+    log.error(`Build failed: ${err.message}`);
     process.exit(1);
   }
 }

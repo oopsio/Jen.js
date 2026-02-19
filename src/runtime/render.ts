@@ -178,8 +178,8 @@ export async function renderRouteToHtml(opts: {
       const componentPath = route.filePath;
       const islandId = `island-${Math.random().toString(36).slice(2, 9)}`;
       const marker = createIslandMarker(islandId, componentPath, strategy, {});
-      // Mark location in HTML for client to find
-      // Note: In a real implementation, we'd track island renders more carefully
+      // Inject marker before closing app div
+      bodyHtml = bodyHtml.replace("</div>", `${marker}</div>`);
     }
   }
 
