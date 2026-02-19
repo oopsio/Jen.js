@@ -125,12 +125,7 @@ export function buildHydrationModule(routeIdOrPath: string) {
       return `export default function Page(){ return null }`;
     }
 
-    const out =
-      `
-import { h } from "https://esm.sh/preact@10.25.4";
-import { Fragment } from "https://esm.sh/preact@10.25.4";
-import { jsx, jsxs } from "https://esm.sh/preact@10.25.4/jsx-runtime";
-` + jsOutput;
+    const out = jsOutput;
 
     const etag = etagOf(out);
     cache.set(key, { js: out, etag });

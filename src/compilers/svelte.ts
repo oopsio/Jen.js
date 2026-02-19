@@ -40,7 +40,6 @@ export class SvelteCompiler {
       const result = svelteCompile(source, {
         filename,
         dev: options.dev ?? false,
-        hydratable: options.hydratable ?? false,
         css: "injected", // Inject CSS at runtime instead of extracting
         preserveComments: !options.minified,
         preserveWhitespace: !options.minified,

@@ -16,10 +16,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { MyApp } from "./mycomponent";
+
+
 export default function Index() {
   return (
     <div className="container">
       <h1>Jen.js + SCSS</h1>
+      <MyApp />
       <p>This page is styled using a real SCSS compiler!</p>
       <div className="card">
         <h2>Nested Rules</h2>

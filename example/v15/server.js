@@ -49,12 +49,12 @@ async function main() {
   const configFile = join(outdir, "jen.config.js");
   const config = (await import(pathToFileURL(configFile).href)).default;
 
-  const appPath = pathToFileURL(join(rootDir, "build/src/server/app.js")).href;
+  const appPath = pathToFileURL(join(rootDir, "dist/src/server/app.js")).href;
   const { createApp } = await import(appPath);
 
   // Load banner
   const bannerPath = pathToFileURL(
-    join(rootDir, "build/src/cli/banner.js"),
+    join(rootDir, "dist/src/cli/banner.js"),
   ).href;
   const { printBanner } = await import(bannerPath);
 
