@@ -37,7 +37,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       sass:
         specifier: ^1.97.3
         version: 1.97.3
@@ -118,7 +118,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       sirv:
         specifier: ^3.0.1
         version: 3.0.2
@@ -143,7 +143,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       sirv:
         specifier: ^3.0.1
         version: 3.0.2
@@ -183,7 +183,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       sass:
         specifier: ^1.69.0
         version: 1.97.3
@@ -208,7 +208,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       sirv:
         specifier: ^3.0.1
         version: 3.0.2
@@ -233,7 +233,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       sirv:
         specifier: ^3.0.1
         version: 3.0.2
@@ -336,7 +336,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.5.13
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
       shiki:
         specifier: ^3.22.0
         version: 3.22.0
@@ -370,7 +370,7 @@ importers:
         version: 10.28.4
       preact-render-to-string:
         specifier: ^6.2.0
-        version: 6.6.5(preact@10.28.4)
+        version: 6.6.6(preact@10.28.4)
     devDependencies:
       esbuild:
         specifier: ^0.25.0
@@ -383,7 +383,7 @@ importers:
         version: 4.3.13(astro@5.17.2(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))
       '@astrojs/preact':
         specifier: ^4.1.3
-        version: 4.1.3(@babel/core@7.29.0)(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(preact@10.28.3)(rollup@4.57.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.1.3(@babel/core@7.29.0)(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(preact@10.28.4)(rollup@4.57.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
       '@astrojs/tailwind':
         specifier: ^5.1.0
         version: 5.1.5(astro@5.17.2(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(rollup@4.57.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2))(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.15))(@types/node@20.19.33)(typescript@5.9.3))
@@ -1738,8 +1738,8 @@ packages:
   '@preact/signals-core@1.13.0':
     resolution: {integrity: sha512-slT6XeTCAbdql61GVLlGU4x7XHI7kCZV5Um5uhE4zLX4ApgiiXc0UYFvVOKq06xcovzp7p+61l68oPi563ARKg==}
 
-  '@preact/signals@2.7.1':
-    resolution: {integrity: sha512-mP2+wMYHqDXVKFGzjqkL6CiHj3okB8eVTTJUZBrSVGozi/XfA+zZRCEALKKZYRoSoqLyT4J6qM4lhwT9155s1Q==}
+  '@preact/signals@2.8.1':
+    resolution: {integrity: sha512-wX6U0SpcCukZTJBs5ChljvBZb3XmYzA5gd4vKHgX8wZZKaQCo2WHtmThdLx+mcVvlBa5u3XShC7ffbETJD4BiQ==}
     peerDependencies:
       preact: '>= 10.25.0 || >=11.0.0-0'
 
@@ -5103,8 +5103,8 @@ packages:
     resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
     engines: {node: '>=0.10.0'}
 
-  preact-render-to-string@6.6.5:
-    resolution: {integrity: sha512-O6MHzYNIKYaiSX3bOw0gGZfEbOmlIDtDfWwN1JJdc/T3ihzRT6tGGSEWE088dWrEDGa1u7101q+6fzQnO9XCPA==}
+  preact-render-to-string@6.6.6:
+    resolution: {integrity: sha512-EfqZJytnjJldV+YaaqhthU2oXsEf5e+6rDv957p+zxAvNfFLQOPfvBOTncscQ+akzu6Wrl7s3Pa0LjUQmWJsGQ==}
     peerDependencies:
       preact: '>=10 || >= 11.0.0-0'
 
@@ -6527,12 +6527,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/preact@4.1.3(@babel/core@7.29.0)(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(preact@10.28.3)(rollup@4.57.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)':
+  '@astrojs/preact@4.1.3(@babel/core@7.29.0)(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(preact@10.28.4)(rollup@4.57.1)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)':
     dependencies:
-      '@preact/preset-vite': 2.10.3(@babel/core@7.29.0)(preact@10.28.3)(rollup@4.57.1)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
-      '@preact/signals': 2.7.1(preact@10.28.3)
-      preact: 10.28.3
-      preact-render-to-string: 6.6.5(preact@10.28.3)
+      '@preact/preset-vite': 2.10.3(@babel/core@7.29.0)(preact@10.28.4)(rollup@4.57.1)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      '@preact/signals': 2.8.1(preact@10.28.4)
+      preact: 10.28.4
+      preact-render-to-string: 6.6.6(preact@10.28.4)
       vite: 6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - '@babel/core'
@@ -7760,12 +7760,12 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@preact/preset-vite@2.10.3(@babel/core@7.29.0)(preact@10.28.3)(rollup@4.57.1)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
+  '@preact/preset-vite@2.10.3(@babel/core@7.29.0)(preact@10.28.4)(rollup@4.57.1)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-react-jsx': 7.28.6(@babel/core@7.29.0)
       '@babel/plugin-transform-react-jsx-development': 7.27.1(@babel/core@7.29.0)
-      '@prefresh/vite': 2.4.11(preact@10.28.3)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      '@prefresh/vite': 2.4.11(preact@10.28.4)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       '@rollup/pluginutils': 5.3.0(rollup@4.57.1)
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.29.0)
       debug: 4.4.3
@@ -7779,7 +7779,7 @@ snapshots:
 
   '@preact/signals-core@1.13.0': {}
 
-  '@preact/signals@2.7.1(preact@10.28.4)':
+  '@preact/signals@2.8.1(preact@10.28.4)':
     dependencies:
       '@preact/signals-core': 1.13.0
       preact: 10.28.4
@@ -7792,14 +7792,14 @@ snapshots:
 
   '@prefresh/utils@1.2.1': {}
 
-  '@prefresh/vite@2.4.11(preact@10.28.3)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
+  '@prefresh/vite@2.4.11(preact@10.28.4)(vite@6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
       '@babel/core': 7.29.0
       '@prefresh/babel-plugin': 0.5.2
       '@prefresh/core': 1.5.9(preact@10.28.4)
       '@prefresh/utils': 1.2.1
       '@rollup/pluginutils': 4.2.1
-      preact: 10.28.3
+      preact: 10.28.4
       vite: 6.4.1(@types/node@20.19.33)(jiti@1.21.7)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - supports-color
@@ -11818,7 +11818,7 @@ snapshots:
     dependencies:
       xtend: 4.0.2
 
-  preact-render-to-string@6.6.5(preact@10.28.4):
+  preact-render-to-string@6.6.6(preact@10.28.4):
     dependencies:
       preact: 10.28.4
 
