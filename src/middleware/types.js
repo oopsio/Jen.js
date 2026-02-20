@@ -16,4 +16,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * TypeScript type definitions for the middleware subsystem.
+ * This file is reserved for future type exports and interfaces
+ * used by middleware modules and consumers.
+ *
+ * Potential future types:
+ * - Middleware function signature
+ * - Context interface
+ * - ResponseBuilder interface
+ * - Middleware metadata format
+ */
+
 export {};

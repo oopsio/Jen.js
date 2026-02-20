@@ -43,11 +43,47 @@ import {
   invalidateSvelteCache,
 } from "../compilers/esbuild-plugins.js";
 
-// Local middleware type for app routing
+/**
+ * Local middleware type for composing request handlers in the app middleware chain.
+ * Each middleware receives the request context and a next() function to pass to the next middleware.
+ */
 type Middleware = (ctx: any, next: () => Promise<void>) => Promise<void>;
 
+/**
+ * Server mode determines rendering strategy and asset serving behavior.
+ * - "dev": Development mode with HMR, live SCSS compilation, file watching
+ * - "prod": Production mode with pre-built assets, no live compilation
+ */
 type AppMode = "dev" | "prod";
 
+/**
+ * Creates and configures the main HTTP application handler.
+ *
+ * Initializes the middleware chain for handling requests in the following order:
+ * 1. Request logging
+ * 2. Internal runtime modules (hydration, HMR)
+ * 3. API route handling
+ * 4. Static dist directory serving (prod mode)
+ * 5. SCSS compilation (dev mode)
+ * 6. Site assets serving (dev mode)
+ * 7. Server-side rendering (SSR) of route pages
+ * 8. 404 fallback
+ *
+ * In development mode, sets up file watching on the site directory to enable:
+ * - Hot Module Replacement (HMR) via Server-Sent Events (SSE)
+ * - Hot CSS reload for SCSS changes
+ * - Full page reload for JavaScript/TypeScript/framework file changes
+ * - Module and compiler cache invalidation
+ *
+ * @param opts Configuration object
+ * @param opts.config Jen.js framework configuration with routes, directories, etc.
+ * @param opts.mode "dev" for development or "prod" for production
+ * @param opts.viteServer Optional Vite dev server instance for HMR (dev mode only)
+ *
+ * @returns Promise resolving to an object with handle() method for processing HTTP requests
+ *
+ * @throws {Error} If route scanning fails due to invalid route patterns
+ */
 export async function createApp(opts: {
   config: FrameworkConfig;
   mode: AppMode;
@@ -55,21 +91,33 @@ export async function createApp(opts: {
 }) {
   const { config, mode, viteServer } = opts;
 
-  // HMR / Live Reload Setup
+  /**
+   * Set of active Server-Sent Events (SSE) connections for Hot Module Replacement.
+   * Clients maintain a persistent SSE connection to receive change notifications.
+   * Each response object in this set receives change events for CSS updates and full reloads.
+   */
   const hmrClients = new Set<ServerResponse>();
 
   if (mode === "dev") {
     const sitePath = join(process.cwd(), config.siteDir);
     log.info(`[HMR] Watching ${sitePath} for changes...`);
 
-    // Recursive watch (Node 20+)
+    /**
+     * Debounce timer prevents multiple rapid change notifications.
+     * Filesystem watchers often emit multiple events for a single file change.
+     * This delay coalesces rapid changes into a single notification (100ms threshold).
+     */
     let debounceTimer: NodeJS.Timeout;
 
     try {
       watch(sitePath, { recursive: true }, (eventType, filename) => {
         if (!filename) return;
 
-        // Ignore common temporary/hidden files to prevent infinite loops
+        /**
+         * Filter out files that should not trigger HMR notifications.
+         * Temporary files, build artifacts, and hidden files cause infinite loops
+         * or are not meant for hot reload.
+         */
         if (
           filename.startsWith(".") ||
           filename.includes("node_modules") ||
@@ -91,7 +139,11 @@ export async function createApp(opts: {
           log.info(`[HMR] Change detected: ${filename}`);
 
           if (ext === ".css" || ext === ".scss") {
-            // Hot CSS
+            /**
+             * For CSS/SCSS changes, send a style-update event.
+             * This allows the client to reload CSS without full page reload,
+             * preserving component state and providing better developer experience.
+             */
             const cssName = filename.replace(/\.scss$/, ".css");
 
             for (const client of hmrClients) {
@@ -100,7 +152,11 @@ export async function createApp(opts: {
               );
             }
           } else {
-            // Invalidate caches for changed file
+            /**
+             * For JavaScript/TypeScript/component changes, invalidate build caches
+             * and send a full reload event.
+             * Cache invalidation ensures the latest code is loaded on next request.
+             */
             invalidateCache(fullPath);
             if (ext === ".vue") invalidateVueCache(fullPath);
             if (ext === ".svelte") invalidateSvelteCache(fullPath);
@@ -117,6 +173,11 @@ export async function createApp(opts: {
     }
   }
 
+  /**
+   * Scans the site directory for route files and compiles route patterns.
+   * Routes are discovered by filename pattern and file extensions configured in config.
+   * See scanRoutes() for details on route naming conventions.
+   */
   const routes = scanRoutes(config);
   log.info(`Routes discovered: ${routes.length}`);
   for (const r of routes) log.info(`  ${r.urlPath} -> ${r.filePath}`);

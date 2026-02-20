@@ -11,7 +11,11 @@
 - `npm run setup` - Run platform-aware setup script (prefers `scripts/setup.sh`, falls back to `scripts/setup.ps1`)
 - `npm run dev:unix` / `npm run dev:windows` - OS-specific dev scripts
 - `npm run build:unix` / `npm run build:windows` - OS-specific build scripts
-- No test suite configured; linting available via `eslint.config.ts`
+- `npm run test` - Run tests in watch mode (Vitest)
+- `npm run test:run` - Run tests once (CI mode)
+- `npm run test:ui` - Visual test dashboard
+- `npm run test:run -- --coverage` - Tests with coverage report
+- Linting available via `eslint.config.ts`; tests in `tests/` (30+ units)
 
 ## Architecture
 
