@@ -26,8 +26,21 @@ import { log } from "@src/shared/log.js";
 import { printBanner } from "@src/cli/banner.js";
 import { createServer as createViteServer, build as buildWithVite } from "vite";
 
+/**
+ * Global configuration object loaded from jen.config.js.
+ * Holds all framework settings including site directories, server ports, build options, etc.
+ */
 let config: any = null;
 
+/**
+ * Loads the Jen.js framework configuration from jen.config.js.
+ * Attempts multiple resolution paths to support different project layouts:
+ * 1. CWD/jen.config.js (for example projects)
+ * 2. CWD/../../jen.config.js (for monorepo setups)
+ * 3. ./jen.config.js (fallback to root project config)
+ *
+ * @throws {Error} If no configuration file is found or config is invalid
+ */
 async function loadConfig() {
   try {
     // Try loading config from CWD first (for examples)
@@ -45,9 +58,28 @@ async function loadConfig() {
   }
 }
 
+/**
+ * Determines the server mode from command line arguments.
+ * Defaults to "dev" if no argument is provided.
+ * "dev" = development server with HMR
+ * "build" = static site generation
+ * "start" = production server
+ */
 const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";
 
+/**
+ * Starts the development or production HTTP server.
+ * In development mode, integrates Vite for Hot Module Replacement (HMR).
+ * In production mode, serves pre-built static files.
+ *
+ * Server middleware chain:
+ * 1. Vite HMR middleware (dev only)
+ * 2. Application routing and rendering
+ * 3. Error handling and fallback responses
+ *
+ * Gracefully shuts down on SIGINT (Ctrl+C).
+ */
 async function main() {
   await loadConfig();
 
@@ -110,6 +142,14 @@ async function main() {
   });
 }
 
+/**
+ * Builds the site for production using Vite's build pipeline.
+ * Minifies JavaScript using Terser and separates vendor code (Preact) into its own chunk.
+ *
+ * Output directory is configured via config.distDir or defaults to "dist".
+ *
+ * @throws {Error} If the build fails; exits process with code 1
+ */
 async function buildOnly() {
   await loadConfig();
   try {

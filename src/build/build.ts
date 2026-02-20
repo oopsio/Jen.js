@@ -40,6 +40,14 @@ import { resolveDistPath } from "../core/paths.js";
 import { log } from "../shared/log.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 
+/**
+ * Recursively copies a directory and all its contents.
+ * Used to copy static assets from the source directory to the build output.
+ * Creates the destination directory structure as needed.
+ *
+ * @param src The source directory path.
+ * @param dst The destination directory path.
+ */
 function copyDir(src: string, dst: string) {
   if (!existsSync(src)) return;
   mkdirSync(dst, { recursive: true });
@@ -54,19 +62,43 @@ function copyDir(src: string, dst: string) {
   }
 }
 
+/**
+ * Builds a static site by pre-rendering all routes to HTML files.
+ * This is the core static site generation (SSG) function that runs at build time.
+ * It performs the following steps:
+ * 1. Clears the previous build output directory
+ * 2. Discovers all route files in the configured site directory
+ * 3. Renders each route to a static HTML file
+ * 4. Copies static assets from the source directory
+ * 5. Bundles Vue and Svelte components for client-side rehydration
+ * 6. Compiles SCSS to CSS for the global stylesheet
+ *
+ * Routes are rendered with empty req/res objects (SSG mode) to avoid middleware execution.
+ * This produces pure static HTML that can be served by any web server.
+ * Hydration scripts are still injected if the route has hydrate:true, allowing for
+ * optional client-side interactivity in otherwise static pages.
+ *
+ * @param opts Configuration object.
+ * @param opts.config The Jen.js framework configuration.
+ * @throws Logs warnings for missing assets or component bundling failures but does not stop the build.
+ */
 export async function buildSite(opts: { config: FrameworkConfig }) {
   const { config } = opts;
 
+  // Clear and recreate the dist directory for a clean build.
   const dist = resolveDistPath(config);
   rmSync(dist, { recursive: true, force: true });
   mkdirSync(dist, { recursive: true });
 
+  // Discover all routes and pre-render each to a static HTML file.
   const routes = scanRoutes(config);
   log.info(`Building SSG: ${routes.length} routes`);
 
   for (const r of routes) {
+    // Create a synthetic URL for each route. Used as the request URL during rendering.
     const url = new URL("http://localhost" + r.urlPath);
 
+    // Render the route to HTML. Empty req/res indicates SSG mode (no middleware execution).
     const html = await renderRouteToHtml({
       config,
       route: r,
@@ -79,6 +111,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       cookies: {},
     });
 
+    // Calculate output path. Root route goes to index.html, nested routes get their own directories.
     const outPath =
       r.urlPath === "/"
         ? join(dist, "index.html")
@@ -90,9 +123,11 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     log.info(`SSG: ${r.urlPath} -> ${outPath}`);
   }
 
+  // Copy static assets from the source assets directory to the built site.
   copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
 
-  // Handle Vue/Svelte components in site folder
+  // Bundle Vue and Svelte components found in the site directory.
+  // These are transpiled to JavaScript modules for client-side use in interactive pages.
   const siteSourceDir = join(process.cwd(), config.siteDir);
   const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
     (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
@@ -117,7 +152,9 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     }
   }
 
-  // styles.css
+  // Compile the global SCSS file to CSS.
+  // This stylesheet is injected into every page and contains framework-wide styles.
+  // Minification is enabled for production builds.
   const scssPath = join(process.cwd(), config.css.globalScss);
   if (existsSync(scssPath)) {
     const compiler = createScssCompiler();

@@ -23,21 +23,41 @@ import esbuild from "esbuild";
 import { pathToFileURL } from "node:url";
 
 /**
- * API route handler context.
+ * API route handler execution context.
+ * Contains request data and response objects passed to all API handler functions.
  */
 export interface ApiRouteContext {
+  /** Node.js IncomingMessage with raw request properties. */
   req: IncomingMessage;
+  /** Node.js ServerResponse for writing response. */
   res: ServerResponse;
+  /** Request URL object with pathname, search, query parameters. */
   url: URL;
+  /** HTTP method in uppercase (GET, POST, PUT, DELETE, PATCH, etc.). */
   method: string;
+  /** Query string parameters parsed from URL (?key=value). */
   query: Record<string, string>;
+  /** Parsed request body (JSON if Content-Type is application/json, else raw string). */
   body: any;
-  params: Record<string, string>; // For dynamic routes like [id]
+  /** Route path parameters extracted from dynamic segments (e.g., [id], [slug]). */
+  params: Record<string, string>;
 }
 
 /**
- * API handler function.
- * Return Response, string, or object (auto JSON).
+ * API handler function executed for a specific HTTP method.
+ * Receives context with request data and response object.
+ *
+ * Return value is automatically serialized:
+ * - Response: Sent as-is with status and headers
+ * - string: Sent as text/plain; charset=utf-8
+ * - object: Sent as application/json (JSON.stringify'd)
+ * - null: Sent as JSON null
+ *
+ * Handler can also manually set response (res.write/res.end) and return null;
+ * the framework will not double-send if res.writableEnded is true.
+ *
+ * @param ctx - Execution context with request and response objects
+ * @returns Result value or promise resolving to result
  */
 export type ApiHandler = (
   ctx: ApiRouteContext,
@@ -49,8 +69,26 @@ export type ApiHandler = (
   | null;
 
 /**
- * API route module.
- * Export GET, POST, PUT, DELETE, etc.
+ * API route module interface.
+ * Exported from api/*.ts files as named exports for each HTTP method.
+ *
+ * Example api/users/[id].ts:
+ *   export const GET = async (ctx) => {
+ *     return { userId: ctx.params.id, ...userData };
+ *   };
+ *   export const DELETE = async (ctx) => {
+ *     deleteUser(ctx.params.id);
+ *     return { status: "deleted" };
+ *   };
+ *
+ * Supported methods:
+ * - GET: Retrieve data
+ * - POST: Create new resource
+ * - PUT: Replace resource
+ * - DELETE: Remove resource
+ * - PATCH: Partial update
+ * - HEAD: Like GET but no body
+ * - OPTIONS: Describe available methods
  */
 export interface ApiRouteModule {
   GET?: ApiHandler;
@@ -62,10 +100,21 @@ export interface ApiRouteModule {
   OPTIONS?: ApiHandler;
 }
 
+/** Cache directory for transpiled API routes. */
 const apiCacheDir = join(process.cwd(), "node_modules", ".jen", "api-cache");
 
 /**
- * Transpile API route file (TS → JS).
+ * Transpile a TypeScript API route file to JavaScript.
+ * Uses esbuild to convert TS → JS, bundle dependencies, and output as ESM.
+ * The transpiled file is cached in node_modules/.jen/api-cache with a timestamp
+ * in the filename to allow side-by-side versions if the file changes.
+ *
+ * Bundles the route with external dependencies excluded (preact, jenjs).
+ * This enables tree-shaking of server-only exports like loader().
+ *
+ * @param filePath - Absolute path to .ts file
+ * @returns Path to transpiled .mjs file in cache directory
+ * @throws If esbuild fails to transpile
  */
 async function transpileApiRoute(filePath: string): Promise<string> {
   const outfile = join(
@@ -88,12 +137,35 @@ async function transpileApiRoute(filePath: string): Promise<string> {
 }
 
 /**
- * Try to handle an API route.
- * Returns true if handled (success or error), false if no route found.
+ * Attempt to route and handle an API request.
+ * Returns true if the request was handled (success or error response sent),
+ * false if no matching API route exists (caller should try next handler).
  *
- * Routes:
- *   /api/hello → site/api/hello.ts (GET, POST, etc.)
- *   /api/users/123 → site/api/users/[id].ts
+ * Routing:
+ * - /api/endpoint → site/api/endpoint.ts
+ * - /api/users/123 → site/api/users/[id].ts (dynamic params supported)
+ * - /api/ (no segments) → 404
+ *
+ * Resolution order:
+ * 1. Try exact file match (e.g., /api/hello → api/hello.ts)
+ * 2. Try dynamic route match (e.g., /api/123 → api/[id].ts)
+ *
+ * Process:
+ * 1. Validate request starts with /api/
+ * 2. Resolve route file (exact or dynamic match)
+ * 3. Transpile if TypeScript
+ * 4. Load module and find handler for HTTP method
+ * 5. Parse request body
+ * 6. Call handler with context
+ * 7. Serialize response (Response, string, or object)
+ *
+ * All errors send JSON response with error message.
+ * HTTP 405 (Method Not Allowed) if method handler not exported.
+ * HTTP 404 if no matching route file.
+ * HTTP 500 if handler throws or transpilation fails.
+ *
+ * @param opts - Options containing request, response, and site directory
+ * @returns true if handled, false if no API route found
  */
 export async function tryHandleApiRoute(opts: {
   req: IncomingMessage;
@@ -108,14 +180,16 @@ export async function tryHandleApiRoute(opts: {
   );
   const method = (req.method ?? "GET").toUpperCase();
 
-  // Must start with /api/
+  // Only handle /api/* requests
   if (!url.pathname.startsWith("/api/")) return false;
 
+  // Extract path segments after /api/ prefix
   const pathParts = url.pathname
     .slice("/api/".length)
     .split("/")
     .filter(Boolean);
 
+  // /api/ with no segments is 404
   if (pathParts.length === 0) {
     res.statusCode = 404;
     res.setHeader("content-type", "application/json; charset=utf-8");
@@ -123,10 +197,11 @@ export async function tryHandleApiRoute(opts: {
     return true;
   }
 
-  // Try exact match first: /api/hello → api/hello.ts
+  // Resolve route file (exact match or dynamic)
   let apiFile: string | null = null;
   let routeParams: Record<string, string> = {};
 
+  // Try exact file match: /api/hello/world → api/hello/world.ts
   const exactPath = join(
     process.cwd(),
     siteDir,
@@ -136,21 +211,14 @@ export async function tryHandleApiRoute(opts: {
   if (existsSync(exactPath)) {
     apiFile = exactPath;
   } else {
-    // Try dynamic route: /api/users/123 → api/users/[id].ts
+    // Try dynamic route match: /api/users/123 → api/users/[id].ts
     const basePath = join(process.cwd(), siteDir, "api");
     for (let i = pathParts.length; i >= 1; i--) {
       const staticSegments = pathParts.slice(0, i);
       const dynamicSegments = pathParts.slice(i);
 
-      const tryDynamic = join(
-        basePath,
-        ...staticSegments.map((s) => `[${s}]`),
-        `[${staticSegments[staticSegments.length - 1]}].ts`,
-      );
-      // Actually, try: api/[id].ts for /api/123
-      // and api/users/[id].ts for /api/users/123
-
-      // Simple approach: check api/[param].ts
+      // Simple approach: check api/[param].ts for /api/123
+      // TODO: Support nested dynamic routes like api/users/[id]/posts/[postId].ts
       if (staticSegments.length === 0 && dynamicSegments.length === 1) {
         const paramFile = join(basePath, `[${dynamicSegments[0]}].ts`);
         if (existsSync(paramFile)) {
@@ -169,15 +237,16 @@ export async function tryHandleApiRoute(opts: {
     return true;
   }
 
-  // Transpile if TS
+  // Transpile TypeScript to JavaScript
   let moduleUrl = apiFile;
   if (apiFile.endsWith(".ts")) {
     moduleUrl = await transpileApiRoute(apiFile);
   }
 
-  // Load module
+  // Load module and get method handlers
   let mod: ApiRouteModule;
   try {
+    // Cache-busting query param ensures fresh module (important in dev mode)
     mod = await import(pathToFileURL(moduleUrl).href + `?t=${Date.now()}`);
   } catch (err: any) {
     res.statusCode = 500;
@@ -191,7 +260,7 @@ export async function tryHandleApiRoute(opts: {
     return true;
   }
 
-  // Find handler for method
+  // Get handler for the HTTP method
   const handler = mod[method as keyof ApiRouteModule];
   if (!handler) {
     res.statusCode = 405;
@@ -201,10 +270,10 @@ export async function tryHandleApiRoute(opts: {
     return true;
   }
 
-  // Read body
+  // Parse request body
   const body = await readRequestBody(req);
 
-  // Build context
+  // Build handler context
   const ctx: ApiRouteContext = {
     req,
     res,
@@ -215,14 +284,14 @@ export async function tryHandleApiRoute(opts: {
     params: routeParams,
   };
 
-  // Execute handler
+  // Execute handler and serialize response
   try {
     const result = await handler(ctx);
 
-    // Handler already sent response
+    // If handler manually wrote response, don't double-send
     if (res.writableEnded) return true;
 
-    // Handle Response
+    // Serialize Response object
     if (result instanceof Response) {
       res.statusCode = result.status;
       result.headers.forEach((v, k) => res.setHeader(k, v));
@@ -231,7 +300,7 @@ export async function tryHandleApiRoute(opts: {
       return true;
     }
 
-    // Handle string
+    // Serialize string as plain text
     if (typeof result === "string") {
       res.statusCode = 200;
       res.setHeader("content-type", "text/plain; charset=utf-8");
@@ -239,7 +308,7 @@ export async function tryHandleApiRoute(opts: {
       return true;
     }
 
-    // Handle object (JSON)
+    // Serialize object as JSON (null is valid)
     res.statusCode = 200;
     res.setHeader("content-type", "application/json; charset=utf-8");
     res.end(JSON.stringify(result ?? null));
@@ -255,12 +324,24 @@ export async function tryHandleApiRoute(opts: {
 }
 
 /**
- * Read request body (shared with old API handler).
+ * Parse request body based on Content-Type header.
+ * Reads all chunks from the request stream and deserializes based on content type.
+ *
+ * - GET/HEAD: Returns null (no body expected)
+ * - JSON (application/json): Parses and returns object; falls back to { __raw } if invalid JSON
+ * - Other: Returns { __raw } with raw body string
+ *
+ * This function is shared between different request handlers in the framework.
+ *
+ * @param req - Node.js IncomingMessage to read body from
+ * @returns Parsed body object or null
  */
 async function readRequestBody(req: IncomingMessage): Promise<any> {
   const method = (req.method ?? "GET").toUpperCase();
+  // Methods without bodies per HTTP spec
   if (method === "GET" || method === "HEAD") return null;
 
+  // Read all body chunks
   const chunks: Buffer[] = [];
   for await (const chunk of req) {
     chunks.push(Buffer.from(chunk));
@@ -270,13 +351,16 @@ async function readRequestBody(req: IncomingMessage): Promise<any> {
   const raw = Buffer.concat(chunks).toString("utf8");
   const ct = (req.headers["content-type"] ?? "").toString();
 
+  // Try to parse JSON
   if (ct.includes("application/json")) {
     try {
       return JSON.parse(raw);
     } catch {
+      // Return raw body if JSON parsing fails
       return { __raw: raw };
     }
   }
 
+  // Return raw body for non-JSON content
   return { __raw: raw };
 }

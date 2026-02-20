@@ -27,13 +27,28 @@ import {
   svelteEsbuildPlugin,
 } from "../compilers/esbuild-plugins.js";
 
+/**
+ * Cached import metadata for a dynamically imported module.
+ * Tracks both the module object and an ETag for cache invalidation.
+ */
 interface ImportCache {
+  /** The imported module object (exports). */
   module: any;
+  /** SHA1 hash of the compiled module for change detection. */
   etag: string;
 }
 
+/** In-memory cache mapping file paths to imported modules. Enables fast repeated imports. */
 const importCache = new Map<string, ImportCache>();
 
+/**
+ * Resolve the cache directory path for a compiled module.
+ * Uses a flattened naming scheme to work reliably on Windows and other systems.
+ * Compiled modules are cached in node_modules/.jen/import-cache and are typically .gitignored.
+ *
+ * @param filePath The absolute path to the original source file.
+ * @returns The absolute path to the cached compiled .mjs file.
+ */
 function getCachePath(filePath: string): string {
   const cacheDir = join(process.cwd(), "node_modules", ".jen", "import-cache");
   if (!existsSync(cacheDir)) {
@@ -43,17 +58,39 @@ function getCachePath(filePath: string): string {
   return join(cacheDir, flatName + ".mjs");
 }
 
+/**
+ * Generate an ETag hash for a file to detect changes.
+ * Uses SHA1 for speed and sufficient collision resistance for this use case.
+ *
+ * @param content The file content to hash.
+ * @returns A 40-character hex string representing the hash.
+ */
 function generateEtag(content: string): string {
   return createHash("sha1").update(content).digest("hex");
 }
 
 /**
- * Universal module importer for Vue, Svelte, and regular JS/TS
+ * Universal module importer for Vue, Svelte, and regular JS/TS files.
+ * Handles transpilation and caching to enable dynamic imports of framework components
+ * and utility modules with automatic compilation.
+ *
+ * Supported file types: .vue, .svelte, .ts, .tsx, .js, .jsx.
+ * Transpilation is performed using esbuild with Vue and Svelte plugins.
+ * Compiled modules are cached in node_modules/.jen/import-cache for fast subsequent loads.
+ *
+ * @param specifier File path relative to baseDir (typically process.cwd() or a component directory).
+ * @param opts Import options.
+ * @param opts.baseDir Base directory for relative path resolution. Defaults to process.cwd().
+ * @param opts.cache Whether to use in-memory cache. Defaults to true.
+ * @param opts.forceRecompile If true, bypass cache and recompile the module.
+ * @returns The imported module object (exports).
+ * @throws Error if the file type is unsupported, the file cannot be read, or transpilation fails.
  *
  * @example
- * const Button = await jen.import("./components/Button.vue");
- * const Card = await jen.import("./ui/Card.svelte");
- * const Utils = await jen.import("./utils.ts");
+ * const Button = await jenImport("./components/Button.vue");
+ * const Card = await jenImport("./ui/Card.svelte");
+ * const Utils = await jenImport("./utils.ts", { cache: true });
+ * const Fresh = await jenImport("./component.tsx", { forceRecompile: true });
  */
 export async function jenImport(
   specifier: string,
@@ -68,11 +105,11 @@ export async function jenImport(
   const forceRecompile = opts?.forceRecompile ?? false;
 
   try {
-    // Resolve the file path
+    // Resolve the file path relative to baseDir
     const filePath = resolve(baseDir, specifier);
     const ext = extname(filePath);
 
-    // Check cache first
+    // Check cache first if enabled and not forcing recompile
     if (useCache && !forceRecompile && importCache.has(filePath)) {
       log.info(`[jen.import] Cache hit: ${specifier}`);
       return importCache.get(filePath)!.module;
@@ -82,6 +119,7 @@ export async function jenImport(
     const isSvelte = ext === ".svelte";
     const isTs = ext === ".ts" || ext === ".tsx";
 
+    // Validate file type
     if (!isVue && !isSvelte && !isTs && ext !== ".js" && ext !== ".jsx") {
       throw new Error(
         `Unsupported file type: ${ext}. Supported: .vue, .svelte, .ts, .tsx, .js, .jsx`,
@@ -92,7 +130,9 @@ export async function jenImport(
 
     const outfile = getCachePath(filePath);
 
-    // Build with appropriate plugins
+    // Transpile the module using esbuild with appropriate plugins
+    // Platform is set to "browser" for client-side components
+    // Bundle is false to preserve imports and enable tree-shaking
     const result = buildSync({
       entryPoints: [filePath],
       outfile,
@@ -116,11 +156,12 @@ export async function jenImport(
       },
     });
 
-    // Dynamic import with cache-busting
+    // Dynamic import with cache-busting query parameter
+    // Prevents Node.js from caching the old module on repeated imports
     const moduleUrl = pathToFileURL(outfile).href + "?t=" + Date.now();
     const mod = await import(moduleUrl);
 
-    // Cache the imported module
+    // Cache the imported module if caching is enabled
     if (useCache) {
       importCache.set(filePath, {
         module: mod,
@@ -139,7 +180,11 @@ export async function jenImport(
 }
 
 /**
- * Clear import cache for a specific file
+ * Invalidate the import cache for a specific file.
+ * Forces the next import to recompile the module from source.
+ * Useful during development when code changes frequently and cache may be stale.
+ *
+ * @param specifier File path (relative to process.cwd()) to invalidate.
  */
 export function invalidateImportCache(specifier: string): void {
   const filePath = resolve(process.cwd(), specifier);
@@ -148,7 +193,9 @@ export function invalidateImportCache(specifier: string): void {
 }
 
 /**
- * Clear all import caches
+ * Clear all import caches completely.
+ * Forces all subsequent imports to recompile from source.
+ * Should be called sparingly; typically used when restarting the development server.
  */
 export function clearImportCache(): void {
   importCache.clear();
@@ -156,7 +203,12 @@ export function clearImportCache(): void {
 }
 
 /**
- * Export as global jen.import if needed
+ * Global jen namespace providing access to jen.import() for dynamic module loading.
+ * Can be used as an alternative to calling jenImport() directly.
+ *
+ * @example
+ * import { jen } from '@src/import/jen-import';
+ * const Component = await jen.import('./Component.vue');
  */
 export const jen = {
   import: jenImport,

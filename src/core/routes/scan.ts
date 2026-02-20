@@ -20,14 +20,52 @@ import { readdirSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import type { FrameworkConfig } from "../config.js";
 
+/**
+ * Represents a discovered route file with all metadata needed for routing and rendering.
+ * Created by scanRoutes() based on filesystem structure and file patterns.
+ */
 export type RouteEntry = {
+  /**
+   * Unique identifier for the route, derived from file path.
+   * Example: "posts_id_tsx" for "posts/(id).tsx"
+   */
   id: string;
+
+  /**
+   * Absolute filesystem path to the route file.
+   * Examples: "/app/src/pages/(home).tsx", "/app/src/posts/($id).tsx"
+   */
   filePath: string;
+
+  /**
+   * URL path that this route should respond to.
+   * Dynamic segments use colon prefix for params and asterisk for catch-all.
+   * Examples: "/", "/about", "/posts/:id", "/docs/*rest"
+   */
   urlPath: string;
-  pattern: string; // regex source
+
+  /**
+   * Regular expression pattern for URL matching.
+   * Compiled from urlPath to enable fast route matching at request time.
+   * Example: "^/posts/([^/]+)/?$" for route "/posts/:id"
+   */
+  pattern: string;
+
+  /**
+   * Array of parameter names in order they appear in the URL pattern.
+   * Used to extract and name captured groups from route.pattern regex matches.
+   * Examples: ["id"] for "/posts/:id", ["rest"] for "/docs/*rest"
+   */
   paramNames: string[];
 };
 
+/**
+ * Recursively walks a directory and returns all file paths.
+ * Used to discover all potential route files in the siteDir.
+ *
+ * @param dir Directory path to walk
+ * @returns Flat array of all file paths found, relative or absolute as provided
+ */
 function walk(dir: string): string[] {
   const out: string[] = [];
   for (const name of readdirSync(dir)) {
@@ -39,14 +77,37 @@ function walk(dir: string): string[] {
   return out;
 }
 
+/**
+ * Normalizes filesystem path separators to forward slashes.
+ * Ensures consistent path format across Windows and Unix systems.
+ *
+ * @param p Path with possibly mixed separators
+ * @returns Path with forward slashes only
+ */
 function normalizeSlashes(p: string) {
   return p.split(sep).join("/");
 }
 
+/**
+ * Escapes special regex characters in a string.
+ * Prevents literal characters from being interpreted as regex syntax.
+ *
+ * @param s String to escape
+ * @returns Escaped string safe for regex
+ */
 function escapeRegex(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Converts a URL path segment to a regex pattern.
+ * Handles dynamic parameters (:id) and catch-alls (*rest).
+ * Side effect: appends parameter names to provided array.
+ *
+ * @param seg URL segment like "id", ":id", or "*rest"
+ * @param paramNames Array to accumulate discovered parameter names
+ * @returns Regex pattern for this segment
+ */
 function segmentToRegex(seg: string, paramNames: string[]) {
   // (id) => ([^/]+)
   // (...rest) => (.*)
@@ -59,6 +120,19 @@ function segmentToRegex(seg: string, paramNames: string[]) {
   return "([^/]+)";
 }
 
+/**
+ * Converts a URL path string into a compiled regex pattern and parameter list.
+ * Handles static segments, dynamic parameters (:param), and catch-all routes (*rest).
+ *
+ * @param urlPath URL path like "/posts/:id" or "/docs/*rest"
+ * @returns Object with regex source string and ordered parameter names
+ *
+ * @example
+ * buildRoutePattern("/posts/:id") => {
+ *   src: "^/posts/([^/]+)/?$",
+ *   paramNames: ["id"]
+ * }
+ */
 function buildRoutePattern(urlPath: string) {
   // Convert /user/:id into regex
   // We store urlPath with placeholders already replaced during scan
@@ -81,6 +155,23 @@ function buildRoutePattern(urlPath: string) {
   return { src, paramNames };
 }
 
+/**
+ * Scans the configured siteDir for route files and returns an ordered list.
+ * Files are matched against config.routes.routeFilePattern (typically /^\(([^)]+)\)/).
+ * Only files with extensions in config.routes.fileExtensions are considered.
+ *
+ * Naming conventions:
+ * - (home).tsx => route "/" (root, or within its directory)
+ * - ($paramName).tsx => dynamic route "/:paramName" (requires $ prefix)
+ * - (...restName).tsx => catch-all route "/*restName" (requires ... prefix)
+ * - (name).tsx => literal route "/name"
+ *
+ * Routes are sorted by specificity: static routes first, then dynamic/catch-all.
+ *
+ * @param config Framework configuration with siteDir and route patterns
+ * @returns Array of RouteEntry objects, sorted by specificity (most specific first)
+ * @throws {Error} If a parameter name is invalid (e.g., starts with number)
+ */
 export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
   const siteRoot = join(process.cwd(), config.siteDir);
   const files = walk(siteRoot);
@@ -118,13 +209,14 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
     let url = "/" + (relDir ? relDir + "/" : "") + urlSeg;
     url = url.replaceAll("//", "/");
 
-    // Dynamic route segment detection:
-    // Routes are determined by the filename within parentheses
-    // - (home).tsx => / (root) or /{dir}/ (in subdirectory)
-    // - ($paramName).tsx => /:paramName (dynamic param, requires $ prefix)
-    // - (...restName).tsx => /*restName (catch-all, requires ... prefix)
-    // - Any other (name).tsx => /name (literal segment)
-
+    /**
+     * Dynamic route segment detection based on filename within parentheses.
+     * Routes are determined by the filename prefix conventions:
+     * - (home).tsx => / (root) or /{dir}/ (in subdirectory)
+     * - ($paramName).tsx => /:paramName (dynamic param, requires $ prefix)
+     * - (...restName).tsx => /*restName (catch-all, requires ... prefix)
+     * - Any other (name).tsx => /name (literal segment)
+     */
     const rawName = name;
 
     // Handle special prefixes for dynamic routing
@@ -165,6 +257,7 @@ export function scanRoutes(config: FrameworkConfig): RouteEntry[] {
     });
   }
 
+  // Sort by specificity: exact matches and static routes first, dynamic routes last
   routes.sort((a, b) => {
     // more specific first
     const aDyn = a.urlPath.includes(":") || a.urlPath.includes("*");
