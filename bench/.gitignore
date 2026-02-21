@@ -1,8 +1,3 @@
-# Benchmark Results
-results.json
-results.*.json
-*.bench.log
-
 # HTML Reports
 report.html
 report/
