@@ -1,0 +1,148 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[2];
+
+const code1 = `export default function Button({ children, onClick }) {
+  return (
+    &lt;button onClick={onClick} class="btn"&gt;
+      {children}
+    &lt;/button&gt;
+  );
+}`;
+
+const code2 = `import { useState, useEffect } from 'preact/hooks';
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() => setCount(count + 1)}&gt;
+        Increment
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}`;
+
+const code3 = `function Card({ title, children }) {
+  return (
+    &lt;div class="card"&gt;
+      &lt;h2&gt;{title}&lt;/h2&gt;
+      &lt;div&gt;{children}&lt;/div&gt;
+    &lt;/div&gt;
+  );
+}`;
+
+const code4 = `&lt;div style={{ color: 'red', padding: '10px' }}&gt;
+  Styled content
+&lt;/div&gt;`;
+
+const code5 = `function Form() {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitted');
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input /&gt;
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}`;
+---
+
+<Layout title="Preact Components - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>Preact Components</h1>
+        <p>Jen.js uses Preact, a lightweight alternative to React. Components work similarly to React but with a smaller footprint.</p>
+
+        <h2>Component Basics</h2>
+        <p>Create components using JSX or functional components:</p>
+        <pre><code set:html={code1}></code></pre>
+
+        <h2>Functional Components</h2>
+        <p>Use hooks for state and side effects:</p>
+        <pre><code set:html={code2}></code></pre>
+
+        <h2>Essential Hooks</h2>
+        <h3>useState</h3>
+        <p>Manage component state.</p>
+
+        <h3>useEffect</h3>
+        <p>Handle side effects after render.</p>
+
+        <h3>useContext</h3>
+        <p>Access context values.</p>
+
+        <h3>useCallback</h3>
+        <p>Memoize callback functions.</p>
+
+        <h3>useMemo</h3>
+        <p>Memoize computed values.</p>
+
+        <h2>Props and Destructuring</h2>
+        <pre><code set:html={code3}></code></pre>
+
+        <h2>Styling</h2>
+        <h3>CSS Classes</h3>
+        <pre><code>&lt;button class="btn btn-primary"&gt;Click me&lt;/button&gt;</code></pre>
+
+        <h3>Inline Styles</h3>
+        <pre><code set:html={code4}></code></pre>
+
+        <h2>Event Handling</h2>
+        <pre><code set:html={code5}></code></pre>
+
+        <h2>Performance Tips</h2>
+        <ul>
+          <li>Memoize expensive components with useMemo</li>
+          <li>Use useCallback for event handlers passed to children</li>
+          <li>Avoid inline function definitions in event handlers</li>
+          <li>Use lazy loading for large components</li>
+        </ul>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/routing" class="nav-prev">Previous: File-Based Routing</a>
+        <a href="/docs/building" class="nav-next">Next: Building Static Sites</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article pre { margin: 1.5rem 0; background: var(--code-bg); color: var(--code-color); padding: 1.5rem; border-radius: 4px; overflow-x: auto; }
+  .doc-article code { font-family: 'Geist Mono', monospace; }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-prev { text-align: left; }
+  .nav-next { text-align: right; }
+</style>

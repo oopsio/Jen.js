@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[0];
+---
+
+<Layout title="Introduction - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>Introduction to Jen.js</h1>
+        <p>Jen.js is a TypeScript-first web framework designed for building fast, lightweight static and server-rendered applications using Preact.</p>
+
+        <h2>What is Jen.js?</h2>
+        <p>Jen.js combines the best aspects of modern web development:</p>
+        <ul>
+          <li><strong>TypeScript-First</strong>: Built with TypeScript from the ground up for type safety and better developer experience</li>
+          <li><strong>File-Based Routing</strong>: Routes are automatically generated from your file structure, no configuration needed</li>
+          <li><strong>Preact-Powered</strong>: Leverages Preact for lightweight, high-performance component rendering</li>
+          <li><strong>Zero Configuration</strong>: Works out of the box with sensible defaults</li>
+          <li><strong>Multiple Rendering Strategies</strong>: Support for static site generation (SSG) and server-side rendering (SSR)</li>
+          <li><strong>Minimal Bundle Size</strong>: Produces incredibly small JavaScript bundles, often just kilobytes</li>
+        </ul>
+
+        <h2>Core Concepts</h2>
+        <h3>Static Site Generation (SSG)</h3>
+        <p>Generate your entire site at build time. Perfect for blogs, documentation, marketing sites, and any content that doesn't change frequently.</p>
+
+        <h3>Server-Side Rendering (SSR)</h3>
+        <p>Render pages on the server for dynamic content. Great for applications that need to fetch data per request or personalize content.</p>
+
+        <h3>Islands Architecture</h3>
+        <p>Load interactive components only where needed. Serve static HTML for the rest of the page, reducing JavaScript shipped to browsers.</p>
+
+        <h2>Why Choose Jen.js?</h2>
+        <h3>Performance</h3>
+        <p>Jen.js prioritizes performance from the ground up with ultra-small bundle sizes, efficient asset hashing and minification, smart code splitting, and optimization for Core Web Vitals.</p>
+
+        <h3>Developer Experience</h3>
+        <p>Type-safe TypeScript configuration, hot module replacement in development, clear and minimal API, and comprehensive error messages.</p>
+
+        <h3>Production Ready</h3>
+        <p>Tested and stable, follows web standards, compatible with existing JavaScript ecosystems, and deployable anywhere.</p>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/routing" class="nav-next">Next: File-Based Routing</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article :global(h1) { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-next { text-align: right; }
+</style>

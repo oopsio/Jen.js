@@ -1,0 +1,289 @@
+---
+title: Configuration
+description: Configuring Jen.js projects
+order: 5
+---
+
+# Configuration
+
+Configure your Jen.js project using `jen.config.ts` in the project root.
+
+## Basic Configuration
+
+```ts
+import { defineConfig } from 'jenjs';
+
+export default defineConfig({
+  projectName: 'My Site',
+  description: 'My awesome site',
+  
+  build: {
+    strategy: 'static', // 'static' or 'ssr'
+    outDir: 'dist',
+    minify: true,
+    hashAssets: true,
+  },
+  
+  dev: {
+    port: 3000,
+    host: 'localhost',
+    hmr: true,
+  },
+  
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+  },
+});
+```
+
+## Build Options
+
+### strategy
+
+Choose between static generation or server-side rendering:
+
+```ts
+build: {
+  strategy: 'static', // Generate static HTML
+}
+```
+
+or
+
+```ts
+build: {
+  strategy: 'ssr', // Render on server
+}
+```
+
+### outDir
+
+Output directory for built files:
+
+```ts
+build: {
+  outDir: 'dist', // or 'build', 'public', etc.
+}
+```
+
+### minify
+
+Minify JavaScript and CSS:
+
+```ts
+build: {
+  minify: true, // Enable minification
+}
+```
+
+### hashAssets
+
+Add content-based hashing to asset filenames:
+
+```ts
+build: {
+  hashAssets: true, // /img.png -> /img-abc123.png
+}
+```
+
+## Development Options
+
+### port
+
+Development server port:
+
+```ts
+dev: {
+  port: 3000,
+}
+```
+
+### host
+
+Development server host:
+
+```ts
+dev: {
+  host: 'localhost', // or '0.0.0.0' for network access
+}
+```
+
+### hmr
+
+Enable hot module replacement:
+
+```ts
+dev: {
+  hmr: true, // Hot reload on file changes
+}
+```
+
+## Server Options
+
+### port
+
+Production server port:
+
+```ts
+server: {
+  port: 3000,
+}
+```
+
+### host
+
+Production server host:
+
+```ts
+server: {
+  host: '0.0.0.0', // Listen on all interfaces
+}
+```
+
+## Routes
+
+Configure route behavior:
+
+```ts
+routes: {
+  basePath: '/', // Base URL path
+  trailingSlash: true, // /page/ vs /page
+}
+```
+
+## Features
+
+Enable or disable features:
+
+```ts
+features: {
+  islands: true, // Islands architecture
+  imageOptimization: true, // Automatic image optimization
+  cssExtraction: true, // Extract CSS to separate files
+  codeSpitting: true, // Split code into chunks
+}
+```
+
+## Environment
+
+Handle different environments:
+
+```ts
+env: {
+  production: {
+    apiUrl: 'https://api.example.com',
+  },
+  development: {
+    apiUrl: 'http://localhost:3001',
+  },
+}
+```
+
+Access in components:
+
+```tsx
+const apiUrl = import.meta.env.VITE_API_URL;
+```
+
+## Middleware
+
+Configure middleware stack:
+
+```ts
+middleware: [
+  'cors',
+  'logger',
+  'security-headers',
+  'rate-limit',
+]
+```
+
+## Plugins
+
+Load plugins:
+
+```ts
+plugins: [
+  'sitemap-plugin',
+  'rss-plugin',
+]
+```
+
+## Type Checking
+
+Configure TypeScript:
+
+```ts
+typeCheck: {
+  enabled: true,
+  strict: true,
+}
+```
+
+## Complete Example
+
+```ts
+import { defineConfig } from 'jenjs';
+
+export default defineConfig({
+  projectName: 'My Blog',
+  description: 'A modern blog built with Jen.js',
+  
+  build: {
+    strategy: 'static',
+    outDir: 'dist',
+    minify: true,
+    hashAssets: true,
+  },
+  
+  dev: {
+    port: 3000,
+    host: 'localhost',
+    hmr: true,
+  },
+  
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+  },
+  
+  routes: {
+    basePath: '/',
+    trailingSlash: false,
+  },
+  
+  features: {
+    islands: true,
+    imageOptimization: true,
+    cssExtraction: true,
+  },
+  
+  middleware: ['logger', 'cors'],
+});
+```
+
+## Environment Variables
+
+Create `.env` file:
+
+```
+VITE_API_URL=https://api.example.com
+VITE_APP_NAME=My App
+```
+
+Use in code:
+
+```ts
+const apiUrl = import.meta.env.VITE_API_URL;
+```
+
+## Secrets
+
+For sensitive data, use `.env.local`:
+
+```
+VITE_API_KEY=secret-key-here
+```
+
+Never commit `.env.local` to version control.

@@ -1,0 +1,355 @@
+---
+title: Deployment
+description: Deploying Jen.js applications
+order: 7
+---
+
+# Deployment
+
+Deploy your Jen.js application to production with various hosting providers.
+
+## Build for Production
+
+First, build your application:
+
+```bash
+npm run build
+```
+
+This generates optimized files in the `dist/` directory.
+
+## Static Deployment
+
+For static sites, upload the `dist/` directory to any static host.
+
+### Vercel
+
+Deploy to Vercel with one command:
+
+```bash
+npm install -g vercel
+vercel
+```
+
+Or connect your GitHub repository for automatic deployments.
+
+### Netlify
+
+```bash
+npm install -g netlify-cli
+netlify deploy --prod --dir dist
+```
+
+Or use the Netlify Dashboard to connect your Git repository.
+
+### GitHub Pages
+
+```bash
+npm run build
+git add dist
+git commit -m "Deploy"
+git push origin main
+```
+
+Configure in `jen.config.ts`:
+
+```ts
+export default {
+  build: {
+    basePath: '/repository-name', // If not using a custom domain
+  },
+};
+```
+
+### AWS S3
+
+```bash
+npm run build
+aws s3 sync dist/ s3://my-bucket/
+```
+
+### Cloudflare Pages
+
+```bash
+npm install -g wrangler
+wrangler pages deploy dist
+```
+
+## Server Deployment
+
+For server-rendered applications, deploy the Node.js application:
+
+### Heroku
+
+Create `Procfile`:
+
+```
+web: node server.ts start
+```
+
+Deploy:
+
+```bash
+heroku create my-app
+git push heroku main
+```
+
+### Railway
+
+```bash
+npm install -g railway
+railway up
+```
+
+### DigitalOcean App Platform
+
+1. Connect your GitHub repository
+2. Select Node.js buildpack
+3. Set start command: `npm run start`
+
+### Docker
+
+Create `Dockerfile`:
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "run", "start"]
+```
+
+Build and run:
+
+```bash
+docker build -t my-app .
+docker run -p 3000:3000 my-app
+```
+
+## Environment Configuration
+
+### Production Environment Variables
+
+Create `.env.production`:
+
+```
+VITE_API_URL=https://api.example.com
+NODE_ENV=production
+```
+
+### Build-Time Environment Variables
+
+Set during build:
+
+```bash
+VITE_APP_VERSION=1.0.0 npm run build
+```
+
+Access in your code:
+
+```tsx
+const version = import.meta.env.VITE_APP_VERSION;
+```
+
+## Performance Optimization
+
+### Caching Headers
+
+Configure your host to cache static assets:
+
+```
+/dist/_astro/* -> Cache for 1 year
+/dist/assets/* -> Cache for 1 year
+/index.html -> Cache for 5 minutes
+```
+
+### Content Compression
+
+Enable gzip compression on your server:
+
+```bash
+# Vercel: automatic
+# Netlify: automatic
+# Custom: configure your web server
+```
+
+### CDN Distribution
+
+Use a CDN for faster global delivery:
+
+- Vercel Edge Network (automatic)
+- Netlify Edge (automatic)
+- Cloudflare Global Network (automatic)
+- AWS CloudFront
+- Bunny CDN
+
+## Monitoring
+
+### Error Tracking
+
+Monitor errors in production:
+
+```ts
+// sentry.ts
+import * as Sentry from "@sentry/browser";
+
+if (typeof window !== 'undefined') {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    environment: import.meta.env.NODE_ENV,
+  });
+}
+```
+
+### Analytics
+
+Track page views and user behavior:
+
+```ts
+// pages/index.tsx
+import { useEffect } from 'preact/hooks';
+
+export default function Home() {
+  useEffect(() => {
+    // Track page view
+    gtag.pageview({
+      page_path: '/',
+      page_title: 'Home',
+    });
+  }, []);
+
+  return <div>Content</div>;
+}
+```
+
+## SSL/HTTPS
+
+All major hosts provide free SSL:
+
+- Vercel: automatic
+- Netlify: automatic
+- Cloudflare: automatic
+- Let's Encrypt: free certificates
+
+## Database Deployment
+
+For applications using databases:
+
+### Vercel PostgreSQL
+
+```ts
+import { sql } from '@vercel/postgres';
+
+const data = await sql`SELECT * FROM posts`;
+```
+
+### MongoDB Atlas
+
+```ts
+import { MongoClient } from 'mongodb';
+
+const client = new MongoClient(process.env.MONGODB_URI);
+```
+
+## Continuous Deployment
+
+### GitHub Actions
+
+Create `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
+      - uses: vercel/action@master
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+```
+
+### GitLab CI
+
+Create `.gitlab-ci.yml`:
+
+```yaml
+build:
+  image: node:18
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  script:
+    - apk add --no-cache curl
+    - curl -X POST $DEPLOY_WEBHOOK
+  only:
+    - main
+```
+
+## Rollback Strategy
+
+### Keep Previous Deployments
+
+Most platforms keep deployment history:
+
+- Vercel: 25 latest deployments
+- Netlify: 10 latest deployments
+- GitHub Pages: Previous commits available
+
+Rollback by selecting a previous deployment in the dashboard.
+
+## Monitoring Deployment
+
+### Health Checks
+
+Implement health check endpoint:
+
+```ts
+// pages/api/health.ts
+export const GET = async (req) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ status: 'ok' }),
+  };
+};
+```
+
+Monitor:
+
+```bash
+curl https://example.com/api/health
+```
+
+## Best Practices
+
+1. Always build and test locally before deploying
+2. Use environment variables for secrets
+3. Enable SSL/HTTPS
+4. Configure caching headers
+5. Set up monitoring and alerting
+6. Use a CDN for static assets
+7. Implement database backups
+8. Keep dependencies updated
+9. Monitor performance metrics
+10. Have a rollback plan

@@ -1,0 +1,76 @@
+---
+import { codeToHtml } from 'shiki';
+
+interface Props {
+  code: string;
+  lang?: string;
+  title?: string;
+}
+
+const { code, lang = 'bash', title } = Astro.props;
+
+let html = '';
+try {
+  html = await codeToHtml(code.trim(), {
+    lang: lang,
+    theme: 'github-dark',
+  });
+} catch (e) {
+  // Fallback if language not supported
+  html = `<pre><code>${code.trim()}</code></pre>`;
+}
+---
+
+<div class="code-block">
+  {title && <div class="code-title">{title}</div>}
+  <div class="code-content" set:html={html} />
+</div>
+
+<style>
+  .code-block {
+    margin: 1rem 0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .code-title {
+    background: var(--code-bg);
+    color: var(--code-color);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    font-family: 'Geist Mono', monospace;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .code-content {
+    overflow-x: auto;
+  }
+
+  .code-content :global(pre) {
+    margin: 0;
+    padding: 1.5rem;
+    background: var(--code-bg);
+    color: var(--code-color);
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .code-content :global(code) {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  .code-content :global(.shiki) {
+    background: var(--code-bg) !important;
+    transition: background-color 0.3s ease;
+  }
+
+  .code-content :global(.shiki span) {
+    font-family: 'Geist Mono', monospace;
+  }
+</style>

@@ -1,0 +1,119 @@
+---
+---
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">TypeScript-first web framework</h1>
+      <p class="hero-subtitle">
+        Build static and server-rendered applications with <strong>Preact</strong>. 
+        File-based routing, simple configuration, minimal overhead.
+      </p>
+      <div class="hero-cta">
+        <a href="https://github.com/oopsio/jen.js" class="btn btn-primary">View on GitHub</a>
+        <a href="#quickstart" class="btn btn-secondary">Quick Start</a>
+      </div>
+      <div class="hero-meta">
+        <span>Built with Preact • TypeScript • Zero-config routing</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 6rem 0;
+    background: var(--bg-secondary);
+    transition: background-color 0.3s ease;
+  }
+
+  .hero-content {
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: -1px;
+    color: var(--text-primary);
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: 1px solid var(--text-primary);
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+  }
+
+  .btn-primary:hover {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+  }
+
+  .btn-secondary {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-tertiary);
+  }
+
+  .hero-meta {
+    color: var(--text-tertiary);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 4rem 0;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+    }
+
+    .hero-cta {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 250px;
+    }
+  }
+</style>

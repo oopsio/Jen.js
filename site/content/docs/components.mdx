@@ -1,0 +1,247 @@
+---
+title: Preact Components
+description: Working with Preact components in Jen.js
+order: 3
+---
+
+# Preact Components
+
+Jen.js uses Preact, a lightweight alternative to React. Components work similarly to React but with a smaller footprint.
+
+## Component Basics
+
+Create components using JSX or functional components:
+
+```tsx
+export default function Button({ children, onClick }) {
+  return (
+    <button onClick={onClick} class="btn">
+      {children}
+    </button>
+  );
+}
+```
+
+## Functional Components
+
+Use hooks for state and side effects:
+
+```tsx
+import { useState, useEffect } from 'preact/hooks';
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+    </div>
+  );
+}
+```
+
+## Hooks
+
+Preact provides these essential hooks:
+
+### useState
+
+Manage component state:
+
+```tsx
+const [value, setValue] = useState('');
+```
+
+### useEffect
+
+Handle side effects:
+
+```tsx
+useEffect(() => {
+  // Runs after render
+  console.log('Component mounted');
+  
+  return () => {
+    // Cleanup function
+    console.log('Component unmounting');
+  };
+}, []); // dependency array
+```
+
+### useContext
+
+Access context values:
+
+```tsx
+import { createContext } from 'preact';
+import { useContext } from 'preact/hooks';
+
+const ThemeContext = createContext();
+
+function Child() {
+  const theme = useContext(ThemeContext);
+  return <div class={theme}>Content</div>;
+}
+```
+
+### useCallback
+
+Memoize callback functions:
+
+```tsx
+const handleClick = useCallback(() => {
+  doSomething();
+}, [dependency]);
+```
+
+### useMemo
+
+Memoize computed values:
+
+```tsx
+const computed = useMemo(() => {
+  return expensive(data);
+}, [data]);
+```
+
+## Props and Destructuring
+
+Access component props:
+
+```tsx
+function Card({ title, children }) {
+  return (
+    <div class="card">
+      <h2>{title}</h2>
+      <div>{children}</div>
+    </div>
+  );
+}
+```
+
+## Styling
+
+### CSS Classes
+
+```tsx
+<button class="btn btn-primary">Click me</button>
+```
+
+### Inline Styles
+
+```tsx
+<div style={{ color: 'red', padding: '10px' }}>
+  Styled content
+</div>
+```
+
+### CSS Modules
+
+```tsx
+import styles from './button.module.css';
+
+export default function Button() {
+  return <button class={styles.primary}>Click</button>;
+}
+```
+
+## Event Handling
+
+Events work the same as React but with the Preact API:
+
+```tsx
+function Form() {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitted');
+  };
+
+  const handleChange = (e) => {
+    console.log(e.target.value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input onChange={handleChange} />
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+
+## Composition
+
+Compose components to build complex UIs:
+
+```tsx
+function Page() {
+  return (
+    <Layout>
+      <Header />
+      <MainContent />
+      <Sidebar />
+      <Footer />
+    </Layout>
+  );
+}
+```
+
+## Conditional Rendering
+
+```tsx
+function Item({ show }) {
+  return show ? <div>Visible</div> : null;
+}
+```
+
+## Lists and Keys
+
+Always provide keys when rendering lists:
+
+```tsx
+function List({ items }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## Fragment
+
+Group multiple elements without adding a wrapper:
+
+```tsx
+import { Fragment } from 'preact';
+
+function Items() {
+  return (
+    <>
+      <li>Item 1</li>
+      <li>Item 2</li>
+    </>
+  );
+}
+```
+
+## Performance Tips
+
+1. Memoize expensive components with `useMemo`
+2. Use `useCallback` for event handlers passed to children
+3. Avoid inline function definitions in event handlers
+4. Implement shouldComponentUpdate logic for class components
+5. Use lazy loading for large components
+
+## Preact vs React Differences
+
+- Smaller bundle size
+- Slightly different API for some features
+- No automatic key handling (use explicit keys)
+- No defaultProps (use default parameters)
+- refs use `useRef` hook

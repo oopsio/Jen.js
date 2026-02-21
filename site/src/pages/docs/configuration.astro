@@ -1,0 +1,130 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[4];
+
+const code1 = `import { defineConfig } from 'jenjs';
+
+export default defineConfig({
+  projectName: 'My Site',
+  description: 'My awesome site',
+  
+  build: {
+    strategy: 'static',
+    outDir: 'dist',
+    minify: true,
+    hashAssets: true,
+  },
+  
+  dev: {
+    port: 3000,
+    host: 'localhost',
+    hmr: true,
+  },
+  
+  server: {
+    port: 3000,
+    host: '0.0.0.0',
+  },
+});`;
+
+const code2 = `routes: {
+  basePath: '/',
+  trailingSlash: true,
+}`;
+
+const code3 = `features: {
+  islands: true,
+  imageOptimization: true,
+  cssExtraction: true,
+  codeSplitting: true,
+}`;
+---
+
+<Layout title="Configuration - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>Configuration</h1>
+        <p>Configure your Jen.js project using jen.config.ts in the project root.</p>
+
+        <h2>Basic Configuration</h2>
+        <pre><code set:html={code1}></code></pre>
+
+        <h2>Build Options</h2>
+        <h3>strategy</h3>
+        <p>Choose between static generation or server-side rendering. Use 'static' to generate static HTML.</p>
+
+        <h3>outDir</h3>
+        <p>Output directory for built files. Default is 'dist'.</p>
+
+        <h3>minify</h3>
+        <p>Minify JavaScript and CSS. Enabled by default.</p>
+
+        <h3>hashAssets</h3>
+        <p>Add content-based hashing to asset filenames for cache busting.</p>
+
+        <h2>Development Options</h2>
+        <h3>port</h3>
+        <p>Development server port. Default is 3000.</p>
+
+        <h3>host</h3>
+        <p>Development server host. Use '0.0.0.0' for network access.</p>
+
+        <h3>hmr</h3>
+        <p>Enable hot module replacement for live reloading.</p>
+
+        <h2>Routes Configuration</h2>
+        <pre><code set:html={code2}></code></pre>
+
+        <h2>Environment Variables</h2>
+        <p>Create .env file:</p>
+        <pre><code>VITE_API_URL=https://api.example.com
+VITE_APP_NAME=My App</code></pre>
+
+        <p>Use in code:</p>
+        <pre><code>const apiUrl = import.meta.env.VITE_API_URL;</code></pre>
+
+        <h2>Features</h2>
+        <pre><code set:html={code3}></code></pre>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/building" class="nav-prev">Previous: Building Static Sites</a>
+        <a href="/docs/api-routes" class="nav-next">Next: API Routes</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article pre { margin: 1.5rem 0; background: var(--code-bg); color: var(--code-color); padding: 1.5rem; border-radius: 4px; overflow-x: auto; }
+  .doc-article code { font-family: 'Geist Mono', monospace; }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-prev { text-align: left; }
+  .nav-next { text-align: right; }
+</style>

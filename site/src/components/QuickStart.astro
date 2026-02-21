@@ -1,0 +1,177 @@
+---
+import CodeBlock from './CodeBlock.astro';
+---
+
+<section id="quickstart" class="quickstart">
+  <div class="container">
+    <h2 class="section-title">Quick Start</h2>
+    
+    <div class="quickstart-content">
+      <div class="quickstart-steps">
+        <h3>Get started in 3 steps</h3>
+        
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Install</h4>
+            <CodeBlock code="npm install" lang="bash" />
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Develop</h4>
+            <CodeBlock code="npm run dev" lang="bash" />
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Build</h4>
+            <CodeBlock code="npm run build" lang="bash" />
+          </div>
+        </div>
+      </div>
+
+      <div class="quickstart-example">
+        <h3>Example Component</h3>
+        <CodeBlock 
+          code={`import { h } from 'preact';
+
+export default function Home() {
+  return (
+    <div>
+      <h1>Welcome to Jen.js</h1>
+      <p>Build fast, lightweight web apps.</p>
+    </div>
+  );
+}`}
+          lang="jsx"
+          title="src/pages/index.jsx"
+        />
+      </div>
+    </div>
+
+    <div class="learning-resources">
+      <h3>Next Steps</h3>
+      <ul>
+        <li><a href="https://github.com/oopsio/jen.js#readme" target="_blank">Read the README</a></li>
+        <li><a href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md" target="_blank">Contributing Guide</a></li>
+        <li><a href="https://github.com/oopsio/jen.js/issues" target="_blank">Report Issues</a></li>
+        <li><a href="https://github.com/oopsio/jen.js/discussions" target="_blank">Join Discussions</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .quickstart {
+    padding: 6rem 0;
+    background: var(--bg-secondary);
+    transition: background-color 0.3s ease;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+  }
+
+  .quickstart-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .quickstart-steps h3,
+  .quickstart-example h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .step {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .step-number {
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-content h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .learning-resources {
+    background: var(--bg-primary);
+    padding: 2rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .learning-resources h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .learning-resources ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .learning-resources li {
+    margin-bottom: 0.75rem;
+  }
+
+  .learning-resources a {
+    color: var(--link-color);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+  }
+
+  .learning-resources a:hover {
+    color: var(--link-hover);
+  }
+
+  @media (max-width: 768px) {
+    .quickstart {
+      padding: 4rem 0;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .quickstart-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .quickstart-steps h3,
+    .quickstart-example h3 {
+      font-size: 1.25rem;
+    }
+  }
+</style>

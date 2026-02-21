@@ -1,0 +1,107 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[3];
+---
+
+<Layout title="Building Static Sites - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>Building Static Sites</h1>
+        <p>Jen.js can generate fully static HTML files at build time, perfect for hosting on any static host.</p>
+
+        <h2>Building Your Site</h2>
+        <pre><code>npm run build</code></pre>
+
+        <p>This generates optimized HTML, CSS, and JavaScript files in the dist/ directory.</p>
+
+        <h2>Build Process</h2>
+        <p>The build process includes:</p>
+        <ul>
+          <li><strong>Route Scanning</strong>: Discover all pages from your file structure</li>
+          <li><strong>Static Generation</strong>: Pre-render pages to HTML</li>
+          <li><strong>Asset Processing</strong>: Optimize images, fonts, and other assets</li>
+          <li><strong>Code Splitting</strong>: Divide code into optimal chunks</li>
+          <li><strong>Minification</strong>: Reduce file sizes</li>
+          <li><strong>Asset Hashing</strong>: Add cache-busting hashes to filenames</li>
+        </ul>
+
+        <h2>Static Generation</h2>
+        <pre><code>export default {'{'}
+  build: {'{'}
+    strategy: 'static',
+    outDir: 'dist',
+  {'}'},
+{'}'};</code></pre>
+
+        <h2>Generating Routes</h2>
+        <p>All routes in pages/ are automatically generated. For dynamic routes, export getStaticParams:</p>
+        <pre><code>export async function getStaticParams() {'{'}
+  return [
+    {'{'}slug: 'first-post'{'}'} ,
+    {'{'}slug: 'second-post'{'}'} ,
+  ];
+{'}'}</code></pre>
+
+        <h2>Output Structure</h2>
+        <pre><code>dist/
+├── index.html
+├── about/
+│   └── index.html
+├── blog/
+│   └── post-1/
+│       └── index.html
+├── _astro/
+│   └── client.abc123.js
+└── assets/
+    └── images/</code></pre>
+
+        <h2>Deployment</h2>
+        <p>Deploy to any static host like Vercel, Netlify, GitHub Pages, or AWS S3.</p>
+
+        <h2>Preview Output</h2>
+        <pre><code>npm run preview</code></pre>
+
+        <p>This serves the dist/ directory and lets you test before deployment.</p>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/components" class="nav-prev">Previous: Preact Components</a>
+        <a href="/docs/configuration" class="nav-next">Next: Configuration</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article pre { margin: 1.5rem 0; background: var(--code-bg); color: var(--code-color); padding: 1.5rem; border-radius: 4px; overflow-x: auto; }
+  .doc-article code { font-family: 'Geist Mono', monospace; }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-prev { text-align: left; }
+  .nav-next { text-align: right; }
+</style>

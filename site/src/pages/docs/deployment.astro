@@ -1,0 +1,126 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[6];
+---
+
+<Layout title="Deployment - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>Deployment</h1>
+        <p>Deploy your Jen.js application to production with various hosting providers.</p>
+
+        <h2>Build for Production</h2>
+        <pre><code>npm run build</code></pre>
+
+        <p>This generates optimized files in the dist/ directory.</p>
+
+        <h2>Static Deployment</h2>
+        <p>For static sites, upload the dist/ directory to any static host.</p>
+
+        <h3>Vercel</h3>
+        <pre><code>npm install -g vercel
+vercel</code></pre>
+
+        <p>Or connect your GitHub repository for automatic deployments.</p>
+
+        <h3>Netlify</h3>
+        <pre><code>npm install -g netlify-cli
+netlify deploy --prod --dir dist</code></pre>
+
+        <h3>GitHub Pages</h3>
+        <pre><code>npm run build
+git add dist
+git commit -m "Deploy"
+git push origin main</code></pre>
+
+        <h3>AWS S3</h3>
+        <pre><code>npm run build
+aws s3 sync dist/ s3://my-bucket/</code></pre>
+
+        <h3>Cloudflare Pages</h3>
+        <pre><code>npm install -g wrangler
+wrangler pages deploy dist</code></pre>
+
+        <h2>Environment Configuration</h2>
+        <h3>Production Environment Variables</h3>
+        <p>Create .env.production:</p>
+        <pre><code>VITE_API_URL=https://api.example.com
+NODE_ENV=production</code></pre>
+
+        <h2>Performance Optimization</h2>
+        <h3>Caching Headers</h3>
+        <p>Configure your host to cache static assets for long periods:</p>
+        <ul>
+          <li>/dist/_astro/* → Cache for 1 year</li>
+          <li>/dist/assets/* → Cache for 1 year</li>
+          <li>/index.html → Cache for 5 minutes</li>
+        </ul>
+
+        <h2>Monitoring</h2>
+        <h3>Error Tracking</h3>
+        <p>Use services like Sentry to track errors in production.</p>
+
+        <h3>Analytics</h3>
+        <p>Integrate analytics to track page views and user behavior.</p>
+
+        <h2>SSL/HTTPS</h2>
+        <p>All major hosts provide free SSL certificates automatically.</p>
+
+        <h2>Continuous Deployment</h2>
+        <p>Set up GitHub Actions or GitLab CI for automatic deployments on every push.</p>
+
+        <h2>Best Practices</h2>
+        <ul>
+          <li>Always build and test locally before deploying</li>
+          <li>Use environment variables for secrets</li>
+          <li>Enable SSL/HTTPS</li>
+          <li>Configure caching headers</li>
+          <li>Set up monitoring and alerting</li>
+          <li>Use a CDN for static assets</li>
+          <li>Implement database backups</li>
+          <li>Keep dependencies updated</li>
+          <li>Monitor performance metrics</li>
+          <li>Have a rollback plan</li>
+        </ul>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/api-routes" class="nav-prev">Previous: API Routes</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article pre { margin: 1.5rem 0; background: var(--code-bg); color: var(--code-color); padding: 1.5rem; border-radius: 4px; overflow-x: auto; }
+  .doc-article code { font-family: 'Geist Mono', monospace; }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-prev { text-align: left; }
+  .nav-next { text-align: right; }
+</style>

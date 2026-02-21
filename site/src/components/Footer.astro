@@ -1,0 +1,113 @@
+---
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Jen.js</h4>
+        <ul>
+          <li><a href="https://github.com/oopsio/jen.js" target="_blank">GitHub</a></li>
+          <li><a href="https://github.com/oopsio/jen.js/issues" target="_blank">Issues</a></li>
+          <li><a href="https://github.com/oopsio/jen.js/discussions" target="_blank">Discussions</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="https://github.com/oopsio/jen.js#readme" target="_blank">Documentation</a></li>
+          <li><a href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+          <li><a href="https://github.com/oopsio/jen.js/blob/main/CODE_OF_CONDUCT.md" target="_blank">Code of Conduct</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="https://github.com/oopsio/jen.js/blob/main/LICENSE" target="_blank">License (GNU GPL 3.0)</a></li>
+          <li><a href="https://github.com/oopsio/jen.js/blob/main/SECURITY.md" target="_blank">Security</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2025 Jen.js. All rights reserved.</p>
+      <p class="footer-note">Built with Preact • TypeScript • Modern tooling</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    padding: 4rem 0 2rem;
+    border-top: 1px solid var(--border-color);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .footer-section h4 {
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-section li {
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-section a {
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+  }
+
+  .footer-section a:hover {
+    color: var(--text-primary);
+  }
+
+  .footer-bottom {
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+  }
+
+  .footer-bottom p {
+    margin: 0.5rem 0;
+  }
+
+  .footer-note {
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .footer {
+      padding: 3rem 0 1.5rem;
+    }
+
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .footer-bottom {
+      padding-top: 1.5rem;
+    }
+  }
+</style>

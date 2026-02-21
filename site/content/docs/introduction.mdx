@@ -1,0 +1,76 @@
+---
+title: Introduction
+description: Getting started with Jen.js
+order: 1
+---
+
+# Introduction to Jen.js
+
+Jen.js is a TypeScript-first web framework designed for building fast, lightweight static and server-rendered applications using Preact.
+
+## What is Jen.js?
+
+Jen.js combines the best aspects of modern web development:
+
+- **TypeScript-First**: Built with TypeScript from the ground up for type safety and better developer experience
+- **File-Based Routing**: Routes are automatically generated from your file structure, no configuration needed
+- **Preact-Powered**: Leverages Preact for lightweight, high-performance component rendering
+- **Zero Configuration**: Works out of the box with sensible defaults
+- **Multiple Rendering Strategies**: Support for static site generation (SSG) and server-side rendering (SSR)
+- **Minimal Bundle Size**: Produces incredibly small JavaScript bundles, often just kilobytes
+
+## Core Concepts
+
+### Static Site Generation (SSG)
+
+Generate your entire site at build time. Perfect for blogs, documentation, marketing sites, and any content that doesn't change frequently.
+
+### Server-Side Rendering (SSR)
+
+Render pages on the server for dynamic content. Great for applications that need to fetch data per request or personalize content.
+
+### Islands Architecture
+
+Load interactive components only where needed. Serve static HTML for the rest of the page, reducing JavaScript shipped to browsers.
+
+## Why Choose Jen.js?
+
+### Performance
+
+Jen.js prioritizes performance from the ground up:
+- Ultra-small bundle sizes
+- Efficient asset hashing and minification
+- Smart code splitting
+- Optimized for Core Web Vitals
+
+### Developer Experience
+
+- Type-safe TypeScript configuration
+- Hot module replacement (HMR) in development
+- Clear, minimal API
+- Comprehensive error messages
+
+### Production Ready
+
+- Tested and stable
+- Follows web standards
+- Compatible with existing JavaScript ecosystems
+- Deployable anywhere
+
+## Quick Comparison
+
+| Feature | Jen.js | Next.js | Nuxt | SvelteKit |
+|---------|--------|---------|------|-----------|
+| Language | TypeScript | TypeScript | TypeScript | TypeScript/JavaScript |
+| Hello World Size | 188 bytes | 747 KB | 150 KB | 66 KB |
+| SSG Support | Yes | Yes | Yes | Yes |
+| SSR Support | Yes | Yes | Yes | Yes |
+| Learning Curve | Low | Medium | Medium | Low |
+| Bundle Size Focus | Yes | No | No | Yes |
+
+## Next Steps
+
+- Learn about [File-Based Routing](./routing)
+- Explore [Building Static Sites](./building)
+- Understand the [Preact Components](./components)
+- Check out [Configuration Options](./configuration)

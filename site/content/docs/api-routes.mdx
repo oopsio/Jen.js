@@ -1,0 +1,327 @@
+---
+title: API Routes
+description: Creating API endpoints with Jen.js
+order: 6
+---
+
+# API Routes
+
+Create API endpoints directly in your Jen.js project using API routes.
+
+## Creating API Routes
+
+Place files in `pages/api/` to create API endpoints:
+
+```
+pages/api/
+├── hello.ts        -> GET /api/hello
+├── users.ts        -> /api/users
+└── posts/
+    └── [id].ts     -> /api/posts/:id
+```
+
+## Basic API Route
+
+```ts
+import type { ApiHandler } from 'jenjs';
+
+export const GET: ApiHandler = async (req) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: 'Hello, World!' }),
+  };
+};
+
+export const POST: ApiHandler = async (req) => {
+  const data = await req.json();
+  return {
+    statusCode: 201,
+    body: JSON.stringify({ created: true, data }),
+  };
+};
+```
+
+## HTTP Methods
+
+Define handlers for specific HTTP methods:
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  return { statusCode: 200, body: 'GET' };
+};
+
+export const POST: ApiHandler = async (req) => {
+  return { statusCode: 200, body: 'POST' };
+};
+
+export const PUT: ApiHandler = async (req) => {
+  return { statusCode: 200, body: 'PUT' };
+};
+
+export const DELETE: ApiHandler = async (req) => {
+  return { statusCode: 200, body: 'DELETE' };
+};
+
+export const PATCH: ApiHandler = async (req) => {
+  return { statusCode: 200, body: 'PATCH' };
+};
+```
+
+## Reading Request Data
+
+### Query Parameters
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  const id = req.query.id; // ?id=123
+  return { statusCode: 200, body: JSON.stringify({ id }) };
+};
+```
+
+### URL Parameters
+
+```ts
+// pages/api/posts/[id].ts
+export const GET: ApiHandler = async (req) => {
+  const { id } = req.params;
+  return { statusCode: 200, body: JSON.stringify({ postId: id }) };
+};
+```
+
+### Request Body
+
+```ts
+export const POST: ApiHandler = async (req) => {
+  const body = await req.json();
+  const { name, email } = body;
+  
+  return {
+    statusCode: 201,
+    body: JSON.stringify({ name, email }),
+  };
+};
+```
+
+### Headers
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  const auth = req.headers['authorization'];
+  const contentType = req.headers['content-type'];
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ auth, contentType }),
+  };
+};
+```
+
+## Response Handling
+
+### JSON Response
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  return {
+    statusCode: 200,
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ success: true }),
+  };
+};
+```
+
+### HTML Response
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  return {
+    statusCode: 200,
+    headers: { 'content-type': 'text/html' },
+    body: '<h1>Hello</h1>',
+  };
+};
+```
+
+### Error Response
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  return {
+    statusCode: 400,
+    body: JSON.stringify({ error: 'Bad request' }),
+  };
+};
+```
+
+## Dynamic Routes
+
+Create dynamic API routes with `[param]`:
+
+```ts
+// pages/api/users/[id].ts
+export const GET: ApiHandler = async (req) => {
+  const { id } = req.params;
+  const user = await fetchUser(id);
+  
+  if (!user) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ error: 'User not found' }),
+    };
+  }
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify(user),
+  };
+};
+```
+
+## Middleware
+
+Use middleware in API routes:
+
+```ts
+import { withAuth, withLogger } from './middleware';
+
+export const GET = withAuth(
+  withLogger(async (req) => {
+    return { statusCode: 200, body: 'Protected' };
+  })
+);
+```
+
+## Database Access
+
+Query databases from API routes:
+
+```ts
+import db from 'your-database';
+
+export const GET: ApiHandler = async (req) => {
+  const posts = await db.posts.findAll();
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify(posts),
+  };
+};
+```
+
+## Authentication
+
+Implement authentication in API routes:
+
+```ts
+export const POST: ApiHandler = async (req) => {
+  const { username, password } = await req.json();
+  
+  const user = await authenticateUser(username, password);
+  
+  if (!user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ error: 'Unauthorized' }),
+    };
+  }
+  
+  const token = generateToken(user);
+  
+  return {
+    statusCode: 200,
+    headers: { 'set-cookie': `token=${token}` },
+    body: JSON.stringify({ token }),
+  };
+};
+```
+
+## CORS Headers
+
+Add CORS headers to API responses:
+
+```ts
+export const GET: ApiHandler = async (req) => {
+  return {
+    statusCode: 200,
+    headers: {
+      'access-control-allow-origin': '*',
+      'access-control-allow-methods': 'GET, POST, PUT, DELETE',
+    },
+    body: JSON.stringify({ data: 'public' }),
+  };
+};
+```
+
+## Example: User Management
+
+```ts
+// pages/api/users.ts
+export const GET: ApiHandler = async (req) => {
+  const users = await db.users.findAll();
+  return {
+    statusCode: 200,
+    body: JSON.stringify(users),
+  };
+};
+
+export const POST: ApiHandler = async (req) => {
+  const { name, email } = await req.json();
+  
+  const user = await db.users.create({ name, email });
+  
+  return {
+    statusCode: 201,
+    body: JSON.stringify(user),
+  };
+};
+
+// pages/api/users/[id].ts
+export const GET: ApiHandler = async (req) => {
+  const { id } = req.params;
+  const user = await db.users.findById(id);
+  
+  if (!user) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ error: 'Not found' }),
+    };
+  }
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify(user),
+  };
+};
+
+export const PUT: ApiHandler = async (req) => {
+  const { id } = req.params;
+  const updates = await req.json();
+  
+  const user = await db.users.update(id, updates);
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify(user),
+  };
+};
+
+export const DELETE: ApiHandler = async (req) => {
+  const { id } = req.params;
+  await db.users.delete(id);
+  
+  return {
+    statusCode: 204,
+    body: '',
+  };
+};
+```
+
+## Best Practices
+
+1. Validate input data before processing
+2. Use appropriate HTTP status codes
+3. Implement proper error handling
+4. Add authentication for protected routes
+5. Use TypeScript for type safety
+6. Document your API endpoints
+7. Implement rate limiting for public APIs
