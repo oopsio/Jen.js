@@ -59,6 +59,7 @@ jobs:
         run: mkdir -p build
 
       - name: Build Jen CLI
+        shell: bash
         run: |
           BIN_NAME=jen-${{ matrix.os }}-${{ matrix.goarch }}
           if [ "${{ matrix.os }}" = "windows" ]; then
