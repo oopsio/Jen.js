@@ -22,6 +22,32 @@ const config: FrameworkConfig = {
   siteDir: "site",
   distDir: "dist",
 
+  /**
+   * Feature Configuration
+   * Control which framework features are enabled/disabled.
+   * Disabled features are completely tree-shaken for zero overhead.
+   * 
+   * For this example project, we enable commonly used features.
+   * Adjust based on your actual usage to minimize bundle size.
+   * 
+   * See FEATURE_GATING.md for complete feature list and examples.
+   */
+  features: {
+    api: true,        // Enable API routes
+    middleware: true, // Enable middleware pipeline
+    cache: true,      // Enable response caching
+    env: true,        // Environment variables (enabled by default)
+    // Disable features you don't use to reduce bundle size:
+    markdown: false,
+    imageOpt: false,
+    streaming: false,
+    auth: false,
+    graphql: false,
+    db: false,
+    i18n: false,
+    jdb: false,
+  },
+
   routes: {
     fileExtensions: [".tsx", ".jsx", ".ts", ".js"],
     routeFilePattern: /^\((.+)\)\.(t|j)sx?$/,

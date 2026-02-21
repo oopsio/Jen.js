@@ -24,6 +24,8 @@
  * - "isr": Incremental static regeneration - revalidates static pages on demand
  * - "ppr": Partial pre-rendering - mixes static and dynamic content
  */
+import type { FeatureConfig } from "./features.js";
+
 export type RenderMode = "ssr" | "ssg" | "isr" | "ppr";
 
 /**
@@ -37,6 +39,11 @@ export type RenderMode = "ssr" | "ssg" | "isr" | "ppr";
  * export default {
  *   siteDir: "src",
  *   distDir: "dist",
+ *   features: {
+ *     api: true,
+ *     middleware: true,
+ *     cache: true,
+ *   },
  *   routes: {
  *     fileExtensions: [".tsx", ".ts", ".jsx", ".js"],
  *     routeFilePattern: /^\(([^)]+)\)/,
@@ -47,6 +54,24 @@ export type RenderMode = "ssr" | "ssg" | "isr" | "ppr";
  * ```
  */
 export type FrameworkConfig = {
+  /**
+   * Feature configuration for the framework.
+   * Each feature can be enabled/disabled independently.
+   * Disabled features are tree-shaken from the build for zero overhead.
+   *
+   * @example
+   * ```typescript
+   * features: {
+   *   api: true,              // Enable API routes
+   *   middleware: true,       // Enable middleware pipeline
+   *   markdown: false,        // Disable markdown compilation
+   *   cache: true,           // Enable response caching
+   *   streaming: true,       // Enable streaming SSR
+   * }
+   * ```
+   */
+  features?: FeatureConfig;
+
   /**
    * Root directory where route files, components, and assets are located.
    * Relative to project root (CWD). Example: "src", "site", "pages".
