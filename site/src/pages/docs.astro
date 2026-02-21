@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import DocsLayout from '../layouts/DocsLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[0];
+---
+
+<Layout title="Documentation - Jen.js">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <h1>{currentDoc.title}</h1>
+      <p class="doc-intro">Read the documentation to learn how to build with Jen.js.</p>
+      
+      <div class="doc-grid">
+        {docs.map(doc => (
+          <a href={`/docs/${doc.slug}`} class="doc-card">
+            <h3>{doc.title}</h3>
+            <p>Learn more about {doc.title.toLowerCase()}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content {
+    flex: 1;
+    max-width: 900px;
+  }
+
+  .doc-intro {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .doc-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+  }
+
+  .doc-card:hover {
+    border-color: var(--text-primary);
+    background: var(--bg-primary);
+    transform: translateY(-2px);
+  }
+
+  .doc-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .doc-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+</style>

@@ -1,0 +1,148 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[5];
+
+const code1 = `import type { ApiHandler } from 'jenjs';
+
+export const GET: ApiHandler = async (req) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: 'Hello, World!' }),
+  };
+};
+
+export const POST: ApiHandler = async (req) => {
+  const data = await req.json();
+  return {
+    statusCode: 201,
+    body: JSON.stringify({ created: true, data }),
+  };
+};`;
+
+const code2 = `return {
+  statusCode: 200,
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ success: true }),
+};`;
+
+const code3 = `return {
+  statusCode: 400,
+  body: JSON.stringify({ error: 'Bad request' }),
+};`;
+
+const code4 = `// pages/api/users/[id].ts
+export const GET: ApiHandler = async (req) => {
+  const id_param = req.params.id;
+  const user = await fetchUser(id_param);
+  
+  if (!user) {
+    return {
+      statusCode: 404,
+      body: JSON.stringify({ error: 'User not found' }),
+    };
+  }
+  
+  return {
+    statusCode: 200,
+    body: JSON.stringify(user),
+  };
+};`;
+
+const code5 = `const id = req.query.id; // ?id=123`;
+const code6 = `const id_param = req.params.id_param;`;
+---
+
+<Layout title="API Routes - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>API Routes</h1>
+        <p>Create API endpoints directly in your Jen.js project using API routes.</p>
+
+        <h2>Creating API Routes</h2>
+        <p>Place files in pages/api/ to create API endpoints:</p>
+        <pre><code>pages/api/
+├── hello.ts        → GET /api/hello
+├── users.ts        → /api/users
+└── posts/
+    └── [id].ts     → /api/posts/:id</code></pre>
+
+        <h2>Basic API Route</h2>
+        <pre><code set:html={code1}></code></pre>
+
+        <h2>HTTP Methods</h2>
+        <p>Define handlers for specific HTTP methods: GET, POST, PUT, DELETE, PATCH.</p>
+
+        <h2>Reading Request Data</h2>
+        <h3>Query Parameters</h3>
+        <pre><code set:html={code5}></code></pre>
+
+        <h3>URL Parameters</h3>
+        <pre><code set:html={code6}></code></pre>
+
+        <h3>Request Body</h3>
+        <pre><code>const body = await req.json();</code></pre>
+
+        <h3>Headers</h3>
+        <pre><code>const auth = req.headers['authorization'];</code></pre>
+
+        <h2>Response Handling</h2>
+        <h3>JSON Response</h3>
+        <pre><code set:html={code2}></code></pre>
+
+        <h3>Error Response</h3>
+        <pre><code set:html={code3}></code></pre>
+
+        <h2>Dynamic Routes</h2>
+        <pre><code set:html={code4}></code></pre>
+
+        <h2>Best Practices</h2>
+        <ul>
+          <li>Validate input data before processing</li>
+          <li>Use appropriate HTTP status codes</li>
+          <li>Implement proper error handling</li>
+          <li>Add authentication for protected routes</li>
+          <li>Use TypeScript for type safety</li>
+        </ul>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/configuration" class="nav-prev">Previous: Configuration</a>
+        <a href="/docs/deployment" class="nav-next">Next: Deployment</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article pre { margin: 1.5rem 0; background: var(--code-bg); color: var(--code-color); padding: 1.5rem; border-radius: 4px; overflow-x: auto; }
+  .doc-article code { font-family: 'Geist Mono', monospace; }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-prev { text-align: left; }
+  .nav-next { text-align: right; }
+</style>

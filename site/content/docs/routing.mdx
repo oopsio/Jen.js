@@ -1,0 +1,142 @@
+---
+title: File-Based Routing
+description: How routing works in Jen.js
+order: 2
+---
+
+# File-Based Routing
+
+Jen.js uses file-based routing, meaning your file structure automatically becomes your URL structure. No configuration required.
+
+## Basic Structure
+
+```
+src/
+├── pages/
+│   ├── index.tsx          -> /
+│   ├── about.tsx          -> /about
+│   ├── blog/
+│   │   ├── index.tsx      -> /blog
+│   │   └── [slug].tsx     -> /blog/:slug
+│   └── api/
+│       └── hello.ts       -> API route
+```
+
+## Route Types
+
+### Static Routes
+
+Create a file and it becomes a route. The file name maps directly to the URL path.
+
+```
+pages/about.tsx -> /about
+pages/pricing.tsx -> /pricing
+pages/contact.tsx -> /contact
+```
+
+### Dynamic Routes
+
+Use square brackets to create dynamic segments.
+
+```
+pages/blog/[slug].tsx -> /blog/post-title
+pages/products/[id].tsx -> /products/123
+pages/users/[username]/profile.tsx -> /users/john/profile
+```
+
+### Catch-All Routes
+
+Use ellipsis to catch all remaining segments.
+
+```
+pages/docs/[...path].tsx -> /docs/getting-started/setup
+                           /docs/api/core
+                           /docs/anything/goes/here
+```
+
+## Route Parameters
+
+Access dynamic parameters in your component:
+
+```tsx
+export default function BlogPost({ params }) {
+  const { slug } = params;
+  
+  return <h1>Post: {slug}</h1>;
+}
+```
+
+## Page Components
+
+Every page file should default export a Preact component:
+
+```tsx
+export default function Home() {
+  return (
+    <main>
+      <h1>Welcome</h1>
+      <p>This is the home page.</p>
+    </main>
+  );
+}
+```
+
+## Static Generation
+
+Export `getStaticParams` to generate pages at build time:
+
+```tsx
+export async function getStaticParams() {
+  const posts = await fetchPosts();
+  return posts.map(post => ({ slug: post.slug }));
+}
+
+export default function BlogPost({ params }) {
+  return <h1>{params.slug}</h1>;
+}
+```
+
+## Server-Side Props
+
+Export `getServerSideProps` to fetch data per request:
+
+```tsx
+export async function getServerSideProps({ params }) {
+  const data = await fetchData(params.id);
+  return { props: { data } };
+}
+
+export default function Page({ data }) {
+  return <div>{data.title}</div>;
+}
+```
+
+## Nested Routes
+
+Directories naturally create nested routes:
+
+```
+pages/
+├── blog/
+│   ├── index.tsx -> /blog
+│   ├── [slug].tsx -> /blog/:slug
+│   └── edit/
+│       └── [id].tsx -> /blog/edit/:id
+```
+
+## Reserved Names
+
+Certain names have special meaning:
+
+- `[...rest].tsx` - Catch-all route
+- `_app.tsx` - App wrapper/layout
+- `_document.tsx` - HTML document wrapper
+- `api/` - API routes (not rendered as pages)
+
+## Best Practices
+
+1. Keep route names descriptive and lowercase
+2. Use dynamic routes for variable content
+3. Organize related pages in subdirectories
+4. Use layouts to share structure between routes
+5. Pre-generate static routes at build time when possible

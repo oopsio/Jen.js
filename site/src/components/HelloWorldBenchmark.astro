@@ -1,0 +1,81 @@
+---
+// src/components/HelloWorldBenchmark.astro
+const rawData = [
+  { "Next.js App Router": ["747.50 KB"] },
+  { "Next.js Pages Router": ["413.12 KB"] },
+  { "Nuxt 3": ["150.95 KB"] },
+  { "SvelteKit": ["66.90 KB"] },
+  { "Jen.js": ["188.00 Bytes"] },
+];
+
+// Labels
+const labels = rawData.map(item => Object.keys(item)[0]);
+
+// Convert to KB for chart
+const values = rawData.map(item => {
+  const val = Object.values(item)[0][0];
+  if (val.endsWith("KB")) return parseFloat(val.replace(" KB", ""));
+  if (val.endsWith("Bytes")) return parseFloat(val.replace(" Bytes", "")) / 1024;
+  return 0;
+});
+
+// Original sizes for tooltip
+const originalSizes = rawData.map(item => Object.values(item)[0][0]);
+---
+
+<canvas id="helloWorldChart" width="600" height="400"
+  data-labels={JSON.stringify(labels)}
+  data-values={JSON.stringify(values)}
+  data-original={JSON.stringify(originalSizes)}>
+</canvas>
+
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script defer>
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("helloWorldChart");
+  const labels = JSON.parse(canvas.dataset.labels);
+  const values = JSON.parse(canvas.dataset.values);
+  const originalSizes = JSON.parse(canvas.dataset.original);
+
+  new Chart(canvas.getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Bundle Size (KB)",
+        data: values,
+        backgroundColor: labels.map(label =>
+          label === "Jen.js" ? "rgba(255, 99, 132, 0.8)" : "rgba(75, 192, 192, 0.7)"
+        )
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: { display: true, text: "Hello World Benchmark" },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const idx = context.dataIndex;
+              return `${labels[idx]}: ${originalSizes[idx]}`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          type: 'logarithmic',
+          min: 0.01, // <-- ensures tiny bars are visible
+          ticks: {
+            callback: function(value) {
+              return Number(value.toFixed(2)) + ' KB';
+            }
+          }
+        }
+      }
+    }
+  });
+});
+</script>

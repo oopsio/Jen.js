@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+const docs = [
+  { title: 'Introduction', slug: 'introduction', order: 1 },
+  { title: 'File-Based Routing', slug: 'routing', order: 2 },
+  { title: 'Preact Components', slug: 'components', order: 3 },
+  { title: 'Building Static Sites', slug: 'building', order: 4 },
+  { title: 'Configuration', slug: 'configuration', order: 5 },
+  { title: 'API Routes', slug: 'api-routes', order: 6 },
+  { title: 'Deployment', slug: 'deployment', order: 7 },
+];
+
+const currentDoc = docs[1];
+---
+
+<Layout title="File-Based Routing - Jen.js Docs">
+  <Header />
+  <DocsLayout docs={docs} currentDoc={currentDoc}>
+    <div class="doc-content">
+      <article class="doc-article">
+        <h1>File-Based Routing</h1>
+        <p>Jen.js uses file-based routing, meaning your file structure automatically becomes your URL structure. No configuration required.</p>
+
+        <h2>Basic Structure</h2>
+        <pre><code>src/
+├── pages/
+│   ├── index.tsx          -&gt; /
+│   ├── about.tsx          -&gt; /about
+│   ├── blog/
+│   │   ├── index.tsx      -&gt; /blog
+│   │   └── [slug].tsx     -&gt; /blog/:slug
+│   └── api/
+│       └── hello.ts       -&gt; API route</code></pre>
+
+        <h2>Route Types</h2>
+        <h3>Static Routes</h3>
+        <p>Create a file and it becomes a route. The file name maps directly to the URL path.</p>
+        <pre><code>pages/about.tsx -&gt; /about
+pages/pricing.tsx -&gt; /pricing
+pages/contact.tsx -&gt; /contact</code></pre>
+
+        <h3>Dynamic Routes</h3>
+        <p>Use square brackets to create dynamic segments.</p>
+        <pre><code>pages/blog/[slug].tsx -&gt; /blog/post-title
+pages/products/[id].tsx -&gt; /products/123
+pages/users/[username]/profile.tsx -&gt; /users/john/profile</code></pre>
+
+        <h3>Catch-All Routes</h3>
+        <p>Use ellipsis to catch all remaining segments.</p>
+        <pre><code>pages/docs/[...path].tsx -&gt; /docs/getting-started/setup
+                           /docs/api/core
+                           /docs/anything/goes/here</code></pre>
+
+        <h2>Route Parameters</h2>
+        <p>Access dynamic parameters in your component:</p>
+        <pre><code set:html={`export default function BlogPost({ params }) {\n  const { slug } = params;\n  return &lt;h1&gt;Post: {' '}{'{'}slug{'}'}&lt;/h1&gt;;\n}`}></code></pre>
+
+        <h2>Best Practices</h2>
+        <ul>
+          <li>Keep route names descriptive and lowercase</li>
+          <li>Use dynamic routes for variable content</li>
+          <li>Organize related pages in subdirectories</li>
+          <li>Use layouts to share structure between routes</li>
+          <li>Pre-generate static routes at build time when possible</li>
+        </ul>
+      </article>
+      <nav class="doc-nav">
+        <a href="/docs/introduction" class="nav-prev">Previous: Introduction</a>
+        <a href="/docs/components" class="nav-next">Next: Preact Components</a>
+      </nav>
+    </div>
+  </DocsLayout>
+  <Footer />
+</Layout>
+
+<style>
+  .doc-content { flex: 1; }
+  .doc-article { max-width: 900px; }
+  .doc-article h1 { margin-top: 0; margin-bottom: 1rem; font-size: 2.5rem; color: var(--text-primary); }
+  .doc-article h2 { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-primary); }
+  .doc-article h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: 1.25rem; color: var(--text-primary); }
+  .doc-article p { margin-bottom: 1rem; line-height: 1.8; color: var(--text-primary); }
+  .doc-article pre { margin: 1.5rem 0; background: var(--code-bg); color: var(--code-color); padding: 1.5rem; border-radius: 4px; overflow-x: auto; }
+  .doc-article code { font-family: 'Geist Mono', monospace; }
+  .doc-article ul { margin: 1rem 0; padding-left: 2rem; }
+  .doc-article li { margin-bottom: 0.5rem; color: var(--text-primary); }
+  .doc-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+  .nav-prev, .nav-next { padding: 1rem; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.95rem; transition: all 0.2s ease; }
+  .nav-prev:hover, .nav-next:hover { border-color: var(--text-primary); background: var(--bg-primary); }
+  .nav-prev { text-align: left; }
+  .nav-next { text-align: right; }
+</style>

@@ -1,0 +1,117 @@
+---
+interface Props {
+  docs: Array<{ title: string; slug: string; order: number }>;
+  currentDoc: { title: string; slug: string; order: number };
+}
+
+const { docs, currentDoc } = Astro.props;
+---
+
+<div class="docs-wrapper">
+  <aside class="docs-sidebar">
+    <nav class="docs-nav">
+      <h3>Documentation</h3>
+      <ul>
+        {docs.map(doc => (
+          <li>
+            <a 
+              href={`/docs/${doc.slug}`} 
+              class={`nav-link ${doc.slug === currentDoc.slug ? 'active' : ''}`}
+            >
+              {doc.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </aside>
+  
+  <main class="docs-main">
+    <slot />
+  </main>
+</div>
+
+<style>
+  .docs-wrapper {
+    display: flex;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    min-height: calc(100vh - 200px);
+  }
+
+  .docs-sidebar {
+    position: sticky;
+    top: 80px;
+    width: 250px;
+    height: fit-content;
+  }
+
+  .docs-nav h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+
+  .docs-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .docs-nav li {
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-link:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+  }
+
+  .nav-link.active {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    border-left-color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .docs-main {
+    flex: 1;
+  }
+
+  @media (max-width: 1024px) {
+    .docs-wrapper {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .docs-sidebar {
+      position: static;
+      width: 100%;
+    }
+
+    .docs-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .docs-nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+</style>

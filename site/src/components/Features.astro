@@ -1,0 +1,177 @@
+---
+---
+
+<section id="features" class="features">
+  <div class="container">
+    <h2 class="section-title">Why Jen.js?</h2>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>TypeScript-First</h3>
+        <p>Built for TypeScript. Strong type safety and excellent IDE support out of the box.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>File-Based Routing</h3>
+        <p>Routes are automatically generated from your file structure. Simple and intuitive.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Zero Config</h3>
+        <p>Sensible defaults. Start building immediately. Configure only when you need to.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Preact-Powered</h3>
+        <p>Lightweight component library. High performance. Compatible with React ecosystem.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Static & SSR</h3>
+        <p>Generate static sites or server-render your pages. Choose based on your needs.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Minimal Output</h3>
+        <p>Lean bundle sizes. Only ship what you need. Fast loading times guaranteed.</p>
+      </div>
+    </div>
+
+    <div class="comparison">
+      <h3>Hello World Bundle Size</h3>
+      <div class="comparison-content">
+        <div class="comparison-item">
+          <span class="framework">Next.js App Router</span>
+          <span class="size">747.50 KB</span>
+        </div>
+        <div class="comparison-item">
+          <span class="framework">Nuxt 3</span>
+          <span class="size">150.95 KB</span>
+        </div>
+        <div class="comparison-item">
+          <span class="framework">SvelteKit</span>
+          <span class="size">66.90 KB</span>
+        </div>
+        <div class="comparison-item highlight">
+          <span class="framework">Jen.js</span>
+          <span class="size">188 Bytes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features {
+    padding: 6rem 0;
+    background: var(--bg-primary);
+    transition: background-color 0.3s ease;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 5rem;
+  }
+
+  .feature-card {
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    transition: all 0.2s ease;
+  }
+
+  .feature-card:hover {
+    border-color: var(--text-primary);
+    background: var(--bg-primary);
+  }
+
+  .feature-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .feature-card p {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .comparison {
+    border-top: 1px solid var(--border-color);
+    padding-top: 3rem;
+  }
+
+  .comparison h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+  }
+
+  .comparison-content {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .comparison-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+  }
+
+  .comparison-item.highlight {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--text-primary);
+    border-radius: 4px;
+    border-bottom: 1px solid var(--text-primary);
+    font-weight: 600;
+  }
+
+  .framework {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .size {
+    color: var(--text-secondary);
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.95rem;
+  }
+
+  .comparison-item.highlight .size {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .features {
+      padding: 4rem 0;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .comparison {
+      padding-top: 2rem;
+    }
+  }
+</style>

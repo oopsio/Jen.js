@@ -1,0 +1,238 @@
+---
+title: Building Static Sites
+description: Building and deploying static sites with Jen.js
+order: 4
+---
+
+# Building Static Sites
+
+Jen.js can generate fully static HTML files at build time, perfect for hosting on any static host.
+
+## Building Your Site
+
+```bash
+npm run build
+```
+
+This generates optimized HTML, CSS, and JavaScript files in the `dist/` directory.
+
+## Build Process
+
+The build process includes:
+
+1. **Route Scanning**: Discover all pages from your file structure
+2. **Static Generation**: Pre-render pages to HTML
+3. **Asset Processing**: Optimize images, fonts, and other assets
+4. **Code Splitting**: Divide code into optimal chunks
+5. **Minification**: Reduce file sizes
+6. **Asset Hashing**: Add cache-busting hashes to filenames
+
+## Static Generation
+
+Configure static generation in `jen.config.ts`:
+
+```ts
+export default {
+  build: {
+    strategy: 'static',
+    outDir: 'dist',
+  },
+};
+```
+
+## Generating Routes
+
+All routes in `pages/` are automatically generated. For dynamic routes, export `getStaticParams`:
+
+```tsx
+export async function getStaticParams() {
+  return [
+    { slug: 'first-post' },
+    { slug: 'second-post' },
+    { slug: 'third-post' },
+  ];
+}
+
+export default function Post({ params }) {
+  return <h1>{params.slug}</h1>;
+}
+```
+
+## Asset Optimization
+
+### Image Optimization
+
+Assets are automatically hashed:
+
+```tsx
+<img src="/images/logo.png" alt="Logo" />
+// Becomes: /images/logo-abc123def.png
+```
+
+### CSS Extraction
+
+Styles are extracted and minified:
+
+```tsx
+import './styles.css';
+
+export default function Page() {
+  return <div>Content</div>;
+}
+```
+
+### JavaScript Minification
+
+All JavaScript is minified by default:
+
+```bash
+npm run build
+# Produces minified dist/ with hashed assets
+```
+
+## Output Structure
+
+```
+dist/
+├── index.html           # Home page
+├── about/
+│   └── index.html       # /about
+├── blog/
+│   ├── index.html       # /blog
+│   ├── post-1/
+│   │   └── index.html   # /blog/post-1
+│   └── post-2/
+│       └── index.html   # /blog/post-2
+├── _astro/
+│   ├── client.abc123.js # Client-side JavaScript
+│   └── styles.xyz789.css # Extracted CSS
+└── assets/
+    └── images/
+        ├── logo-abc123.png
+        └── background-xyz789.jpg
+```
+
+## Deployment
+
+### Static Hosting Services
+
+Deploy to any static host:
+
+- Vercel
+- Netlify
+- GitHub Pages
+- AWS S3
+- Cloudflare Pages
+- Surge
+- Firebase Hosting
+
+### Basic Deployment Steps
+
+1. Build your site: `npm run build`
+2. Upload `dist/` directory to your host
+3. Configure to serve `index.html` for 404s
+
+### Vercel Deployment
+
+```bash
+npm i -g vercel
+vercel --prod
+```
+
+### Netlify Deployment
+
+```bash
+npm run build
+netlify deploy --prod --dir dist
+```
+
+## Incremental Static Regeneration
+
+For sites that need periodic updates:
+
+```tsx
+export async function getStaticProps() {
+  const data = await fetchData();
+  return {
+    props: { data },
+    revalidate: 3600, // Revalidate every hour
+  };
+}
+```
+
+## Preview Output
+
+Preview the built site locally:
+
+```bash
+npm run preview
+```
+
+This serves the `dist/` directory and lets you test before deployment.
+
+## Build Configuration
+
+Customize build behavior in `jen.config.ts`:
+
+```ts
+export default {
+  build: {
+    strategy: 'static',
+    outDir: 'dist',
+    minify: true,
+    hashAssets: true,
+    removeComments: true,
+    sourceMaps: false, // Production: false
+  },
+};
+```
+
+## Optimizing Build Size
+
+1. **Use lazy loading** for heavy components
+2. **Code split** at route boundaries automatically
+3. **Optimize images** before including
+4. **Remove unused CSS** 
+5. **Tree-shake unused exports**
+
+## Build Performance
+
+Build times depend on:
+
+- Number of pages
+- Data fetching during build
+- Asset size and quantity
+
+Optimize by:
+
+1. Caching expensive computations
+2. Parallel processing where possible
+3. Limiting asset sizes
+4. Using efficient data sources
+
+## Environment Variables
+
+Use environment variables in builds:
+
+```tsx
+export default function Page() {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  return <div>{apiUrl}</div>;
+}
+```
+
+Set in `.env`:
+
+```
+VITE_API_URL=https://api.example.com
+```
+
+## Debugging Builds
+
+Enable verbose output:
+
+```bash
+npm run build -- --verbose
+```
+
+Check the build log for errors and warnings.

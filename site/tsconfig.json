@@ -1,9 +1,14 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
   "compilerOptions": {
-    "jsxImportSource": "preact",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"]
-  },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
 }
