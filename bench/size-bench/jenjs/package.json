@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "node build.js",
-    "start": "jen start",
+    "start": "node server.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -108,6 +108,17 @@ const config: FrameworkConfig = {
     generateSitemap: true,
     sitemapBaseUrl: process.env.SITE_URL || "https://example.com",
   },
+
+  fonts: {
+    // Uncomment to enable fonts
+    // local: [
+    //   "site/fonts/Inter-Regular.woff2",
+    //   "site/fonts/Inter-Bold.woff2",
+    // ],
+    // google: ["Inter:400,700", "Roboto:400,600"],
+    // preload: true,
+    // display: "swap",
+  },
 };
 
 export default config;

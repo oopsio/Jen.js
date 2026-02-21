@@ -42,6 +42,7 @@ import {
   invalidateVueCache,
   invalidateSvelteCache,
 } from "../compilers/esbuild-plugins.js";
+import { fontServeMiddleware } from "../fonts/inject.js";
 
 /**
  * Local middleware type for composing request handlers in the app middleware chain.
@@ -191,6 +192,10 @@ export async function createApp(opts: {
     dev: mode === "dev",
     etag: true,
   });
+
+  // Font serving middleware
+  const fontCacheDir = join(process.cwd(), config.build?.cacheDir ?? ".jen", "fonts");
+  const serveFonts = fontServeMiddleware(fontCacheDir);
 
   const middlewares: Middleware[] = [
     async (ctx, next) => {
@@ -350,6 +355,13 @@ initializeIslands();
         return;
       }
 
+      await next();
+    },
+
+    async (ctx, next) => {
+      // Font serving (with proper cache headers)
+      const handled = await serveFonts(ctx.req, ctx.res);
+      if (handled) return;
       await next();
     },
 
