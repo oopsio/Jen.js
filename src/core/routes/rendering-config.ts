@@ -1,0 +1,170 @@
+/*
+ * This file is part of Jen.js.
+ * Copyright (C) 2026 oopsio
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * Route-level rendering configuration detection
+ *
+ * Allows routes to specify their rendering strategy via exported config:
+ *
+ * @example
+ * // pages/(home).tsx
+ * export const rendering = "ssg";
+ * export const revalidate = 3600; // ISR revalidation in seconds
+ *
+ * export default function Home() { ... }
+ */
+
+import type { RenderMode } from "../config.js";
+
+/**
+ * Rendering configuration for a route
+ */
+export interface RouteRenderingConfig {
+  mode: RenderMode;
+  revalidateSeconds?: number;
+}
+
+/**
+ * Extract rendering configuration from a route module.
+ * Safely handles modules that don't specify rendering config.
+ *
+ * @param module Route module (imported component)
+ * @param defaultMode Default rendering mode if not specified
+ * @param defaultRevalidate Default revalidation seconds for ISR
+ * @returns Route rendering configuration
+ */
+export function extractRenderingConfig(
+  module: any,
+  defaultMode: RenderMode = "ssg",
+  defaultRevalidate: number = 3600,
+): RouteRenderingConfig {
+  const mode = (module?.rendering || defaultMode) as RenderMode;
+
+  // Validate mode
+  const validModes: RenderMode[] = ["ssg", "ssr", "isr", "ppr"];
+  if (!validModes.includes(mode)) {
+    console.warn(
+      `Invalid rendering mode: ${mode}, defaulting to ${defaultMode}`,
+    );
+    return { mode: defaultMode, revalidateSeconds: defaultRevalidate };
+  }
+
+  // Extract revalidation time if mode is ISR
+  let revalidateSeconds: number | undefined;
+  if (mode === "isr") {
+    revalidateSeconds =
+      typeof module?.revalidate === "number"
+        ? module.revalidate
+        : defaultRevalidate;
+  }
+
+  return { mode, revalidateSeconds };
+}
+
+/**
+ * Cached rendering configs to avoid repeated module evaluations.
+ * Maps file path → rendering config.
+ */
+const configCache = new Map<string, RouteRenderingConfig>();
+
+/**
+ * Clear the rendering config cache.
+ * Useful during development when routes change.
+ */
+export function clearRenderingConfigCache() {
+  configCache.clear();
+}
+
+/**
+ * Get rendering config for a route, with caching.
+ * Attempts to dynamically import and evaluate the route module.
+ *
+ * In a production SSR environment, route modules are pre-compiled.
+ * In a build environment, we need to safely evaluate modules.
+ *
+ * @param filePath Absolute path to route file
+ * @param defaultMode Default rendering mode
+ * @param defaultRevalidate Default revalidation seconds
+ * @returns Rendering configuration promise
+ */
+export async function getRenderingConfig(
+  filePath: string,
+  defaultMode: RenderMode = "ssg",
+  defaultRevalidate: number = 3600,
+): Promise<RouteRenderingConfig> {
+  // Check cache first
+  if (configCache.has(filePath)) {
+    return configCache.get(filePath)!;
+  }
+
+  try {
+    // Attempt to import the module
+    // This works in ESM environments with proper module resolution
+    const module = await import(`file://${filePath}`);
+    const config = extractRenderingConfig(
+      module,
+      defaultMode,
+      defaultRevalidate,
+    );
+
+    // Cache for future lookups
+    configCache.set(filePath, config);
+    return config;
+  } catch (err) {
+    // If import fails, return default config
+    // This can happen if module has syntax errors or imports unavailable at build time
+    const config: RouteRenderingConfig = {
+      mode: defaultMode,
+      revalidateSeconds: defaultMode === "isr" ? defaultRevalidate : undefined,
+    };
+    configCache.set(filePath, config);
+    return config;
+  }
+}
+
+/**
+ * Synchronously get rendering config (for build-time use).
+ * Falls back to default if module can't be imported.
+ *
+ * Note: This uses a synchronous require-like approach and may not work
+ * in all environments. Prefer async getRenderingConfig() when possible.
+ *
+ * @param filePath Absolute path to route file
+ * @param defaultMode Default rendering mode
+ * @param defaultRevalidate Default revalidation seconds
+ * @returns Rendering configuration
+ */
+export function getRenderingConfigSync(
+  filePath: string,
+  defaultMode: RenderMode = "ssg",
+  defaultRevalidate: number = 3600,
+): RouteRenderingConfig {
+  // Check cache first
+  if (configCache.has(filePath)) {
+    return configCache.get(filePath)!;
+  }
+
+  // In sync context, we can't dynamically import
+  // Return default config
+  const config: RouteRenderingConfig = {
+    mode: defaultMode,
+    revalidateSeconds: defaultMode === "isr" ? defaultRevalidate : undefined,
+  };
+  configCache.set(filePath, config);
+  return config;
+}

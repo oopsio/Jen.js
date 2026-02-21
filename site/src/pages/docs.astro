@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import DocsLayout from '../layouts/DocsLayout.astro';
 import Footer from '../components/Footer.astro';
+import Comments from '../components/Comments.astro';
 
 const docs = [
   { title: 'Introduction', slug: 'introduction', order: 1 },
@@ -36,6 +37,7 @@ const currentDoc = docs[0];
   </DocsLayout>
   <Footer />
 </Layout>
+<Comments />
 
 <style>
   .doc-content {
