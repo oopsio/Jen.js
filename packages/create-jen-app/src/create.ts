@@ -37,7 +37,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface ProjectOptions {
   projectName: string;
-  template: "static";
+  template: "static" | "ssr-isr";
   typescript: boolean;
   installDeps: boolean;
   gitInit: boolean;
@@ -107,6 +107,11 @@ export async function createJenApp() {
         label: `${pc.cyan("Static")} - Pure SSG with components`,
         value: "static",
         hint: "Fast, lightweight static sites",
+      },
+      {
+        label: `${pc.green("SSR & ISR")} - Server-side rendering with incremental static regeneration`,
+        value: "ssr-isr",
+        hint: "Dynamic content with cached pages",
       },
     ],
   });
