@@ -16,13 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 export function getFrameworkData() {
-    const el = document.getElementById("__FRAMEWORK_DATA__");
-    if (!el)
-        return null;
-    try {
-        return JSON.parse(el.textContent || "null");
-    }
-    catch {
-        return null;
-    }
+  const el = document.getElementById("__FRAMEWORK_DATA__");
+  if (!el) return null;
+  try {
+    return JSON.parse(el.textContent || "null");
+  } catch {
+    return null;
+  }
 }

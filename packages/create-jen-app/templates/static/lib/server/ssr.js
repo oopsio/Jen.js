@@ -23,8 +23,8 @@ import { renderRouteToHtml } from "../runtime/render.js";
  */
 const renderCache = new Map();
 let cacheConfig = {
-    enabled: true,
-    ttlSeconds: 3600, // Default: 1 hour
+  enabled: true,
+  ttlSeconds: 3600, // Default: 1 hour
 };
 /**
  * Configure the SSR HTML cache behavior.
@@ -32,14 +32,14 @@ let cacheConfig = {
  * @param config Cache configuration options
  */
 export function configureSsrCache(config) {
-    cacheConfig = { ...cacheConfig, ...config };
+  cacheConfig = { ...cacheConfig, ...config };
 }
 /**
  * Clear the entire SSR render cache.
  * Useful in development or when data has changed.
  */
 export function clearSsrCache() {
-    renderCache.clear();
+  renderCache.clear();
 }
 /**
  * Clear a specific cached page by URL pathname.
@@ -47,7 +47,7 @@ export function clearSsrCache() {
  * @param pathname URL pathname to invalidate
  */
 export function invalidateSsrCache(pathname) {
-    renderCache.delete(pathname);
+  renderCache.delete(pathname);
 }
 /**
  * Get cached HTML for a page if it exists and hasn't expired.
@@ -56,17 +56,15 @@ export function invalidateSsrCache(pathname) {
  * @returns Cached HTML string, or null if not cached/expired
  */
 function getCachedHtml(pathname) {
-    if (!cacheConfig.enabled)
-        return null;
-    const cached = renderCache.get(pathname);
-    if (!cached)
-        return null;
-    const age = (Date.now() - cached.timestamp) / 1000;
-    if (age > cacheConfig.ttlSeconds) {
-        renderCache.delete(pathname);
-        return null;
-    }
-    return cached.html;
+  if (!cacheConfig.enabled) return null;
+  const cached = renderCache.get(pathname);
+  if (!cached) return null;
+  const age = (Date.now() - cached.timestamp) / 1000;
+  if (age > cacheConfig.ttlSeconds) {
+    renderCache.delete(pathname);
+    return null;
+  }
+  return cached.html;
 }
 /**
  * Cache rendered HTML for a page.
@@ -75,9 +73,8 @@ function getCachedHtml(pathname) {
  * @param html Complete HTML string to cache
  */
 function cacheHtml(pathname, html) {
-    if (!cacheConfig.enabled)
-        return;
-    renderCache.set(pathname, { html, timestamp: Date.now() });
+  if (!cacheConfig.enabled) return;
+  renderCache.set(pathname, { html, timestamp: Date.now() });
 }
 /**
  * Core SSR render function: converts a component/template to HTML string.
@@ -108,27 +105,27 @@ function cacheHtml(pathname, html) {
  * ```
  */
 export async function render(config, route, ctx) {
-    const pathname = ctx.url.pathname;
-    // Check cache first
-    const cached = getCachedHtml(pathname);
-    if (cached) {
-        return cached;
-    }
-    // Render the page
-    const html = await renderRouteToHtml({
-        config,
-        route,
-        req: ctx.req,
-        res: ctx.res,
-        url: ctx.url,
-        params: ctx.params,
-        query: ctx.query,
-        headers: ctx.headers,
-        cookies: ctx.cookies,
-    });
-    // Cache for next request
-    cacheHtml(pathname, html);
-    return html;
+  const pathname = ctx.url.pathname;
+  // Check cache first
+  const cached = getCachedHtml(pathname);
+  if (cached) {
+    return cached;
+  }
+  // Render the page
+  const html = await renderRouteToHtml({
+    config,
+    route,
+    req: ctx.req,
+    res: ctx.res,
+    url: ctx.url,
+    params: ctx.params,
+    query: ctx.query,
+    headers: ctx.headers,
+    cookies: ctx.cookies,
+  });
+  // Cache for next request
+  cacheHtml(pathname, html);
+  return html;
 }
 /**
  * Advanced SSR render with optional caching control.
@@ -149,31 +146,30 @@ export async function render(config, route, ctx) {
  * ```
  */
 export async function renderWithOptions(config, route, ctx, options = {}) {
-    const { cache = true } = options;
-    const pathname = ctx.url.pathname;
-    // Check cache if enabled
-    if (cache) {
-        const cached = getCachedHtml(pathname);
-        if (cached)
-            return cached;
-    }
-    // Render the page
-    const html = await renderRouteToHtml({
-        config,
-        route,
-        req: ctx.req,
-        res: ctx.res,
-        url: ctx.url,
-        params: ctx.params,
-        query: ctx.query,
-        headers: ctx.headers,
-        cookies: ctx.cookies,
-    });
-    // Cache if enabled
-    if (cache) {
-        cacheHtml(pathname, html);
-    }
-    return html;
+  const { cache = true } = options;
+  const pathname = ctx.url.pathname;
+  // Check cache if enabled
+  if (cache) {
+    const cached = getCachedHtml(pathname);
+    if (cached) return cached;
+  }
+  // Render the page
+  const html = await renderRouteToHtml({
+    config,
+    route,
+    req: ctx.req,
+    res: ctx.res,
+    url: ctx.url,
+    params: ctx.params,
+    query: ctx.query,
+    headers: ctx.headers,
+    cookies: ctx.cookies,
+  });
+  // Cache if enabled
+  if (cache) {
+    cacheHtml(pathname, html);
+  }
+  return html;
 }
 /**
  * Manual HTML rendering of a component to string (no full document).
@@ -188,21 +184,21 @@ export async function renderWithOptions(config, route, ctx, options = {}) {
  * @returns Just the component body HTML (no <!doctype>, no <head>, no hydration)
  */
 export async function renderComponentToString(config, route, ctx) {
-    // For now, we render the full HTML and extract the body
-    const html = await renderRouteToHtml({
-        config,
-        route,
-        req: ctx.req,
-        res: ctx.res,
-        url: ctx.url,
-        params: ctx.params,
-        query: ctx.query,
-        headers: ctx.headers,
-        cookies: ctx.cookies,
-    });
-    // Extract body content
-    const bodyMatch = html.match(/<div id="app">([\s\S]*?)<\/div>/);
-    return bodyMatch ? bodyMatch[1] : "";
+  // For now, we render the full HTML and extract the body
+  const html = await renderRouteToHtml({
+    config,
+    route,
+    req: ctx.req,
+    res: ctx.res,
+    url: ctx.url,
+    params: ctx.params,
+    query: ctx.query,
+    headers: ctx.headers,
+    cookies: ctx.cookies,
+  });
+  // Extract body content
+  const bodyMatch = html.match(/<div id="app">([\s\S]*?)<\/div>/);
+  return bodyMatch ? bodyMatch[1] : "";
 }
 /**
  * Get cache statistics for monitoring and debugging.
@@ -210,14 +206,14 @@ export async function renderComponentToString(config, route, ctx) {
  * @returns Cache statistics
  */
 export function getSsrCacheStats() {
-    return {
-        size: renderCache.size,
-        enabled: cacheConfig.enabled,
-        ttlSeconds: cacheConfig.ttlSeconds,
-        entries: Array.from(renderCache.entries()).map(([key, value]) => ({
-            pathname: key,
-            age: (Date.now() - value.timestamp) / 1000,
-            size: value.html.length,
-        })),
-    };
+  return {
+    size: renderCache.size,
+    enabled: cacheConfig.enabled,
+    ttlSeconds: cacheConfig.ttlSeconds,
+    entries: Array.from(renderCache.entries()).map(([key, value]) => ({
+      pathname: key,
+      age: (Date.now() - value.timestamp) / 1000,
+      size: value.html.length,
+    })),
+  };
 }

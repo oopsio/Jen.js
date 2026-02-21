@@ -126,7 +126,8 @@ function debugLog(message: string, ...args: unknown[]): void {
  */
 function isRevalidationNeeded(entry: IsrCacheEntry): boolean {
   const now = Date.now();
-  const revalidateTtl = (entry.revalidateSeconds ?? defaultRevalidateSeconds) * 1000;
+  const revalidateTtl =
+    (entry.revalidateSeconds ?? defaultRevalidateSeconds) * 1000;
   const age = now - entry.timestamp;
   return age > revalidateTtl;
 }
@@ -250,7 +251,10 @@ export async function getIsrHtml(
   let revalidateTtl = defaultRevalidateSeconds;
   if (options?.revalidate !== undefined) {
     revalidateTtl = options.revalidate;
-  } else if ("revalidateSeconds" in route && typeof route.revalidateSeconds === "number") {
+  } else if (
+    "revalidateSeconds" in route &&
+    typeof route.revalidateSeconds === "number"
+  ) {
     revalidateTtl = route.revalidateSeconds;
   }
 
@@ -306,7 +310,9 @@ export function setIsrCache(
     revalidating: false,
   });
 
-  debugLog(`Manually set ISR cache for ${routePath} with TTL ${revalidateTtl}s`);
+  debugLog(
+    `Manually set ISR cache for ${routePath} with TTL ${revalidateTtl}s`,
+  );
 }
 
 /**
@@ -415,7 +421,8 @@ export function getIsrStats(): IsrStats {
 
   for (const [pathname, entry] of isrCache.entries()) {
     const age = (now - entry.timestamp) / 1000;
-    const revalidateSeconds = entry.revalidateSeconds ?? defaultRevalidateSeconds;
+    const revalidateSeconds =
+      entry.revalidateSeconds ?? defaultRevalidateSeconds;
 
     entries.push({
       pathname,

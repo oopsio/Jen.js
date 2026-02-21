@@ -27,7 +27,7 @@ export default function Button({ children, onClick }) {
 Use hooks for state and side effects:
 
 ```tsx
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from "preact/hooks";
 
 export default function Counter() {
   const [count, setCount] = useState(0);
@@ -35,9 +35,7 @@ export default function Counter() {
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>
-        Increment
-      </button>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
     </div>
   );
 }
@@ -52,7 +50,7 @@ Preact provides these essential hooks:
 Manage component state:
 
 ```tsx
-const [value, setValue] = useState('');
+const [value, setValue] = useState("");
 ```
 
 ### useEffect
@@ -62,11 +60,11 @@ Handle side effects:
 ```tsx
 useEffect(() => {
   // Runs after render
-  console.log('Component mounted');
-  
+  console.log("Component mounted");
+
   return () => {
     // Cleanup function
-    console.log('Component unmounting');
+    console.log("Component unmounting");
   };
 }, []); // dependency array
 ```
@@ -76,8 +74,8 @@ useEffect(() => {
 Access context values:
 
 ```tsx
-import { createContext } from 'preact';
-import { useContext } from 'preact/hooks';
+import { createContext } from "preact";
+import { useContext } from "preact/hooks";
 
 const ThemeContext = createContext();
 
@@ -133,15 +131,13 @@ function Card({ title, children }) {
 ### Inline Styles
 
 ```tsx
-<div style={{ color: 'red', padding: '10px' }}>
-  Styled content
-</div>
+<div style={{ color: "red", padding: "10px" }}>Styled content</div>
 ```
 
 ### CSS Modules
 
 ```tsx
-import styles from './button.module.css';
+import styles from "./button.module.css";
 
 export default function Button() {
   return <button class={styles.primary}>Click</button>;
@@ -156,7 +152,7 @@ Events work the same as React but with the Preact API:
 function Form() {
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitted');
+    console.log("Submitted");
   };
 
   const handleChange = (e) => {
@@ -205,7 +201,7 @@ Always provide keys when rendering lists:
 function List({ items }) {
   return (
     <ul>
-      {items.map(item => (
+      {items.map((item) => (
         <li key={item.id}>{item.name}</li>
       ))}
     </ul>
@@ -218,7 +214,7 @@ function List({ items }) {
 Group multiple elements without adding a wrapper:
 
 ```tsx
-import { Fragment } from 'preact';
+import { Fragment } from "preact";
 
 function Items() {
   return (

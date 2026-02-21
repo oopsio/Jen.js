@@ -21,18 +21,21 @@ import { join, resolve, extname } from "node:path";
 import { mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { log } from "../shared/log.js";
-import { vueEsbuildPlugin, svelteEsbuildPlugin } from "../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../compilers/esbuild-plugins.js";
 const importCache = new Map();
 function getCachePath(filePath) {
-    const cacheDir = join(process.cwd(), "node_modules", ".jen", "import-cache");
-    if (!existsSync(cacheDir)) {
-        mkdirSync(cacheDir, { recursive: true });
-    }
-    const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
-    return join(cacheDir, flatName + ".mjs");
+  const cacheDir = join(process.cwd(), "node_modules", ".jen", "import-cache");
+  if (!existsSync(cacheDir)) {
+    mkdirSync(cacheDir, { recursive: true });
+  }
+  const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
+  return join(cacheDir, flatName + ".mjs");
 }
 function generateEtag(content) {
-    return createHash("sha1").update(content).digest("hex");
+  return createHash("sha1").update(content).digest("hex");
 }
 /**
  * Universal module importer for Vue, Svelte, and regular JS/TS
@@ -43,86 +46,87 @@ function generateEtag(content) {
  * const Utils = await jen.import("./utils.ts");
  */
 export async function jenImport(specifier, opts) {
-    const baseDir = opts?.baseDir ?? process.cwd();
-    const useCache = opts?.cache !== false;
-    const forceRecompile = opts?.forceRecompile ?? false;
-    try {
-        // Resolve the file path
-        const filePath = resolve(baseDir, specifier);
-        const ext = extname(filePath);
-        // Check cache first
-        if (useCache && !forceRecompile && importCache.has(filePath)) {
-            log.info(`[jen.import] Cache hit: ${specifier}`);
-            return importCache.get(filePath).module;
-        }
-        const isVue = ext === ".vue";
-        const isSvelte = ext === ".svelte";
-        const isTs = ext === ".ts" || ext === ".tsx";
-        if (!isVue && !isSvelte && !isTs && ext !== ".js" && ext !== ".jsx") {
-            throw new Error(`Unsupported file type: ${ext}. Supported: .vue, .svelte, .ts, .tsx, .js, .jsx`);
-        }
-        log.info(`[jen.import] Loading: ${specifier} (${ext})`);
-        const outfile = getCachePath(filePath);
-        // Build with appropriate plugins
-        const result = buildSync({
-            entryPoints: [filePath],
-            outfile,
-            format: "esm",
-            platform: "browser",
-            target: "es2022",
-            bundle: false, // Don't bundle to preserve imports
-            write: true,
-            plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-            external: [
-                "preact",
-                "preact/hooks",
-                "preact/jsx-runtime",
-                "preact-render-to-string",
-                "vue",
-                "svelte",
-            ],
-            logLevel: "error",
-            define: {
-                "process.env.NODE_ENV": JSON.stringify("development"),
-            },
-        });
-        // Dynamic import with cache-busting
-        const moduleUrl = pathToFileURL(outfile).href + "?t=" + Date.now();
-        const mod = await import(moduleUrl);
-        // Cache the imported module
-        if (useCache) {
-            importCache.set(filePath, {
-                module: mod,
-                etag: generateEtag(outfile),
-            });
-        }
-        log.info(`[jen.import] Successfully loaded: ${specifier}`);
-        return mod;
+  const baseDir = opts?.baseDir ?? process.cwd();
+  const useCache = opts?.cache !== false;
+  const forceRecompile = opts?.forceRecompile ?? false;
+  try {
+    // Resolve the file path
+    const filePath = resolve(baseDir, specifier);
+    const ext = extname(filePath);
+    // Check cache first
+    if (useCache && !forceRecompile && importCache.has(filePath)) {
+      log.info(`[jen.import] Cache hit: ${specifier}`);
+      return importCache.get(filePath).module;
     }
-    catch (err) {
-        const message = err.message || String(err);
-        log.error(`[jen.import] Failed to import "${specifier}": ${message}`);
-        throw new Error(`jen.import() failed for "${specifier}": ${message}`);
+    const isVue = ext === ".vue";
+    const isSvelte = ext === ".svelte";
+    const isTs = ext === ".ts" || ext === ".tsx";
+    if (!isVue && !isSvelte && !isTs && ext !== ".js" && ext !== ".jsx") {
+      throw new Error(
+        `Unsupported file type: ${ext}. Supported: .vue, .svelte, .ts, .tsx, .js, .jsx`,
+      );
     }
+    log.info(`[jen.import] Loading: ${specifier} (${ext})`);
+    const outfile = getCachePath(filePath);
+    // Build with appropriate plugins
+    const result = buildSync({
+      entryPoints: [filePath],
+      outfile,
+      format: "esm",
+      platform: "browser",
+      target: "es2022",
+      bundle: false, // Don't bundle to preserve imports
+      write: true,
+      plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+      external: [
+        "preact",
+        "preact/hooks",
+        "preact/jsx-runtime",
+        "preact-render-to-string",
+        "vue",
+        "svelte",
+      ],
+      logLevel: "error",
+      define: {
+        "process.env.NODE_ENV": JSON.stringify("development"),
+      },
+    });
+    // Dynamic import with cache-busting
+    const moduleUrl = pathToFileURL(outfile).href + "?t=" + Date.now();
+    const mod = await import(moduleUrl);
+    // Cache the imported module
+    if (useCache) {
+      importCache.set(filePath, {
+        module: mod,
+        etag: generateEtag(outfile),
+      });
+    }
+    log.info(`[jen.import] Successfully loaded: ${specifier}`);
+    return mod;
+  } catch (err) {
+    const message = err.message || String(err);
+    log.error(`[jen.import] Failed to import "${specifier}": ${message}`);
+    throw new Error(`jen.import() failed for "${specifier}": ${message}`);
+  }
 }
 /**
  * Clear import cache for a specific file
  */
 export function invalidateImportCache(specifier) {
-    const filePath = resolve(process.cwd(), specifier);
-    importCache.delete(filePath);
-    log.info(`[jen.import] Cache invalidated: ${specifier}`);
+  const filePath = resolve(process.cwd(), specifier);
+  importCache.delete(filePath);
+  log.info(`[jen.import] Cache invalidated: ${specifier}`);
 }
 /**
  * Clear all import caches
  */
 export function clearImportCache() {
-    importCache.clear();
-    log.info(`[jen.import] All caches cleared`);
+  importCache.clear();
+  log.info(`[jen.import] All caches cleared`);
 }
 /**
  * Export as global jen.import if needed
  */
 export const jen = {
-    import: jenImport,
+  import: jenImport,
 };

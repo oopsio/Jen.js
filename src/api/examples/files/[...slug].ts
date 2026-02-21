@@ -5,7 +5,7 @@
  * Matches: /api/files/a, /api/files/a/b, /api/files/a/b/c, etc.
  */
 
-import type { ApiRequest, ApiResponse } from '../../index';
+import type { ApiRequest, ApiResponse } from "../../index";
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   const { slug } = req.params;
@@ -14,15 +14,15 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   // /api/files/docs/readme.md -> slug = ['docs', 'readme.md']
   // /api/files/a/b/c -> slug = ['a', 'b', 'c']
 
-  const filePath = Array.isArray(slug) ? slug.join('/') : slug;
+  const filePath = Array.isArray(slug) ? slug.join("/") : slug;
 
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     res.status(200).json({
-      message: 'File resource',
+      message: "File resource",
       path: filePath,
       segments: slug,
     });
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: "Method not allowed" });
   }
 }

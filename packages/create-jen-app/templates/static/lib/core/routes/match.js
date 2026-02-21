@@ -44,22 +44,21 @@
  * }
  */
 export function matchRoute(routes, pathname) {
-    for (const r of routes) {
-        const re = new RegExp(r.pattern);
-        const m = pathname.match(re);
-        if (!m)
-            continue;
-        /**
-         * Extract captured groups from the regex match.
-         * Captured group 0 is the entire match; groups 1+ are the parameters.
-         * Each parameter name from r.paramNames corresponds to its regex group by index.
-         * URL-decode parameter values since they came from a URL path.
-         */
-        const params = {};
-        for (let i = 0; i < r.paramNames.length; i++) {
-            params[r.paramNames[i]] = decodeURIComponent(m[i + 1] ?? "");
-        }
-        return { route: r, params };
+  for (const r of routes) {
+    const re = new RegExp(r.pattern);
+    const m = pathname.match(re);
+    if (!m) continue;
+    /**
+     * Extract captured groups from the regex match.
+     * Captured group 0 is the entire match; groups 1+ are the parameters.
+     * Each parameter name from r.paramNames corresponds to its regex group by index.
+     * URL-decode parameter values since they came from a URL path.
+     */
+    const params = {};
+    for (let i = 0; i < r.paramNames.length; i++) {
+      params[r.paramNames[i]] = decodeURIComponent(m[i + 1] ?? "");
     }
-    return null;
+    return { route: r, params };
+  }
+  return null;
 }

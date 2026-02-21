@@ -1,1 +1,84 @@
-import{a as x,f as b}from"../chunks/H8nz2_yU.js";import"../chunks/BoXfMa9x.js";import{g as k,x as y,u as i,i as $,y as l,z,A as v,B as A,D as B,F as D,v as E,G as F,I as G,J as u,K as m,L as I}from"../chunks/C9ZxGUY4.js";import{s as g}from"../chunks/Da2gH_jp.js";import{s as J,p as _}from"../chunks/gOH8XEXq.js";function K(a=!1){const e=k,t=e.l.u;if(!t)return;let r=()=>A(e.s);if(a){let o=0,s={};const f=B(()=>{let c=!1;const p=e.s;for(const n in p)p[n]!==s[n]&&(s[n]=p[n],c=!0);return c&&o++,o});r=()=>v(f)}t.b.length&&y(()=>{h(e,r),l(t.b)}),i(()=>{const o=$(()=>t.m.map(z));return()=>{for(const s of o)typeof s=="function"&&s()}}),t.a.length&&i(()=>{h(e,r),l(t.a)})}function h(a,e){if(a.l.s)for(const t of a.l.s)v(t);e()}const L={get error(){return _.error},get status(){return _.status}};J.updated.check;const d=L;var j=b("<h1> </h1> <p> </p>",1);function N(a,e){D(e,!1),K();var t=j(),r=E(t),o=u(r,!0);m(r);var s=I(r,2),f=u(s,!0);m(s),F(()=>{g(o,d.status),g(f,d.error?.message)}),x(a,t),G()}export{N as component};
+import { a as x, f as b } from "../chunks/H8nz2_yU.js";
+import "../chunks/BoXfMa9x.js";
+import {
+  g as k,
+  x as y,
+  u as i,
+  i as $,
+  y as l,
+  z,
+  A as v,
+  B as A,
+  D as B,
+  F as D,
+  v as E,
+  G as F,
+  I as G,
+  J as u,
+  K as m,
+  L as I,
+} from "../chunks/C9ZxGUY4.js";
+import { s as g } from "../chunks/Da2gH_jp.js";
+import { s as J, p as _ } from "../chunks/gOH8XEXq.js";
+function K(a = !1) {
+  const e = k,
+    t = e.l.u;
+  if (!t) return;
+  let r = () => A(e.s);
+  if (a) {
+    let o = 0,
+      s = {};
+    const f = B(() => {
+      let c = !1;
+      const p = e.s;
+      for (const n in p) p[n] !== s[n] && ((s[n] = p[n]), (c = !0));
+      return (c && o++, o);
+    });
+    r = () => v(f);
+  }
+  (t.b.length &&
+    y(() => {
+      (h(e, r), l(t.b));
+    }),
+    i(() => {
+      const o = $(() => t.m.map(z));
+      return () => {
+        for (const s of o) typeof s == "function" && s();
+      };
+    }),
+    t.a.length &&
+      i(() => {
+        (h(e, r), l(t.a));
+      }));
+}
+function h(a, e) {
+  if (a.l.s) for (const t of a.l.s) v(t);
+  e();
+}
+const L = {
+  get error() {
+    return _.error;
+  },
+  get status() {
+    return _.status;
+  },
+};
+J.updated.check;
+const d = L;
+var j = b("<h1> </h1> <p> </p>", 1);
+function N(a, e) {
+  (D(e, !1), K());
+  var t = j(),
+    r = E(t),
+    o = u(r, !0);
+  m(r);
+  var s = I(r, 2),
+    f = u(s, !0);
+  (m(s),
+    F(() => {
+      (g(o, d.status), g(f, d.error?.message));
+    }),
+    x(a, t),
+    G());
+}
+export { N as component };

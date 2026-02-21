@@ -61,7 +61,7 @@ Access dynamic parameters in your component:
 ```tsx
 export default function BlogPost({ params }) {
   const { slug } = params;
-  
+
   return <h1>Post: {slug}</h1>;
 }
 ```
@@ -88,7 +88,7 @@ Export `getStaticParams` to generate pages at build time:
 ```tsx
 export async function getStaticParams() {
   const posts = await fetchPosts();
-  return posts.map(post => ({ slug: post.slug }));
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export default function BlogPost({ params }) {

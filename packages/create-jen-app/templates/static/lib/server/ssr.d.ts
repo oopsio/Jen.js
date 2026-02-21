@@ -6,47 +6,50 @@ import type { RouteEntry } from "../core/routes/scan.js";
  * Contains all necessary information to render a page on the server.
  */
 export interface SSRContext {
-    req: IncomingMessage;
-    res: ServerResponse;
-    url: URL;
-    params: Record<string, string>;
-    query: Record<string, string>;
-    headers: Record<string, string>;
-    cookies: Record<string, string>;
+  req: IncomingMessage;
+  res: ServerResponse;
+  url: URL;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  headers: Record<string, string>;
+  cookies: Record<string, string>;
 }
 /**
  * Server-side props context passed to getServerSideProps().
  * Provides access to request, params, and query string.
  */
 export interface GetServerSidePropsContext {
-    req: IncomingMessage;
-    res: ServerResponse;
-    params: Record<string, string>;
-    query: Record<string, string>;
-    headers: Record<string, string>;
-    cookies: Record<string, string>;
-    url: URL;
+  req: IncomingMessage;
+  res: ServerResponse;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  headers: Record<string, string>;
+  cookies: Record<string, string>;
+  url: URL;
 }
 /**
  * Return type from getServerSideProps().
  * Can return notFound for 404, redirect for redirects, or props for rendering.
  */
-export type GetServerSidePropsResult<T = any> = {
-    props: T;
-} | {
-    notFound: true;
-} | {
-    redirect: {
+export type GetServerSidePropsResult<T = any> =
+  | {
+      props: T;
+    }
+  | {
+      notFound: true;
+    }
+  | {
+      redirect: {
         destination: string;
         permanent?: boolean;
+      };
     };
-};
 /**
  * Cache configuration and TTL management.
  */
 export interface CacheConfig {
-    enabled: boolean;
-    ttlSeconds: number;
+  enabled: boolean;
+  ttlSeconds: number;
 }
 /**
  * Configure the SSR HTML cache behavior.
@@ -93,7 +96,11 @@ export declare function invalidateSsrCache(pathname: string): void;
  * res.end(html);
  * ```
  */
-export declare function render(config: FrameworkConfig, route: RouteEntry, ctx: SSRContext): Promise<string>;
+export declare function render(
+  config: FrameworkConfig,
+  route: RouteEntry,
+  ctx: SSRContext,
+): Promise<string>;
 /**
  * Advanced SSR render with optional caching control.
  * Allows per-request cache bypass for revalidation.
@@ -112,9 +119,14 @@ export declare function render(config: FrameworkConfig, route: RouteEntry, ctx: 
  * });
  * ```
  */
-export declare function renderWithOptions(config: FrameworkConfig, route: RouteEntry, ctx: SSRContext, options?: {
+export declare function renderWithOptions(
+  config: FrameworkConfig,
+  route: RouteEntry,
+  ctx: SSRContext,
+  options?: {
     cache?: boolean;
-}): Promise<string>;
+  },
+): Promise<string>;
 /**
  * Manual HTML rendering of a component to string (no full document).
  * Useful when you need just the component HTML without head/body wrapper.
@@ -127,19 +139,23 @@ export declare function renderWithOptions(config: FrameworkConfig, route: RouteE
  * @param ctx SSR context
  * @returns Just the component body HTML (no <!doctype>, no <head>, no hydration)
  */
-export declare function renderComponentToString(config: FrameworkConfig, route: RouteEntry, ctx: SSRContext): Promise<string>;
+export declare function renderComponentToString(
+  config: FrameworkConfig,
+  route: RouteEntry,
+  ctx: SSRContext,
+): Promise<string>;
 /**
  * Get cache statistics for monitoring and debugging.
  *
  * @returns Cache statistics
  */
 export declare function getSsrCacheStats(): {
+  size: number;
+  enabled: boolean;
+  ttlSeconds: number;
+  entries: {
+    pathname: string;
+    age: number;
     size: number;
-    enabled: boolean;
-    ttlSeconds: number;
-    entries: {
-        pathname: string;
-        age: number;
-        size: number;
-    }[];
+  }[];
 };

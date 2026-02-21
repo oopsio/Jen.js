@@ -4,7 +4,7 @@
  * Example showing dynamic route parameters
  */
 
-import type { ApiRequest, ApiResponse } from '../../index';
+import type { ApiRequest, ApiResponse } from "../../index";
 
 interface Post {
   id: number;
@@ -13,8 +13,8 @@ interface Post {
 }
 
 const posts: Post[] = [
-  { id: 1, title: 'First Post', content: 'Hello World' },
-  { id: 2, title: 'Second Post', content: 'Jen.js is awesome' },
+  { id: 1, title: "First Post", content: "Hello World" },
+  { id: 2, title: "Second Post", content: "Jen.js is awesome" },
 ];
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
@@ -22,19 +22,19 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   const postId = parseInt(String(id), 10);
 
   if (isNaN(postId)) {
-    return res.status(400).json({ error: 'Invalid post ID' });
+    return res.status(400).json({ error: "Invalid post ID" });
   }
 
   const post = posts.find((p) => p.id === postId);
 
   if (!post) {
-    return res.status(404).json({ error: 'Post not found' });
+    return res.status(404).json({ error: "Post not found" });
   }
 
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     // Get single post
     res.status(200).json({ data: post });
-  } else if (req.method === 'PUT') {
+  } else if (req.method === "PUT") {
     // Update post
     const { title, content } = req.body;
 
@@ -42,13 +42,13 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     if (content) post.content = content;
 
     res.status(200).json({ data: post });
-  } else if (req.method === 'DELETE') {
+  } else if (req.method === "DELETE") {
     // Delete post
     const index = posts.findIndex((p) => p.id === postId);
     posts.splice(index, 1);
 
-    res.status(200).json({ message: 'Post deleted' });
+    res.status(200).json({ message: "Post deleted" });
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: "Method not allowed" });
   }
 }

@@ -1,1 +1,70 @@
-import{c,a as p}from"../chunks/H8nz2_yU.js";import{j as d,E as m,a as _,H as y,k as E,h as l,C as v,n as o,o as i,q as f,e as g,t as h,v as T,w as b,$ as C}from"../chunks/C9ZxGUY4.js";import{B as F}from"../chunks/CmVFfo4C.js";function S(n,s,...t){var r=new F(n);d(()=>{const a=s()??null;r.ensure(a,a&&(e=>a(e,...t)))},m)}function $(n,s){let t=null,r=l;var a;if(l){t=g;for(var e=h(document.head);e!==null&&(e.nodeType!==v||e.data!==n);)e=o(e);if(e===null)i(!1);else{var u=o(e);e.remove(),f(u)}}l||(a=document.head.appendChild(_()));try{d(()=>s(a),y|E)}finally{r&&(i(!0),f(t))}}const w=!1,M=!0,j=Object.freeze(Object.defineProperty({__proto__:null,prerender:M,ssr:w},Symbol.toStringTag,{value:"Module"}));function k(n,s){var t=c();$("12qhfyh",a=>{b(()=>{C.title="SvelteKit Benchmark"})});var r=T(t);S(r,()=>s.children),p(n,t)}export{k as component,j as universal};
+import { c, a as p } from "../chunks/H8nz2_yU.js";
+import {
+  j as d,
+  E as m,
+  a as _,
+  H as y,
+  k as E,
+  h as l,
+  C as v,
+  n as o,
+  o as i,
+  q as f,
+  e as g,
+  t as h,
+  v as T,
+  w as b,
+  $ as C,
+} from "../chunks/C9ZxGUY4.js";
+import { B as F } from "../chunks/CmVFfo4C.js";
+function S(n, s, ...t) {
+  var r = new F(n);
+  d(() => {
+    const a = s() ?? null;
+    r.ensure(a, a && ((e) => a(e, ...t)));
+  }, m);
+}
+function $(n, s) {
+  let t = null,
+    r = l;
+  var a;
+  if (l) {
+    t = g;
+    for (
+      var e = h(document.head);
+      e !== null && (e.nodeType !== v || e.data !== n);
+    )
+      e = o(e);
+    if (e === null) i(!1);
+    else {
+      var u = o(e);
+      (e.remove(), f(u));
+    }
+  }
+  l || (a = document.head.appendChild(_()));
+  try {
+    d(() => s(a), y | E);
+  } finally {
+    r && (i(!0), f(t));
+  }
+}
+const w = !1,
+  M = !0,
+  j = Object.freeze(
+    Object.defineProperty(
+      { __proto__: null, prerender: M, ssr: w },
+      Symbol.toStringTag,
+      { value: "Module" },
+    ),
+  );
+function k(n, s) {
+  var t = c();
+  $("12qhfyh", (a) => {
+    b(() => {
+      C.title = "SvelteKit Benchmark";
+    });
+  });
+  var r = T(t);
+  (S(r, () => s.children), p(n, t));
+}
+export { k as component, j as universal };

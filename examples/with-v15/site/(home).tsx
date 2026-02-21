@@ -18,7 +18,6 @@
 
 import { MyApp } from "./mycomponent";
 
-
 export default function Index() {
   return (
     <div className="container">

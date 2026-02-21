@@ -3,7 +3,7 @@
  * GET /api/users/[id]/profile
  */
 
-import type { ApiRequest, ApiResponse } from '../../../../../../src/api';
+import type { ApiRequest, ApiResponse } from "../../../../../../src/api";
 
 interface UserProfile {
   id: number;
@@ -19,16 +19,16 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   const userId = parseInt(String(id), 10);
 
   if (isNaN(userId)) {
-    return res.status(400).json({ error: 'Invalid user ID' });
+    return res.status(400).json({ error: "Invalid user ID" });
   }
 
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     // Mock user data
     const profile: UserProfile = {
       id: userId,
       name: `User ${userId}`,
       email: `user${userId}@example.com`,
-      bio: 'Jen.js enthusiast',
+      bio: "Jen.js enthusiast",
       followers: Math.floor(Math.random() * 10000),
       createdAt: new Date().toISOString(),
     };
@@ -37,6 +37,6 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       data: profile,
     });
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: "Method not allowed" });
   }
 }

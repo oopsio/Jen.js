@@ -1,5 +1,3 @@
 export function MyApp() {
-  return (
-    <h1>yo</h1>
-  )
+  return <h1>yo</h1>;
 }

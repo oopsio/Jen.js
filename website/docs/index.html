@@ -1,4 +1,419 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Jen.js: A TypeScript-first web framework for building static and server-rendered applications with Preact."><meta name="theme-color" content="#000000"><link rel="canonical" href="https://jen.js.org"><link rel="preconnect" href="https://rsms.me/"><link rel="stylesheet" href="https://rsms.me/inter/inter.css"><link href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500,600,700&display=swap" rel="stylesheet"><title>Documentation - Jen.js</title><link rel="stylesheet" href="/_astro/docs.ikx-0NEr.css">
-<style>.docs-wrapper[data-astro-cid-mw7aashj]{display:flex;gap:2rem;max-width:1400px;margin:0 auto;padding:3rem 2rem;min-height:calc(100vh - 200px)}.docs-sidebar[data-astro-cid-mw7aashj]{position:sticky;top:80px;width:250px;height:fit-content}.docs-nav[data-astro-cid-mw7aashj] h3[data-astro-cid-mw7aashj]{margin-top:0;margin-bottom:1rem;font-size:1rem;color:var(--text-primary)}.docs-nav[data-astro-cid-mw7aashj] ul[data-astro-cid-mw7aashj]{list-style:none;padding:0;margin:0}.docs-nav[data-astro-cid-mw7aashj] li[data-astro-cid-mw7aashj]{margin-bottom:.5rem}.nav-link[data-astro-cid-mw7aashj]{display:block;padding:.5rem .75rem;border-radius:4px;color:var(--text-secondary);font-size:.95rem;transition:all .2s ease;border-left:2px solid transparent}.nav-link[data-astro-cid-mw7aashj]:hover{color:var(--text-primary);background:var(--bg-secondary)}.nav-link[data-astro-cid-mw7aashj].active{color:var(--text-primary);background:var(--bg-secondary);border-left-color:var(--text-primary);font-weight:600}.docs-main[data-astro-cid-mw7aashj]{flex:1}@media(max-width:1024px){.docs-wrapper[data-astro-cid-mw7aashj]{flex-direction:column;gap:1rem}.docs-sidebar[data-astro-cid-mw7aashj]{position:static;width:100%}.docs-nav[data-astro-cid-mw7aashj]{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem}.docs-nav[data-astro-cid-mw7aashj] ul[data-astro-cid-mw7aashj]{display:flex;flex-wrap:wrap;gap:.5rem}}
-.doc-content[data-astro-cid-44xb4kzv]{flex:1;max-width:900px}.doc-intro[data-astro-cid-44xb4kzv]{color:var(--text-secondary);font-size:1.1rem;margin-bottom:2rem}.doc-grid[data-astro-cid-44xb4kzv]{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:2rem}.doc-card[data-astro-cid-44xb4kzv]{padding:1.5rem;border:1px solid var(--border-color);border-radius:4px;background:var(--bg-secondary);transition:all .2s ease;color:var(--text-primary)}.doc-card[data-astro-cid-44xb4kzv]:hover{border-color:var(--text-primary);background:var(--bg-primary);transform:translateY(-2px)}.doc-card[data-astro-cid-44xb4kzv] h3[data-astro-cid-44xb4kzv]{margin-top:0;margin-bottom:.5rem;color:var(--text-primary)}.doc-card[data-astro-cid-44xb4kzv] p[data-astro-cid-44xb4kzv]{margin:0;color:var(--text-secondary);font-size:.9rem}
-</style></head> <body>  <header class="header" data-astro-cid-3ef6ksr2> <div class="container" data-astro-cid-3ef6ksr2> <div class="header-content" data-astro-cid-3ef6ksr2> <div class="logo" data-astro-cid-3ef6ksr2> <a href="/" data-astro-cid-3ef6ksr2> <span class="logo-text" data-astro-cid-3ef6ksr2>Jen.js</span> </a> </div> <nav class="nav" data-astro-cid-3ef6ksr2> <a href="#features" class="nav-link" data-astro-cid-3ef6ksr2>Features</a> <a href="#quickstart" class="nav-link" data-astro-cid-3ef6ksr2>Quick Start</a> <a href="/docs" class="nav-link" data-astro-cid-3ef6ksr2>Docs</a> <a href="https://github.com/oopsio/jen.js" class="nav-link" target="_blank" data-astro-cid-3ef6ksr2>GitHub</a> <a href="https://github.com/oopsio/jen.js/discussions" class="nav-link" target="_blank" data-astro-cid-3ef6ksr2>Discussions</a> <button class="theme-toggle" aria-label="Toggle theme" onclick="window.toggleTheme()" id="theme-btn" data-astro-cid-3ef6ksr2> <span class="theme-icon" id="theme-icon" data-astro-cid-3ef6ksr2>🌙</span> </button> </nav> </div> </div> </header>  <div class="docs-wrapper" data-astro-cid-mw7aashj> <aside class="docs-sidebar" data-astro-cid-mw7aashj> <nav class="docs-nav" data-astro-cid-mw7aashj> <h3 data-astro-cid-mw7aashj>Documentation</h3> <ul data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/docs/introduction" class="nav-link active" data-astro-cid-mw7aashj> Introduction </a> </li><li data-astro-cid-mw7aashj> <a href="/docs/routing" class="nav-link " data-astro-cid-mw7aashj> File-Based Routing </a> </li><li data-astro-cid-mw7aashj> <a href="/docs/components" class="nav-link " data-astro-cid-mw7aashj> Preact Components </a> </li><li data-astro-cid-mw7aashj> <a href="/docs/building" class="nav-link " data-astro-cid-mw7aashj> Building Static Sites </a> </li><li data-astro-cid-mw7aashj> <a href="/docs/configuration" class="nav-link " data-astro-cid-mw7aashj> Configuration </a> </li><li data-astro-cid-mw7aashj> <a href="/docs/api-routes" class="nav-link " data-astro-cid-mw7aashj> API Routes </a> </li><li data-astro-cid-mw7aashj> <a href="/docs/deployment" class="nav-link " data-astro-cid-mw7aashj> Deployment </a> </li> </ul> </nav> </aside> <main class="docs-main" data-astro-cid-mw7aashj>  <div class="doc-content" data-astro-cid-44xb4kzv> <h1 data-astro-cid-44xb4kzv>Introduction</h1> <p class="doc-intro" data-astro-cid-44xb4kzv>Read the documentation to learn how to build with Jen.js.</p> <div class="doc-grid" data-astro-cid-44xb4kzv> <a href="/docs/introduction" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>Introduction</h3> <p data-astro-cid-44xb4kzv>Learn more about introduction</p> </a><a href="/docs/routing" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>File-Based Routing</h3> <p data-astro-cid-44xb4kzv>Learn more about file-based routing</p> </a><a href="/docs/components" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>Preact Components</h3> <p data-astro-cid-44xb4kzv>Learn more about preact components</p> </a><a href="/docs/building" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>Building Static Sites</h3> <p data-astro-cid-44xb4kzv>Learn more about building static sites</p> </a><a href="/docs/configuration" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>Configuration</h3> <p data-astro-cid-44xb4kzv>Learn more about configuration</p> </a><a href="/docs/api-routes" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>API Routes</h3> <p data-astro-cid-44xb4kzv>Learn more about api routes</p> </a><a href="/docs/deployment" class="doc-card" data-astro-cid-44xb4kzv> <h3 data-astro-cid-44xb4kzv>Deployment</h3> <p data-astro-cid-44xb4kzv>Learn more about deployment</p> </a> </div> </div>  </main> </div>  <footer class="footer" data-astro-cid-sz7xmlte> <div class="container" data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <div class="footer-section" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Jen.js</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js" target="_blank" data-astro-cid-sz7xmlte>GitHub</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/issues" target="_blank" data-astro-cid-sz7xmlte>Issues</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/discussions" target="_blank" data-astro-cid-sz7xmlte>Discussions</a></li> </ul> </div> <div class="footer-section" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Resources</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js#readme" target="_blank" data-astro-cid-sz7xmlte>Documentation</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md" target="_blank" data-astro-cid-sz7xmlte>Contributing</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/CODE_OF_CONDUCT.md" target="_blank" data-astro-cid-sz7xmlte>Code of Conduct</a></li> </ul> </div> <div class="footer-section" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Legal</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/LICENSE" target="_blank" data-astro-cid-sz7xmlte>License (GNU GPL 3.0)</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/SECURITY.md" target="_blank" data-astro-cid-sz7xmlte>Security</a></li> </ul> </div> </div> <div class="footer-bottom" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2025 Jen.js. All rights reserved.</p> <p class="footer-note" data-astro-cid-sz7xmlte>Built with Preact • TypeScript • Modern tooling</p> </div> </div> </footer>   <script type="module">function s(){const t=document.documentElement,e=document.getElementById("theme-icon");e&&(e.textContent=t.classList.contains("dark")?"☀️":"🌙")}function c(){const t=document.documentElement;localStorage.getItem("theme")==="light"?(t.classList.add("light"),t.classList.remove("dark")):(t.classList.add("dark"),t.classList.remove("light")),s()}window.toggleTheme=function(){const t=document.documentElement;t.classList.contains("dark")?(t.classList.remove("dark"),t.classList.add("light"),localStorage.setItem("theme","light")):(t.classList.add("dark"),t.classList.remove("light"),localStorage.setItem("theme","dark")),s()};c();</script> </body> </html> 
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Jen.js: A TypeScript-first web framework for building static and server-rendered applications with Preact."
+    />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href="https://jen.js.org" />
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Documentation - Jen.js</title>
+    <link rel="stylesheet" href="/_astro/docs.ikx-0NEr.css" />
+    <style>
+      .docs-wrapper[data-astro-cid-mw7aashj] {
+        display: flex;
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+        min-height: calc(100vh - 200px);
+      }
+      .docs-sidebar[data-astro-cid-mw7aashj] {
+        position: sticky;
+        top: 80px;
+        width: 250px;
+        height: fit-content;
+      }
+      .docs-nav[data-astro-cid-mw7aashj] h3[data-astro-cid-mw7aashj] {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        color: var(--text-primary);
+      }
+      .docs-nav[data-astro-cid-mw7aashj] ul[data-astro-cid-mw7aashj] {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .docs-nav[data-astro-cid-mw7aashj] li[data-astro-cid-mw7aashj] {
+        margin-bottom: 0.5rem;
+      }
+      .nav-link[data-astro-cid-mw7aashj] {
+        display: block;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        border-left: 2px solid transparent;
+      }
+      .nav-link[data-astro-cid-mw7aashj]:hover {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+      }
+      .nav-link[data-astro-cid-mw7aashj].active {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+        border-left-color: var(--text-primary);
+        font-weight: 600;
+      }
+      .docs-main[data-astro-cid-mw7aashj] {
+        flex: 1;
+      }
+      @media (max-width: 1024px) {
+        .docs-wrapper[data-astro-cid-mw7aashj] {
+          flex-direction: column;
+          gap: 1rem;
+        }
+        .docs-sidebar[data-astro-cid-mw7aashj] {
+          position: static;
+          width: 100%;
+        }
+        .docs-nav[data-astro-cid-mw7aashj] {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+        }
+        .docs-nav[data-astro-cid-mw7aashj] ul[data-astro-cid-mw7aashj] {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+      }
+      .doc-content[data-astro-cid-44xb4kzv] {
+        flex: 1;
+        max-width: 900px;
+      }
+      .doc-intro[data-astro-cid-44xb4kzv] {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+      }
+      .doc-grid[data-astro-cid-44xb4kzv] {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      .doc-card[data-astro-cid-44xb4kzv] {
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--bg-secondary);
+        transition: all 0.2s ease;
+        color: var(--text-primary);
+      }
+      .doc-card[data-astro-cid-44xb4kzv]:hover {
+        border-color: var(--text-primary);
+        background: var(--bg-primary);
+        transform: translateY(-2px);
+      }
+      .doc-card[data-astro-cid-44xb4kzv] h3[data-astro-cid-44xb4kzv] {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+      .doc-card[data-astro-cid-44xb4kzv] p[data-astro-cid-44xb4kzv] {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header" data-astro-cid-3ef6ksr2>
+      <div class="container" data-astro-cid-3ef6ksr2>
+        <div class="header-content" data-astro-cid-3ef6ksr2>
+          <div class="logo" data-astro-cid-3ef6ksr2>
+            <a href="/" data-astro-cid-3ef6ksr2>
+              <span class="logo-text" data-astro-cid-3ef6ksr2>Jen.js</span>
+            </a>
+          </div>
+          <nav class="nav" data-astro-cid-3ef6ksr2>
+            <a href="#features" class="nav-link" data-astro-cid-3ef6ksr2
+              >Features</a
+            >
+            <a href="#quickstart" class="nav-link" data-astro-cid-3ef6ksr2
+              >Quick Start</a
+            >
+            <a href="/docs" class="nav-link" data-astro-cid-3ef6ksr2>Docs</a>
+            <a
+              href="https://github.com/oopsio/jen.js"
+              class="nav-link"
+              target="_blank"
+              data-astro-cid-3ef6ksr2
+              >GitHub</a
+            >
+            <a
+              href="https://github.com/oopsio/jen.js/discussions"
+              class="nav-link"
+              target="_blank"
+              data-astro-cid-3ef6ksr2
+              >Discussions</a
+            >
+            <button
+              class="theme-toggle"
+              aria-label="Toggle theme"
+              onclick="window.toggleTheme()"
+              id="theme-btn"
+              data-astro-cid-3ef6ksr2
+            >
+              <span class="theme-icon" id="theme-icon" data-astro-cid-3ef6ksr2
+                >🌙</span
+              >
+            </button>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <div class="docs-wrapper" data-astro-cid-mw7aashj>
+      <aside class="docs-sidebar" data-astro-cid-mw7aashj>
+        <nav class="docs-nav" data-astro-cid-mw7aashj>
+          <h3 data-astro-cid-mw7aashj>Documentation</h3>
+          <ul data-astro-cid-mw7aashj>
+            <li data-astro-cid-mw7aashj>
+              <a
+                href="/docs/introduction"
+                class="nav-link active"
+                data-astro-cid-mw7aashj
+              >
+                Introduction
+              </a>
+            </li>
+            <li data-astro-cid-mw7aashj>
+              <a href="/docs/routing" class="nav-link" data-astro-cid-mw7aashj>
+                File-Based Routing
+              </a>
+            </li>
+            <li data-astro-cid-mw7aashj>
+              <a
+                href="/docs/components"
+                class="nav-link"
+                data-astro-cid-mw7aashj
+              >
+                Preact Components
+              </a>
+            </li>
+            <li data-astro-cid-mw7aashj>
+              <a href="/docs/building" class="nav-link" data-astro-cid-mw7aashj>
+                Building Static Sites
+              </a>
+            </li>
+            <li data-astro-cid-mw7aashj>
+              <a
+                href="/docs/configuration"
+                class="nav-link"
+                data-astro-cid-mw7aashj
+              >
+                Configuration
+              </a>
+            </li>
+            <li data-astro-cid-mw7aashj>
+              <a
+                href="/docs/api-routes"
+                class="nav-link"
+                data-astro-cid-mw7aashj
+              >
+                API Routes
+              </a>
+            </li>
+            <li data-astro-cid-mw7aashj>
+              <a
+                href="/docs/deployment"
+                class="nav-link"
+                data-astro-cid-mw7aashj
+              >
+                Deployment
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="docs-main" data-astro-cid-mw7aashj>
+        <div class="doc-content" data-astro-cid-44xb4kzv>
+          <h1 data-astro-cid-44xb4kzv>Introduction</h1>
+          <p class="doc-intro" data-astro-cid-44xb4kzv>
+            Read the documentation to learn how to build with Jen.js.
+          </p>
+          <div class="doc-grid" data-astro-cid-44xb4kzv>
+            <a
+              href="/docs/introduction"
+              class="doc-card"
+              data-astro-cid-44xb4kzv
+            >
+              <h3 data-astro-cid-44xb4kzv>Introduction</h3>
+              <p data-astro-cid-44xb4kzv>Learn more about introduction</p> </a
+            ><a href="/docs/routing" class="doc-card" data-astro-cid-44xb4kzv>
+              <h3 data-astro-cid-44xb4kzv>File-Based Routing</h3>
+              <p data-astro-cid-44xb4kzv>
+                Learn more about file-based routing
+              </p> </a
+            ><a
+              href="/docs/components"
+              class="doc-card"
+              data-astro-cid-44xb4kzv
+            >
+              <h3 data-astro-cid-44xb4kzv>Preact Components</h3>
+              <p data-astro-cid-44xb4kzv>
+                Learn more about preact components
+              </p> </a
+            ><a href="/docs/building" class="doc-card" data-astro-cid-44xb4kzv>
+              <h3 data-astro-cid-44xb4kzv>Building Static Sites</h3>
+              <p data-astro-cid-44xb4kzv>
+                Learn more about building static sites
+              </p> </a
+            ><a
+              href="/docs/configuration"
+              class="doc-card"
+              data-astro-cid-44xb4kzv
+            >
+              <h3 data-astro-cid-44xb4kzv>Configuration</h3>
+              <p data-astro-cid-44xb4kzv>Learn more about configuration</p> </a
+            ><a
+              href="/docs/api-routes"
+              class="doc-card"
+              data-astro-cid-44xb4kzv
+            >
+              <h3 data-astro-cid-44xb4kzv>API Routes</h3>
+              <p data-astro-cid-44xb4kzv>Learn more about api routes</p> </a
+            ><a
+              href="/docs/deployment"
+              class="doc-card"
+              data-astro-cid-44xb4kzv
+            >
+              <h3 data-astro-cid-44xb4kzv>Deployment</h3>
+              <p data-astro-cid-44xb4kzv>Learn more about deployment</p>
+            </a>
+          </div>
+        </div>
+      </main>
+    </div>
+    <footer class="footer" data-astro-cid-sz7xmlte>
+      <div class="container" data-astro-cid-sz7xmlte>
+        <div class="footer-content" data-astro-cid-sz7xmlte>
+          <div class="footer-section" data-astro-cid-sz7xmlte>
+            <h4 data-astro-cid-sz7xmlte>Jen.js</h4>
+            <ul data-astro-cid-sz7xmlte>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >GitHub</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/issues"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Issues</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/discussions"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Discussions</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section" data-astro-cid-sz7xmlte>
+            <h4 data-astro-cid-sz7xmlte>Resources</h4>
+            <ul data-astro-cid-sz7xmlte>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js#readme"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Documentation</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Contributing</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/CODE_OF_CONDUCT.md"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Code of Conduct</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section" data-astro-cid-sz7xmlte>
+            <h4 data-astro-cid-sz7xmlte>Legal</h4>
+            <ul data-astro-cid-sz7xmlte>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/LICENSE"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >License (GNU GPL 3.0)</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/SECURITY.md"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Security</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom" data-astro-cid-sz7xmlte>
+          <p data-astro-cid-sz7xmlte>
+            &copy; 2025 Jen.js. All rights reserved.
+          </p>
+          <p class="footer-note" data-astro-cid-sz7xmlte>
+            Built with Preact • TypeScript • Modern tooling
+          </p>
+        </div>
+      </div>
+    </footer>
+    <script type="module">
+      function s() {
+        const t = document.documentElement,
+          e = document.getElementById("theme-icon");
+        e && (e.textContent = t.classList.contains("dark") ? "☀️" : "🌙");
+      }
+      function c() {
+        const t = document.documentElement;
+        (localStorage.getItem("theme") === "light"
+          ? (t.classList.add("light"), t.classList.remove("dark"))
+          : (t.classList.add("dark"), t.classList.remove("light")),
+          s());
+      }
+      window.toggleTheme = function () {
+        const t = document.documentElement;
+        (t.classList.contains("dark")
+          ? (t.classList.remove("dark"),
+            t.classList.add("light"),
+            localStorage.setItem("theme", "light"))
+          : (t.classList.add("dark"),
+            t.classList.remove("light"),
+            localStorage.setItem("theme", "dark")),
+          s());
+      };
+      c();
+    </script>
+  </body>
+</html>

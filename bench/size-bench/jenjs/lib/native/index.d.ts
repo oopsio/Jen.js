@@ -7,24 +7,24 @@ export type { StyleCompilerOptions } from "./style-compiler.js";
 export { optimize, optimizeImages, minifyHTML } from "./optimizer.js";
 export type { OptimizerOptions } from "./optimizer.js";
 export declare const NATIVE_MODULES: {
-    devServer: {
-        name: string;
-        status: string;
-        implementation: string;
-    };
-    bundler: {
-        name: string;
-        status: string;
-        implementation: string;
-    };
-    styleCompiler: {
-        name: string;
-        status: string;
-        implementation: string;
-    };
-    optimizer: {
-        name: string;
-        status: string;
-        implementation: string;
-    };
+  devServer: {
+    name: string;
+    status: string;
+    implementation: string;
+  };
+  bundler: {
+    name: string;
+    status: string;
+    implementation: string;
+  };
+  styleCompiler: {
+    name: string;
+    status: string;
+    implementation: string;
+  };
+  optimizer: {
+    name: string;
+    status: string;
+    implementation: string;
+  };
 };

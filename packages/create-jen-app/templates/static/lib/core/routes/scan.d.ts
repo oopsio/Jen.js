@@ -4,34 +4,34 @@ import type { FrameworkConfig } from "../config.js";
  * Created by scanRoutes() based on filesystem structure and file patterns.
  */
 export type RouteEntry = {
-    /**
-     * Unique identifier for the route, derived from file path.
-     * Example: "posts_id_tsx" for "posts/(id).tsx"
-     */
-    id: string;
-    /**
-     * Absolute filesystem path to the route file.
-     * Examples: "/app/src/pages/(home).tsx", "/app/src/posts/($id).tsx"
-     */
-    filePath: string;
-    /**
-     * URL path that this route should respond to.
-     * Dynamic segments use colon prefix for params and asterisk for catch-all.
-     * Examples: "/", "/about", "/posts/:id", "/docs/*rest"
-     */
-    urlPath: string;
-    /**
-     * Regular expression pattern for URL matching.
-     * Compiled from urlPath to enable fast route matching at request time.
-     * Example: "^/posts/([^/]+)/?$" for route "/posts/:id"
-     */
-    pattern: string;
-    /**
-     * Array of parameter names in order they appear in the URL pattern.
-     * Used to extract and name captured groups from route.pattern regex matches.
-     * Examples: ["id"] for "/posts/:id", ["rest"] for "/docs/*rest"
-     */
-    paramNames: string[];
+  /**
+   * Unique identifier for the route, derived from file path.
+   * Example: "posts_id_tsx" for "posts/(id).tsx"
+   */
+  id: string;
+  /**
+   * Absolute filesystem path to the route file.
+   * Examples: "/app/src/pages/(home).tsx", "/app/src/posts/($id).tsx"
+   */
+  filePath: string;
+  /**
+   * URL path that this route should respond to.
+   * Dynamic segments use colon prefix for params and asterisk for catch-all.
+   * Examples: "/", "/about", "/posts/:id", "/docs/*rest"
+   */
+  urlPath: string;
+  /**
+   * Regular expression pattern for URL matching.
+   * Compiled from urlPath to enable fast route matching at request time.
+   * Example: "^/posts/([^/]+)/?$" for route "/posts/:id"
+   */
+  pattern: string;
+  /**
+   * Array of parameter names in order they appear in the URL pattern.
+   * Used to extract and name captured groups from route.pattern regex matches.
+   * Examples: ["id"] for "/posts/:id", ["rest"] for "/docs/*rest"
+   */
+  paramNames: string[];
 };
 /**
  * Scans the configured siteDir for route files and returns an ordered list.

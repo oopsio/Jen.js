@@ -52,6 +52,7 @@ pnpm dev
 Open http://localhost:3000 in your browser.
 
 The dev server includes:
+
 - Hot Module Replacement (HMR) for instant updates
 - SCSS compilation on-the-fly
 - Full SSR on every request
@@ -114,14 +115,14 @@ export default function HomePage({ data, params, query }) {
 export const loader = async (ctx: LoaderContext) => {
   // ctx.params.id contains the route parameter
   const postId = ctx.params.id;
-  
+
   // Fetch from database based on parameter
   const post = await db.posts.findById(postId);
-  
+
   if (!post) {
     throw new Error("404: Post not found");
   }
-  
+
   return { post };
 };
 
@@ -149,14 +150,14 @@ export default function PostPage({ data, params }) {
 
 ### Key Advantages
 
-| Benefit | Explanation |
-|---------|-------------|
-| **Fast First Paint** | HTML is complete and ready to display immediately |
-| **Better SEO** | All content in initial HTML, no JS execution needed |
-| **Works without JS** | Pages are usable even if JavaScript fails to load |
-| **Smaller Client Bundle** | Less JavaScript needed on client side |
-| **Server-side Security** | Sensitive operations stay on server |
-| **Better Mobile Performance** | Less processing needed on device |
+| Benefit                       | Explanation                                         |
+| ----------------------------- | --------------------------------------------------- |
+| **Fast First Paint**          | HTML is complete and ready to display immediately   |
+| **Better SEO**                | All content in initial HTML, no JS execution needed |
+| **Works without JS**          | Pages are usable even if JavaScript fails to load   |
+| **Smaller Client Bundle**     | Less JavaScript needed on client side               |
+| **Server-side Security**      | Sensitive operations stay on server                 |
+| **Better Mobile Performance** | Less processing needed on device                    |
 
 ## Loader Context
 
@@ -164,12 +165,12 @@ The `loader` function receives a `LoaderContext` object with:
 
 ```typescript
 export type LoaderContext = {
-  url: URL;                          // Full URL object
-  params: Record<string, string>;    // Route parameters (:id)
-  query: Record<string, string>;     // Query string (?sort=date)
-  headers: Record<string, string>;   // HTTP headers
-  cookies: Record<string, string>;   // Parsed cookies
-  data?: Record<string, any>;        // Middleware data
+  url: URL; // Full URL object
+  params: Record<string, string>; // Route parameters (:id)
+  query: Record<string, string>; // Query string (?sort=date)
+  headers: Record<string, string>; // HTTP headers
+  cookies: Record<string, string>; // Parsed cookies
+  data?: Record<string, any>; // Middleware data
 };
 ```
 
@@ -178,7 +179,7 @@ export type LoaderContext = {
 ```typescript
 // Access route parameters
 export const loader = async (ctx) => {
-  const postId = ctx.params.id;  // from /posts/:id
+  const postId = ctx.params.id; // from /posts/:id
   const post = await db.posts.get(postId);
   return { post };
 };
@@ -220,14 +221,14 @@ routes: {
 
 ### Examples
 
-| File Path | Route URL | Type |
-|-----------|-----------|------|
-| `(home).tsx` | `/` | Static root |
-| `(about).tsx` | `/about` | Static |
-| `(blog).tsx` | `/blog` | Static |
-| `posts/(home).tsx` | `/posts/` | Nested static |
-| `posts/($id).tsx` | `/posts/:id` | Dynamic parameter |
-| `posts/(...slug).tsx` | `/posts/*slug` | Catch-all |
+| File Path             | Route URL      | Type              |
+| --------------------- | -------------- | ----------------- |
+| `(home).tsx`          | `/`            | Static root       |
+| `(about).tsx`         | `/about`       | Static            |
+| `(blog).tsx`          | `/blog`        | Static            |
+| `posts/(home).tsx`    | `/posts/`      | Nested static     |
+| `posts/($id).tsx`     | `/posts/:id`   | Dynamic parameter |
+| `posts/(...slug).tsx` | `/posts/*slug` | Catch-all         |
 
 ## Configuration
 
@@ -237,27 +238,27 @@ Edit `jen.config.ts` to customize:
 const config: FrameworkConfig = {
   // Site directory where routes are located
   siteDir: "site",
-  
+
   // Output directory for production builds
   distDir: "dist",
-  
+
   // Route discovery patterns
   routes: {
     fileExtensions: [".tsx", ".ts"],
     routeFilePattern: /\(/,
   },
-  
+
   // Default rendering mode: "ssr", "ssg", "isr", or "ppr"
   rendering: {
     defaultMode: "ssr",
     defaultRevalidateSeconds: 3600,
   },
-  
+
   // Global styles
   css: {
     globalScss: "site/styles.scss",
   },
-  
+
   // Server configuration
   server: {
     port: 3000,
@@ -269,22 +270,26 @@ const config: FrameworkConfig = {
 ## Pages Included
 
 ### 1. Home Page `/`
+
 - Overview of SSR capabilities
 - Feature list with dynamically loaded data
 - Performance metrics
 - Links to other pages
 
 ### 2. Blog `/blog`
+
 - List of blog posts (server-rendered)
 - Metadata for each post
 - Links to individual posts
 
 ### 3. Dynamic Post `/posts/:id`
+
 - Single post rendered based on URL parameter
 - Related posts section
 - Navigation back to blog
 
 ### 4. About `/about`
+
 - Information about SSR
 - Technical explanation of how Jen.js SSR works
 - Project structure and configuration guide
@@ -317,8 +322,8 @@ Access server render time through X-Render-Time header (if implemented):
 
 ```javascript
 // In browser console
-fetch('/posts/1').then(r => {
-  console.log('Render time:', r.headers.get('x-render-time'));
+fetch("/posts/1").then((r) => {
+  console.log("Render time:", r.headers.get("x-render-time"));
 });
 ```
 

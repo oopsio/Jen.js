@@ -25,107 +25,107 @@ import type { IncomingMessage, ServerResponse } from "node:http";
  * - Request validation: Validate params/query, return error JSON if invalid
  */
 export interface RouteMiddlewareContext {
-    /**
-     * Node.js IncomingMessage with request method, URL, headers, etc.
-     * Direct access for advanced use cases not covered by the context.
-     */
-    req: IncomingMessage;
-    /**
-     * Node.js ServerResponse for sending responses.
-     * Methods status(), setHeader(), redirect(), and json() wrap this.
-     */
-    res: ServerResponse;
-    /**
-     * Parsed URL object with pathname, searchParams, host, etc.
-     * Same URL available in LoaderContext; middleware and loader see the same URL.
-     */
-    url: URL;
-    /**
-     * Route parameters extracted from the URL path by route matching.
-     * For route "/posts/:id" matching "/posts/42", yields { id: "42" }.
-     */
-    params: Record<string, string>;
-    /**
-     * Query string parameters from the URL search string.
-     * For "/search?q=test&limit=10", yields { q: "test", limit: "10" }.
-     */
-    query: Record<string, string>;
-    /**
-     * HTTP request headers as a normalized object.
-     * Keys are lowercase; values are strings or comma-separated lists.
-     */
-    headers: Record<string, string>;
-    /**
-     * Parsed HTTP cookies as an object.
-     * Keys are cookie names; values are decoded cookie values.
-     */
-    cookies: Record<string, string>;
-    /**
-     * Data object that middleware can populate.
-     * Data is passed to the loader and page component.
-     * Useful for sharing computed values (user info, locale, etc.) from middleware to components.
-     *
-     * @example
-     * ctx.data.userId = 42;  // Set in auth middleware
-     * ctx.data.locale = 'en'; // Set in i18n middleware
-     * // Then in loader and page: function Page({ data }) { ... data.userId ... }
-     */
-    data?: Record<string, any>;
-    /**
-     * Sets the HTTP response status code.
-     * Default is 200 (OK) unless changed by middleware.
-     * Returns this for method chaining.
-     *
-     * @param code HTTP status code (200, 404, 500, etc.)
-     * @returns This context for chaining with other methods
-     *
-     * @example ctx.status(404).json({ error: "Not found" });
-     */
-    status: (code: number) => RouteMiddlewareContext;
-    /**
-     * Sets an HTTP response header.
-     * Multiple calls with the same key overwrite previous values.
-     * Returns this for method chaining.
-     *
-     * @param key Header name (Content-Type, Set-Cookie, etc.)
-     * @param value Header value
-     * @returns This context for chaining
-     *
-     * @example ctx.setHeader("Cache-Control", "no-cache").setHeader("X-Custom", "value");
-     */
-    setHeader: (key: string, value: string) => RouteMiddlewareContext;
-    /**
-     * Sends a redirect response and stops middleware execution.
-     * Sets Location header and sends the response.
-     * Default status code is 302 (temporary redirect); 301 is permanent.
-     *
-     * Throws a sentinel error ("__REDIRECT__") to stop further execution.
-     * This error is caught by executeRouteMiddleware() and not re-thrown.
-     *
-     * @param url Destination URL for the redirect
-     * @param statusCode HTTP status code; defaults to 302 (temporary redirect)
-     * @throws Error with message "__REDIRECT__" to stop execution
-     *
-     * @example
-     * if (!user) ctx.redirect("/login", 302);  // Never returns; throw is implicit
-     */
-    redirect: (url: string, statusCode?: number) => never;
-    /**
-     * Sends a JSON response and stops middleware execution.
-     * Sets Content-Type and sends JSON-stringified data.
-     * Useful for API errors or early JSON responses.
-     *
-     * Throws a sentinel error ("__JSON__") to stop further execution.
-     * This error is caught and not re-thrown.
-     *
-     * @param data Object or value to JSON-encode and send
-     * @param statusCode HTTP status code; defaults to 200 (OK)
-     * @throws Error with message "__JSON__" to stop execution
-     *
-     * @example
-     * if (!params.id) ctx.json({ error: "Missing id" }, 400);  // Never returns
-     */
-    json: (data: any, statusCode?: number) => never;
+  /**
+   * Node.js IncomingMessage with request method, URL, headers, etc.
+   * Direct access for advanced use cases not covered by the context.
+   */
+  req: IncomingMessage;
+  /**
+   * Node.js ServerResponse for sending responses.
+   * Methods status(), setHeader(), redirect(), and json() wrap this.
+   */
+  res: ServerResponse;
+  /**
+   * Parsed URL object with pathname, searchParams, host, etc.
+   * Same URL available in LoaderContext; middleware and loader see the same URL.
+   */
+  url: URL;
+  /**
+   * Route parameters extracted from the URL path by route matching.
+   * For route "/posts/:id" matching "/posts/42", yields { id: "42" }.
+   */
+  params: Record<string, string>;
+  /**
+   * Query string parameters from the URL search string.
+   * For "/search?q=test&limit=10", yields { q: "test", limit: "10" }.
+   */
+  query: Record<string, string>;
+  /**
+   * HTTP request headers as a normalized object.
+   * Keys are lowercase; values are strings or comma-separated lists.
+   */
+  headers: Record<string, string>;
+  /**
+   * Parsed HTTP cookies as an object.
+   * Keys are cookie names; values are decoded cookie values.
+   */
+  cookies: Record<string, string>;
+  /**
+   * Data object that middleware can populate.
+   * Data is passed to the loader and page component.
+   * Useful for sharing computed values (user info, locale, etc.) from middleware to components.
+   *
+   * @example
+   * ctx.data.userId = 42;  // Set in auth middleware
+   * ctx.data.locale = 'en'; // Set in i18n middleware
+   * // Then in loader and page: function Page({ data }) { ... data.userId ... }
+   */
+  data?: Record<string, any>;
+  /**
+   * Sets the HTTP response status code.
+   * Default is 200 (OK) unless changed by middleware.
+   * Returns this for method chaining.
+   *
+   * @param code HTTP status code (200, 404, 500, etc.)
+   * @returns This context for chaining with other methods
+   *
+   * @example ctx.status(404).json({ error: "Not found" });
+   */
+  status: (code: number) => RouteMiddlewareContext;
+  /**
+   * Sets an HTTP response header.
+   * Multiple calls with the same key overwrite previous values.
+   * Returns this for method chaining.
+   *
+   * @param key Header name (Content-Type, Set-Cookie, etc.)
+   * @param value Header value
+   * @returns This context for chaining
+   *
+   * @example ctx.setHeader("Cache-Control", "no-cache").setHeader("X-Custom", "value");
+   */
+  setHeader: (key: string, value: string) => RouteMiddlewareContext;
+  /**
+   * Sends a redirect response and stops middleware execution.
+   * Sets Location header and sends the response.
+   * Default status code is 302 (temporary redirect); 301 is permanent.
+   *
+   * Throws a sentinel error ("__REDIRECT__") to stop further execution.
+   * This error is caught by executeRouteMiddleware() and not re-thrown.
+   *
+   * @param url Destination URL for the redirect
+   * @param statusCode HTTP status code; defaults to 302 (temporary redirect)
+   * @throws Error with message "__REDIRECT__" to stop execution
+   *
+   * @example
+   * if (!user) ctx.redirect("/login", 302);  // Never returns; throw is implicit
+   */
+  redirect: (url: string, statusCode?: number) => never;
+  /**
+   * Sends a JSON response and stops middleware execution.
+   * Sets Content-Type and sends JSON-stringified data.
+   * Useful for API errors or early JSON responses.
+   *
+   * Throws a sentinel error ("__JSON__") to stop further execution.
+   * This error is caught and not re-thrown.
+   *
+   * @param data Object or value to JSON-encode and send
+   * @param statusCode HTTP status code; defaults to 200 (OK)
+   * @throws Error with message "__JSON__" to stop execution
+   *
+   * @example
+   * if (!params.id) ctx.json({ error: "Missing id" }, 400);  // Never returns
+   */
+  json: (data: any, statusCode?: number) => never;
 }
 /**
  * Middleware function that executes for a specific route before rendering.
@@ -148,7 +148,9 @@ export interface RouteMiddlewareContext {
  *   ctx.data.user = user;  // Available in loader and page
  * };
  */
-export type RouteMiddleware = (ctx: RouteMiddlewareContext) => Promise<void> | void;
+export type RouteMiddleware = (
+  ctx: RouteMiddlewareContext,
+) => Promise<void> | void;
 /**
  * Type definitions note:
  * Route module types (middleware field, hydrate field) are defined in core/types.ts.
@@ -175,13 +177,13 @@ export type RouteMiddleware = (ctx: RouteMiddlewareContext) => Promise<void> | v
  * @returns Initialized RouteMiddlewareContext ready for middleware execution
  */
 export declare function createRouteMiddlewareContext(opts: {
-    req: IncomingMessage;
-    res: ServerResponse;
-    url: URL;
-    params: Record<string, string>;
-    query: Record<string, string>;
-    headers: Record<string, string>;
-    cookies: Record<string, string>;
+  req: IncomingMessage;
+  res: ServerResponse;
+  url: URL;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  headers: Record<string, string>;
+  cookies: Record<string, string>;
 }): RouteMiddlewareContext;
 /**
  * Executes an array of route middleware sequentially for a route.
@@ -211,4 +213,7 @@ export declare function createRouteMiddlewareContext(opts: {
  * @throws Error with message "__JSON__" if middleware calls ctx.json()
  * @throws Error from middleware if it throws
  */
-export declare function executeRouteMiddleware(middlewares: RouteMiddleware[], ctx: RouteMiddlewareContext): Promise<void>;
+export declare function executeRouteMiddleware(
+  middlewares: RouteMiddleware[],
+  ctx: RouteMiddlewareContext,
+): Promise<void>;
