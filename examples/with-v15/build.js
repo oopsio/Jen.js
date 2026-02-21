@@ -91,7 +91,7 @@ async function main() {
   const config = (await import(pathToFileURL(configFile).href)).default;
 
   const buildPath = pathToFileURL(
-    join(rootDir, "build/src/build/build.js"),
+    join(rootDir, "dist/src/build/build.js"),
   ).href;
   const { buildSite } = await import(buildPath);
 

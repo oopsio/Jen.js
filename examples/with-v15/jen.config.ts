@@ -31,7 +31,7 @@ const config: FrameworkConfig = {
     defaultRevalidateSeconds: 0,
   },
   inject: {
-    head: ['<link rel="stylesheet" href="/styles.css">'],
+    head: [],
     bodyEnd: [],
   },
   css: {

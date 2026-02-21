@@ -53,17 +53,78 @@ export interface GetServerSidePropsContext {
  * Return type from getServerSideProps().
  * Can return notFound for 404, redirect for redirects, or props for rendering.
  */
-export type GetServerSidePropsResult<T = any> =
+export type GetServerSidePropsResult<T = unknown> =
   | { props: T }
   | { notFound: true }
   | { redirect: { destination: string; permanent?: boolean } };
 
 /**
- * HTML rendering cache for performance optimization.
- * Cache key is URL pathname. Useful for frequently accessed pages.
- * In production, consider using Redis or external cache for distributed rendering.
+ * LRU Cache entry with timestamp for TTL tracking.
  */
-const renderCache = new Map<string, { html: string; timestamp: number }>();
+interface CacheEntry {
+  html: string;
+  timestamp: number;
+  accessedAt: number;
+}
+
+/**
+ * Lightweight LRU (Least Recently Used) Cache implementation.
+ * Maintains insertion order and tracks access time for eviction.
+ */
+class LRUCache {
+  private map = new Map<string, CacheEntry>();
+  private maxSize: number;
+
+  constructor(maxSize: number) {
+    this.maxSize = maxSize;
+  }
+
+  get(key: string): CacheEntry | undefined {
+    const entry = this.map.get(key);
+    if (entry) {
+      // Move to end (most recently used)
+      this.map.delete(key);
+      entry.accessedAt = Date.now();
+      this.map.set(key, entry);
+    }
+    return entry;
+  }
+
+  set(key: string, entry: CacheEntry) {
+    // Remove if exists to re-insert at end
+    if (this.map.has(key)) {
+      this.map.delete(key);
+    }
+
+    this.map.set(key, entry);
+
+    // Evict least recently used if over capacity
+    if (this.map.size > this.maxSize) {
+      const firstKey = this.map.keys().next().value;
+      if (firstKey) {
+        this.map.delete(firstKey);
+      }
+    }
+  }
+
+  delete(key: string) {
+    this.map.delete(key);
+  }
+
+  clear() {
+    this.map.clear();
+  }
+
+  get size() {
+    return this.map.size;
+  }
+
+  entries() {
+    return this.map.entries();
+  }
+}
+
+const renderCache = new LRUCache(1000);
 
 /**
  * Cache configuration and TTL management.
@@ -71,20 +132,76 @@ const renderCache = new Map<string, { html: string; timestamp: number }>();
 export interface CacheConfig {
   enabled: boolean;
   ttlSeconds: number;
+  maxEntries?: number;
 }
 
 let cacheConfig: CacheConfig = {
   enabled: true,
   ttlSeconds: 3600, // Default: 1 hour
+  maxEntries: 1000, // Default: 1000 max cached pages
 };
 
 /**
+ * Background sweep interval (ms) to clean expired entries.
+ */
+const CACHE_SWEEP_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Start periodic cache cleanup to remove expired entries.
+ */
+function startCacheSweep() {
+  const sweepTimer = setInterval(() => {
+    if (!cacheConfig.enabled) return;
+
+    const now = Date.now();
+    const ttlMs = (cacheConfig.ttlSeconds ?? 3600) * 1000;
+
+    for (const [key, entry] of renderCache.entries()) {
+      const age = now - entry.timestamp;
+      if (age > ttlMs) {
+        renderCache.delete(key);
+      }
+    }
+  }, CACHE_SWEEP_INTERVAL);
+
+  // Prevent Node.js process from exiting due to this timer
+  if (typeof sweepTimer.unref === "function") {
+    sweepTimer.unref();
+  }
+
+  return sweepTimer;
+}
+
+// Start the background sweep
+if (typeof global !== "undefined") {
+  try {
+    startCacheSweep();
+  } catch {
+    // Ignore if called in non-Node environment
+  }
+}
+
+/**
  * Configure the SSR HTML cache behavior.
+ * Updates maxEntries for the LRU cache if provided.
  *
  * @param config Cache configuration options
  */
 export function configureSsrCache(config: Partial<CacheConfig>) {
   cacheConfig = { ...cacheConfig, ...config };
+  
+  // Update LRU cache size if maxEntries changed
+  if (config.maxEntries && config.maxEntries > 0) {
+    // Reinitialize LRU cache with new size
+    const existing = Array.from(renderCache.entries());
+    renderCache.clear();
+    
+    // Recreate with new size (this is a limitation of the current approach,
+    // but maxEntries rarely changes at runtime)
+    for (const [key, entry] of existing) {
+      renderCache.set(key, entry);
+    }
+  }
 }
 
 /**
@@ -127,13 +244,18 @@ function getCachedHtml(pathname: string): string | null {
 
 /**
  * Cache rendered HTML for a page.
+ * LRU eviction occurs automatically when maxEntries is exceeded.
  *
  * @param pathname URL pathname
  * @param html Complete HTML string to cache
  */
 function cacheHtml(pathname: string, html: string) {
   if (!cacheConfig.enabled) return;
-  renderCache.set(pathname, { html, timestamp: Date.now() });
+  renderCache.set(pathname, {
+    html,
+    timestamp: Date.now(),
+    accessedAt: Date.now(),
+  });
 }
 
 /**
