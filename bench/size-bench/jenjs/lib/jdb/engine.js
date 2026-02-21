@@ -1,0 +1,176 @@
+/*
+ * This file is part of Jen.js.
+ * Copyright (C) 2026 oopsio
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+import path from "path";
+import { ensureDir, readJSON, writeJSON, generateId, matchFilter, applyUpdate, } from "./utils";
+class JDBCollection {
+    name;
+    dir;
+    inMemory;
+    file;
+    data = [];
+    loaded = false;
+    saving = false;
+    queueSave = false;
+    constructor(name, dir, inMemory) {
+        this.name = name;
+        this.dir = dir;
+        this.inMemory = inMemory;
+        this.file = path.join(dir, `${name}.jdb`);
+    }
+    async load() {
+        if (this.loaded)
+            return;
+        if (!this.inMemory) {
+            await ensureDir(this.dir);
+            const content = await readJSON(this.file);
+            this.data = content || [];
+        }
+        this.loaded = true;
+    }
+    async save() {
+        if (this.inMemory)
+            return;
+        if (this.saving) {
+            this.queueSave = true;
+            return;
+        }
+        this.saving = true;
+        try {
+            await writeJSON(this.file, this.data);
+        }
+        finally {
+            this.saving = false;
+            if (this.queueSave) {
+                this.queueSave = false;
+                this.save();
+            }
+        }
+    }
+    async insert(doc) {
+        await this.load();
+        const now = Date.now();
+        const newDoc = {
+            _id: doc._id || generateId(),
+            _created: now,
+            _updated: now,
+            ...doc,
+        };
+        this.data.push(newDoc);
+        this.save();
+        return newDoc;
+    }
+    async insertMany(docs) {
+        await this.load();
+        const now = Date.now();
+        const newDocs = docs.map((doc) => ({
+            _id: doc._id || generateId(),
+            _created: now,
+            _updated: now,
+            ...doc,
+        }));
+        this.data.push(...newDocs);
+        this.save();
+        return newDocs;
+    }
+    async findOne(filter) {
+        await this.load();
+        return this.data.find((doc) => matchFilter(doc, filter)) || null;
+    }
+    async find(filter, options) {
+        await this.load();
+        let result = this.data.filter((doc) => matchFilter(doc, filter));
+        if (options?.sort) {
+            const sortKeys = Object.keys(options.sort);
+            result.sort((a, b) => {
+                for (const key of sortKeys) {
+                    const dir = options.sort[key];
+                    if (a[key] < b[key])
+                        return -1 * dir;
+                    if (a[key] > b[key])
+                        return 1 * dir;
+                }
+                return 0;
+            });
+        }
+        if (options?.skip) {
+            result = result.slice(options.skip);
+        }
+        if (options?.limit) {
+            result = result.slice(0, options.limit);
+        }
+        return result;
+    }
+    async update(filter, update, multi = false) {
+        await this.load();
+        let count = 0;
+        for (const doc of this.data) {
+            if (matchFilter(doc, filter)) {
+                applyUpdate(doc, update);
+                count++;
+                if (!multi)
+                    break;
+            }
+        }
+        if (count > 0)
+            this.save();
+        return count;
+    }
+    async delete(filter, multi = false) {
+        await this.load();
+        const originalLen = this.data.length;
+        if (!multi) {
+            const index = this.data.findIndex((doc) => matchFilter(doc, filter));
+            if (index !== -1) {
+                this.data.splice(index, 1);
+                this.save();
+                return 1;
+            }
+            return 0;
+        }
+        else {
+            this.data = this.data.filter((doc) => !matchFilter(doc, filter));
+            const deleted = originalLen - this.data.length;
+            if (deleted > 0)
+                this.save();
+            return deleted;
+        }
+    }
+    async count(filter) {
+        await this.load();
+        return this.data.filter((doc) => matchFilter(doc, filter)).length;
+    }
+}
+export class JDBEngine {
+    config;
+    collections = new Map();
+    constructor(config) {
+        this.config = config;
+    }
+    async connect() {
+        await ensureDir(this.config.root);
+    }
+    async disconnect() {
+        // No-op for file based, maybe ensure all saves are flushed
+    }
+    collection(name) {
+        if (!this.collections.has(name)) {
+            this.collections.set(name, new JDBCollection(name, this.config.root, !!this.config.inMemory));
+        }
+        return this.collections.get(name);
+    }
+}
