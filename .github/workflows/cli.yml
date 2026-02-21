@@ -3,80 +3,90 @@ name: Build Jen CLI
 on:
   push:
     branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build Jen CLI for ${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
-    runs-on: ${{ matrix.runner }}
-
+    name: Build CLI
+    runs-on: ${{ matrix.os_runner }}
     strategy:
       matrix:
         include:
-          # Windows builds
-          - os: windows
+          # Linux
+          - os: linux
+            os_runner: ubuntu-latest
             arch: 386
-            compiler: msvc
-            runner: windows-latest
-          - os: windows
-            arch: amd64
-            compiler: msvc
-            runner: windows-latest
-          - os: windows
-            arch: amd64
-            compiler: gnu
-            runner: windows-latest
-
-          # Linux builds
+            goarch: 386
           - os: linux
+            os_runner: ubuntu-latest
+            arch: amd64
+            goarch: amd64
+          - os: linux
+            os_runner: ubuntu-latest
+            arch: arm64
+            goarch: arm64
+          # Windows GNU/MSVC
+          - os: windows
+            os_runner: windows-latest
             arch: 386
-            compiler: gnu
-            runner: ubuntu-latest
-          - os: linux
+            goarch: 386
+            windows_target: gnu
+          - os: windows
+            os_runner: windows-latest
             arch: amd64
-            compiler: gnu
-            runner: ubuntu-latest
-          - os: linux
-            arch: arm64
-            compiler: gnu
-            runner: ubuntu-latest
-
-          # macOS builds
-          - os: macos
+            goarch: amd64
+            windows_target: gnu
+          - os: windows
+            os_runner: windows-latest
+            arch: 386
+            goarch: 386
+            windows_target: msvc
+          - os: windows
+            os_runner: windows-latest
             arch: amd64
-            compiler: clang
-            runner: macos-latest
+            goarch: amd64
+            windows_target: msvc
+          # macOS
           - os: macos
+            os_runner: macos-latest
+            arch: amd64
+            goarch: amd64
+            cc: clang
+          - os: macos
+            os_runner: macos-latest
             arch: arm64
-            compiler: clang
-            runner: macos-latest
+            goarch: arm64
+            cc: clang
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.21
+          go-version: "1.23"
 
-      - name: Set environment variables
-        run: |
-          echo "GOOS=${{ matrix.os }}" >> $GITHUB_ENV
-          echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
-
-      - name: Build Jen CLI
+      - name: Build CLI
         run: |
           mkdir -p build
-          output_name="jen-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}"
-          if [ "${{ matrix.os }}" = "windows" ]; then
-            output_name="$output_name.exe"
+          cd packages/cli
+          echo "Building for OS=${{ matrix.os }} ARCH=${{ matrix.arch }}"
+          if [[ "${{ matrix.os }}" == "windows" ]]; then
+            # Windows builds
+            if [[ "${{ matrix.windows_target }}" == "msvc" ]]; then
+              set CC=cl.exe
+            else
+              set CC=x86_64-w64-mingw32-gcc
+            fi
+            GOOS=windows GOARCH=${{ matrix.goarch }} GO111MODULE=off go build -o ../../build/jen-${{ matrix.os }}-${{ matrix.arch }}.exe main.go
+          else
+            # Linux/macOS builds
+            GOOS=${{ matrix.os }} GOARCH=${{ matrix.goarch }} CC=${{ matrix.cc }} GO111MODULE=off go build -o ../../build/jen-${{ matrix.os }}-${{ matrix.arch }} main.go
           fi
-          go build -o build/$output_name main.go
-          echo "Built $output_name"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: jen-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
-          path: build/
+          name: jen-cli-${{ matrix.os }}-${{ matrix.arch }}
+          path: build/jen-${{ matrix.os }}-${{ matrix.arch }}*
