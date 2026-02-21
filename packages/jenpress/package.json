@@ -6,7 +6,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "jenpress": "./bin/jenpress.js"
+    "jenpress": "bin/jenpress.js"
   },
   "exports": {
     ".": {
