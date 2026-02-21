@@ -1,0 +1,19 @@
+{
+  "name": "jen-ssr-example",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Server-side rendering (SSR) example for jen.js with dynamic data loading",
+  "scripts": {
+    "dev": "npx tsx server.ts dev",
+    "start": "npx tsx server.ts start",
+    "build": "npx tsx build.ts"
+  },
+  "keywords": [
+    "jen",
+    "ssr",
+    "server-side-rendering",
+    "preact"
+  ],
+  "author": "",
+  "license": "MIT"
+}
