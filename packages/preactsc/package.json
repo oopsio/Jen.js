@@ -1,5 +1,5 @@
 {
-  "name": "preactsc",
+  "name": "@jenjs/preactsc",
   "version": "0.1.0",
   "description": "Preact Server Components - Standalone implementation",
   "type": "module",
