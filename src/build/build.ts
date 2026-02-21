@@ -39,6 +39,7 @@ import { scanRoutes } from "../core/routes/scan.js";
 import { resolveDistPath } from "../core/paths.js";
 import { log } from "../shared/log.js";
 import { renderRouteToHtml } from "../runtime/render.js";
+import { injectFonts } from "../fonts/inject.js";
 
 /**
  * Recursively copies a directory and all its contents.
@@ -84,6 +85,10 @@ function copyDir(src: string, dst: string) {
  */
 export async function buildSite(opts: { config: FrameworkConfig }) {
   const { config } = opts;
+
+  // Inject fonts configuration into config.inject.head
+  // This automatically adds Google Fonts links and local @font-face CSS
+  injectFonts(config);
 
   // Clear and recreate the dist directory for a clean build.
   const dist = resolveDistPath(config);

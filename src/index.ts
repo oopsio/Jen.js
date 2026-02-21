@@ -149,6 +149,10 @@ export * from "./native/style-compiler.js";
 
 // Plugin
 export * from "./plugin/loader.js";
+export * from "./plugin/types.js";
+export { PluginManager, getPluginManager, resetPluginManager } from "./plugin/plugin-manager.js";
+export * from "./plugin/examples/cdn-upload-plugin.js";
+export * from "./plugin/examples/analytics-plugin.js";
 
 // Runtime
 export * from "./runtime/render.js";
@@ -170,6 +174,13 @@ export type {
 // Keep old api.js exports for backward compatibility
 export { tryHandleApiRoute } from "./server/api.js";
 export * from "./server/runtimeServe.js";
+
+// Security
+export * from "./security/security-config.js";
+export { securityHeadersMiddleware, createCSRFMiddleware } from "./security/security-middleware.js";
+
+// Assets
+export * from "./assets/types.js";
 
 // Shared utilities
 export * from "./shared/log.js";

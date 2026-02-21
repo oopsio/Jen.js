@@ -25,6 +25,10 @@
  * - "ppr": Partial pre-rendering - mixes static and dynamic content
  */
 import type { FeatureConfig } from "./features.js";
+import type { FontsConfig } from "../fonts/types.js";
+import type { PluginConfig } from "../plugin/types.js";
+import type { SecurityConfig } from "../security/security-config.js";
+import type { AssetOptimizeConfig } from "../assets/types.js";
 
 export type RenderMode = "ssr" | "ssg" | "isr" | "ppr";
 
@@ -292,4 +296,87 @@ export type FrameworkConfig = {
      */
     sitemapBaseUrl?: string;
   };
+
+  /**
+   * Optional fonts configuration for local and Google Fonts.
+   * Supports automatic setup of @font-face rules and Google Fonts links.
+   * Fonts are automatically injected into SSR/SSG/ISR rendered pages.
+   *
+   * @example
+   * ```typescript
+   * fonts: {
+   *   local: ["site/fonts/Roboto-Regular.woff2", "site/fonts/Roboto-Bold.woff2"],
+   *   google: ["Roboto:400,700", "Open Sans:400,600"],
+   *   preload: true,
+   *   display: "swap"
+   * }
+   * ```
+   *
+   * Fully hackable: Override `injectFonts()` in build.js or server.js
+   * to customize font injection behavior.
+   */
+  fonts?: FontsConfig;
+
+  /**
+   * Plugin system configuration.
+   * Plugins can hook into build, dev, request, and rendering stages.
+   *
+   * @example
+   * ```typescript
+   * plugins: {
+   *   plugins: ["./plugins/my-plugin.ts", myInlinePlugin],
+   *   hooks: {
+   *     parallel: false,
+   *     timeout: 30000,
+   *     silent: false
+   *   }
+   * }
+   * ```
+   */
+  plugins?: PluginConfig;
+
+  /**
+   * Security headers and protection configuration.
+   * Configurable CSP, HSTS, CORS, CSRF, and other security headers.
+   *
+   * @example
+   * ```typescript
+   * security: {
+   *   headers: {
+   *     csp: {
+   *       enabled: true,
+   *       directives: {
+   *         "default-src": ["'self'"],
+   *         "script-src": ["'self'", "'unsafe-inline'"]
+   *       }
+   *     },
+   *     hsts: { enabled: true, maxAge: 31536000 }
+   *   },
+   *   csrf: { enabled: true },
+   *   rateLimit: { enabled: true, maxRequests: 100 }
+   * }
+   * ```
+   */
+  security?: SecurityConfig;
+
+  /**
+   * Asset optimization configuration.
+   * Automatically optimize images, SVGs, and media files.
+   *
+   * @example
+   * ```typescript
+   * assets: {
+   *   optimize: {
+   *     enabled: true,
+   *     images: {
+   *       webp: true,
+   *       avif: true,
+   *       resolutions: [640, 1024, 1920]
+   *     },
+   *     svg: { enabled: true, minify: true }
+   *   }
+   * }
+   * ```
+   */
+  assetOptimize?: AssetOptimizeConfig;
 };

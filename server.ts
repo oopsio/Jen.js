@@ -25,6 +25,7 @@ import { createApp } from "@src/server/app.js";
 import { log } from "@src/shared/log.js";
 import { printBanner } from "@src/cli/banner.js";
 import { createServer as createViteServer, build as buildWithVite } from "vite";
+import { injectFonts } from "@src/fonts/inject.js";
 
 /**
  * Global configuration object loaded from jen.config.js.
@@ -82,6 +83,10 @@ const isDev = mode === "dev";
  */
 async function main() {
   await loadConfig();
+
+  // Inject fonts configuration into config.inject.head
+  // This automatically adds Google Fonts links and local @font-face CSS
+  injectFonts(config);
 
   let viteServer: any = null;
 
@@ -152,6 +157,10 @@ async function main() {
  */
 async function buildOnly() {
   await loadConfig();
+
+  // Inject fonts configuration into config.inject.head
+  injectFonts(config);
+
   try {
     log.info("Building with Vite...");
     await buildWithVite({
