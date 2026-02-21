@@ -1,48 +1,53 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 /**
- * Universal module importer for Vue, Svelte, and regular JS/TS
+ * Universal module importer for Vue, Svelte, and regular JS/TS files.
+ * Handles transpilation and caching to enable dynamic imports of framework components
+ * and utility modules with automatic compilation.
+ *
+ * Supported file types: .vue, .svelte, .ts, .tsx, .js, .jsx.
+ * Transpilation is performed using esbuild with Vue and Svelte plugins.
+ * Compiled modules are cached in node_modules/.jen/import-cache for fast subsequent loads.
+ *
+ * @param specifier File path relative to baseDir (typically process.cwd() or a component directory).
+ * @param opts Import options.
+ * @param opts.baseDir Base directory for relative path resolution. Defaults to process.cwd().
+ * @param opts.cache Whether to use in-memory cache. Defaults to true.
+ * @param opts.forceRecompile If true, bypass cache and recompile the module.
+ * @returns The imported module object (exports).
+ * @throws Error if the file type is unsupported, the file cannot be read, or transpilation fails.
  *
  * @example
- * const Button = await jen.import("./components/Button.vue");
- * const Card = await jen.import("./ui/Card.svelte");
- * const Utils = await jen.import("./utils.ts");
+ * const Button = await jenImport("./components/Button.vue");
+ * const Card = await jenImport("./ui/Card.svelte");
+ * const Utils = await jenImport("./utils.ts", { cache: true });
+ * const Fresh = await jenImport("./component.tsx", { forceRecompile: true });
  */
-export declare function jenImport(
-  specifier: string,
-  opts?: {
+export declare function jenImport(specifier: string, opts?: {
     baseDir?: string;
     cache?: boolean;
     forceRecompile?: boolean;
-  },
-): Promise<any>;
+}): Promise<any>;
 /**
- * Clear import cache for a specific file
+ * Invalidate the import cache for a specific file.
+ * Forces the next import to recompile the module from source.
+ * Useful during development when code changes frequently and cache may be stale.
+ *
+ * @param specifier File path (relative to process.cwd()) to invalidate.
  */
 export declare function invalidateImportCache(specifier: string): void;
 /**
- * Clear all import caches
+ * Clear all import caches completely.
+ * Forces all subsequent imports to recompile from source.
+ * Should be called sparingly; typically used when restarting the development server.
  */
 export declare function clearImportCache(): void;
 /**
- * Export as global jen.import if needed
+ * Global jen namespace providing access to jen.import() for dynamic module loading.
+ * Can be used as an alternative to calling jenImport() directly.
+ *
+ * @example
+ * import { jen } from '@src/import/jen-import';
+ * const Component = await jen.import('./Component.vue');
  */
 export declare const jen: {
-  import: typeof jenImport;
+    import: typeof jenImport;
 };

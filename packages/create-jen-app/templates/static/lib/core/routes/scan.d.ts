@@ -1,27 +1,53 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 import type { FrameworkConfig } from "../config.js";
+/**
+ * Represents a discovered route file with all metadata needed for routing and rendering.
+ * Created by scanRoutes() based on filesystem structure and file patterns.
+ */
 export type RouteEntry = {
-  id: string;
-  filePath: string;
-  urlPath: string;
-  pattern: string;
-  paramNames: string[];
+    /**
+     * Unique identifier for the route, derived from file path.
+     * Example: "posts_id_tsx" for "posts/(id).tsx"
+     */
+    id: string;
+    /**
+     * Absolute filesystem path to the route file.
+     * Examples: "/app/src/pages/(home).tsx", "/app/src/posts/($id).tsx"
+     */
+    filePath: string;
+    /**
+     * URL path that this route should respond to.
+     * Dynamic segments use colon prefix for params and asterisk for catch-all.
+     * Examples: "/", "/about", "/posts/:id", "/docs/*rest"
+     */
+    urlPath: string;
+    /**
+     * Regular expression pattern for URL matching.
+     * Compiled from urlPath to enable fast route matching at request time.
+     * Example: "^/posts/([^/]+)/?$" for route "/posts/:id"
+     */
+    pattern: string;
+    /**
+     * Array of parameter names in order they appear in the URL pattern.
+     * Used to extract and name captured groups from route.pattern regex matches.
+     * Examples: ["id"] for "/posts/:id", ["rest"] for "/docs/*rest"
+     */
+    paramNames: string[];
 };
+/**
+ * Scans the configured siteDir for route files and returns an ordered list.
+ * Files are matched against config.routes.routeFilePattern (typically /^\(([^)]+)\)/).
+ * Only files with extensions in config.routes.fileExtensions are considered.
+ *
+ * Naming conventions:
+ * - (home).tsx => route "/" (root, or within its directory)
+ * - ($paramName).tsx => dynamic route "/:paramName" (requires $ prefix)
+ * - (...restName).tsx => catch-all route "/*restName" (requires ... prefix)
+ * - (name).tsx => literal route "/name"
+ *
+ * Routes are sorted by specificity: static routes first, then dynamic/catch-all.
+ *
+ * @param config Framework configuration with siteDir and route patterns
+ * @returns Array of RouteEntry objects, sorted by specificity (most specific first)
+ * @throws {Error} If a parameter name is invalid (e.g., starts with number)
+ */
 export declare function scanRoutes(config: FrameworkConfig): RouteEntry[];

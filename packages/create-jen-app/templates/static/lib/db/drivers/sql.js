@@ -23,177 +23,160 @@ const ALLOWED_IDENTIFIERS = new Set();
  * Note: Hyphen is NOT allowed as it can cause confusion with operators
  */
 function quoteIdentifier(id) {
-  if (!id || !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(id)) {
-    throw new Error(
-      `Invalid SQL identifier: ${id}. Only alphanumeric, underscore, and dollar sign allowed. Must start with letter, underscore, or dollar.`,
-    );
-  }
-  return `\`${id}\``; // Use backticks for MySQL, adjust for other databases
+    if (!id || !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(id)) {
+        throw new Error(`Invalid SQL identifier: ${id}. Only alphanumeric, underscore, and dollar sign allowed. Must start with letter, underscore, or dollar.`);
+    }
+    return `\`${id}\``; // Use backticks for MySQL, adjust for other databases
 }
 /**
  * Validate and register allowed table/collection names for security
  */
 export function registerAllowedTable(tableName) {
-  if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(tableName)) {
-    ALLOWED_IDENTIFIERS.add(tableName);
-  } else {
-    throw new Error(
-      `Invalid table name: ${tableName}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
-    );
-  }
+    if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(tableName)) {
+        ALLOWED_IDENTIFIERS.add(tableName);
+    }
+    else {
+        throw new Error(`Invalid table name: ${tableName}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
+    }
 }
 /**
  * Check if table is in allowed list
  */
 function isTableAllowed(tableName) {
-  return ALLOWED_IDENTIFIERS.has(tableName);
+    return ALLOWED_IDENTIFIERS.has(tableName);
 }
 /**
  * Validate integer value (for LIMIT/OFFSET)
  */
 function validateInteger(value) {
-  const num = parseInt(value, 10);
-  if (isNaN(num) || num < 0) {
-    throw new Error(`Invalid integer value: ${value}`);
-  }
-  return num;
+    const num = parseInt(value, 10);
+    if (isNaN(num) || num < 0) {
+        throw new Error(`Invalid integer value: ${value}`);
+    }
+    return num;
 }
 export class SQLDriver {
-  executor;
-  constructor(config) {
-    if (typeof config.connection === "function") {
-      this.executor = config.connection;
-    } else if (config.connection && config.connection.query) {
-      // Support objects like Pool or Client from pg/mysql
-      this.executor = (sql, params) => config.connection.query(sql, params);
-    } else {
-      // Default stub that warns if no connection provided, or we could try to load a default
-      this.executor = async () => {
-        throw new Error("No SQL connection provided to SQLDriver");
-      };
-    }
-  }
-  async connect() {
-    // Connection management usually handled by the pool passed in, but we can add logic here if needed
-  }
-  async disconnect() {
-    // No-op or close pool
-  }
-  async query(q) {
-    if (typeof q === "string") {
-      return this.executor(q, []);
-    }
-    if ("sql" in q) {
-      return this.executor(q.sql, q.params || []);
-    }
-    // Convert NoSQL style to SQL (Basic translation)
-    const query = q;
-    const { sql, params } = this.translateQuery(query);
-    return this.executor(sql, params);
-  }
-  translateQuery(q) {
-    // Security: Validate table name
-    if (!isTableAllowed(q.find)) {
-      throw new Error(
-        `Table '${q.find}' not registered. Call registerAllowedTable() first.`,
-      );
-    }
-    let sql = `SELECT * FROM ${quoteIdentifier(q.find)}`;
-    const params = [];
-    if (q.where && Object.keys(q.where).length > 0) {
-      const conditions = [];
-      const whereRecord = q.where;
-      for (const key in whereRecord) {
-        // Security: Validate column name
-        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
-          throw new Error(
-            `Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
-          );
+    executor;
+    constructor(config) {
+        if (typeof config.connection === "function") {
+            this.executor = config.connection;
         }
-        // Safely access where property
-        const val = whereRecord[key];
-        conditions.push(`${quoteIdentifier(key)} = ?`);
-        params.push(val);
-      }
-      sql += ` WHERE ${conditions.join(" AND ")}`;
+        else if (config.connection && config.connection.query) {
+            // Support objects like Pool or Client from pg/mysql
+            this.executor = (sql, params) => config.connection.query(sql, params);
+        }
+        else {
+            // Default stub that warns if no connection provided, or we could try to load a default
+            this.executor = async () => {
+                throw new Error("No SQL connection provided to SQLDriver");
+            };
+        }
     }
-    if (q.options?.limit) {
-      // Security: Validate limit is a positive integer
-      const limit = validateInteger(q.options.limit);
-      sql += ` LIMIT ${limit}`;
+    async connect() {
+        // Connection management usually handled by the pool passed in, but we can add logic here if needed
     }
-    if (q.options?.skip) {
-      // Security: Validate offset is a non-negative integer
-      const skip = validateInteger(q.options.skip);
-      sql += ` OFFSET ${skip}`;
+    async disconnect() {
+        // No-op or close pool
     }
-    return { sql, params };
-  }
-  async create(collection, data) {
-    // Security: Validate table name
-    if (!isTableAllowed(collection)) {
-      throw new Error(
-        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
-      );
+    async query(q) {
+        if (typeof q === "string") {
+            return this.executor(q, []);
+        }
+        if ("sql" in q) {
+            return this.executor(q.sql, q.params || []);
+        }
+        // Convert NoSQL style to SQL (Basic translation)
+        const query = q;
+        const { sql, params } = this.translateQuery(query);
+        return this.executor(sql, params);
     }
-    const keys = Object.keys(data);
-    // Security: Validate all column names
-    for (const key of keys) {
-      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
-        throw new Error(
-          `Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
-        );
-      }
+    translateQuery(q) {
+        // Security: Validate table name
+        if (!isTableAllowed(q.find)) {
+            throw new Error(`Table '${q.find}' not registered. Call registerAllowedTable() first.`);
+        }
+        let sql = `SELECT * FROM ${quoteIdentifier(q.find)}`;
+        const params = [];
+        if (q.where && Object.keys(q.where).length > 0) {
+            const conditions = [];
+            const whereRecord = q.where;
+            for (const key in whereRecord) {
+                // Security: Validate column name
+                if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+                    throw new Error(`Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
+                }
+                // Safely access where property
+                const val = whereRecord[key];
+                conditions.push(`${quoteIdentifier(key)} = ?`);
+                params.push(val);
+            }
+            sql += ` WHERE ${conditions.join(" AND ")}`;
+        }
+        if (q.options?.limit) {
+            // Security: Validate limit is a positive integer
+            const limit = validateInteger(q.options.limit);
+            sql += ` LIMIT ${limit}`;
+        }
+        if (q.options?.skip) {
+            // Security: Validate offset is a non-negative integer
+            const skip = validateInteger(q.options.skip);
+            sql += ` OFFSET ${skip}`;
+        }
+        return { sql, params };
     }
-    const placeholders = keys.map(() => "?").join(",");
-    const quotedKeys = keys.map((k) => quoteIdentifier(k)).join(",");
-    const sql = `INSERT INTO ${quoteIdentifier(collection)} (${quotedKeys}) VALUES (${placeholders})`;
-    const params = keys.map((k) => data[k]);
-    await this.executor(sql, params);
-    // Retrieve generic - this might need adjustment per driver for "returning" support
-    return data;
-  }
-  async update(collection, filter, update) {
-    // Basic implementation requiring WHERE clause
-    // This is complex to map generic Mongo-style updates to SQL without a robust builder
-    throw new Error(
-      "Complex update translation not implemented for Generic SQL Driver yet. Use raw SQL.",
-    );
-  }
-  async delete(collection, filter) {
-    // Security: Validate table name
-    if (!isTableAllowed(collection)) {
-      throw new Error(
-        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
-      );
+    async create(collection, data) {
+        // Security: Validate table name
+        if (!isTableAllowed(collection)) {
+            throw new Error(`Table '${collection}' not registered. Call registerAllowedTable() first.`);
+        }
+        const keys = Object.keys(data);
+        // Security: Validate all column names
+        for (const key of keys) {
+            if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+                throw new Error(`Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`);
+            }
+        }
+        const placeholders = keys.map(() => "?").join(",");
+        const quotedKeys = keys.map((k) => quoteIdentifier(k)).join(",");
+        const sql = `INSERT INTO ${quoteIdentifier(collection)} (${quotedKeys}) VALUES (${placeholders})`;
+        const params = keys.map((k) => data[k]);
+        await this.executor(sql, params);
+        // Retrieve generic - this might need adjustment per driver for "returning" support
+        return data;
     }
-    // Validate that filter is not empty to prevent accidental full table delete
-    if (!filter || Object.keys(filter).length === 0) {
-      throw new Error(
-        "Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.",
-      );
+    async update(collection, filter, update) {
+        // Basic implementation requiring WHERE clause
+        // This is complex to map generic Mongo-style updates to SQL without a robust builder
+        throw new Error("Complex update translation not implemented for Generic SQL Driver yet. Use raw SQL.");
     }
-    const { sql, params } = this.translateQuery({
-      find: collection,
-      where: filter,
-    });
-    const deleteSql = sql.replace("SELECT \\*", "DELETE");
-    await this.executor(deleteSql, params);
-    return 1; // Unknown count without driver specific result
-  }
-  async count(collection, filter) {
-    // Security: Validate table name
-    if (!isTableAllowed(collection)) {
-      throw new Error(
-        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
-      );
+    async delete(collection, filter) {
+        // Security: Validate table name
+        if (!isTableAllowed(collection)) {
+            throw new Error(`Table '${collection}' not registered. Call registerAllowedTable() first.`);
+        }
+        // Validate that filter is not empty to prevent accidental full table delete
+        if (!filter || Object.keys(filter).length === 0) {
+            throw new Error("Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.");
+        }
+        const { sql, params } = this.translateQuery({
+            find: collection,
+            where: filter,
+        });
+        const deleteSql = sql.replace("SELECT \\*", "DELETE");
+        await this.executor(deleteSql, params);
+        return 1; // Unknown count without driver specific result
     }
-    const { sql, params } = this.translateQuery({
-      find: collection,
-      where: filter,
-    });
-    const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as count");
-    const res = await this.executor(countSql, params);
-    return res[0]?.count || 0;
-  }
+    async count(collection, filter) {
+        // Security: Validate table name
+        if (!isTableAllowed(collection)) {
+            throw new Error(`Table '${collection}' not registered. Call registerAllowedTable() first.`);
+        }
+        const { sql, params } = this.translateQuery({
+            find: collection,
+            where: filter,
+        });
+        const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as count");
+        const res = await this.executor(countSql, params);
+        return res[0]?.count || 0;
+    }
 }

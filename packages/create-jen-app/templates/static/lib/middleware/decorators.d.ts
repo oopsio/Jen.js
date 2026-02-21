@@ -1,22 +1,17 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+/**
+ * Class or method decorator for attaching middleware to handlers.
+ * Allows declaring middleware dependencies declaratively on class definitions or methods.
+ * Middleware is merged with existing middleware if applied multiple times.
+ *
+ * @param middleware Middleware functions to attach.
+ * @returns A decorator function compatible with class or method decoration.
+ *
+ * @example
+ * @UseMiddleware(authMiddleware, corsMiddleware)
+ * class UserController {
+ *   @UseMiddleware(rateLimitMiddleware)
+ *   async getUsers(ctx) { ... }
+ * }
  */
-
-export function UseMiddleware(
-  ...middleware: any[]
-): (target: any, propertyKey: any, descriptor: any) => void;
+export function UseMiddleware(...middleware: any[]): (target: any, propertyKey: any, descriptor: any) => void;
 export const MIDDLEWARE_METADATA_KEY: unique symbol;

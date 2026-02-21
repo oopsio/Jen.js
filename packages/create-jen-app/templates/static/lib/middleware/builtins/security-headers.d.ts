@@ -1,19 +1,19 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+/**
+ * Security headers middleware that sets HTTP response headers for defense against common attacks.
+ * Implements a comprehensive security policy including:
+ * - Clickjacking protection (X-Frame-Options)
+ * - MIME type sniffing protection (X-Content-Type-Options)
+ * - XSS protection (X-XSS-Protection, Content-Security-Policy)
+ * - HTTPS enforcement (Strict-Transport-Security)
+ * - Referrer policy (Referrer-Policy)
+ * - Feature permissions (Permissions-Policy)
+ *
+ * CSP is configured permissively to work with most applications.
+ * Adjust directives based on your application's needs (inline scripts, external resources, etc.).
+ *
+ * @returns Middleware function.
+ *
+ * @example
+ * kernel.use(securityHeaders);
  */
-
 export function securityHeaders(ctx: any, next: any): Promise<void>;
