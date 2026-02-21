@@ -1,72 +1,93 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+/**
+ * Hydration strategy for interactive islands.
+ * Determines when client-side JavaScript is loaded and hydration occurs:
+ * - "load": Hydrate immediately on page load (eager)
+ * - "idle": Hydrate when browser is idle via requestIdleCallback (deferred, low-priority)
+ * - "visible": Hydrate when island becomes visible via IntersectionObserver (viewport-based)
  */
-
 export type HydrationStrategy = "load" | "idle" | "visible";
+/**
+ * Props interface for islands (not actively used, provided for type reference).
+ */
 export interface IslandProps {
-  "client:load"?: boolean;
-  "client:idle"?: boolean;
-  "client:visible"?: boolean;
+    "client:load"?: boolean;
+    "client:idle"?: boolean;
+    "client:visible"?: boolean;
 }
 /**
- * Mark a component as an interactive island.
- * Wraps component with hydration metadata.
+ * Mark a component as an interactive island for partial hydration.
+ * Islands are components that require client-side interactivity while the rest of the page
+ * remains static HTML. This enables efficient selective hydration.
+ *
+ * How it works:
+ * - Marks component with metadata (__island, __hydrationStrategy)
+ * - Server renderer detects marked components and emits HTML comments with island metadata
+ * - Client JavaScript discovers islands from HTML comments and hydrates based on strategy
  *
  * Usage in route:
  *   import { Island } from "jenjs";
- *   const Counter = Island(CounterImpl, "load");
+ *   import CounterImpl from "./counter.tsx";
+ *   export default function Page() {
+ *     const Counter = Island(CounterImpl, "load");
+ *     return <Counter count={5} />;
+ *   }
  *
- * Then use in JSX: <Counter count={5} />
+ * Strategies:
+ * - "load": Best for above-the-fold critical interactive components
+ * - "idle": Good for secondary interactive elements (lighter priority)
+ * - "visible": Best for below-the-fold components; hydrates only when scrolled into view
  *
- * Server will:
- * - Render the component to HTML
- * - Emit hydration markers
- * - Include serialized props
- *
- * Client will:
- * - Discover islands from markers
- * - Hydrate based on strategy
+ * @param Component - The Preact component to mark as an island.
+ * @param strategy - Hydration timing strategy.
+ * @returns The same component with island metadata attached.
  */
-export declare function Island<P extends Record<string, any>>(
-  Component: any,
-  strategy: HydrationStrategy,
-): any;
+export declare function Island<P extends Record<string, any>>(Component: any, strategy: HydrationStrategy): any;
 /**
- * Detect islands in a component tree (called by server renderer).
- * Returns array of island metadata to inject into HTML.
+ * Metadata for a detected island extracted from server-rendered HTML.
+ * Includes the island's unique ID, component path, hydration strategy, and serialized props.
  */
 export interface DetectedIsland {
-  id: string;
-  component: string;
-  strategy: HydrationStrategy;
-  props: any;
+    /** Unique identifier for this island instance on the page. */
+    id: string;
+    /** Path to the component module (e.g., "./components/counter.js"). */
+    component: string;
+    /** Hydration strategy: when to hydrate this island. */
+    strategy: HydrationStrategy;
+    /** Serialized component props (deserialized from JSON in HTML comment). */
+    props: any;
 }
 /**
- * Generate island hydration markers for server-rendered HTML.
- * Call this after SSR to inject island metadata.
+ * Generate an HTML comment marker that encodes island metadata.
+ * Server renderer calls this after rendering each island component.
+ * The marker is embedded in the HTML and later parsed by the client.
+ *
+ * Format: <!--__ISLAND_{STRATEGY}__:{id}:{componentPath}:{propsJson}-->
+ * Example: <!--__ISLAND_LOAD__:island-1:./counter.js:{"count":5}-->
+ *
+ * Note: '<' in JSON is escaped to '\\u003c' to prevent breaking HTML parsing
+ * (literal '<' in props could confuse the HTML parser or regex extraction).
+ *
+ * @param id - Unique identifier for the island (e.g., "island-1", "counter-2").
+ * @param componentPath - Path to the component module.
+ * @param strategy - Hydration timing strategy.
+ * @param props - Component props object (will be JSON.stringify'd).
+ * @returns HTML comment string encoding the island metadata.
  */
-export declare function createIslandMarker(
-  id: string,
-  componentPath: string,
-  strategy: HydrationStrategy,
-  props: any,
-): string;
+export declare function createIslandMarker(id: string, componentPath: string, strategy: HydrationStrategy, props: any): string;
 /**
- * Extract islands from server-rendered HTML.
- * Called by client to discover islands and their hydration strategy.
+ * Extract island metadata from server-rendered HTML.
+ * Client-side function that parses island markers from HTML comments.
+ * Called during page initialization to discover which components need hydration.
+ *
+ * Parsing strategy:
+ * - Regex finds HTML comments matching the island marker format
+ * - Extracts strategy, id, componentPath, and props from comment
+ * - Validates all fields are present and props are valid JSON
+ * - Logs warnings for invalid markers but continues processing remaining islands
+ *
+ * Return value includes only valid, parseable islands; invalid ones are skipped.
+ *
+ * @param html - Server-rendered HTML string (typically document.body.innerHTML or full page HTML).
+ * @returns Array of detected islands with complete metadata ready for hydration.
  */
 export declare function extractIslandsFromHtml(html: string): DetectedIsland[];

@@ -1,19 +1,19 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+/**
+ * Request ID middleware that assigns unique identifiers to incoming requests.
+ * Enables request tracing and correlation across logs and API calls.
+ *
+ * If the client provides an X-Request-ID header, that ID is used. Otherwise, a new UUID is generated.
+ * The request ID is attached to both the response header (for client visibility) and ctx.state
+ * (for other middleware like logger to use in log entries).
+ *
+ * This middleware should be registered early in the chain to ensure all downstream handlers
+ * have access to the request ID.
+ *
+ * @returns Middleware function.
+ *
+ * @example
+ * kernel.use(requestId);
+ * // All requests now have a unique X-Request-ID header
+ * // Available in ctx.state.requestId for logging and tracing
  */
-
 export function requestId(ctx: any, next: any): Promise<void>;

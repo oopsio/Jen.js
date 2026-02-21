@@ -1,27 +1,38 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 import { JDBConfig, IDatabaseEngine, ICollection, Document } from "./types";
+/**
+ * File-based database engine implementation.
+ * Stores collections as JSON files in the configured directory.
+ * Provides lazy collection initialization and in-memory option for testing.
+ */
 export declare class JDBEngine implements IDatabaseEngine {
-  private config;
-  private collections;
-  constructor(config: JDBConfig);
-  connect(): Promise<void>;
-  disconnect(): Promise<void>;
-  collection<T extends Document>(name: string): ICollection<T>;
+    private config;
+    /** Cached collection instances. Created on demand and reused for subsequent accesses. */
+    private collections;
+    /**
+     * Create a new database engine instance.
+     *
+     * @param config Configuration specifying storage root directory and memory mode.
+     */
+    constructor(config: JDBConfig);
+    /**
+     * Establish database connection by ensuring the storage root directory exists.
+     * Creates the directory recursively if it doesn't exist.
+     */
+    connect(): Promise<void>;
+    /**
+     * Close database connection and clean up resources.
+     * Currently a no-op for file-based storage, but provided for compatibility with IDatabaseEngine interface.
+     * Future versions may flush pending writes or close file handles here.
+     */
+    disconnect(): Promise<void>;
+    /**
+     * Get or create a collection by name.
+     * Collections are cached after first access, so subsequent calls return the same instance.
+     * Uses lazy initialization: data is not loaded from disk until the collection is accessed.
+     *
+     * @template T Document type for the collection.
+     * @param name Unique name for the collection. Used to generate the .jdb filename.
+     * @returns Collection instance for CRUD operations.
+     */
+    collection<T extends Document>(name: string): ICollection<T>;
 }

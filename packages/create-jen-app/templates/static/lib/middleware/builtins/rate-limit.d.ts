@@ -1,23 +1,22 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 /**
- * Rate limiting middleware
- * Protects against brute force and DDoS attacks
+ * Rate limiting middleware that protects against brute force and DDoS attacks.
+ * Tracks request count per client IP within a time window and rejects excess requests.
+ * Uses in-memory storage, suitable for single-server deployments; use Redis for distributed systems.
+ *
+ * Automatically cleans up expired records every minute to prevent memory leaks.
+ * Respects X-Forwarded-For header for deployments behind a proxy or load balancer.
+ *
+ * @param options Rate limiting configuration.
+ * @param options.windowMs Time window in milliseconds (default: 15 minutes).
+ * @param options.max Maximum requests per IP per window (default: 100).
+ * @param options.message Error message sent to rate-limited clients (default: "Too many requests...").
+ * @param options.statusCode HTTP status for rate-limited responses (default: 429 Too Many Requests).
+ * @returns Middleware function.
+ *
+ * @example
+ * kernel.use(rateLimit({
+ *   windowMs: 15 * 60 * 1000,
+ *   max: 100
+ * }));
  */
 export function rateLimit(options?: {}): (ctx: any, next: any) => Promise<void>;

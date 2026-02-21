@@ -1,22 +1,24 @@
-/*
- * This file is part of Jen.js.
- * Copyright (C) 2026 oopsio
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 import type { FrameworkConfig } from "../core/config.js";
+/**
+ * Builds a static site by pre-rendering all routes to HTML files.
+ * This is the core static site generation (SSG) function that runs at build time.
+ * It performs the following steps:
+ * 1. Clears the previous build output directory
+ * 2. Discovers all route files in the configured site directory
+ * 3. Renders each route to a static HTML file
+ * 4. Copies static assets from the source directory
+ * 5. Bundles Vue and Svelte components for client-side rehydration
+ * 6. Compiles SCSS to CSS for the global stylesheet
+ *
+ * Routes are rendered with empty req/res objects (SSG mode) to avoid middleware execution.
+ * This produces pure static HTML that can be served by any web server.
+ * Hydration scripts are still injected if the route has hydrate:true, allowing for
+ * optional client-side interactivity in otherwise static pages.
+ *
+ * @param opts Configuration object.
+ * @param opts.config The Jen.js framework configuration.
+ * @throws Logs warnings for missing assets or component bundling failures but does not stop the build.
+ */
 export declare function buildSite(opts: {
-  config: FrameworkConfig;
+    config: FrameworkConfig;
 }): Promise<void>;
