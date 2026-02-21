@@ -1,6 +1,6 @@
 {
-  "name": "@jen/jenpack",
-  "version": "0.1.0",
+  "name": "@jenjs/jenpack",
+  "version": "0.1.2",
   "description": "Modern SWC-based bundler for Jen.js ecosystem",
   "type": "module",
   "main": "dist/index.js",
