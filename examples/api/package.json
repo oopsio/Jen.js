@@ -1,0 +1,30 @@
+{
+  "name": "jen-api-example",
+  "version": "1.0.0",
+  "description": "Jen.js API Routes Example - File-based API routing like Next.js",
+  "type": "module",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "npx tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "jen.js",
+    "api-routes",
+    "preact",
+    "typescript",
+    "ssr"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "preact": "^10.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "typescript": "^5.1.6",
+    "tsx": "^3.13.0"
+  }
+}
