@@ -81,6 +81,8 @@ export {
 
 // Core
 export * from "./core/config.js";
+export * from "./core/features.js";
+export * from "./core/feature-guard.js";
 export * from "./core/http.js";
 export * from "./core/paths.js";
 export * from "./core/types.js";
