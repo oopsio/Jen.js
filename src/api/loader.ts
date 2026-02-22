@@ -1,6 +1,6 @@
-import { readdirSync, statSync } from 'fs';
-import { join, resolve, relative } from 'path';
-import type { ApiHandler, ApiConfig } from './router';
+import { readdirSync, statSync } from "fs";
+import { join, resolve, relative } from "path";
+import type { ApiHandler, ApiConfig } from "./router";
 
 /**
  * API route module with optional config
@@ -41,7 +41,7 @@ export class ApiLoader {
    * @param baseRoute Base route prefix (default: '/api')
    * @returns Array of loaded routes
    */
-  async loadRoutes(apiDir: string, baseRoute = '/api'): Promise<LoadedRoute[]> {
+  async loadRoutes(apiDir: string, baseRoute = "/api"): Promise<LoadedRoute[]> {
     const routes: LoadedRoute[] = [];
     const fullPath = resolve(apiDir);
 
@@ -53,10 +53,10 @@ export class ApiLoader {
 
     // Sort routes by specificity: exact > dynamic > catch-all
     routes.sort((a, b) => {
-      const aIsCatchAll = a.path.includes('[...');
-      const bIsCatchAll = b.path.includes('[...');
-      const aIsDynamic = a.path.includes('[');
-      const bIsDynamic = b.path.includes('[');
+      const aIsCatchAll = a.path.includes("[...");
+      const bIsCatchAll = b.path.includes("[...");
+      const aIsDynamic = a.path.includes("[");
+      const bIsDynamic = b.path.includes("[");
 
       if (aIsCatchAll && !bIsCatchAll) return 1;
       if (!aIsCatchAll && bIsCatchAll) return -1;
@@ -85,7 +85,7 @@ export class ApiLoader {
       const fullPath = join(dir, entry.name);
 
       // Skip hidden files and directories
-      if (entry.name.startsWith('.')) continue;
+      if (entry.name.startsWith(".")) continue;
 
       if (entry.isDirectory()) {
         await this.scanDirectory(fullPath, baseRoute, routes);
@@ -93,7 +93,7 @@ export class ApiLoader {
         const routePath = this.filePathToRoute(fullPath, baseRoute);
         const module = await this.loadModule(fullPath);
 
-        if (module && typeof module.default === 'function') {
+        if (module && typeof module.default === "function") {
           routes.push({
             path: routePath,
             handler: module.default,
@@ -110,7 +110,10 @@ export class ApiLoader {
    * @private
    */
   private isRouteFile(filename: string): boolean {
-    return /^[^.][^/]*\.(ts|tsx|js|jsx)$/.test(filename) && !filename.endsWith('.d.ts');
+    return (
+      /^[^.][^/]*\.(ts|tsx|js|jsx)$/.test(filename) &&
+      !filename.endsWith(".d.ts")
+    );
   }
 
   /**
@@ -126,12 +129,12 @@ export class ApiLoader {
    */
   private filePathToRoute(filePath: string, baseRoute: string): string {
     let route = filePath
-      .replace(/\\/g, '/') // Windows path separator
-      .replace(/\.(ts|tsx|js|jsx)$/, '') // Remove extension
-      .replace(/\/index$/, ''); // Remove /index
+      .replace(/\\/g, "/") // Windows path separator
+      .replace(/\.(ts|tsx|js|jsx)$/, "") // Remove extension
+      .replace(/\/index$/, ""); // Remove /index
 
     // Extract path after 'api' directory
-    const apiIndex = route.lastIndexOf('/api');
+    const apiIndex = route.lastIndexOf("/api");
     if (apiIndex !== -1) {
       route = route.slice(apiIndex);
     }
@@ -148,11 +151,11 @@ export class ApiLoader {
     try {
       // Convert Windows path to file:// URL
       let importPath = filePath;
-      if (process.platform === 'win32') {
+      if (process.platform === "win32") {
         // Normalize: backslashes → forward slashes
-        const normalized = filePath.replace(/\\/g, '/');
+        const normalized = filePath.replace(/\\/g, "/");
         // Add file:// scheme (with third slash for absolute paths)
-        importPath = 'file:///' + normalized;
+        importPath = "file:///" + normalized;
       }
 
       // Handle both CommonJS and ESM
@@ -190,7 +193,7 @@ export class ApiLoader {
 export function createApiMiddleware(routes: LoadedRoute[]) {
   return async (req: any, res: any, next: any) => {
     // Only handle API routes
-    if (!req.url.startsWith('/api')) {
+    if (!req.url.startsWith("/api")) {
       return next();
     }
 
@@ -208,8 +211,8 @@ export function createApiMiddleware(routes: LoadedRoute[]) {
       // Execute handler
       await match.route.handler(req, res);
     } catch (err) {
-      console.error('API handler error:', err);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error("API handler error:", err);
+      res.status(500).json({ error: "Internal server error" });
     }
   };
 }
@@ -238,12 +241,12 @@ function matchPath(
   requestPath: string,
   routePath: string,
 ): Record<string, string | string[]> | null {
-  const routeParts = routePath.split('/').filter(Boolean);
-  const requestParts = requestPath.split('/').filter(Boolean);
+  const routeParts = routePath.split("/").filter(Boolean);
+  const requestParts = requestPath.split("/").filter(Boolean);
 
   // Skip 'api' prefix
-  if (routeParts[0] === 'api') routeParts.shift();
-  if (requestParts[0] === 'api') requestParts.shift();
+  if (routeParts[0] === "api") routeParts.shift();
+  if (requestParts[0] === "api") requestParts.shift();
 
   const params: Record<string, string | string[]> = {};
   let routeIndex = 0;
@@ -253,13 +256,13 @@ function matchPath(
     const routePart = routeParts[routeIndex];
     const requestPart = requestParts[requestIndex];
 
-    if (routePart.startsWith('[...')) {
+    if (routePart.startsWith("[...")) {
       // Catch-all
       const paramName = routePart.slice(4, -1);
       const remaining = requestParts.slice(requestIndex);
       params[paramName] = remaining;
       requestIndex = requestParts.length;
-    } else if (routePart.startsWith('[')) {
+    } else if (routePart.startsWith("[")) {
       // Dynamic segment
       const paramName = routePart.slice(1, -1);
       params[paramName] = requestPart;
@@ -276,7 +279,10 @@ function matchPath(
   }
 
   // Check if all parts matched
-  if (routeIndex === routeParts.length && requestIndex === requestParts.length) {
+  if (
+    routeIndex === routeParts.length &&
+    requestIndex === requestParts.length
+  ) {
     return params;
   }
 

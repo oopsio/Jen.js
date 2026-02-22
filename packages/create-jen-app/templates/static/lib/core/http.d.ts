@@ -25,7 +25,9 @@ import type { IncomingMessage } from "node:http";
  * // Header missing or empty
  * // Returns: {}
  */
-export declare function parseCookies(req: IncomingMessage): Record<string, string>;
+export declare function parseCookies(
+  req: IncomingMessage,
+): Record<string, string>;
 /**
  * Converts Node.js headers object to a flat string-valued object.
  *
@@ -49,4 +51,6 @@ export declare function parseCookies(req: IncomingMessage): Record<string, strin
  * // Output:
  * { accept: "text/html", "accept-encoding": "gzip, deflate", "content-type": "application/json" }
  */
-export declare function headersToObject(headers: IncomingMessage["headers"]): Record<string, string>;
+export declare function headersToObject(
+  headers: IncomingMessage["headers"],
+): Record<string, string>;

@@ -51,8 +51,7 @@ const mockBlogPosts = [
   {
     id: 4,
     title: "Performance Best Practices",
-    excerpt:
-      "Tips for keeping your SSR application fast and responsive...",
+    excerpt: "Tips for keeping your SSR application fast and responsive...",
     author: "Alice Brown",
     date: "2025-02-28",
     readTime: "10 min read",
@@ -60,7 +59,8 @@ const mockBlogPosts = [
   {
     id: 5,
     title: "Caching Strategies for SSR",
-    excerpt: "Learn how to implement intelligent caching for better performance...",
+    excerpt:
+      "Learn how to implement intelligent caching for better performance...",
     author: "Charlie Wilson",
     date: "2025-02-20",
     readTime: "7 min read",

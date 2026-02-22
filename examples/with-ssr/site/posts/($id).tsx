@@ -215,9 +215,7 @@ export default function PostPage({ data, params }: any) {
                     </a>
                   </h3>
                   <p>{p.excerpt}</p>
-                  <p style={{ fontSize: "0.85rem", color: "#999" }}>
-                    {p.date}
-                  </p>
+                  <p style={{ fontSize: "0.85rem", color: "#999" }}>{p.date}</p>
                 </div>
               ))}
             </div>

@@ -280,9 +280,7 @@ export const COMPONENTS: Record<string, ComponentDef> = {
   Callout,
 };
 
-export function parseComponentTag(
-  html: string,
-): {
+export function parseComponentTag(html: string): {
   tag: string;
   props: ComponentProps;
   content: string;

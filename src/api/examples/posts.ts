@@ -4,7 +4,7 @@
  * Example showing HTTP method handling and request body parsing
  */
 
-import type { ApiRequest, ApiResponse } from '../index';
+import type { ApiRequest, ApiResponse } from "../index";
 
 interface Post {
   id: number;
@@ -13,20 +13,20 @@ interface Post {
 }
 
 const posts: Post[] = [
-  { id: 1, title: 'First Post', content: 'Hello World' },
-  { id: 2, title: 'Second Post', content: 'Jen.js is awesome' },
+  { id: 1, title: "First Post", content: "Hello World" },
+  { id: 2, title: "Second Post", content: "Jen.js is awesome" },
 ];
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     // Get all posts
     res.status(200).json({ data: posts });
-  } else if (req.method === 'POST') {
+  } else if (req.method === "POST") {
     // Create new post
     const { title, content } = req.body;
 
     if (!title || !content) {
-      return res.status(400).json({ error: 'Missing title or content' });
+      return res.status(400).json({ error: "Missing title or content" });
     }
 
     const newPost: Post = {
@@ -38,7 +38,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     posts.push(newPost);
     res.status(201).json({ data: newPost });
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: "Method not allowed" });
   }
 }
 
@@ -46,6 +46,6 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 export const config = {
   maxDuration: 30,
   bodyParser: {
-    sizeLimit: '1mb',
+    sizeLimit: "1mb",
   },
 };

@@ -28,7 +28,8 @@ export class FeatureDisabledError extends Error {
     public feature: FeatureName,
     context?: string,
   ) {
-    const msg = `Feature "${feature}" is not enabled. ` +
+    const msg =
+      `Feature "${feature}" is not enabled. ` +
       `Enable it in jen.config.ts with: features: { ${feature}: true }${context ? ` (${context})` : ""}`;
     super(msg);
     this.name = "FeatureDisabledError";
@@ -39,7 +40,10 @@ export class FeatureDisabledError extends Error {
  * Feature configuration errors indicate invalid feature configuration.
  */
 export class FeatureConfigError extends Error {
-  constructor(public feature: FeatureName, details: string) {
+  constructor(
+    public feature: FeatureName,
+    details: string,
+  ) {
     super(`Invalid configuration for feature "${feature}": ${details}`);
     this.name = "FeatureConfigError";
   }
@@ -62,7 +66,11 @@ export class FeatureConfigError extends Error {
  *   // ... API setup code
  * }
  */
-export function guardFeature(features: ResolvedFeatures, feature: FeatureName, context?: string): void {
+export function guardFeature(
+  features: ResolvedFeatures,
+  feature: FeatureName,
+  context?: string,
+): void {
   if (!isFeatureEnabled(features, feature)) {
     throw new FeatureDisabledError(feature, context);
   }
@@ -78,13 +86,17 @@ export function guardFeature(features: ResolvedFeatures, feature: FeatureName, c
  *   // ... code that uses both features
  * }
  */
-export function guardFeatures(features: ResolvedFeatures, required: FeatureName[], context?: string): void {
+export function guardFeatures(
+  features: ResolvedFeatures,
+  required: FeatureName[],
+  context?: string,
+): void {
   const missing = required.filter((f) => !isFeatureEnabled(features, f));
   if (missing.length > 0) {
     const list = missing.join(", ");
     throw new Error(
       `Features required: ${list}. ` +
-      `Enable them in jen.config.ts${context ? ` (${context})` : ""}`,
+        `Enable them in jen.config.ts${context ? ` (${context})` : ""}`,
     );
   }
 }
@@ -99,7 +111,10 @@ export function guardFeatures(features: ResolvedFeatures, required: FeatureName[
  *   const result = handleApiRequest(...);
  * }
  */
-export function isFeatureAvailable(features: ResolvedFeatures, feature: FeatureName): feature is FeatureName {
+export function isFeatureAvailable(
+  features: ResolvedFeatures,
+  feature: FeatureName,
+): feature is FeatureName {
   return isFeatureEnabled(features, feature);
 }
 
@@ -127,7 +142,9 @@ export function guardedFunction<T extends (...args: any[]) => any>(
 /**
  * Async version of guardedFunction for async handlers.
  */
-export function guardedAsyncFunction<T extends (...args: any[]) => Promise<any>>(
+export function guardedAsyncFunction<
+  T extends (...args: any[]) => Promise<any>,
+>(
   feature: FeatureName,
   fn: T,
   context?: string,
@@ -149,7 +166,10 @@ export function guardedAsyncFunction<T extends (...args: any[]) => Promise<any>>
  *   return handleApiRequest(ctx);
  * }));
  */
-export function createFeatureMiddleware(feature: FeatureName, context?: string) {
+export function createFeatureMiddleware(
+  feature: FeatureName,
+  context?: string,
+) {
   return (features: ResolvedFeatures) => {
     guardFeature(features, feature, context);
   };
@@ -167,11 +187,18 @@ export interface FeatureConfigValidator {
 /**
  * Validates feature configuration against a schema.
  */
-export function validateFeatureConfig(feature: FeatureName, config: any, validator?: FeatureConfigValidator): void {
+export function validateFeatureConfig(
+  feature: FeatureName,
+  config: any,
+  validator?: FeatureConfigValidator,
+): void {
   if (!validator) return;
 
   const result = validator.validate(config);
   if (!result.valid) {
-    throw new FeatureConfigError(feature, result.errors?.join("; ") || "Invalid configuration");
+    throw new FeatureConfigError(
+      feature,
+      result.errors?.join("; ") || "Invalid configuration",
+    );
   }
 }

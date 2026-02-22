@@ -11,28 +11,28 @@ Configure your Jen.js project using `jen.config.ts` in the project root.
 ## Basic Configuration
 
 ```ts
-import { defineConfig } from 'jenjs';
+import { defineConfig } from "jenjs";
 
 export default defineConfig({
-  projectName: 'My Site',
-  description: 'My awesome site',
-  
+  projectName: "My Site",
+  description: "My awesome site",
+
   build: {
-    strategy: 'static', // 'static' or 'ssr'
-    outDir: 'dist',
+    strategy: "static", // 'static' or 'ssr'
+    outDir: "dist",
     minify: true,
     hashAssets: true,
   },
-  
+
   dev: {
     port: 3000,
-    host: 'localhost',
+    host: "localhost",
     hmr: true,
   },
-  
+
   server: {
     port: 3000,
-    host: '0.0.0.0',
+    host: "0.0.0.0",
   },
 });
 ```
@@ -191,12 +191,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 Configure middleware stack:
 
 ```ts
-middleware: [
-  'cors',
-  'logger',
-  'security-headers',
-  'rate-limit',
-]
+middleware: ["cors", "logger", "security-headers", "rate-limit"];
 ```
 
 ## Plugins
@@ -204,10 +199,7 @@ middleware: [
 Load plugins:
 
 ```ts
-plugins: [
-  'sitemap-plugin',
-  'rss-plugin',
-]
+plugins: ["sitemap-plugin", "rss-plugin"];
 ```
 
 ## Type Checking
@@ -224,42 +216,42 @@ typeCheck: {
 ## Complete Example
 
 ```ts
-import { defineConfig } from 'jenjs';
+import { defineConfig } from "jenjs";
 
 export default defineConfig({
-  projectName: 'My Blog',
-  description: 'A modern blog built with Jen.js',
-  
+  projectName: "My Blog",
+  description: "A modern blog built with Jen.js",
+
   build: {
-    strategy: 'static',
-    outDir: 'dist',
+    strategy: "static",
+    outDir: "dist",
     minify: true,
     hashAssets: true,
   },
-  
+
   dev: {
     port: 3000,
-    host: 'localhost',
+    host: "localhost",
     hmr: true,
   },
-  
+
   server: {
     port: 3000,
-    host: '0.0.0.0',
+    host: "0.0.0.0",
   },
-  
+
   routes: {
-    basePath: '/',
+    basePath: "/",
     trailingSlash: false,
   },
-  
+
   features: {
     islands: true,
     imageOptimization: true,
     cssExtraction: true,
   },
-  
-  middleware: ['logger', 'cors'],
+
+  middleware: ["logger", "cors"],
 });
 ```
 

@@ -51,7 +51,9 @@ export type FeatureName =
  * - `false` - Disabled, excluded from bundle
  * - Object - Enabled with custom configuration options
  */
-export type FeatureConfig = Partial<Record<FeatureName, boolean | Record<string, any>>>;
+export type FeatureConfig = Partial<
+  Record<FeatureName, boolean | Record<string, any>>
+>;
 
 /**
  * Resolved feature state after validation.
@@ -93,12 +95,15 @@ export function resolveFeatures(userConfig?: FeatureConfig): ResolvedFeatures {
 
   for (const [key, value] of Object.entries(userConfig)) {
     if (!(key in DEFAULT_FEATURES)) {
-      console.warn(`⚠️  Unknown feature: "${key}". Valid features are: ${Object.keys(DEFAULT_FEATURES).join(", ")}`);
+      console.warn(
+        `⚠️  Unknown feature: "${key}". Valid features are: ${Object.keys(DEFAULT_FEATURES).join(", ")}`,
+      );
       continue;
     }
 
     // Support boolean shorthand and object with enabled property
-    const isEnabled = typeof value === "boolean" ? value : value?.enabled !== false;
+    const isEnabled =
+      typeof value === "boolean" ? value : value?.enabled !== false;
     resolved[key as FeatureName] = isEnabled;
   }
 
@@ -126,7 +131,10 @@ export function getDisabledFeatures(resolved: ResolvedFeatures): FeatureName[] {
 /**
  * Checks if a specific feature is enabled.
  */
-export function isFeatureEnabled(resolved: ResolvedFeatures, feature: FeatureName): boolean {
+export function isFeatureEnabled(
+  resolved: ResolvedFeatures,
+  feature: FeatureName,
+): boolean {
   return resolved[feature] ?? false;
 }
 
@@ -134,9 +142,14 @@ export function isFeatureEnabled(resolved: ResolvedFeatures, feature: FeatureNam
  * Runtime assertion that a feature is enabled.
  * Throws helpful error if feature is disabled.
  */
-export function requireFeature(resolved: ResolvedFeatures, feature: FeatureName, context?: string): void {
+export function requireFeature(
+  resolved: ResolvedFeatures,
+  feature: FeatureName,
+  context?: string,
+): void {
   if (!isFeatureEnabled(resolved, feature)) {
-    const msg = `Feature "${feature}" is not enabled. ` +
+    const msg =
+      `Feature "${feature}" is not enabled. ` +
       `Enable it in jen.config.ts: features: { ${feature}: true }${context ? ` (${context})` : ""}`;
     throw new Error(msg);
   }
@@ -156,7 +169,10 @@ export interface FeatureBuildMetadata {
 /**
  * Creates build metadata for introspection and debugging.
  */
-export function createBuildMetadata(resolved: ResolvedFeatures, config?: FeatureConfig): FeatureBuildMetadata {
+export function createBuildMetadata(
+  resolved: ResolvedFeatures,
+  config?: FeatureConfig,
+): FeatureBuildMetadata {
   return {
     buildTime: new Date().toISOString(),
     enabledFeatures: getEnabledFeatures(resolved),

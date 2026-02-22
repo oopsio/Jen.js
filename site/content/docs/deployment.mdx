@@ -56,7 +56,7 @@ Configure in `jen.config.ts`:
 ```ts
 export default {
   build: {
-    basePath: '/repository-name', // If not using a custom domain
+    basePath: "/repository-name", // If not using a custom domain
   },
 };
 ```
@@ -196,7 +196,7 @@ Monitor errors in production:
 // sentry.ts
 import * as Sentry from "@sentry/browser";
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
     environment: import.meta.env.NODE_ENV,
@@ -241,7 +241,7 @@ For applications using databases:
 ### Vercel PostgreSQL
 
 ```ts
-import { sql } from '@vercel/postgres';
+import { sql } from "@vercel/postgres";
 
 const data = await sql`SELECT * FROM posts`;
 ```
@@ -249,7 +249,7 @@ const data = await sql`SELECT * FROM posts`;
 ### MongoDB Atlas
 
 ```ts
-import { MongoClient } from 'mongodb';
+import { MongoClient } from "mongodb";
 
 const client = new MongoClient(process.env.MONGODB_URI);
 ```
@@ -330,7 +330,7 @@ Implement health check endpoint:
 export const GET = async (req) => {
   return {
     statusCode: 200,
-    body: JSON.stringify({ status: 'ok' }),
+    body: JSON.stringify({ status: "ok" }),
   };
 };
 ```

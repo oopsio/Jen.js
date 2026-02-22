@@ -33,7 +33,7 @@ const cache = new Map();
  * @returns Hex-encoded SHA-1 hash
  */
 function etagOf(s) {
-    return createHash("sha1").update(s).digest("hex");
+  return createHash("sha1").update(s).digest("hex");
 }
 /**
  * Generate the browser-safe hydration runtime code.
@@ -46,8 +46,8 @@ function etagOf(s) {
  * @returns ES module code string for browser hydration runtime
  */
 export function runtimeHydrateModule() {
-    // Browser-safe runtime (ESM) using CDN preact (fast + zero bundler)
-    return `
+  // Browser-safe runtime (ESM) using CDN preact (fast + zero bundler)
+  return `
 import { hydrate } from "https://esm.sh/preact@10.25.4";
 import { h } from "https://esm.sh/preact@10.25.4";
 
@@ -80,7 +80,7 @@ export async function hydrateClient(entryPath) {
  * @param filePath - Absolute file path to invalidate
  */
 export function invalidateCache(filePath) {
-    cache.delete(filePath);
+  cache.delete(filePath);
 }
 /**
  * Build a client-side hydration module for a route.
@@ -115,64 +115,63 @@ export function invalidateCache(filePath) {
  * @returns ES module JavaScript code (browser-executable)
  */
 export function buildHydrationModule(routeIdOrPath) {
-    // routeIdOrPath is a file path; future versions may support route IDs via config
-    let filePath = routeIdOrPath;
-    // Return fallback if file doesn't exist
-    if (!existsSync(filePath)) {
-        return `export default function Page(){ return null }`;
+  // routeIdOrPath is a file path; future versions may support route IDs via config
+  let filePath = routeIdOrPath;
+  // Return fallback if file doesn't exist
+  if (!existsSync(filePath)) {
+    return `export default function Page(){ return null }`;
+  }
+  const key = filePath;
+  // Return cached result if available (invalidated by invalidateCache)
+  if (cache.has(key)) {
+    return cache.get(key).js;
+  }
+  // Create proxy file to enable tree-shaking of server-only exports (loader, middleware, etc.)
+  // The proxy re-exports only the default component, letting esbuild eliminate other exports
+  const fileName = basename(filePath);
+  const dir = dirname(filePath);
+  const proxyContent = `export { default } from "./${fileName}";`;
+  try {
+    // Transpile proxy with esbuild for browser-safe JavaScript
+    const jsOutput = buildSync({
+      stdin: {
+        contents: proxyContent,
+        resolveDir: dir, // Resolve imports relative to route directory
+        sourcefile: "hydration-proxy.tsx",
+        loader: "tsx", // Support TypeScript and JSX
+      },
+      format: "esm",
+      platform: "browser", // Browser-specific optimizations
+      bundle: true, // Inline dependencies (except external)
+      write: false, // Return code instead of writing file
+      sourcemap: "inline", // Include source map for debugging
+      jsx: "automatic", // Automatic JSX transform (Preact)
+      jsxImportSource: "preact",
+      define: {
+        "process.env.NODE_ENV": JSON.stringify("development"),
+      },
+      // Preact and runtime must be available in browser (loaded separately)
+      external: [
+        "preact",
+        "preact/hooks",
+        "preact/jsx-runtime",
+        "preact-render-to-string",
+      ],
+      // TODO: Add plugin support for Vue/Svelte components
+      // plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+    }).outputFiles?.[0]?.text;
+    if (!jsOutput) {
+      console.error("[HYDRATION] Failed to build module for:", filePath);
+      return `export default function Page(){ return null }`;
     }
-    const key = filePath;
-    // Return cached result if available (invalidated by invalidateCache)
-    if (cache.has(key)) {
-        return cache.get(key).js;
-    }
-    // Create proxy file to enable tree-shaking of server-only exports (loader, middleware, etc.)
-    // The proxy re-exports only the default component, letting esbuild eliminate other exports
-    const fileName = basename(filePath);
-    const dir = dirname(filePath);
-    const proxyContent = `export { default } from "./${fileName}";`;
-    try {
-        // Transpile proxy with esbuild for browser-safe JavaScript
-        const jsOutput = buildSync({
-            stdin: {
-                contents: proxyContent,
-                resolveDir: dir, // Resolve imports relative to route directory
-                sourcefile: "hydration-proxy.tsx",
-                loader: "tsx", // Support TypeScript and JSX
-            },
-            format: "esm",
-            platform: "browser", // Browser-specific optimizations
-            bundle: true, // Inline dependencies (except external)
-            write: false, // Return code instead of writing file
-            sourcemap: "inline", // Include source map for debugging
-            jsx: "automatic", // Automatic JSX transform (Preact)
-            jsxImportSource: "preact",
-            define: {
-                "process.env.NODE_ENV": JSON.stringify("development"),
-            },
-            // Preact and runtime must be available in browser (loaded separately)
-            external: [
-                "preact",
-                "preact/hooks",
-                "preact/jsx-runtime",
-                "preact-render-to-string",
-            ],
-            // TODO: Add plugin support for Vue/Svelte components
-            // plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-        }).outputFiles?.[0]?.text;
-        if (!jsOutput) {
-            console.error("[HYDRATION] Failed to build module for:", filePath);
-            return `export default function Page(){ return null }`;
-        }
-        // Cache result with ETag
-        const etag = etagOf(jsOutput);
-        cache.set(key, { js: jsOutput, etag });
-        return jsOutput;
-    }
-    catch (err) {
-        console.error("[HYDRATION] Build error for", filePath, ":", err);
-        return `export default function Page(){ return null }`;
-    }
+    // Cache result with ETag
+    const etag = etagOf(jsOutput);
+    cache.set(key, { js: jsOutput, etag });
+    return jsOutput;
+  } catch (err) {
+    console.error("[HYDRATION] Build error for", filePath, ":", err);
+    return `export default function Page(){ return null }`;
+  }
 }
 /**
  * Retrieve the ETag (cache hash) for a compiled hydration module.
@@ -182,6 +181,6 @@ export function buildHydrationModule(routeIdOrPath) {
  * @returns ETag hash string or null if not cached
  */
 export function getHydrationEtag(filePath) {
-    const v = cache.get(filePath);
-    return v?.etag ?? null;
+  const v = cache.get(filePath);
+  return v?.etag ?? null;
 }

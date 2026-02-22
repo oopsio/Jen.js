@@ -1,6 +1,12 @@
-export declare function resolveSitePath(config: {
+export declare function resolveSitePath(
+  config: {
     siteDir: string;
-}, ...p: string[]): string;
-export declare function resolveDistPath(config: {
+  },
+  ...p: string[]
+): string;
+export declare function resolveDistPath(
+  config: {
     distDir: string;
-}, ...p: string[]): string;
+  },
+  ...p: string[]
+): string;

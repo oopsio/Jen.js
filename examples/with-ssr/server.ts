@@ -59,7 +59,9 @@ async function loadConfig() {
     }
   } catch (e) {
     // Final fallback
-    const fallbackUrl = new URL("file://" + resolve("./jen.config.js").replace(/\\/g, "/"));
+    const fallbackUrl = new URL(
+      "file://" + resolve("./jen.config.js").replace(/\\/g, "/"),
+    );
     fallbackUrl.searchParams.set("t", Date.now().toString());
     config = (await import(fallbackUrl.href)).default;
   }

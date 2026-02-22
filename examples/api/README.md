@@ -39,15 +39,15 @@ examples/api/
 
 ```typescript
 // src/api/hello.ts
-import type { ApiRequest, ApiResponse } from '@src/api';
+import type { ApiRequest, ApiResponse } from "@src/api";
 
 export default function handler(req: ApiRequest, res: ApiResponse) {
-  res.status(200).json({ message: 'Hello from Jen.js API!' });
+  res.status(200).json({ message: "Hello from Jen.js API!" });
 }
 
 export const config = {
   maxDuration: 30,
-  bodyParser: { sizeLimit: '1mb' }
+  bodyParser: { sizeLimit: "1mb" },
 };
 ```
 
@@ -55,14 +55,14 @@ export const config = {
 
 ```typescript
 // src/api/todos/[id].ts
-import type { ApiRequest, ApiResponse } from '@src/api';
+import type { ApiRequest, ApiResponse } from "@src/api";
 
 export default function handler(req: ApiRequest, res: ApiResponse) {
   const { id } = req.params; // Extract from [id]
-  
-  if (req.method === 'GET') {
+
+  if (req.method === "GET") {
     res.json({ id, title: `Todo ${id}` });
-  } else if (req.method === 'PUT') {
+  } else if (req.method === "PUT") {
     res.json({ id, updated: true });
   }
 }
@@ -72,13 +72,13 @@ export default function handler(req: ApiRequest, res: ApiResponse) {
 
 ```typescript
 // src/api/files/[...path].ts
-import type { ApiRequest, ApiResponse } from '@src/api';
+import type { ApiRequest, ApiResponse } from "@src/api";
 
 export default function handler(req: ApiRequest, res: ApiResponse) {
   const { path } = req.params; // path will be array
   // /api/files/docs/readme.md -> path = ['docs', 'readme.md']
-  
-  res.json({ filePath: path.join('/') });
+
+  res.json({ filePath: path.join("/") });
 }
 ```
 
@@ -86,12 +86,12 @@ export default function handler(req: ApiRequest, res: ApiResponse) {
 
 ```typescript
 // src/api/search.ts
-import type { ApiRequest, ApiResponse } from '@src/api';
+import type { ApiRequest, ApiResponse } from "@src/api";
 
 export default function handler(req: ApiRequest, res: ApiResponse) {
   const { q, limit } = req.query;
   const body = req.body; // Automatically parsed JSON
-  
+
   res.json({ query: q, limit, body });
 }
 ```
@@ -100,18 +100,18 @@ export default function handler(req: ApiRequest, res: ApiResponse) {
 
 ```typescript
 // src/server.ts
-import express from 'express';
-import { ApiLoader, createApiMiddleware } from '@src/api';
+import express from "express";
+import { ApiLoader, createApiMiddleware } from "@src/api";
 
 const app = express();
 
 // Load all API routes from src/api directory
 const loader = new ApiLoader();
-loader.loadRoutes('./src/api').then(routes => {
+loader.loadRoutes("./src/api").then((routes) => {
   app.use(createApiMiddleware(routes));
 });
 
-app.listen(3000, () => console.log('API server running'));
+app.listen(3000, () => console.log("API server running"));
 ```
 
 ## Running the Example
@@ -129,11 +129,13 @@ npm run dev
 ## API Endpoints
 
 ### Hello World
+
 ```bash
 curl http://localhost:3000/api/hello
 ```
 
 ### Todos (List & Create)
+
 ```bash
 # List all todos
 curl http://localhost:3000/api/todos
@@ -145,6 +147,7 @@ curl -X POST http://localhost:3000/api/todos \
 ```
 
 ### Todo Detail (Get, Update, Delete)
+
 ```bash
 # Get todo by ID
 curl http://localhost:3000/api/todos/1
@@ -159,22 +162,26 @@ curl -X DELETE http://localhost:3000/api/todos/1
 ```
 
 ### Search with Query Parameters
+
 ```bash
 curl "http://localhost:3000/api/search?q=javascript&limit=5"
 ```
 
 ### Upload Files
+
 ```bash
 curl -X POST http://localhost:3000/api/upload \
   -F "file=@/path/to/file.txt"
 ```
 
 ### Nested Dynamic Routes
+
 ```bash
 curl http://localhost:3000/api/users/123/profile
 ```
 
 ### Catch-All Routes
+
 ```bash
 curl http://localhost:3000/api/files/docs/guides/getting-started.md
 curl http://localhost:3000/api/files/images/2024/photo.jpg
@@ -182,54 +189,57 @@ curl http://localhost:3000/api/files/images/2024/photo.jpg
 
 ## Key Differences from Next.js
 
-| Feature | Next.js | Jen.js |
-|---------|---------|--------|
-| Framework | React | Preact |
-| Bundle size | Large | Lightweight |
-| Setup | Complex | Simple |
-| API routes | ✅ | ✅ |
-| Type safety | ✅ | ✅ |
-| Query parsing | Auto | Auto |
-| Body parsing | Auto | Auto |
-| Streaming | ✅ | ✅ |
-| Middleware | ✅ | ✅ |
+| Feature       | Next.js | Jen.js      |
+| ------------- | ------- | ----------- |
+| Framework     | React   | Preact      |
+| Bundle size   | Large   | Lightweight |
+| Setup         | Complex | Simple      |
+| API routes    | ✅      | ✅          |
+| Type safety   | ✅      | ✅          |
+| Query parsing | Auto    | Auto        |
+| Body parsing  | Auto    | Auto        |
+| Streaming     | ✅      | ✅          |
+| Middleware    | ✅      | ✅          |
 
 ## Advanced Features
 
 ### Custom Middleware
+
 ```typescript
 export default function handler(req: ApiRequest, res: ApiResponse) {
   // Add custom headers
-  res.header('X-Custom', 'value');
-  
+  res.header("X-Custom", "value");
+
   // Check authentication
   const auth = req.cookies.auth;
   if (!auth) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
   }
-  
-  res.json({ data: 'protected' });
+
+  res.json({ data: "protected" });
 }
 ```
 
 ### Streaming Responses
+
 ```typescript
 export default async function handler(req: ApiRequest, res: ApiResponse) {
-  res.header('Content-Type', 'text/event-stream');
-  
+  res.header("Content-Type", "text/event-stream");
+
   for (let i = 0; i < 10; i++) {
     res.write(`data: ${i}\n\n`);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 1000));
   }
-  
+
   res.end();
 }
 ```
 
 ### File Download
+
 ```typescript
 export default function handler(req: ApiRequest, res: ApiResponse) {
-  res.download('./files/document.pdf', 'my-document.pdf');
+  res.download("./files/document.pdf", "my-document.pdf");
 }
 ```
 
@@ -245,16 +255,16 @@ export default function handler(req: ApiRequest, res: ApiResponse) {
 
 ```typescript
 // Example test
-import { handler } from './api/todos';
+import { handler } from "./api/todos";
 
-test('GET /api/todos', async () => {
-  const req = { method: 'GET', query: {}, params: {}, body: null };
+test("GET /api/todos", async () => {
+  const req = { method: "GET", query: {}, params: {}, body: null };
   const res = { json: jest.fn() };
-  
+
   await handler(req, res);
-  
+
   expect(res.json).toHaveBeenCalledWith(
-    expect.objectContaining({ data: expect.any(Array) })
+    expect.objectContaining({ data: expect.any(Array) }),
   );
 });
 ```

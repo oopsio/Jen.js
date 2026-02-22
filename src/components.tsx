@@ -1,5 +1,5 @@
-import { h, FunctionComponent, ComponentChild } from 'preact';
-import { useEffect } from 'preact/hooks';
+import { h, FunctionComponent, ComponentChild } from "preact";
+import { useEffect } from "preact/hooks";
 
 /**
  * Image component with lazy loading and responsive picture support
@@ -20,7 +20,7 @@ interface ImageProps {
   /** Image height in pixels */
   height?: number;
   /** Loading strategy: 'lazy' (default) or 'eager' */
-  loading?: 'lazy' | 'eager';
+  loading?: "lazy" | "eager";
   /** CSS class name */
   className?: string;
 }
@@ -44,7 +44,7 @@ const Image: FunctionComponent<ImageProps> = ({
   alt,
   width,
   height,
-  loading = 'lazy',
+  loading = "lazy",
   className,
 }) => {
   return (
@@ -91,7 +91,7 @@ interface SeoProps {
   /** Open Graph image URL */
   ogImage?: string;
   /** Twitter card type: 'summary', 'summary_large_image', 'app', or 'player' */
-  twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  twitterCard?: "summary" | "summary_large_image" | "app" | "player";
 }
 
 /**
@@ -118,11 +118,13 @@ const Seo: FunctionComponent<SeoProps> = ({
 
     // Helper to set or create meta tags
     const setMeta = (name: string, content: string, property = false) => {
-      const attr = property ? 'property' : 'name';
-      let meta = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement;
+      const attr = property ? "property" : "name";
+      let meta = document.querySelector(
+        `meta[${attr}="${name}"]`,
+      ) as HTMLMetaElement;
 
       if (!meta) {
-        meta = document.createElement('meta');
+        meta = document.createElement("meta");
         meta.setAttribute(attr, name);
         document.head.appendChild(meta);
       }
@@ -131,27 +133,38 @@ const Seo: FunctionComponent<SeoProps> = ({
     };
 
     // Set meta tags
-    if (description) setMeta('description', description);
-    if (keywords) setMeta('keywords', keywords);
+    if (description) setMeta("description", description);
+    if (keywords) setMeta("keywords", keywords);
     if (canonical) {
-      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+      let link = document.querySelector(
+        'link[rel="canonical"]',
+      ) as HTMLLinkElement;
       if (!link) {
-        link = document.createElement('link');
-        link.rel = 'canonical';
+        link = document.createElement("link");
+        link.rel = "canonical";
         document.head.appendChild(link);
       }
       link.href = canonical;
     }
 
     // Open Graph tags
-    if (ogTitle) setMeta('og:title', ogTitle, true);
-    if (ogDescription) setMeta('og:description', ogDescription, true);
-    if (ogImage) setMeta('og:image', ogImage, true);
-    setMeta('og:type', 'website', true);
+    if (ogTitle) setMeta("og:title", ogTitle, true);
+    if (ogDescription) setMeta("og:description", ogDescription, true);
+    if (ogImage) setMeta("og:image", ogImage, true);
+    setMeta("og:type", "website", true);
 
     // Twitter tags
-    if (twitterCard) setMeta('twitter:card', twitterCard);
-  }, [title, description, keywords, canonical, ogTitle, ogDescription, ogImage, twitterCard]);
+    if (twitterCard) setMeta("twitter:card", twitterCard);
+  }, [
+    title,
+    description,
+    keywords,
+    canonical,
+    ogTitle,
+    ogDescription,
+    ogImage,
+    twitterCard,
+  ]);
 
   // Server-side rendering: return meta tags
   // Note: In Jen.js SSR context, render these elements to be included in head
@@ -162,7 +175,9 @@ const Seo: FunctionComponent<SeoProps> = ({
       {keywords && <meta name="keywords" content={keywords} />}
       {canonical && <link rel="canonical" href={canonical} />}
       {ogTitle && <meta property="og:title" content={ogTitle} />}
-      {ogDescription && <meta property="og:description" content={ogDescription} />}
+      {ogDescription && (
+        <meta property="og:description" content={ogDescription} />
+      )}
       {ogImage && <meta property="og:image" content={ogImage} />}
       <meta property="og:type" content="website" />
       {twitterCard && <meta name="twitter:card" content={twitterCard} />}
@@ -197,15 +212,17 @@ interface PWAProps {
  * Service worker errors are logged to console but don't break the app.
  */
 const PWA: FunctionComponent<PWAProps> = ({
-  manifestPath = '/manifest.json',
-  swPath = '/sw.js',
+  manifestPath = "/manifest.json",
+  swPath = "/sw.js",
 }) => {
   useEffect(() => {
     // Register service worker in browser
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register(swPath)
-        .catch((err) => console.error('Service worker registration failed:', err));
+        .catch((err) =>
+          console.error("Service worker registration failed:", err),
+        );
     }
   }, [swPath]);
 
@@ -214,7 +231,10 @@ const PWA: FunctionComponent<PWAProps> = ({
       <link rel="manifest" href={manifestPath} />
       <meta name="theme-color" content="#000000" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+      />
     </>
   );
 };

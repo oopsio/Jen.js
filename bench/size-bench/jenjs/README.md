@@ -16,7 +16,6 @@ npm run dev
 - `npm run start` - Start production server
 - `npm run typecheck` - Check TypeScript types
 
-
 ## Project Structure
 
 ```

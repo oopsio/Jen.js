@@ -33,17 +33,16 @@ const MetadataStorage = new WeakMap();
  * @returns The metadata value, or undefined if not found.
  */
 function getMetadata(key, target, propertyKey) {
-    // Use native Reflect API if available for better compatibility.
+  // Use native Reflect API if available for better compatibility.
+  // @ts-ignore
+  if (typeof Reflect !== "undefined" && Reflect.getMetadata) {
     // @ts-ignore
-    if (typeof Reflect !== "undefined" && Reflect.getMetadata) {
-        // @ts-ignore
-        return Reflect.getMetadata(key, target, propertyKey);
-    }
-    const targetMap = MetadataStorage.get(target);
-    if (!targetMap)
-        return undefined;
-    const mapKey = propertyKey ? `${String(key)}:${String(propertyKey)}` : key;
-    return targetMap.get(mapKey);
+    return Reflect.getMetadata(key, target, propertyKey);
+  }
+  const targetMap = MetadataStorage.get(target);
+  if (!targetMap) return undefined;
+  const mapKey = propertyKey ? `${String(key)}:${String(propertyKey)}` : key;
+  return targetMap.get(mapKey);
 }
 /**
  * Stores metadata on a target for use by decorators.
@@ -55,19 +54,19 @@ function getMetadata(key, target, propertyKey) {
  * @param propertyKey Optional property name for method/property-level metadata.
  */
 function defineMetadata(key, value, target, propertyKey) {
-    // Use native Reflect API if available for better compatibility.
+  // Use native Reflect API if available for better compatibility.
+  // @ts-ignore
+  if (typeof Reflect !== "undefined" && Reflect.defineMetadata) {
     // @ts-ignore
-    if (typeof Reflect !== "undefined" && Reflect.defineMetadata) {
-        // @ts-ignore
-        return Reflect.defineMetadata(key, value, target, propertyKey);
-    }
-    let targetMap = MetadataStorage.get(target);
-    if (!targetMap) {
-        targetMap = new Map();
-        MetadataStorage.set(target, targetMap);
-    }
-    const mapKey = propertyKey ? `${String(key)}:${String(propertyKey)}` : key;
-    targetMap.set(mapKey, value);
+    return Reflect.defineMetadata(key, value, target, propertyKey);
+  }
+  let targetMap = MetadataStorage.get(target);
+  if (!targetMap) {
+    targetMap = new Map();
+    MetadataStorage.set(target, targetMap);
+  }
+  const mapKey = propertyKey ? `${String(key)}:${String(propertyKey)}` : key;
+  targetMap.set(mapKey, value);
 }
 // Unique symbol to store middleware metadata on classes and methods.
 export const MIDDLEWARE_METADATA_KEY = Symbol("jen:middleware");
@@ -87,16 +86,25 @@ export const MIDDLEWARE_METADATA_KEY = Symbol("jen:middleware");
  * }
  */
 export function UseMiddleware(...middleware) {
-    return function (target, propertyKey, descriptor) {
-        if (descriptor) {
-            // Method decorator: attach middleware to a specific method.
-            const existing = getMetadata(MIDDLEWARE_METADATA_KEY, target, propertyKey) || [];
-            defineMetadata(MIDDLEWARE_METADATA_KEY, [...existing, ...middleware], target, propertyKey);
-        }
-        else {
-            // Class decorator: attach middleware to all methods in the class.
-            const existing = getMetadata(MIDDLEWARE_METADATA_KEY, target) || [];
-            defineMetadata(MIDDLEWARE_METADATA_KEY, [...existing, ...middleware], target);
-        }
-    };
+  return function (target, propertyKey, descriptor) {
+    if (descriptor) {
+      // Method decorator: attach middleware to a specific method.
+      const existing =
+        getMetadata(MIDDLEWARE_METADATA_KEY, target, propertyKey) || [];
+      defineMetadata(
+        MIDDLEWARE_METADATA_KEY,
+        [...existing, ...middleware],
+        target,
+        propertyKey,
+      );
+    } else {
+      // Class decorator: attach middleware to all methods in the class.
+      const existing = getMetadata(MIDDLEWARE_METADATA_KEY, target) || [];
+      defineMetadata(
+        MIDDLEWARE_METADATA_KEY,
+        [...existing, ...middleware],
+        target,
+      );
+    }
+  };
 }
