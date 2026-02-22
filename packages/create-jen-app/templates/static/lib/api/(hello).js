@@ -16,11 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 export default async function handler(ctx) {
-    return {
-        ok: true,
-        message: "Hello from API route",
-        method: ctx.method,
-        query: ctx.query,
-        body: ctx.body,
-    };
+  return {
+    ok: true,
+    message: "Hello from API route",
+    method: ctx.method,
+    query: ctx.query,
+    body: ctx.body,
+  };
 }

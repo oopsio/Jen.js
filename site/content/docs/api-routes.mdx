@@ -23,12 +23,12 @@ pages/api/
 ## Basic API Route
 
 ```ts
-import type { ApiHandler } from 'jenjs';
+import type { ApiHandler } from "jenjs";
 
 export const GET: ApiHandler = async (req) => {
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: 'Hello, World!' }),
+    body: JSON.stringify({ message: "Hello, World!" }),
   };
 };
 
@@ -47,23 +47,23 @@ Define handlers for specific HTTP methods:
 
 ```ts
 export const GET: ApiHandler = async (req) => {
-  return { statusCode: 200, body: 'GET' };
+  return { statusCode: 200, body: "GET" };
 };
 
 export const POST: ApiHandler = async (req) => {
-  return { statusCode: 200, body: 'POST' };
+  return { statusCode: 200, body: "POST" };
 };
 
 export const PUT: ApiHandler = async (req) => {
-  return { statusCode: 200, body: 'PUT' };
+  return { statusCode: 200, body: "PUT" };
 };
 
 export const DELETE: ApiHandler = async (req) => {
-  return { statusCode: 200, body: 'DELETE' };
+  return { statusCode: 200, body: "DELETE" };
 };
 
 export const PATCH: ApiHandler = async (req) => {
-  return { statusCode: 200, body: 'PATCH' };
+  return { statusCode: 200, body: "PATCH" };
 };
 ```
 
@@ -94,7 +94,7 @@ export const GET: ApiHandler = async (req) => {
 export const POST: ApiHandler = async (req) => {
   const body = await req.json();
   const { name, email } = body;
-  
+
   return {
     statusCode: 201,
     body: JSON.stringify({ name, email }),
@@ -106,9 +106,9 @@ export const POST: ApiHandler = async (req) => {
 
 ```ts
 export const GET: ApiHandler = async (req) => {
-  const auth = req.headers['authorization'];
-  const contentType = req.headers['content-type'];
-  
+  const auth = req.headers["authorization"];
+  const contentType = req.headers["content-type"];
+
   return {
     statusCode: 200,
     body: JSON.stringify({ auth, contentType }),
@@ -124,7 +124,7 @@ export const GET: ApiHandler = async (req) => {
 export const GET: ApiHandler = async (req) => {
   return {
     statusCode: 200,
-    headers: { 'content-type': 'application/json' },
+    headers: { "content-type": "application/json" },
     body: JSON.stringify({ success: true }),
   };
 };
@@ -136,8 +136,8 @@ export const GET: ApiHandler = async (req) => {
 export const GET: ApiHandler = async (req) => {
   return {
     statusCode: 200,
-    headers: { 'content-type': 'text/html' },
-    body: '<h1>Hello</h1>',
+    headers: { "content-type": "text/html" },
+    body: "<h1>Hello</h1>",
   };
 };
 ```
@@ -148,7 +148,7 @@ export const GET: ApiHandler = async (req) => {
 export const GET: ApiHandler = async (req) => {
   return {
     statusCode: 400,
-    body: JSON.stringify({ error: 'Bad request' }),
+    body: JSON.stringify({ error: "Bad request" }),
   };
 };
 ```
@@ -162,14 +162,14 @@ Create dynamic API routes with `[param]`:
 export const GET: ApiHandler = async (req) => {
   const { id } = req.params;
   const user = await fetchUser(id);
-  
+
   if (!user) {
     return {
       statusCode: 404,
-      body: JSON.stringify({ error: 'User not found' }),
+      body: JSON.stringify({ error: "User not found" }),
     };
   }
-  
+
   return {
     statusCode: 200,
     body: JSON.stringify(user),
@@ -182,12 +182,12 @@ export const GET: ApiHandler = async (req) => {
 Use middleware in API routes:
 
 ```ts
-import { withAuth, withLogger } from './middleware';
+import { withAuth, withLogger } from "./middleware";
 
 export const GET = withAuth(
   withLogger(async (req) => {
-    return { statusCode: 200, body: 'Protected' };
-  })
+    return { statusCode: 200, body: "Protected" };
+  }),
 );
 ```
 
@@ -196,11 +196,11 @@ export const GET = withAuth(
 Query databases from API routes:
 
 ```ts
-import db from 'your-database';
+import db from "your-database";
 
 export const GET: ApiHandler = async (req) => {
   const posts = await db.posts.findAll();
-  
+
   return {
     statusCode: 200,
     body: JSON.stringify(posts),
@@ -215,21 +215,21 @@ Implement authentication in API routes:
 ```ts
 export const POST: ApiHandler = async (req) => {
   const { username, password } = await req.json();
-  
+
   const user = await authenticateUser(username, password);
-  
+
   if (!user) {
     return {
       statusCode: 401,
-      body: JSON.stringify({ error: 'Unauthorized' }),
+      body: JSON.stringify({ error: "Unauthorized" }),
     };
   }
-  
+
   const token = generateToken(user);
-  
+
   return {
     statusCode: 200,
-    headers: { 'set-cookie': `token=${token}` },
+    headers: { "set-cookie": `token=${token}` },
     body: JSON.stringify({ token }),
   };
 };
@@ -244,10 +244,10 @@ export const GET: ApiHandler = async (req) => {
   return {
     statusCode: 200,
     headers: {
-      'access-control-allow-origin': '*',
-      'access-control-allow-methods': 'GET, POST, PUT, DELETE',
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, PUT, DELETE",
     },
-    body: JSON.stringify({ data: 'public' }),
+    body: JSON.stringify({ data: "public" }),
   };
 };
 ```
@@ -266,9 +266,9 @@ export const GET: ApiHandler = async (req) => {
 
 export const POST: ApiHandler = async (req) => {
   const { name, email } = await req.json();
-  
+
   const user = await db.users.create({ name, email });
-  
+
   return {
     statusCode: 201,
     body: JSON.stringify(user),
@@ -279,14 +279,14 @@ export const POST: ApiHandler = async (req) => {
 export const GET: ApiHandler = async (req) => {
   const { id } = req.params;
   const user = await db.users.findById(id);
-  
+
   if (!user) {
     return {
       statusCode: 404,
-      body: JSON.stringify({ error: 'Not found' }),
+      body: JSON.stringify({ error: "Not found" }),
     };
   }
-  
+
   return {
     statusCode: 200,
     body: JSON.stringify(user),
@@ -296,9 +296,9 @@ export const GET: ApiHandler = async (req) => {
 export const PUT: ApiHandler = async (req) => {
   const { id } = req.params;
   const updates = await req.json();
-  
+
   const user = await db.users.update(id, updates);
-  
+
   return {
     statusCode: 200,
     body: JSON.stringify(user),
@@ -308,10 +308,10 @@ export const PUT: ApiHandler = async (req) => {
 export const DELETE: ApiHandler = async (req) => {
   const { id } = req.params;
   await db.users.delete(id);
-  
+
   return {
     statusCode: 204,
-    body: '',
+    body: "",
   };
 };
 ```

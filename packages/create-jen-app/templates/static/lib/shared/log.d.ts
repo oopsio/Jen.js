@@ -19,31 +19,31 @@
  * This is used throughout the framework for build output, server status, and diagnostics.
  */
 export declare const log: {
-    /**
-     * Logs an informational message with timestamp and [INFO] prefix.
-     * Used for progress updates, build completion, server startup, etc.
-     *
-     * @param msg Message to log
-     *
-     * @example log.info("Server running on port 3000");
-     */
-    info(msg: string): void;
-    /**
-     * Logs a warning message with timestamp and [WARN] prefix.
-     * Used for non-fatal issues, deprecated usage, or recoverable problems.
-     *
-     * @param msg Warning message to log
-     *
-     * @example log.warn("Configuration file not found, using defaults");
-     */
-    warn(msg: string): void;
-    /**
-     * Logs an error message with timestamp and [ERROR] prefix.
-     * Used for critical failures that require immediate attention.
-     *
-     * @param msg Error message to log
-     *
-     * @example log.error("Failed to compile SCSS: syntax error on line 42");
-     */
-    error(msg: string): void;
+  /**
+   * Logs an informational message with timestamp and [INFO] prefix.
+   * Used for progress updates, build completion, server startup, etc.
+   *
+   * @param msg Message to log
+   *
+   * @example log.info("Server running on port 3000");
+   */
+  info(msg: string): void;
+  /**
+   * Logs a warning message with timestamp and [WARN] prefix.
+   * Used for non-fatal issues, deprecated usage, or recoverable problems.
+   *
+   * @param msg Warning message to log
+   *
+   * @example log.warn("Configuration file not found, using defaults");
+   */
+  warn(msg: string): void;
+  /**
+   * Logs an error message with timestamp and [ERROR] prefix.
+   * Used for critical failures that require immediate attention.
+   *
+   * @param msg Error message to log
+   *
+   * @example log.error("Failed to compile SCSS: syntax error on line 42");
+   */
+  error(msg: string): void;
 };

@@ -34,15 +34,15 @@ const config: FrameworkConfig = {
   },
 
   inject: {
-  head: [
-    '<meta charset="utf-8">',
-    '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    "<title>Jen.js SSR Example</title>",
-    // --- Add Tailwind CDN ---
-    '<script src="https://cdn.tailwindcss.com"></script>'
-  ],
-  bodyEnd: [],
-},
+    head: [
+      '<meta charset="utf-8">',
+      '<meta name="viewport" content="width=device-width, initial-scale=1">',
+      "<title>Jen.js SSR Example</title>",
+      // --- Add Tailwind CDN ---
+      '<script src="https://cdn.tailwindcss.com"></script>',
+    ],
+    bodyEnd: [],
+  },
 
   css: {
     globalScss: "site/styles.scss",

@@ -1,27 +1,17 @@
 [
   {
-    "Next.js App Router": [
-      "747.50 KB"
-    ]
+    "Next.js App Router": ["747.50 KB"]
   },
   {
-    "Next.js Pages Router": [
-      "413.12 KB"
-    ]
+    "Next.js Pages Router": ["413.12 KB"]
   },
   {
-    "Nuxt 3": [
-      "150.95 KB"
-    ]
+    "Nuxt 3": ["150.95 KB"]
   },
   {
-    "SvelteKit": [
-      "66.90 KB"
-    ]
+    "SvelteKit": ["66.90 KB"]
   },
   {
-    "Jen.js": [
-      "188.00 Bytes"
-    ]
+    "Jen.js": ["188.00 Bytes"]
   }
-] 
+]

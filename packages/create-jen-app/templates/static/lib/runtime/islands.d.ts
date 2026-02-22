@@ -10,9 +10,9 @@ export type HydrationStrategy = "load" | "idle" | "visible";
  * Props interface for islands (not actively used, provided for type reference).
  */
 export interface IslandProps {
-    "client:load"?: boolean;
-    "client:idle"?: boolean;
-    "client:visible"?: boolean;
+  "client:load"?: boolean;
+  "client:idle"?: boolean;
+  "client:visible"?: boolean;
 }
 /**
  * Mark a component as an interactive island for partial hydration.
@@ -41,20 +41,23 @@ export interface IslandProps {
  * @param strategy - Hydration timing strategy.
  * @returns The same component with island metadata attached.
  */
-export declare function Island<P extends Record<string, any>>(Component: any, strategy: HydrationStrategy): any;
+export declare function Island<P extends Record<string, any>>(
+  Component: any,
+  strategy: HydrationStrategy,
+): any;
 /**
  * Metadata for a detected island extracted from server-rendered HTML.
  * Includes the island's unique ID, component path, hydration strategy, and serialized props.
  */
 export interface DetectedIsland {
-    /** Unique identifier for this island instance on the page. */
-    id: string;
-    /** Path to the component module (e.g., "./components/counter.js"). */
-    component: string;
-    /** Hydration strategy: when to hydrate this island. */
-    strategy: HydrationStrategy;
-    /** Serialized component props (deserialized from JSON in HTML comment). */
-    props: any;
+  /** Unique identifier for this island instance on the page. */
+  id: string;
+  /** Path to the component module (e.g., "./components/counter.js"). */
+  component: string;
+  /** Hydration strategy: when to hydrate this island. */
+  strategy: HydrationStrategy;
+  /** Serialized component props (deserialized from JSON in HTML comment). */
+  props: any;
 }
 /**
  * Generate an HTML comment marker that encodes island metadata.
@@ -73,7 +76,12 @@ export interface DetectedIsland {
  * @param props - Component props object (will be JSON.stringify'd).
  * @returns HTML comment string encoding the island metadata.
  */
-export declare function createIslandMarker(id: string, componentPath: string, strategy: HydrationStrategy, props: any): string;
+export declare function createIslandMarker(
+  id: string,
+  componentPath: string,
+  strategy: HydrationStrategy,
+  props: any,
+): string;
 /**
  * Extract island metadata from server-rendered HTML.
  * Client-side function that parses island markers from HTML comments.

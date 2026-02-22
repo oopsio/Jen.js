@@ -27,9 +27,9 @@
  * Replace with your actual types defined in your schema.
  */
 interface User {
-    id: string;
-    name: string;
-    email: string;
+  id: string;
+  name: string;
+  email: string;
 }
 /**
  * Example resolvers for user queries and mutations.
@@ -37,24 +37,21 @@ interface User {
  * In a real application, resolvers should query your database (JDB, etc.).
  */
 export declare const resolvers: {
-    /**
-     * Query all users.
-     * @returns Array of all users.
-     */
-    users: () => User[];
-    /**
-     * Create a new user.
-     * @param name User's full name.
-     * @param email User's email address.
-     * @returns The created user object with an ID.
-     */
-    createUser: ({ name, email }: {
-        name: string;
-        email: string;
-    }) => {
-        id: string;
-        name: string;
-        email: string;
-    };
+  /**
+   * Query all users.
+   * @returns Array of all users.
+   */
+  users: () => User[];
+  /**
+   * Create a new user.
+   * @param name User's full name.
+   * @param email User's email address.
+   * @returns The created user object with an ID.
+   */
+  createUser: ({ name, email }: { name: string; email: string }) => {
+    id: string;
+    name: string;
+    email: string;
+  };
 };
 export {};

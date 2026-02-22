@@ -35,18 +35,17 @@ import { log } from "../../shared/log.js";
  * kernel.use(logger);
  */
 export async function logger(ctx, next) {
-    const start = performance.now();
-    // Log request entry with method and URL.
-    const method = ctx.req.method;
-    const url = ctx.url.pathname;
-    const id = ctx.state.requestId ? `[${ctx.state.requestId}]` : "";
-    log.info(`${id} -> ${method} ${url}`);
-    try {
-        await next();
-    }
-    finally {
-        // Log response exit with status and elapsed time.
-        const ms = (performance.now() - start).toFixed(2);
-        log.info(`${id} <- ${method} ${url} ${ctx.res.statusCode} (${ms}ms)`);
-    }
+  const start = performance.now();
+  // Log request entry with method and URL.
+  const method = ctx.req.method;
+  const url = ctx.url.pathname;
+  const id = ctx.state.requestId ? `[${ctx.state.requestId}]` : "";
+  log.info(`${id} -> ${method} ${url}`);
+  try {
+    await next();
+  } finally {
+    // Log response exit with status and elapsed time.
+    const ms = (performance.now() - start).toFixed(2);
+    log.info(`${id} <- ${method} ${url} ${ctx.res.statusCode} (${ms}ms)`);
+  }
 }

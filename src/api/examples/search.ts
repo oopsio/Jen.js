@@ -4,13 +4,13 @@
  * Example showing query parameter handling
  */
 
-import type { ApiRequest, ApiResponse } from '../index';
+import type { ApiRequest, ApiResponse } from "../index";
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
-  const { q, limit = '10' } = req.query;
+  const { q, limit = "10" } = req.query;
 
   if (!q) {
-    return res.status(400).json({ error: 'Missing search query parameter' });
+    return res.status(400).json({ error: "Missing search query parameter" });
   }
 
   const limitNum = Math.min(parseInt(String(limit), 10) || 10, 100);

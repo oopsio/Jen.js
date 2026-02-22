@@ -4,7 +4,7 @@
  * POST /api/todos - Create new todo
  */
 
-import type { ApiRequest, ApiResponse } from '../../../../src/api';
+import type { ApiRequest, ApiResponse } from "../../../../src/api";
 
 interface Todo {
   id: number;
@@ -15,20 +15,35 @@ interface Todo {
 
 // In-memory storage (replace with database)
 let todos: Todo[] = [
-  { id: 1, title: 'Learn Jen.js', completed: false, createdAt: new Date().toISOString() },
-  { id: 2, title: 'Build API routes', completed: true, createdAt: new Date().toISOString() },
-  { id: 3, title: 'Deploy to production', completed: false, createdAt: new Date().toISOString() },
+  {
+    id: 1,
+    title: "Learn Jen.js",
+    completed: false,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    title: "Build API routes",
+    completed: true,
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    title: "Deploy to production",
+    completed: false,
+    createdAt: new Date().toISOString(),
+  },
 ];
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     // Get all todos
     const { completed } = req.query;
 
     let filtered = todos;
 
     if (completed !== undefined) {
-      const isCompleted = completed === 'true';
+      const isCompleted = completed === "true";
       filtered = todos.filter((t) => t.completed === isCompleted);
     }
 
@@ -36,12 +51,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       count: filtered.length,
       data: filtered,
     });
-  } else if (req.method === 'POST') {
+  } else if (req.method === "POST") {
     // Create new todo
     const { title } = req.body;
 
-    if (!title || typeof title !== 'string') {
-      return res.status(400).json({ error: 'Missing or invalid title' });
+    if (!title || typeof title !== "string") {
+      return res.status(400).json({ error: "Missing or invalid title" });
     }
 
     const newTodo: Todo = {
@@ -54,17 +69,17 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     todos.push(newTodo);
 
     res.status(201).json({
-      message: 'Todo created',
+      message: "Todo created",
       data: newTodo,
     });
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ error: "Method not allowed" });
   }
 }
 
 export const config = {
   maxDuration: 30,
   bodyParser: {
-    sizeLimit: '1mb',
+    sizeLimit: "1mb",
   },
 };

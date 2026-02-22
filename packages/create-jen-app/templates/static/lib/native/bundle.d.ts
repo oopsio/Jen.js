@@ -1,12 +1,13 @@
 import esbuild from "esbuild";
 export interface BundlerOptions {
-    entryPoint: string;
-    outdir?: string;
-    format?: "esm" | "cjs" | "iife";
-    minify?: boolean;
-    sourcemap?: boolean;
+  entryPoint: string;
+  outdir?: string;
+  format?: "esm" | "cjs" | "iife";
+  minify?: boolean;
+  sourcemap?: boolean;
 }
-export declare function bundle(opts: BundlerOptions): Promise<esbuild.BuildResult<{
+export declare function bundle(opts: BundlerOptions): Promise<
+  esbuild.BuildResult<{
     entryPoints: string[];
     outdir: string;
     format: "esm" | "iife" | "cjs";
@@ -15,5 +16,9 @@ export declare function bundle(opts: BundlerOptions): Promise<esbuild.BuildResul
     platform: "browser";
     target: string;
     logLevel: "info";
-}>>;
-export declare function bundleAssets(assetsDir: string, outdir: string): Promise<void>;
+  }>
+>;
+export declare function bundleAssets(
+  assetsDir: string,
+  outdir: string,
+): Promise<void>;

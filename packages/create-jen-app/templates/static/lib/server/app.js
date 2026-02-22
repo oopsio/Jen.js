@@ -28,8 +28,15 @@ import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
 import { headersToObject, parseCookies } from "../core/http.js";
 import { tryHandleApiRoute } from "./api-routes.js";
 import { resolve } from "node:path";
-import { buildHydrationModule, runtimeHydrateModule, invalidateCache, } from "./runtimeServe.js";
-import { invalidateVueCache, invalidateSvelteCache, } from "../compilers/esbuild-plugins.js";
+import {
+  buildHydrationModule,
+  runtimeHydrateModule,
+  invalidateCache,
+} from "./runtimeServe.js";
+import {
+  invalidateVueCache,
+  invalidateSvelteCache,
+} from "../compilers/esbuild-plugins.js";
 /**
  * Creates and configures the main HTTP application handler.
  *
@@ -59,116 +66,119 @@ import { invalidateVueCache, invalidateSvelteCache, } from "../compilers/esbuild
  * @throws {Error} If route scanning fails due to invalid route patterns
  */
 export async function createApp(opts) {
-    const { config, mode, viteServer } = opts;
+  const { config, mode, viteServer } = opts;
+  /**
+   * Set of active Server-Sent Events (SSE) connections for Hot Module Replacement.
+   * Clients maintain a persistent SSE connection to receive change notifications.
+   * Each response object in this set receives change events for CSS updates and full reloads.
+   */
+  const hmrClients = new Set();
+  if (mode === "dev") {
+    const sitePath = join(process.cwd(), config.siteDir);
+    log.info(`[HMR] Watching ${sitePath} for changes...`);
     /**
-     * Set of active Server-Sent Events (SSE) connections for Hot Module Replacement.
-     * Clients maintain a persistent SSE connection to receive change notifications.
-     * Each response object in this set receives change events for CSS updates and full reloads.
+     * Debounce timer prevents multiple rapid change notifications.
+     * Filesystem watchers often emit multiple events for a single file change.
+     * This delay coalesces rapid changes into a single notification (100ms threshold).
      */
-    const hmrClients = new Set();
-    if (mode === "dev") {
-        const sitePath = join(process.cwd(), config.siteDir);
-        log.info(`[HMR] Watching ${sitePath} for changes...`);
+    let debounceTimer;
+    try {
+      watch(sitePath, { recursive: true }, (eventType, filename) => {
+        if (!filename) return;
         /**
-         * Debounce timer prevents multiple rapid change notifications.
-         * Filesystem watchers often emit multiple events for a single file change.
-         * This delay coalesces rapid changes into a single notification (100ms threshold).
+         * Filter out files that should not trigger HMR notifications.
+         * Temporary files, build artifacts, and hidden files cause infinite loops
+         * or are not meant for hot reload.
          */
-        let debounceTimer;
-        try {
-            watch(sitePath, { recursive: true }, (eventType, filename) => {
-                if (!filename)
-                    return;
-                /**
-                 * Filter out files that should not trigger HMR notifications.
-                 * Temporary files, build artifacts, and hidden files cause infinite loops
-                 * or are not meant for hot reload.
-                 */
-                if (filename.startsWith(".") ||
-                    filename.includes("node_modules") ||
-                    filename.endsWith("~") ||
-                    filename.endsWith(".tmp") ||
-                    filename.endsWith(".esbuild.mjs") || // Ignore build artifacts
-                    filename.includes("\\.") || // Windows hidden files
-                    filename.includes("/.") // Unix hidden files
-                ) {
-                    return;
-                }
-                // Debounce to avoid double events
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    const ext = extname(filename);
-                    // Normalize path
-                    const fullPath = join(sitePath, filename);
-                    log.info(`[HMR] Change detected: ${filename}`);
-                    if (ext === ".css" || ext === ".scss") {
-                        /**
-                         * For CSS/SCSS changes, send a style-update event.
-                         * This allows the client to reload CSS without full page reload,
-                         * preserving component state and providing better developer experience.
-                         */
-                        const cssName = filename.replace(/\.scss$/, ".css");
-                        for (const client of hmrClients) {
-                            client.write(`event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`);
-                        }
-                    }
-                    else {
-                        /**
-                         * For JavaScript/TypeScript/component changes, invalidate build caches
-                         * and send a full reload event.
-                         * Cache invalidation ensures the latest code is loaded on next request.
-                         */
-                        invalidateCache(fullPath);
-                        if (ext === ".vue")
-                            invalidateVueCache(fullPath);
-                        if (ext === ".svelte")
-                            invalidateSvelteCache(fullPath);
-                        // Full reload for JS/TS/Vue/Svelte/Other
-                        for (const client of hmrClients) {
-                            client.write(`event: reload\ndata: {}\n\n`);
-                        }
-                    }
-                }, 100);
-            });
+        if (
+          filename.startsWith(".") ||
+          filename.includes("node_modules") ||
+          filename.endsWith("~") ||
+          filename.endsWith(".tmp") ||
+          filename.endsWith(".esbuild.mjs") || // Ignore build artifacts
+          filename.includes("\\.") || // Windows hidden files
+          filename.includes("/.") // Unix hidden files
+        ) {
+          return;
         }
-        catch (err) {
-            log.warn(`[HMR] Watch failed: ${err}`);
-        }
-    }
-    /**
-     * Scans the site directory for route files and compiles route patterns.
-     * Routes are discovered by filename pattern and file extensions configured in config.
-     * See scanRoutes() for details on route naming conventions.
-     */
-    const routes = scanRoutes(config);
-    log.info(`Routes discovered: ${routes.length}`);
-    for (const r of routes)
-        log.info(`  ${r.urlPath} -> ${r.filePath}`);
-    const serveAssets = sirv(join(process.cwd(), config.siteDir), {
-        dev: mode === "dev",
-        etag: true,
-    });
-    const serveDist = sirv(join(process.cwd(), config.distDir), {
-        dev: mode === "dev",
-        etag: true,
-    });
-    const middlewares = [
-        async (ctx, next) => {
-            log.info(`${ctx.req.method} ${ctx.url.pathname}`);
-            await next();
-        },
-        async (ctx, next) => {
-            // runtime internal modules
-            if (ctx.url.pathname === "/__runtime/hydrate.js") {
-                ctx.res.statusCode = 200;
-                ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
-                ctx.res.end(runtimeHydrateModule());
-                return;
+        // Debounce to avoid double events
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          const ext = extname(filename);
+          // Normalize path
+          const fullPath = join(sitePath, filename);
+          log.info(`[HMR] Change detected: ${filename}`);
+          if (ext === ".css" || ext === ".scss") {
+            /**
+             * For CSS/SCSS changes, send a style-update event.
+             * This allows the client to reload CSS without full page reload,
+             * preserving component state and providing better developer experience.
+             */
+            const cssName = filename.replace(/\.scss$/, ".css");
+            for (const client of hmrClients) {
+              client.write(
+                `event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`,
+              );
             }
-            if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
-                ctx.res.statusCode = 200;
-                ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
-                const islandCode = `
+          } else {
+            /**
+             * For JavaScript/TypeScript/component changes, invalidate build caches
+             * and send a full reload event.
+             * Cache invalidation ensures the latest code is loaded on next request.
+             */
+            invalidateCache(fullPath);
+            if (ext === ".vue") invalidateVueCache(fullPath);
+            if (ext === ".svelte") invalidateSvelteCache(fullPath);
+            // Full reload for JS/TS/Vue/Svelte/Other
+            for (const client of hmrClients) {
+              client.write(`event: reload\ndata: {}\n\n`);
+            }
+          }
+        }, 100);
+      });
+    } catch (err) {
+      log.warn(`[HMR] Watch failed: ${err}`);
+    }
+  }
+  /**
+   * Scans the site directory for route files and compiles route patterns.
+   * Routes are discovered by filename pattern and file extensions configured in config.
+   * See scanRoutes() for details on route naming conventions.
+   */
+  const routes = scanRoutes(config);
+  log.info(`Routes discovered: ${routes.length}`);
+  for (const r of routes) log.info(`  ${r.urlPath} -> ${r.filePath}`);
+  const serveAssets = sirv(join(process.cwd(), config.siteDir), {
+    dev: mode === "dev",
+    etag: true,
+  });
+  const serveDist = sirv(join(process.cwd(), config.distDir), {
+    dev: mode === "dev",
+    etag: true,
+  });
+  const middlewares = [
+    async (ctx, next) => {
+      log.info(`${ctx.req.method} ${ctx.url.pathname}`);
+      await next();
+    },
+    async (ctx, next) => {
+      // runtime internal modules
+      if (ctx.url.pathname === "/__runtime/hydrate.js") {
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader(
+          "content-type",
+          "application/javascript; charset=utf-8",
+        );
+        ctx.res.end(runtimeHydrateModule());
+        return;
+      }
+      if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader(
+          "content-type",
+          "application/javascript; charset=utf-8",
+        );
+        const islandCode = `
 import { hydrate } from "https://esm.sh/preact@10";
 import { h } from "https://esm.sh/preact@10";
 
@@ -262,173 +272,184 @@ export function initializeIslands() {
 
 initializeIslands();
 `;
-                ctx.res.end(islandCode);
-                return;
-            }
-            // HMR Endpoint (SSE)
-            if (ctx.url.pathname === "/__hmr" && mode === "dev") {
-                ctx.res.statusCode = 200;
-                ctx.res.setHeader("content-type", "text/event-stream");
-                ctx.res.setHeader("cache-control", "no-cache");
-                ctx.res.setHeader("connection", "keep-alive");
-                ctx.res.write("data: connected\n\n");
-                hmrClients.add(ctx.res);
-                ctx.req.on("close", () => {
-                    hmrClients.delete(ctx.res);
-                });
-                return;
-            }
-            if (ctx.url.pathname === "/__hydrate") {
-                const file = ctx.url.searchParams.get("file");
-                if (!file) {
-                    ctx.res.statusCode = 400;
-                    ctx.res.end("missing file");
-                    return;
-                }
-                const js = buildHydrationModule(file);
-                ctx.res.statusCode = 200;
-                ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
-                ctx.res.setHeader("cache-control", "no-store");
-                ctx.res.end(js);
-                return;
-            }
-            await next();
-        },
-        async (ctx, next) => {
-            // API routes
-            const handled = await tryHandleApiRoute({
-                req: ctx.req,
-                res: ctx.res,
-                siteDir: config.siteDir,
-            });
-            if (handled)
-                return;
-            await next();
-        },
-        async (ctx, next) => {
-            // dist
-            if (mode === "prod") {
-                await new Promise((resolve) => {
-                    serveDist(ctx.req, ctx.res, () => resolve());
-                });
-                if (ctx.res.writableEnded || ctx.res.headersSent)
-                    return;
-            }
-            await next();
-        },
-        async (ctx, next) => {
-            // SCSS Compilation (Dev)
-            if (mode === "dev" && ctx.url.pathname.endsWith(".css")) {
-                let scssFile = null;
-                const basePath = resolve(process.cwd());
-                if (ctx.url.pathname === "/styles.css") {
-                    // Global SCSS
-                    if (config.css?.globalScss) {
-                        // Already includes siteDir if needed, but add it if it doesn't
-                        const scssPath = config.css.globalScss.startsWith(config.siteDir)
-                            ? config.css.globalScss
-                            : join(config.siteDir, config.css.globalScss);
-                        scssFile = join(basePath, scssPath);
-                        console.log("[DEBUG CSS] Looking for global SCSS:", scssFile, "exists:", existsSync(scssFile));
-                    }
-                    else {
-                        console.log("[DEBUG CSS] No config.css.globalScss found");
-                    }
-                }
-                else {
-                    // Map /foo.css -> siteDir/foo.scss
-                    const rel = ctx.url.pathname.slice(1);
-                    const tryPath = join(basePath, config.siteDir, rel.replace(/\.css$/, ".scss"));
-                    if (existsSync(tryPath)) {
-                        scssFile = tryPath;
-                    }
-                }
-                if (scssFile && existsSync(scssFile)) {
-                    const compiler = createScssCompiler();
-                    const result = compiler.compile({
-                        inputPath: scssFile,
-                        minified: false,
-                        sourceMap: true,
-                    });
-                    if (result.error) {
-                        ctx.res.statusCode = 500;
-                        ctx.res.setHeader("content-type", "text/css");
-                        ctx.res.end(`/* SCSS Error: ${result.error.replace(/\*\//g, "* /")} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error
-                            .replace(/\\/g, "\\\\")
-                            .replace(/"/g, '\\"')}"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`);
-                        return;
-                    }
-                    ctx.res.statusCode = 200;
-                    ctx.res.setHeader("content-type", "text/css");
-                    ctx.res.end(result.css);
-                    return;
-                }
-            }
-            await next();
-        },
-        async (ctx, next) => {
-            // site assets in dev
-            if (mode === "dev") {
-                await new Promise((resolve) => {
-                    serveAssets(ctx.req, ctx.res, () => resolve());
-                });
-                if (ctx.res.writableEnded || ctx.res.headersSent)
-                    return;
-            }
-            await next();
-        },
-        async (ctx, next) => {
-            // SSR
-            if (ctx.req.method !== "GET")
-                return next();
-            const m = matchRoute(routes, ctx.url.pathname);
-            if (!m)
-                return next();
-            const reqHeaders = headersToObject(ctx.req.headers);
-            const cookies = parseCookies(ctx.req);
-            const query = {};
-            for (const [k, v] of ctx.url.searchParams.entries())
-                query[k] = v;
-            try {
-                const html = await renderRouteToHtml({
-                    config,
-                    route: m.route,
-                    req: ctx.req,
-                    res: ctx.res,
-                    url: ctx.url,
-                    params: m.params,
-                    query,
-                    headers: reqHeaders,
-                    cookies,
-                });
-                let finalHtml = html;
-                if (mode === "dev") {
-                    // Inject HMR client
-                    finalHtml = html.replace("</body>", `<script>${HMR_CLIENT_SCRIPT}</script></body>`);
-                }
-                ctx.res.statusCode = 200;
-                ctx.res.setHeader("content-type", "text/html; charset=utf-8");
-                ctx.res.end(finalHtml);
-            }
-            catch (err) {
-                // Middleware may have sent a response (redirect/json)
-                if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
-                    return; // Response already sent
-                }
-                throw err;
-            }
-        },
-        async (ctx) => {
-            ctx.res.statusCode = 404;
-            ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
-            ctx.res.end("404 Not Found");
-        },
-    ];
-    const kernel = new Kernel();
-    middlewares.forEach((m) => kernel.use(m));
-    return {
-        async handle(req, res) {
-            await kernel.handle(req, res);
-        },
-    };
+        ctx.res.end(islandCode);
+        return;
+      }
+      // HMR Endpoint (SSE)
+      if (ctx.url.pathname === "/__hmr" && mode === "dev") {
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader("content-type", "text/event-stream");
+        ctx.res.setHeader("cache-control", "no-cache");
+        ctx.res.setHeader("connection", "keep-alive");
+        ctx.res.write("data: connected\n\n");
+        hmrClients.add(ctx.res);
+        ctx.req.on("close", () => {
+          hmrClients.delete(ctx.res);
+        });
+        return;
+      }
+      if (ctx.url.pathname === "/__hydrate") {
+        const file = ctx.url.searchParams.get("file");
+        if (!file) {
+          ctx.res.statusCode = 400;
+          ctx.res.end("missing file");
+          return;
+        }
+        const js = buildHydrationModule(file);
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader(
+          "content-type",
+          "application/javascript; charset=utf-8",
+        );
+        ctx.res.setHeader("cache-control", "no-store");
+        ctx.res.end(js);
+        return;
+      }
+      await next();
+    },
+    async (ctx, next) => {
+      // API routes
+      const handled = await tryHandleApiRoute({
+        req: ctx.req,
+        res: ctx.res,
+        siteDir: config.siteDir,
+      });
+      if (handled) return;
+      await next();
+    },
+    async (ctx, next) => {
+      // dist
+      if (mode === "prod") {
+        await new Promise((resolve) => {
+          serveDist(ctx.req, ctx.res, () => resolve());
+        });
+        if (ctx.res.writableEnded || ctx.res.headersSent) return;
+      }
+      await next();
+    },
+    async (ctx, next) => {
+      // SCSS Compilation (Dev)
+      if (mode === "dev" && ctx.url.pathname.endsWith(".css")) {
+        let scssFile = null;
+        const basePath = resolve(process.cwd());
+        if (ctx.url.pathname === "/styles.css") {
+          // Global SCSS
+          if (config.css?.globalScss) {
+            // Already includes siteDir if needed, but add it if it doesn't
+            const scssPath = config.css.globalScss.startsWith(config.siteDir)
+              ? config.css.globalScss
+              : join(config.siteDir, config.css.globalScss);
+            scssFile = join(basePath, scssPath);
+            console.log(
+              "[DEBUG CSS] Looking for global SCSS:",
+              scssFile,
+              "exists:",
+              existsSync(scssFile),
+            );
+          } else {
+            console.log("[DEBUG CSS] No config.css.globalScss found");
+          }
+        } else {
+          // Map /foo.css -> siteDir/foo.scss
+          const rel = ctx.url.pathname.slice(1);
+          const tryPath = join(
+            basePath,
+            config.siteDir,
+            rel.replace(/\.css$/, ".scss"),
+          );
+          if (existsSync(tryPath)) {
+            scssFile = tryPath;
+          }
+        }
+        if (scssFile && existsSync(scssFile)) {
+          const compiler = createScssCompiler();
+          const result = compiler.compile({
+            inputPath: scssFile,
+            minified: false,
+            sourceMap: true,
+          });
+          if (result.error) {
+            ctx.res.statusCode = 500;
+            ctx.res.setHeader("content-type", "text/css");
+            ctx.res.end(
+              `/* SCSS Error: ${result.error.replace(/\*\//g, "* /")} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error
+                .replace(/\\/g, "\\\\")
+                .replace(
+                  /"/g,
+                  '\\"',
+                )}"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`,
+            );
+            return;
+          }
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader("content-type", "text/css");
+          ctx.res.end(result.css);
+          return;
+        }
+      }
+      await next();
+    },
+    async (ctx, next) => {
+      // site assets in dev
+      if (mode === "dev") {
+        await new Promise((resolve) => {
+          serveAssets(ctx.req, ctx.res, () => resolve());
+        });
+        if (ctx.res.writableEnded || ctx.res.headersSent) return;
+      }
+      await next();
+    },
+    async (ctx, next) => {
+      // SSR
+      if (ctx.req.method !== "GET") return next();
+      const m = matchRoute(routes, ctx.url.pathname);
+      if (!m) return next();
+      const reqHeaders = headersToObject(ctx.req.headers);
+      const cookies = parseCookies(ctx.req);
+      const query = {};
+      for (const [k, v] of ctx.url.searchParams.entries()) query[k] = v;
+      try {
+        const html = await renderRouteToHtml({
+          config,
+          route: m.route,
+          req: ctx.req,
+          res: ctx.res,
+          url: ctx.url,
+          params: m.params,
+          query,
+          headers: reqHeaders,
+          cookies,
+        });
+        let finalHtml = html;
+        if (mode === "dev") {
+          // Inject HMR client
+          finalHtml = html.replace(
+            "</body>",
+            `<script>${HMR_CLIENT_SCRIPT}</script></body>`,
+          );
+        }
+        ctx.res.statusCode = 200;
+        ctx.res.setHeader("content-type", "text/html; charset=utf-8");
+        ctx.res.end(finalHtml);
+      } catch (err) {
+        // Middleware may have sent a response (redirect/json)
+        if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
+          return; // Response already sent
+        }
+        throw err;
+      }
+    },
+    async (ctx) => {
+      ctx.res.statusCode = 404;
+      ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
+      ctx.res.end("404 Not Found");
+    },
+  ];
+  const kernel = new Kernel();
+  middlewares.forEach((m) => kernel.use(m));
+  return {
+    async handle(req, res) {
+      await kernel.handle(req, res);
+    },
+  };
 }

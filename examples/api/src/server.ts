@@ -3,12 +3,12 @@
  * No external dependencies - uses built-in Node.js modules only
  */
 
-import { createServer, IncomingMessage, ServerResponse } from 'http';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { ApiLoader } from '../../../src/api/loader';
-import { ApiRouter } from '../../../src/api/router';
-import { createApiRequest, createApiResponse } from '../../../src/api/router';
+import { createServer, IncomingMessage, ServerResponse } from "http";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { ApiLoader } from "../../../src/api/loader";
+import { ApiRouter } from "../../../src/api/router";
+import { createApiRequest, createApiResponse } from "../../../src/api/router";
 
 const PORT = process.env.PORT || 3000;
 const apiRouter = new ApiRouter();
@@ -17,15 +17,15 @@ const apiRouter = new ApiRouter();
  * Parse URL and extract path and query
  */
 function parseUrl(url: string) {
-  const [path, search] = url.split('?');
-  return { path, search: search ? `?${search}` : '' };
+  const [path, search] = url.split("?");
+  return { path, search: search ? `?${search}` : "" };
 }
 
 /**
  * Send JSON response
  */
 function sendJson(res: ServerResponse, statusCode: number, data: any) {
-  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.writeHead(statusCode, { "Content-Type": "application/json" });
   res.end(JSON.stringify(data));
 }
 
@@ -33,7 +33,7 @@ function sendJson(res: ServerResponse, statusCode: number, data: any) {
  * Send HTML response
  */
 function sendHtml(res: ServerResponse, statusCode: number, html: string) {
-  res.writeHead(statusCode, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.writeHead(statusCode, { "Content-Type": "text/html; charset=utf-8" });
   res.end(html);
 }
 
@@ -45,22 +45,27 @@ async function setupApiRoutes() {
 
   try {
     // Get the directory of this file, then navigate to api folder
-    const serverDir = import.meta.url.replace('file:///', '').replace(/\//g, '\\').split('\\').slice(0, -1).join('\\');
-    const apiDir = join(serverDir, 'api');
-    
+    const serverDir = import.meta.url
+      .replace("file:///", "")
+      .replace(/\//g, "\\")
+      .split("\\")
+      .slice(0, -1)
+      .join("\\");
+    const apiDir = join(serverDir, "api");
+
     // Load routes with empty base route since we'll prepend /api ourselves
-    const routes = await loader.loadRoutes(apiDir, '');
+    const routes = await loader.loadRoutes(apiDir, "");
 
     console.log(`✅ Loaded ${routes.length} API routes:`);
 
     // Register each route with /api prefix
     routes.forEach((route) => {
-      const fullPath = '/api' + route.path;
+      const fullPath = "/api" + route.path;
       apiRouter.register(fullPath, route.handler);
       console.log(`   ${fullPath}`);
     });
   } catch (err) {
-    console.error('❌ Failed to load API routes:', err);
+    console.error("❌ Failed to load API routes:", err);
   }
 }
 
@@ -68,15 +73,15 @@ async function setupApiRoutes() {
  * Main request handler
  */
 async function handleRequest(req: IncomingMessage, res: ServerResponse) {
-  const { path, search } = parseUrl(req.url || '/');
+  const { path, search } = parseUrl(req.url || "/");
 
   // API routes
-  if (path.startsWith('/api/')) {
+  if (path.startsWith("/api/")) {
     const match = apiRouter.match(path);
 
     if (!match) {
       return sendJson(res, 404, {
-        error: 'API route not found',
+        error: "API route not found",
         path,
       });
     }
@@ -86,25 +91,28 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       const apiRes = createApiResponse(res);
       await match.handler(apiReq, apiRes);
     } catch (err) {
-      console.error('API handler error:', err);
+      console.error("API handler error:", err);
       sendJson(res, 500, {
-        error: 'Internal server error',
-        message: process.env.NODE_ENV === 'development' ? (err as Error).message : undefined,
+        error: "Internal server error",
+        message:
+          process.env.NODE_ENV === "development"
+            ? (err as Error).message
+            : undefined,
       });
     }
     return;
   }
 
   // Health check
-  if (path === '/health') {
+  if (path === "/health") {
     return sendJson(res, 200, {
-      status: 'ok',
+      status: "ok",
       timestamp: new Date().toISOString(),
     });
   }
 
   // Root page
-  if (path === '/' || path === '') {
+  if (path === "/" || path === "") {
     return sendHtml(
       res,
       200,
@@ -192,7 +200,7 @@ curl http://localhost:3000/api/files/docs/guide.md
       <p style="color: #666; font-size: 14px;">Built with Jen.js • Powered by Preact • Vanilla Node.js</p>
     </body>
     </html>
-  `
+  `,
     );
   }
 
@@ -210,7 +218,7 @@ curl http://localhost:3000/api/files/docs/guide.md
       <p><a href="/">Back to home</a></p>
     </body>
     </html>
-  `
+  `,
   );
 }
 

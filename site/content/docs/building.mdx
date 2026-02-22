@@ -34,8 +34,8 @@ Configure static generation in `jen.config.ts`:
 ```ts
 export default {
   build: {
-    strategy: 'static',
-    outDir: 'dist',
+    strategy: "static",
+    outDir: "dist",
   },
 };
 ```
@@ -47,9 +47,9 @@ All routes in `pages/` are automatically generated. For dynamic routes, export `
 ```tsx
 export async function getStaticParams() {
   return [
-    { slug: 'first-post' },
-    { slug: 'second-post' },
-    { slug: 'third-post' },
+    { slug: "first-post" },
+    { slug: "second-post" },
+    { slug: "third-post" },
   ];
 }
 
@@ -74,7 +74,7 @@ Assets are automatically hashed:
 Styles are extracted and minified:
 
 ```tsx
-import './styles.css';
+import "./styles.css";
 
 export default function Page() {
   return <div>Content</div>;
@@ -177,8 +177,8 @@ Customize build behavior in `jen.config.ts`:
 ```ts
 export default {
   build: {
-    strategy: 'static',
-    outDir: 'dist',
+    strategy: "static",
+    outDir: "dist",
     minify: true,
     hashAssets: true,
     removeComments: true,
@@ -192,7 +192,7 @@ export default {
 1. **Use lazy loading** for heavy components
 2. **Code split** at route boundaries automatically
 3. **Optimize images** before including
-4. **Remove unused CSS** 
+4. **Remove unused CSS**
 5. **Tree-shake unused exports**
 
 ## Build Performance

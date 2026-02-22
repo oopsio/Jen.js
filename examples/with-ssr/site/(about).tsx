@@ -59,9 +59,7 @@ export default function AboutPage({ data }: any) {
     <div class="about-page">
       <div class="navbar">
         <h1>ℹ️ About</h1>
-        <p class="subtitle">
-          {data?.pageTitle || "Learn about this example"}
-        </p>
+        <p class="subtitle">{data?.pageTitle || "Learn about this example"}</p>
       </div>
 
       <div class="container">
@@ -91,8 +89,8 @@ export default function AboutPage({ data }: any) {
             <h3 style={{ marginTop: "1.5rem" }}>Key Advantages:</h3>
             <ul style={{ paddingLeft: "1.5rem", marginTop: "1rem" }}>
               <li style={{ marginBottom: "0.75rem" }}>
-                ⚡ <strong>Fast Initial Load</strong> - No waiting for JavaScript
-                to execute
+                ⚡ <strong>Fast Initial Load</strong> - No waiting for
+                JavaScript to execute
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
                 🔍 <strong>Better SEO</strong> - Search engines see all content
@@ -121,43 +119,85 @@ export default function AboutPage({ data }: any) {
             <ol style={{ paddingLeft: "1.5rem", marginTop: "1rem" }}>
               <li style={{ marginBottom: "1rem" }}>
                 <strong>Client makes request</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Browser requests a page, e.g., GET /posts/123
                 </p>
               </li>
               <li style={{ marginBottom: "1rem" }}>
                 <strong>Route matching</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Framework matches URL to route file, e.g., posts/($id).tsx
                 </p>
               </li>
               <li style={{ marginBottom: "1rem" }}>
                 <strong>Loader execution</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Loader function runs with access to request context
                 </p>
               </li>
               <li style={{ marginBottom: "1rem" }}>
                 <strong>Data fetching</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Query database, API, cache, or other server resources
                 </p>
               </li>
               <li style={{ marginBottom: "1rem" }}>
                 <strong>Component rendering</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Preact renders component to HTML string using loader data
                 </p>
               </li>
               <li style={{ marginBottom: "1rem" }}>
                 <strong>HTML response</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Complete, fully-rendered HTML sent to client
                 </p>
               </li>
               <li style={{ marginBottom: 0 }}>
                 <strong>Client displays page</strong>
-                <p style={{ color: "#666", fontSize: "0.9rem", margin: "0.25rem 0 0 0" }}>
+                <p
+                  style={{
+                    color: "#666",
+                    fontSize: "0.9rem",
+                    margin: "0.25rem 0 0 0",
+                  }}
+                >
                   Browser displays content immediately; optional hydration
                   enables interactivity
                 </p>

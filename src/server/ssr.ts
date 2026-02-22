@@ -189,13 +189,13 @@ if (typeof global !== "undefined") {
  */
 export function configureSsrCache(config: Partial<CacheConfig>) {
   cacheConfig = { ...cacheConfig, ...config };
-  
+
   // Update LRU cache size if maxEntries changed
   if (config.maxEntries && config.maxEntries > 0) {
     // Reinitialize LRU cache with new size
     const existing = Array.from(renderCache.entries());
     renderCache.clear();
-    
+
     // Recreate with new size (this is a limitation of the current approach,
     // but maxEntries rarely changes at runtime)
     for (const [key, entry] of existing) {

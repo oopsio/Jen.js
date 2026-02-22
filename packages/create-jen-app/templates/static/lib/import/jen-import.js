@@ -21,7 +21,10 @@ import { join, resolve, extname } from "node:path";
 import { mkdirSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { log } from "../shared/log.js";
-import { vueEsbuildPlugin, svelteEsbuildPlugin, } from "../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../compilers/esbuild-plugins.js";
 /** In-memory cache mapping file paths to imported modules. Enables fast repeated imports. */
 const importCache = new Map();
 /**
@@ -33,12 +36,12 @@ const importCache = new Map();
  * @returns The absolute path to the cached compiled .mjs file.
  */
 function getCachePath(filePath) {
-    const cacheDir = join(process.cwd(), "node_modules", ".jen", "import-cache");
-    if (!existsSync(cacheDir)) {
-        mkdirSync(cacheDir, { recursive: true });
-    }
-    const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
-    return join(cacheDir, flatName + ".mjs");
+  const cacheDir = join(process.cwd(), "node_modules", ".jen", "import-cache");
+  if (!existsSync(cacheDir)) {
+    mkdirSync(cacheDir, { recursive: true });
+  }
+  const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
+  return join(cacheDir, flatName + ".mjs");
 }
 /**
  * Generate an ETag hash for a file to detect changes.
@@ -48,7 +51,7 @@ function getCachePath(filePath) {
  * @returns A 40-character hex string representing the hash.
  */
 function generateEtag(content) {
-    return createHash("sha1").update(content).digest("hex");
+  return createHash("sha1").update(content).digest("hex");
 }
 /**
  * Universal module importer for Vue, Svelte, and regular JS/TS files.
@@ -74,71 +77,72 @@ function generateEtag(content) {
  * const Fresh = await jenImport("./component.tsx", { forceRecompile: true });
  */
 export async function jenImport(specifier, opts) {
-    const baseDir = opts?.baseDir ?? process.cwd();
-    const useCache = opts?.cache !== false;
-    const forceRecompile = opts?.forceRecompile ?? false;
-    try {
-        // Resolve the file path relative to baseDir
-        const filePath = resolve(baseDir, specifier);
-        const ext = extname(filePath);
-        // Check cache first if enabled and not forcing recompile
-        if (useCache && !forceRecompile && importCache.has(filePath)) {
-            log.info(`[jen.import] Cache hit: ${specifier}`);
-            return importCache.get(filePath).module;
-        }
-        const isVue = ext === ".vue";
-        const isSvelte = ext === ".svelte";
-        const isTs = ext === ".ts" || ext === ".tsx";
-        // Validate file type
-        if (!isVue && !isSvelte && !isTs && ext !== ".js" && ext !== ".jsx") {
-            throw new Error(`Unsupported file type: ${ext}. Supported: .vue, .svelte, .ts, .tsx, .js, .jsx`);
-        }
-        log.info(`[jen.import] Loading: ${specifier} (${ext})`);
-        const outfile = getCachePath(filePath);
-        // Transpile the module using esbuild with appropriate plugins
-        // Platform is set to "browser" for client-side components
-        // Bundle is false to preserve imports and enable tree-shaking
-        const result = buildSync({
-            entryPoints: [filePath],
-            outfile,
-            format: "esm",
-            platform: "browser",
-            target: "es2022",
-            bundle: false, // Don't bundle to preserve imports
-            write: true,
-            plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-            external: [
-                "preact",
-                "preact/hooks",
-                "preact/jsx-runtime",
-                "preact-render-to-string",
-                "vue",
-                "svelte",
-            ],
-            logLevel: "error",
-            define: {
-                "process.env.NODE_ENV": JSON.stringify("development"),
-            },
-        });
-        // Dynamic import with cache-busting query parameter
-        // Prevents Node.js from caching the old module on repeated imports
-        const moduleUrl = pathToFileURL(outfile).href + "?t=" + Date.now();
-        const mod = await import(moduleUrl);
-        // Cache the imported module if caching is enabled
-        if (useCache) {
-            importCache.set(filePath, {
-                module: mod,
-                etag: generateEtag(outfile),
-            });
-        }
-        log.info(`[jen.import] Successfully loaded: ${specifier}`);
-        return mod;
+  const baseDir = opts?.baseDir ?? process.cwd();
+  const useCache = opts?.cache !== false;
+  const forceRecompile = opts?.forceRecompile ?? false;
+  try {
+    // Resolve the file path relative to baseDir
+    const filePath = resolve(baseDir, specifier);
+    const ext = extname(filePath);
+    // Check cache first if enabled and not forcing recompile
+    if (useCache && !forceRecompile && importCache.has(filePath)) {
+      log.info(`[jen.import] Cache hit: ${specifier}`);
+      return importCache.get(filePath).module;
     }
-    catch (err) {
-        const message = err.message || String(err);
-        log.error(`[jen.import] Failed to import "${specifier}": ${message}`);
-        throw new Error(`jen.import() failed for "${specifier}": ${message}`);
+    const isVue = ext === ".vue";
+    const isSvelte = ext === ".svelte";
+    const isTs = ext === ".ts" || ext === ".tsx";
+    // Validate file type
+    if (!isVue && !isSvelte && !isTs && ext !== ".js" && ext !== ".jsx") {
+      throw new Error(
+        `Unsupported file type: ${ext}. Supported: .vue, .svelte, .ts, .tsx, .js, .jsx`,
+      );
     }
+    log.info(`[jen.import] Loading: ${specifier} (${ext})`);
+    const outfile = getCachePath(filePath);
+    // Transpile the module using esbuild with appropriate plugins
+    // Platform is set to "browser" for client-side components
+    // Bundle is false to preserve imports and enable tree-shaking
+    const result = buildSync({
+      entryPoints: [filePath],
+      outfile,
+      format: "esm",
+      platform: "browser",
+      target: "es2022",
+      bundle: false, // Don't bundle to preserve imports
+      write: true,
+      plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+      external: [
+        "preact",
+        "preact/hooks",
+        "preact/jsx-runtime",
+        "preact-render-to-string",
+        "vue",
+        "svelte",
+      ],
+      logLevel: "error",
+      define: {
+        "process.env.NODE_ENV": JSON.stringify("development"),
+      },
+    });
+    // Dynamic import with cache-busting query parameter
+    // Prevents Node.js from caching the old module on repeated imports
+    const moduleUrl = pathToFileURL(outfile).href + "?t=" + Date.now();
+    const mod = await import(moduleUrl);
+    // Cache the imported module if caching is enabled
+    if (useCache) {
+      importCache.set(filePath, {
+        module: mod,
+        etag: generateEtag(outfile),
+      });
+    }
+    log.info(`[jen.import] Successfully loaded: ${specifier}`);
+    return mod;
+  } catch (err) {
+    const message = err.message || String(err);
+    log.error(`[jen.import] Failed to import "${specifier}": ${message}`);
+    throw new Error(`jen.import() failed for "${specifier}": ${message}`);
+  }
 }
 /**
  * Invalidate the import cache for a specific file.
@@ -148,9 +152,9 @@ export async function jenImport(specifier, opts) {
  * @param specifier File path (relative to process.cwd()) to invalidate.
  */
 export function invalidateImportCache(specifier) {
-    const filePath = resolve(process.cwd(), specifier);
-    importCache.delete(filePath);
-    log.info(`[jen.import] Cache invalidated: ${specifier}`);
+  const filePath = resolve(process.cwd(), specifier);
+  importCache.delete(filePath);
+  log.info(`[jen.import] Cache invalidated: ${specifier}`);
 }
 /**
  * Clear all import caches completely.
@@ -158,8 +162,8 @@ export function invalidateImportCache(specifier) {
  * Should be called sparingly; typically used when restarting the development server.
  */
 export function clearImportCache() {
-    importCache.clear();
-    log.info(`[jen.import] All caches cleared`);
+  importCache.clear();
+  log.info(`[jen.import] All caches cleared`);
 }
 /**
  * Global jen namespace providing access to jen.import() for dynamic module loading.
@@ -170,5 +174,5 @@ export function clearImportCache() {
  * const Component = await jen.import('./Component.vue');
  */
 export const jen = {
-    import: jenImport,
+  import: jenImport,
 };
