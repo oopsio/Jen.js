@@ -15,48 +15,27 @@ jobs:
           # Linux
           - os: linux
             os_runner: ubuntu-latest
-            arch: 386
             goarch: 386
           - os: linux
             os_runner: ubuntu-latest
-            arch: amd64
             goarch: amd64
           - os: linux
             os_runner: ubuntu-latest
-            arch: arm64
             goarch: arm64
-          # Windows GNU/MSVC
+          # Windows
           - os: windows
             os_runner: windows-latest
-            arch: 386
             goarch: 386
-            windows_target: gnu
           - os: windows
             os_runner: windows-latest
-            arch: amd64
             goarch: amd64
-            windows_target: gnu
-          - os: windows
-            os_runner: windows-latest
-            arch: 386
-            goarch: 386
-            windows_target: msvc
-          - os: windows
-            os_runner: windows-latest
-            arch: amd64
-            goarch: amd64
-            windows_target: msvc
           # macOS
           - os: macos
             os_runner: macos-latest
-            arch: amd64
             goarch: amd64
-            cc: clang
           - os: macos
             os_runner: macos-latest
-            arch: arm64
             goarch: arm64
-            cc: clang
 
     steps:
       - name: Checkout repo
@@ -71,22 +50,12 @@ jobs:
         run: |
           mkdir -p build
           cd packages/cli
-          echo "Building for OS=${{ matrix.os }} ARCH=${{ matrix.arch }}"
-          if [[ "${{ matrix.os }}" == "windows" ]]; then
-            # Windows builds
-            if [[ "${{ matrix.windows_target }}" == "msvc" ]]; then
-              set CC=cl.exe
-            else
-              set CC=x86_64-w64-mingw32-gcc
-            fi
-            GOOS=windows GOARCH=${{ matrix.goarch }} GO111MODULE=off go build -o ../../build/jen-${{ matrix.os }}-${{ matrix.arch }}.exe main.go
-          else
-            # Linux/macOS builds
-            GOOS=${{ matrix.os }} GOARCH=${{ matrix.goarch }} CC=${{ matrix.cc }} GO111MODULE=off go build -o ../../build/jen-${{ matrix.os }}-${{ matrix.arch }} main.go
-          fi
+          echo "Building for OS=${{ matrix.os }} ARCH=${{ matrix.goarch }}"
+          # module-less build
+          GOOS=${{ matrix.os }} GOARCH=${{ matrix.goarch }} GO111MODULE=off go build -o ../../build/jen-${{ matrix.os }}-${{ matrix.goarch }} main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: jen-cli-${{ matrix.os }}-${{ matrix.arch }}
-          path: build/jen-${{ matrix.os }}-${{ matrix.arch }}*
+          name: jen-cli-${{ matrix.os }}-${{ matrix.goarch }}
+          path: build/jen-${{ matrix.os }}-${{ matrix.goarch }}*
