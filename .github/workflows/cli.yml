@@ -1,0 +1,82 @@
+name: Build Jen CLI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    name: Build Jen CLI for ${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      matrix:
+        include:
+          # Windows builds
+          - os: windows
+            arch: 386
+            compiler: msvc
+            runner: windows-latest
+          - os: windows
+            arch: amd64
+            compiler: msvc
+            runner: windows-latest
+          - os: windows
+            arch: amd64
+            compiler: gnu
+            runner: windows-latest
+
+          # Linux builds
+          - os: linux
+            arch: 386
+            compiler: gnu
+            runner: ubuntu-latest
+          - os: linux
+            arch: amd64
+            compiler: gnu
+            runner: ubuntu-latest
+          - os: linux
+            arch: arm64
+            compiler: gnu
+            runner: ubuntu-latest
+
+          # macOS builds
+          - os: macos
+            arch: amd64
+            compiler: clang
+            runner: macos-latest
+          - os: macos
+            arch: arm64
+            compiler: clang
+            runner: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Set environment variables
+        run: |
+          echo "GOOS=${{ matrix.os }}" >> $GITHUB_ENV
+          echo "GOARCH=${{ matrix.arch }}" >> $GITHUB_ENV
+
+      - name: Build Jen CLI
+        run: |
+          mkdir -p build
+          output_name="jen-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}"
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            output_name="$output_name.exe"
+          fi
+          go build -o build/$output_name main.go
+          echo "Built $output_name"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jen-${{ matrix.os }}-${{ matrix.arch }}-${{ matrix.compiler }}
+          path: build/
