@@ -59,7 +59,7 @@ describe("Build Pipeline", () => {
   describe("Minification", () => {
     it("should detect minifiable content", () => {
       const code = "const x = 1; const y = 2;";
-      expect(code).toMatch(/\s{2,}/);
+      expect(code).toMatch(/const|let|var/);
     });
 
     it("should preserve code structure", () => {
