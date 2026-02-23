@@ -7,55 +7,67 @@ on:
 
 jobs:
   build:
-    name: Build CLI
-    runs-on: ${{ matrix.os_runner }}
     strategy:
       matrix:
         include:
-          # Linux
-          - os: linux
-            os_runner: ubuntu-latest
-            goarch: 386
-          - os: linux
-            os_runner: ubuntu-latest
-            goarch: amd64
-          - os: linux
-            os_runner: ubuntu-latest
-            goarch: arm64
-          # Windows
-          - os: windows
-            os_runner: windows-latest
-            goarch: 386
-          - os: windows
-            os_runner: windows-latest
-            goarch: amd64
           # macOS
           - os: macos
-            os_runner: macos-latest
+            runner: macos-latest
+            goos: darwin
             goarch: amd64
           - os: macos
-            os_runner: macos-latest
+            runner: macos-latest
+            goos: darwin
             goarch: arm64
+
+          # Linux
+          - os: linux
+            runner: ubuntu-latest
+            goos: linux
+            goarch: amd64
+          - os: linux
+            runner: ubuntu-latest
+            goos: linux
+            goarch: 386
+          - os: linux
+            runner: ubuntu-latest
+            goos: linux
+            goarch: arm64
+
+          # Windows
+          - os: windows
+            runner: windows-latest
+            goos: windows
+            goarch: amd64
+          - os: windows
+            runner: windows-latest
+            goos: windows
+            goarch: 386
+
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Go
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.23"
+          go-version: 1.23 # or your desired version
 
-      - name: Build CLI
+      - name: Create build folder
+        run: mkdir -p build
+
+      - name: Build Jen CLI
         run: |
-          mkdir -p build
-          cd packages/cli
-          echo "Building for OS=${{ matrix.os }} ARCH=${{ matrix.goarch }}"
-          # module-less build
-          GOOS=${{ matrix.os }} GOARCH=${{ matrix.goarch }} GO111MODULE=off go build -o ../../build/jen-${{ matrix.os }}-${{ matrix.goarch }} main.go
+          BIN_NAME=jen-${{ matrix.os }}-${{ matrix.goarch }}
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            BIN_NAME=${BIN_NAME}.exe
+          fi
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o build/$BIN_NAME packages/cli/main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: jen-cli-${{ matrix.os }}-${{ matrix.goarch }}
-          path: build/jen-${{ matrix.os }}-${{ matrix.goarch }}*
+          name: jen-${{ matrix.os }}-${{ matrix.goarch }}
+          path: build/*
