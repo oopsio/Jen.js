@@ -1,0 +1,16 @@
+{
+  "name": "@jenjs/cli",
+  "version": "1.0.0",
+  "bin": {
+    "jen": "bin/jen.js"
+  },
+  "files": [
+    "bin/",
+    "jen-linux-*",
+    "jen-macos-*",
+    "jen-windows-*"
+  ],
+  "scripts": {
+    "postinstall": "node ./bin/postinstall.js"
+  }
+}
