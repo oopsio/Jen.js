@@ -3,7 +3,7 @@
  * Copyright (C) 2026 oopsio
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
 import { DevTools, initDevTools, getDevTools } from '../src/devtools/devtools.js';
 import { ComponentTreeManager, type ComponentNode } from '../src/devtools/component-tree.js';
 import { EventLogger } from '../src/devtools/event-logger.js';
@@ -11,6 +11,28 @@ import { PerformanceMonitor } from '../src/devtools/performance.js';
 import { SearchManager } from '../src/devtools/search.js';
 import { PersistenceManager } from '../src/devtools/persistence.js';
 import { createEventBus } from '../src/devtools/event-bus.js';
+
+// Mock localStorage for Node.js test environment
+if (typeof global.localStorage === 'undefined') {
+  const mockStorage: Record<string, string> = {};
+  global.localStorage = {
+    getItem: (key: string) => mockStorage[key] || null,
+    setItem: (key: string, value: string) => {
+      mockStorage[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete mockStorage[key];
+    },
+    clear: () => {
+      Object.keys(mockStorage).forEach(key => delete mockStorage[key]);
+    },
+    key: (index: number) => {
+      const keys = Object.keys(mockStorage);
+      return keys[index] || null;
+    },
+    length: Object.keys(mockStorage).length,
+  } as Storage;
+}
 
 describe('DevTools', () => {
   describe('ComponentTreeManager', () => {
@@ -342,6 +364,11 @@ describe('DevTools', () => {
     });
 
     it('should handle localStorage errors gracefully', () => {
+      // Skip test in non-browser environments
+      if (typeof localStorage === 'undefined') {
+        vi.skip();
+        return;
+      }
       // Simulate localStorage.setItem throwing
       const originalSetItem = localStorage.setItem;
       localStorage.setItem = vi.fn(() => {

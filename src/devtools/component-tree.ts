@@ -60,6 +60,12 @@ export class ComponentTreeManager {
         if (index < siblings.length - 1) {
           return siblings[index + 1];
         }
+      } else {
+        // Check root level siblings
+        const index = this.tree.indexOf(node);
+        if (index < this.tree.length - 1) {
+          return this.tree[index + 1];
+        }
       }
       node = node.parent;
     }

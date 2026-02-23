@@ -24,6 +24,13 @@ import {
   createRouteMiddlewareContext,
   executeRouteMiddleware,
 } from "../core/middleware-hooks.js";
+import {
+  scanLayouts,
+  buildLayoutHierarchy,
+  resolveLayoutStack,
+  renderWithLayoutStack,
+  collectLayoutHeads,
+} from "../core/layouts/index.js";
 import { createIslandMarker } from "./islands.js";
 
 import { h } from "preact";
@@ -111,6 +118,11 @@ export async function renderRouteToHtml(opts: {
   cookies: Record<string, string>;
 }) {
   const { config, route, url, params, query, headers, cookies } = opts;
+
+  // Scan and build layout hierarchy for this route
+  const layoutEntries = scanLayouts(config);
+  const applicableLayouts = buildLayoutHierarchy(layoutEntries, route.filePath, config.siteDir);
+  const layoutStack = await resolveLayoutStack(applicableLayouts);
 
   // Transpile route file if needed. TypeScript and JSX require compilation to JavaScript.
   // Vue and Svelte components also need transpilation to Preact-compatible JavaScript.
@@ -213,9 +225,14 @@ export async function renderRouteToHtml(opts: {
   // Check if hydration is disabled. Set to false for purely static pages with no client-side interactivity.
   const shouldHydrate = mod.hydrate !== false;
 
-  const app = h(Page as any, { data, params, query });
+  // Render with layout hierarchy wrapping the page component
+  const app = renderWithLayoutStack(layoutStack, Page, {
+    data,
+    params,
+    query,
+  });
 
-  // Render the page component to a static HTML string.
+  // Render the page component (with layouts) to a static HTML string.
   // Preact rendering at this stage is purely static; hydration happens on the client.
   let bodyHtml = renderToString(app);
 
@@ -237,19 +254,20 @@ export async function renderRouteToHtml(opts: {
     }
   }
 
-  // Collect all head elements from configuration and the route's Head component.
-  // Head components allow per-route customization of meta tags, title, links, etc.
+  // Collect all head elements from configuration, layout components, and the route's Head component.
+  // Head components are collected from root layout to page, allowing each layer to contribute meta tags.
   const headParts: string[] = [];
   headParts.push(...config.inject.head);
 
-  if (mod.Head) {
+  // Collect heads from layout stack
+  const layoutHeads = collectLayoutHeads(layoutStack, mod.Head, { data, params, query });
+  for (const headNode of layoutHeads) {
     try {
-      const headNode = h(mod.Head as any, { data, params, query });
       const headHtml = renderToString(headNode);
       headParts.push(headHtml);
     } catch (err) {
       console.error(
-        `Failed to render Head component for ${route.filePath}:`,
+        `Failed to render Head component:`,
         err instanceof Error ? err.message : String(err),
       );
     }

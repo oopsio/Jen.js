@@ -26,6 +26,7 @@ import { createScssCompiler } from "../css/compiler.js";
 import type { FrameworkConfig } from "../core/config.js";
 import { scanRoutes } from "../core/routes/scan.js";
 import { matchRoute } from "../core/routes/match.js";
+import { createAdvancedRouter } from "../core/routes/orchestrator.js";
 import { log } from "../shared/log.js";
 import { Kernel } from "../middleware/kernel.js";
 import { renderRouteToHtml } from "../runtime/render.js";
@@ -43,6 +44,7 @@ import {
   invalidateSvelteCache,
 } from "../compilers/esbuild-plugins.js";
 import { fontServeMiddleware } from "../fonts/inject.js";
+import { createServerActionsMiddleware } from "../server-actions/middleware.js";
 
 /**
  * Local middleware type for composing request handlers in the app middleware chain.
@@ -180,6 +182,7 @@ export async function createApp(opts: {
    * See scanRoutes() for details on route naming conventions.
    */
   const routes = scanRoutes(config);
+  const router = createAdvancedRouter(routes, config);
   log.info(`Routes discovered: ${routes.length}`);
   for (const r of routes) log.info(`  ${r.urlPath} -> ${r.filePath}`);
 
@@ -196,6 +199,9 @@ export async function createApp(opts: {
   // Font serving middleware
   const fontCacheDir = join(process.cwd(), config.build?.cacheDir ?? ".jen", "fonts");
   const serveFonts = fontServeMiddleware(fontCacheDir);
+
+  // Server actions middleware
+  const serverActionsMiddleware = await createServerActionsMiddleware({ config });
 
   const middlewares: Middleware[] = [
     async (ctx, next) => {
@@ -366,6 +372,11 @@ initializeIslands();
     },
 
     async (ctx, next) => {
+      // Server actions
+      await serverActionsMiddleware(ctx, next);
+    },
+
+    async (ctx, next) => {
       // API routes
       const handled = await tryHandleApiRoute({
         req: ctx.req,
@@ -470,27 +481,44 @@ initializeIslands();
     },
 
     async (ctx, next) => {
-      // SSR
+      // Advanced routing with guards, redirects, and 404 handling
       if (ctx.req.method !== "GET") return next();
-
-      const m = matchRoute(routes, ctx.url.pathname);
-      if (!m) return next();
 
       const reqHeaders = headersToObject(ctx.req.headers);
       const cookies = parseCookies(ctx.req);
 
-      const query: Record<string, string> = {};
-      for (const [k, v] of ctx.url.searchParams.entries()) query[k] = v;
+      // Use advanced router to resolve the route
+      const resolution = await router.resolve(
+        ctx.url.pathname,
+        ctx.url,
+        reqHeaders,
+        cookies,
+      );
+
+      if (resolution.type === "redirect") {
+        // Handle redirects (both app-level and route-level)
+        router.handleRedirect(ctx.res, resolution.location, resolution.status);
+        return;
+      }
+
+      if (resolution.type === "not_found") {
+        // Handle 404 responses
+        await router.handle404(ctx.res, resolution.pathname);
+        return;
+      }
+
+      // Route matched - render the page
+      if (resolution.type !== "matched") return next();
 
       try {
         const html = await renderRouteToHtml({
           config,
-          route: m.route,
+          route: resolution.route,
           req: ctx.req,
           res: ctx.res,
           url: ctx.url,
-          params: m.params,
-          query,
+          params: resolution.params,
+          query: resolution.query,
           headers: reqHeaders,
           cookies,
         });
@@ -516,11 +544,7 @@ initializeIslands();
       }
     },
 
-    async (ctx) => {
-      ctx.res.statusCode = 404;
-      ctx.res.setHeader("content-type", "text/plain; charset=utf-8");
-      ctx.res.end("404 Not Found");
-    },
+
   ];
 
   const kernel = new Kernel();

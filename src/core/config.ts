@@ -29,6 +29,7 @@ import type { FontsConfig } from "../fonts/types.js";
 import type { PluginConfig } from "../plugin/types.js";
 import type { SecurityConfig } from "../security/security-config.js";
 import type { AssetOptimizeConfig } from "../assets/types.js";
+import type { RedirectConfig } from "./routes/handlers.js";
 
 export type RenderMode = "ssr" | "ssg" | "isr" | "ppr";
 
@@ -109,6 +110,20 @@ export type FrameworkConfig = {
      */
     enableIndexFallback: boolean;
   };
+
+  /**
+   * Application-level redirects configuration.
+   * Redirects are processed before route matching, enabling URL rewriting.
+   *
+   * @example
+   * ```typescript
+   * redirects: [
+   *   { from: "/old-page", to: "/new-page", status: 301 },
+   *   { from: "/docs/*", to: "/help/*", status: 302 }
+   * ]
+   * ```
+   */
+  redirects?: RedirectConfig[];
 
   /**
    * Default rendering behavior for all routes.

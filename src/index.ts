@@ -49,6 +49,24 @@ export {
   extractIslandsFromHtml,
   injectIslandScript,
 } from "./build/island-hydration.js";
+export {
+  ScriptOptimizer,
+  scriptOptimizerPlugin,
+  type ScriptOptimizeConfig,
+  type ScriptMetadata,
+  type OptimizedChunk,
+} from "./build/script-optimizer.js";
+export {
+  CodeSplitter,
+  createSplitConfig,
+  type SplitStrategy,
+} from "./build/code-splitter.js";
+export {
+  LazyLoader,
+  createLazyLoader,
+  type LazyModule,
+  type LazyManifest,
+} from "./build/lazy-loader.js";
 
 // Cache
 export * from "./cache/index.js";
@@ -88,10 +106,17 @@ export * from "./core/paths.js";
 export * from "./core/types.js";
 export * from "./core/routes/match.js";
 export * from "./core/routes/scan.js";
+export * from "./core/routes/advanced.js";
+export * from "./core/routes/handlers.js";
+export * from "./core/routes/orchestrator.js";
 export * from "./core/middleware-hooks.js";
+export * from "./core/layouts/index.js";
 
 // CSS
 export * from "./css/compiler.js";
+
+// Data Fetching
+export * from "./data-fetching/index.js";
 
 // Database
 export * from "./db/index.js";
@@ -174,6 +199,9 @@ export type {
 // Keep old api.js exports for backward compatibility
 export { tryHandleApiRoute } from "./server/api.js";
 export * from "./server/runtimeServe.js";
+
+// Server Actions
+export * from "./server-actions/index.js";
 
 // Security
 export * from "./security/security-config.js";
