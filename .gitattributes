@@ -1,8 +1,4 @@
 website/** linguist-generated
 jenpack/** linguist-language=TypeScript
 *.js linguist-language=TypeScript
-*.ps1 linguist-language=TypeScript
-*.sh linguist-language=TypeScript
-*.css linguist-language=TypeScript
-*.scss linguist-language=TypeScript
 **/vendor/** linguist-vendored
