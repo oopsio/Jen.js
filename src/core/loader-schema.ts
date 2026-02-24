@@ -64,7 +64,16 @@ export function validateLoaderData(
   const obj = data as Record<string, any>;
   for (const [key, type] of Object.entries(schema)) {
     const value = obj[key];
-    const actualType = Array.isArray(value) ? "array" : typeof value;
+    // Determine actual type (arrays are objects, so treat both as "object")
+    let actualType = typeof value;
+    if (value === null) {
+      actualType = "null";
+    } else if (type === "array" && Array.isArray(value)) {
+      actualType = "array";
+    } else if (Array.isArray(value) && type === "object") {
+      // Arrays pass object validation (since arrays are objects)
+      actualType = "object";
+    }
 
     if (actualType !== type) {
       throw new Error(
