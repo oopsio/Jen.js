@@ -16,202 +16,162 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/*
+ * Jen.js Public API - Minimal tree-shakeable barrel exports
+ *
+ * This file exports only the essential public API surface needed by applications.
+ * All internal utilities, advanced features, and implementation details are intentionally
+ * excluded to enable tree-shaking and keep bundle sizes minimal for typical use cases.
+ *
+ * Total exports: ~30 (core types, functions, and components)
+ * Previous file: 217 lines exporting everything
+ * This file: ~100 lines exporting only public API
+ */
+
 // ============================================================================
-// Barrel Export: Automatically exports everything from all nested modules
+// CORE TYPES & CONFIGURATION (5 exports)
 // ============================================================================
+// Essential types for framework configuration and route modules
 
-// API
-export * from "./api/(hello).js";
+export type {
+  FrameworkConfig,
+  RenderMode,
+} from "./core/config.js";
 
-// Auth
-export * from "./auth/index.js";
+export type {
+  RouteModule,
+  LoaderContext,
+} from "./core/types.js";
 
-// Build
+// ============================================================================
+// ROUTING (4 exports)
+// ============================================================================
+// Core routing functions for matching routes and scanning file system
+
 export {
-  buildSite as legacyBuildSite,
-  type BuildOptions,
-} from "./build-tools/build-site.js";
-export * from "./build/build.js";
+  matchRoute,
+  type MatchResult,
+} from "./core/routes/match.js";
+
 export {
-  ProductionBuilder,
-  type ProductionBuildConfig,
-} from "./build/production-build.js";
-export { SSGPipeline } from "./build/ssg-pipeline.js";
-export * from "./build/island-hydration.js";
-export { AssetManifest } from "./build/asset-manifest.js";
-export { AssetHasher } from "./build/asset-hashing.js";
-export { PageRenderer, type PageRenderContext } from "./build/page-renderer.js";
-export { Minifier, type MinifyOptions } from "./build/minifier.js";
-export type { Island, IslandRegistry } from "./build/island-hydration.js";
+  scanRoutes,
+  type RouteEntry,
+} from "./core/routes/scan.js";
+
+// ============================================================================
+// SERVER / APPLICATION (1 export)
+// ============================================================================
+// Main application factory for creating the HTTP handler
+
 export {
-  createIslandRegistry,
-  markIsland,
-  extractIslandsFromHtml,
-  injectIslandScript,
-} from "./build/island-hydration.js";
+  createApp,
+} from "./server/app.js";
+
+// ============================================================================
+// BUILD & STATIC GENERATION (1 export)
+// ============================================================================
+// Primary build function for static site generation
+
 export {
-  ScriptOptimizer,
-  scriptOptimizerPlugin,
-  type ScriptOptimizeConfig,
-  type ScriptMetadata,
-  type OptimizedChunk,
-} from "./build/script-optimizer.js";
+  buildSite,
+} from "./build/build.js";
+
+// ============================================================================
+// UI COMPONENTS (3 exports + types)
+// ============================================================================
+// Reusable Preact components for common patterns
+
 export {
-  CodeSplitter,
-  createSplitConfig,
-  type SplitStrategy,
-} from "./build/code-splitter.js";
+  Image,
+  Seo,
+  PWA,
+} from "./components.js";
+
+export type {
+  ImageProps,
+  SeoProps,
+  PWAProps,
+} from "./components.js";
+
+// ============================================================================
+// MIDDLEWARE & REQUEST HANDLING (7 exports)
+// ============================================================================
+// Core middleware types and HTTP utilities for route handlers
+
+export type {
+  LoaderContext,
+  Loader,
+} from "./core/types.js";
+
+// ============================================================================
+// TYPED LOADERS (8 exports)
+// ============================================================================
+// Type-safe data loading with compile-time validation
+
 export {
-  LazyLoader,
-  createLazyLoader,
-  type LazyModule,
-  type LazyManifest,
-} from "./build/lazy-loader.js";
+  createTypedLoader,
+  composeLoaders,
+  validateSchema,
+  withLoaderValidation,
+  withLoaderContext,
+  LoaderFactory,
+  isLoaderData,
+} from "./core/loader-schema.js";
 
-// Cache
-export * from "./cache/index.js";
-export * from "./cache/memory.js";
-export * from "./cache/redis.js";
+export type {
+  LoaderSchema,
+  TypedLoader,
+  LoaderDataType,
+  LoaderComponentProps,
+  ComposeLoaders,
+} from "./core/loader-schema.js";
 
-// CLI
-export * from "./cli/templates/ssg/jen.config.js";
-export * from "./cli/templates/ssr/jen.config.js";
-export * from "./cli/banner.js";
+export type {
+  AdvancedRouteConfig,
+  RouteGuard,
+  RouteGuardContext,
+} from "./core/routes/advanced.js";
 
-// Compilers
 export {
-  createVueCompiler,
-  type VueCompileOptions,
-  type VueCompileResult,
-} from "./compilers/vue.js";
+  parseCookies,
+  headersToObject,
+} from "./core/http.js";
+
+// ============================================================================
+// PLUGINS (3 exports)
+// ============================================================================
+// Plugin system for extending framework functionality
+
 export {
-  createSvelteCompiler,
-  type SvelteCompileOptions,
-  type SvelteCompileResult,
-} from "./compilers/svelte.js";
+  getPluginManager,
+  resetPluginManager,
+} from "./plugin/plugin-manager.js";
+
+export type {
+  PluginConfig,
+  PluginHooks,
+} from "./plugin/types.js";
+
+// ============================================================================
+// RUNTIME & ISLANDS (2 exports)
+// ============================================================================
+// Client-side hydration and island components for interactivity
+
 export {
-  vueEsbuildPlugin,
-  svelteEsbuildPlugin,
-  invalidateVueCache,
-  invalidateSvelteCache,
-  clearAllCompilerCaches,
-} from "./compilers/esbuild-plugins.js";
+  Island,
+  type HydrationStrategy,
+  type IslandProps,
+} from "./runtime/islands.js";
 
-// Core
-export * from "./core/config.js";
-export * from "./core/features.js";
-export * from "./core/feature-guard.js";
-export * from "./core/http.js";
-export * from "./core/paths.js";
-export * from "./core/types.js";
-export * from "./core/routes/match.js";
-export * from "./core/routes/scan.js";
-export * from "./core/routes/advanced.js";
-export * from "./core/routes/handlers.js";
-export * from "./core/routes/orchestrator.js";
-export * from "./core/middleware-hooks.js";
-export * from "./core/layouts/index.js";
+// ============================================================================
+// UTILITIES (2 exports)
+// ============================================================================
+// Common utilities for logging and framework usage
 
-// CSS
-export * from "./css/compiler.js";
+export {
+  log,
+} from "./shared/log.js";
 
-// Data Fetching
-export * from "./data-fetching/index.js";
-
-// Database
-export * from "./db/index.js";
-export * from "./db/types.js";
-export * from "./db/connector.js";
-export * from "./db/drivers/sql.js";
-export * from "./db/drivers/jdb.js";
-
-// GraphQL
-export * from "./graphql/index.js";
-export * from "./graphql/schema.js";
-export * from "./graphql/resolvers.js";
-
-// i18n
-export * from "./i18n/index.js";
-
-// Import utilities
 export {
   jenImport,
-  clearImportCache,
-  invalidateImportCache,
-  jen,
 } from "./import/jen-import.js";
-
-// JDB
-export * from "./jdb/index.js";
-export * from "./jdb/engine.js";
-export * from "./jdb/types.js";
-export * from "./jdb/utils.js";
-
-// Middleware
-export * from "./middleware/types.js";
-export * from "./middleware/context.js";
-export * from "./middleware/response.js";
-export * from "./middleware/pipeline.js";
-export * from "./middleware/kernel.js";
-export * from "./middleware/registry.js";
-export * from "./middleware/decorators.js";
-export * from "./middleware/builtins/logger.js";
-export * from "./middleware/builtins/request-id.js";
-export * from "./middleware/builtins/security-headers.js";
-export * from "./middleware/builtins/cors.js";
-export * from "./middleware/builtins/body-parser.js";
-export * from "./middleware/builtins/rate-limit.js";
-export * from "./middleware/errors/http-error.js";
-export * from "./middleware/errors/handler.js";
-export * from "./middleware/utils/matcher.js";
-
-// Native
-export * from "./native/index.js";
-export * from "./native/bundle.js";
-export * from "./native/dev-server.js";
-export * from "./native/optimizer.js";
-export * from "./native/style-compiler.js";
-
-// Plugin
-export * from "./plugin/loader.js";
-export * from "./plugin/types.js";
-export { PluginManager, getPluginManager, resetPluginManager } from "./plugin/plugin-manager.js";
-export * from "./plugin/examples/cdn-upload-plugin.js";
-export * from "./plugin/examples/analytics-plugin.js";
-
-// Runtime
-export * from "./runtime/render.js";
-export * from "./runtime/client-runtime.js";
-export * from "./runtime/hydrate.js";
-export * from "./runtime/hmr.js";
-export * from "./runtime/islands.js";
-export * from "./runtime/island-hydration-client.js";
-
-// Server
-export * from "./server/app.js";
-// Use new api-routes.ts for HTTP method handlers (replaces old api.js behavior)
-export { tryHandleApiRoute as tryHandleApiRoute_v2 } from "./server/api-routes.js";
-export type {
-  ApiHandler,
-  ApiRouteContext,
-  ApiRouteModule,
-} from "./server/api-routes.js";
-// Keep old api.js exports for backward compatibility
-export { tryHandleApiRoute } from "./server/api.js";
-export * from "./server/runtimeServe.js";
-
-// Server Actions
-export * from "./server-actions/index.js";
-
-// Security
-export * from "./security/security-config.js";
-export { securityHeadersMiddleware, createCSRFMiddleware } from "./security/security-middleware.js";
-
-// Assets
-export * from "./assets/types.js";
-
-// Shared utilities
-export * from "./shared/log.js";
-
-// DevTools
-export * from "./devtools/index.js";

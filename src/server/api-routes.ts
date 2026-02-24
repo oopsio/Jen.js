@@ -17,10 +17,24 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, basename } from "node:path";
+import { createHash } from "node:crypto";
 import esbuild from "esbuild";
 import { pathToFileURL } from "node:url";
+
+/** Supported HTTP methods for API routes. */
+export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+
+/** Query parameter type after coercion (strings remain strings, numeric strings stay strings). */
+export type QueryValue = string | number | boolean | null;
+
+/** Validation error response. */
+export interface ValidationError {
+  error: string;
+  field?: string;
+  details?: string;
+}
 
 /**
  * API route handler execution context.
@@ -33,12 +47,12 @@ export interface ApiRouteContext {
   res: ServerResponse;
   /** Request URL object with pathname, search, query parameters. */
   url: URL;
-  /** HTTP method in uppercase (GET, POST, PUT, DELETE, PATCH, etc.). */
-  method: string;
-  /** Query string parameters parsed from URL (?key=value). */
-  query: Record<string, string>;
+  /** HTTP method as literal union type (GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS). */
+  method: HttpMethod;
+  /** Query string parameters parsed from URL with type coercion (?key=value). */
+  query: Record<string, QueryValue>;
   /** Parsed request body (JSON if Content-Type is application/json, else raw string). */
-  body: any;
+  body: unknown;
   /** Route path parameters extracted from dynamic segments (e.g., [id], [slug]). */
   params: Record<string, string>;
 }
@@ -100,12 +114,70 @@ export interface ApiRouteModule {
   OPTIONS?: ApiHandler;
 }
 
+/** Default max request body size: 10MB. */
+export const DEFAULT_MAX_BODY_SIZE = 10 * 1024 * 1024;
+
 /** Cache directory for transpiled API routes. */
 const apiCacheDir = join(process.cwd(), "node_modules", ".jen", "api-cache");
 
 /**
+ * Coerce query parameter value to appropriate type.
+ * - "true" / "false" → boolean
+ * - numeric strings → number
+ * - empty string → null
+ * - otherwise → string
+ *
+ * @param value - Raw query string value
+ * @returns Coerced value
+ */
+function coerceQueryValue(value: string): QueryValue {
+  if (value === "true") return true;
+  if (value === "false") return false;
+  if (value === "") return null;
+  const num = Number(value);
+  if (!isNaN(num) && value.trim() !== "") return num;
+  return value;
+}
+
+/**
+ * Validate and parse query parameters with type coercion.
+ * Prevents type confusion bugs like `query.limit + 10` returning "10010" string.
+ *
+ * @param url - URL object with search parameters
+ * @returns Parsed query parameters with coerced types
+ */
+export function validateQuery(url: URL): Record<string, QueryValue> {
+  const query: Record<string, QueryValue> = {};
+  for (const [key, value] of url.searchParams.entries()) {
+    query[key] = coerceQueryValue(value);
+  }
+  return query;
+}
+
+/**
+ * Validate request body with size limit.
+ * Default max size is 10MB. Throws ValidationError if exceeded or invalid JSON.
+ *
+ * @param body - Parsed body object
+ * @param bodySize - Size of body in bytes
+ * @param maxSize - Maximum allowed body size in bytes (default 10MB)
+ * @returns true if body is valid
+ * @throws ValidationError if body exceeds maxSize
+ */
+export function validateBody(body: unknown, bodySize: number, maxSize: number = DEFAULT_MAX_BODY_SIZE): boolean {
+  if (bodySize > maxSize) {
+    throw {
+      error: "Payload too large",
+      field: "body",
+      details: `Max size is ${maxSize} bytes, got ${bodySize} bytes`,
+    } as ValidationError;
+  }
+  return true;
+}
+
+/**
  * Transpile a TypeScript API route file to JavaScript.
- * Uses esbuild to convert TS → JS, bundle dependencies, and output as ESM.
+ * Uses esbuild to convert TS + JS, bundle dependencies, and output as ESM.
  * The transpiled file is cached in node_modules/.jen/api-cache with a timestamp
  * in the filename to allow side-by-side versions if the file changes.
  *
@@ -155,11 +227,13 @@ async function transpileApiRoute(filePath: string): Promise<string> {
  * 2. Resolve route file (exact or dynamic match)
  * 3. Transpile if TypeScript
  * 4. Load module and find handler for HTTP method
- * 5. Parse request body
- * 6. Call handler with context
- * 7. Serialize response (Response, string, or object)
+ * 5. Parse request body with size limit
+ * 6. Validate query and body
+ * 7. Call handler with context
+ * 8. Serialize response (Response, string, or object)
  *
  * All errors send JSON response with error message.
+ * HTTP 413 (Payload Too Large) if body exceeds 10MB.
  * HTTP 405 (Method Not Allowed) if method handler not exported.
  * HTTP 404 if no matching route file.
  * HTTP 500 if handler throws or transpilation fails.
@@ -171,14 +245,26 @@ export async function tryHandleApiRoute(opts: {
   req: IncomingMessage;
   res: ServerResponse;
   siteDir: string;
+  maxBodySize?: number;
 }): Promise<boolean> {
-  const { req, res, siteDir } = opts;
+  const { req, res, siteDir, maxBodySize = DEFAULT_MAX_BODY_SIZE } = opts;
 
   const url = new URL(
     req.url ?? "/",
     `http://${req.headers.host ?? "localhost"}`,
   );
-  const method = (req.method ?? "GET").toUpperCase();
+  const methodStr = (req.method ?? "GET").toUpperCase();
+
+  // Validate method is one of the allowed HTTP methods
+  const allowedMethods: HttpMethod[] = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
+  const method = methodStr as HttpMethod;
+  if (!allowedMethods.includes(method)) {
+    res.statusCode = 405;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.setHeader("allow", allowedMethods.join(", "));
+    res.end(JSON.stringify({ error: `${methodStr} not allowed` }));
+    return true;
+  }
 
   // Only handle /api/* requests
   if (!url.pathname.startsWith("/api/")) return false;
@@ -270,8 +356,39 @@ export async function tryHandleApiRoute(opts: {
     return true;
   }
 
-  // Parse request body
-  const body = await readRequestBody(req);
+  // Parse request body with size limit
+  let body: unknown;
+  let bodySize = 0;
+  try {
+    const result = await readRequestBody(req, maxBodySize);
+    body = result.body;
+    bodySize = result.size;
+
+    // Validate body size
+    validateBody(body, bodySize, maxBodySize);
+  } catch (err: any) {
+    if (err.error === "Payload too large") {
+      res.statusCode = 413;
+      res.setHeader("content-type", "application/json; charset=utf-8");
+      res.end(JSON.stringify({ error: err.error, details: err.details }));
+      return true;
+    }
+    res.statusCode = 400;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ error: "Bad request", details: err.message }));
+    return true;
+  }
+
+  // Validate and coerce query parameters
+  let query: Record<string, QueryValue>;
+  try {
+    query = validateQuery(url);
+  } catch (err: any) {
+    res.statusCode = 400;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ error: "Invalid query parameters", details: err.message }));
+    return true;
+  }
 
   // Build handler context
   const ctx: ApiRouteContext = {
@@ -279,7 +396,7 @@ export async function tryHandleApiRoute(opts: {
     res,
     url,
     method,
-    query: Object.fromEntries(url.searchParams.entries()),
+    query,
     body,
     params: routeParams,
   };
@@ -324,43 +441,67 @@ export async function tryHandleApiRoute(opts: {
 }
 
 /**
- * Parse request body based on Content-Type header.
+ * Parse request body based on Content-Type header with size limit enforcement.
  * Reads all chunks from the request stream and deserializes based on content type.
  *
- * - GET/HEAD: Returns null (no body expected)
- * - JSON (application/json): Parses and returns object; falls back to { __raw } if invalid JSON
- * - Other: Returns { __raw } with raw body string
+ * - GET/HEAD: Returns { body: null, size: 0 } (no body expected)
+ * - JSON (application/json): Parses and returns object; throws on invalid JSON
+ * - Other: Returns { body: { __raw }, size: byteLength }
+ *
+ * Throws ValidationError if body size exceeds maxSize.
  *
  * This function is shared between different request handlers in the framework.
  *
  * @param req - Node.js IncomingMessage to read body from
- * @returns Parsed body object or null
+ * @param maxSize - Maximum allowed body size in bytes (default 10MB)
+ * @returns Object with parsed body and size in bytes
+ * @throws ValidationError if body exceeds maxSize or invalid JSON
  */
-async function readRequestBody(req: IncomingMessage): Promise<any> {
+async function readRequestBody(
+  req: IncomingMessage,
+  maxSize: number = DEFAULT_MAX_BODY_SIZE,
+): Promise<{ body: unknown; size: number }> {
   const method = (req.method ?? "GET").toUpperCase();
   // Methods without bodies per HTTP spec
-  if (method === "GET" || method === "HEAD") return null;
+  if (method === "GET" || method === "HEAD") return { body: null, size: 0 };
 
-  // Read all body chunks
+  // Read all body chunks with size limit check
   const chunks: Buffer[] = [];
-  for await (const chunk of req) {
-    chunks.push(Buffer.from(chunk));
-  }
-  if (chunks.length === 0) return null;
+  let totalSize = 0;
 
-  const raw = Buffer.concat(chunks).toString("utf8");
+  try {
+    for await (const chunk of req) {
+      totalSize += chunk.length;
+      if (totalSize > maxSize) {
+        throw {
+          error: "Payload too large",
+          field: "body",
+          details: `Max size is ${maxSize} bytes, got at least ${totalSize} bytes`,
+        } as ValidationError;
+      }
+      chunks.push(Buffer.from(chunk));
+    }
+  } catch (err: any) {
+    // Re-throw validation errors
+    if (err.error === "Payload too large") throw err;
+    throw new Error(`Failed to read request body: ${err.message}`);
+  }
+
+  if (chunks.length === 0) return { body: null, size: 0 };
+
+  const bodyBuffer = Buffer.concat(chunks);
+  const raw = bodyBuffer.toString("utf8");
   const ct = (req.headers["content-type"] ?? "").toString();
 
   // Try to parse JSON
   if (ct.includes("application/json")) {
     try {
-      return JSON.parse(raw);
-    } catch {
-      // Return raw body if JSON parsing fails
-      return { __raw: raw };
+      return { body: JSON.parse(raw), size: bodyBuffer.byteLength };
+    } catch (err: any) {
+      throw new Error(`Invalid JSON: ${err.message}`);
     }
   }
 
   // Return raw body for non-JSON content
-  return { __raw: raw };
+  return { body: { __raw: raw }, size: bodyBuffer.byteLength };
 }
