@@ -215,7 +215,7 @@ describe("Integration: API Routes", () => {
 
       const ctx = createMockContext();
 
-      expect(async () => {
+      await expect(async () => {
         await router.match("GET", "/api/error", ctx);
       }).rejects.toThrow();
     });
