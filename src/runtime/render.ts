@@ -37,12 +37,19 @@ import { h } from "preact";
 import renderToString from "preact-render-to-string";
 import { pathToFileURL } from "node:url";
 import { join, dirname, basename } from "node:path";
-import { mkdirSync, existsSync } from "node:fs";
+import { mkdirSync, existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import esbuild from "esbuild";
 import {
   vueEsbuildPlugin,
   svelteEsbuildPlugin,
 } from "../compilers/esbuild-plugins.js";
+
+/**
+ * Maximum data size for serialization (1MB).
+ * Prevents DoS attacks via extremely large payloads.
+ */
+const MAX_DATA_SIZE = 1024 * 1024; // 1MB
 
 /**
  * Escapes HTML special characters to prevent injection attacks.
@@ -51,7 +58,7 @@ import {
  * @param s The string to escape.
  * @returns The escaped string safe for inclusion in HTML.
  */
-function escapeHtml(s: string) {
+function escapeHtml(s: string): string {
   return s
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -61,22 +68,143 @@ function escapeHtml(s: string) {
 }
 
 /**
+ * Recursively escapes all strings in an object to prevent XSS attacks.
+ * Traverses nested objects, arrays, and all string values.
+ * Non-string, non-object values are returned as-is.
+ *
+ * @param value The value to escape (can be any type).
+ * @returns A new object with all strings escaped.
+ */
+function recursivelyEscapeStrings(value: any): any {
+  if (typeof value === "string") {
+    return escapeHtml(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map(recursivelyEscapeStrings);
+  }
+  if (value !== null && typeof value === "object") {
+    const escaped: Record<string, any> = {};
+    for (const [key, val] of Object.entries(value)) {
+      escaped[key] = recursivelyEscapeStrings(val);
+    }
+    return escaped;
+  }
+  // Return primitives (numbers, booleans, null, undefined) as-is
+  return value;
+}
+
+/**
+ * In-memory deduplication map for concurrent transpile requests.
+ * Prevents race conditions where multiple concurrent requests transpile the same file.
+ * Maps from cache key to a Promise that resolves to the output file path.
+ */
+const transpileInProgress = new Map<string, Promise<string>>();
+
+/**
+ * Computes a hash of the file content to track changes.
+ * Uses SHA-256 to create a unique hash of the source file.
+ * This enables cache invalidation when the file changes.
+ *
+ * @param filePath The absolute path to the file.
+ * @returns A short hash of the file content (first 8 chars).
+ */
+function getFileHash(filePath: string): string {
+  try {
+    const content = readFileSync(filePath, "utf-8");
+    const hash = createHash("sha256").update(content).digest("hex");
+    return hash.slice(0, 8);
+  } catch {
+    return "unknown";
+  }
+}
+
+/**
+ * Gets the modification time of a file.
+ * Used to detect stale cache entries.
+ *
+ * @param filePath The absolute path to the file.
+ * @returns The modification time in milliseconds, or 0 if file doesn't exist.
+ */
+function getFileMtime(filePath: string): number {
+  try {
+    return statSync(filePath).mtimeMs;
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Resolves the cache directory path for compiled route modules.
- * Transpiled TypeScript/JSX/Vue/Svelte routes are cached to avoid repeated compilation.
+ * Cache key includes file hash to track changes.
  * Cache is stored in node_modules/.jen/cache to leverage .gitignore and keep the workspace clean.
  * Path names are flattened to avoid nested directory creation issues on Windows.
  *
+ * Cache metadata file (.meta) stores:
+ * - Original file modification time
+ * - File content hash
+ * - Cache creation time
+ *
  * @param filePath The absolute path to the original source file.
- * @returns The absolute path to the cached compiled output file.
+ * @returns Object with cache file path and metadata file path.
  */
-function getCachePath(filePath: string) {
+function getCachePath(filePath: string): { cachePath: string; metaPath: string } {
   const cacheDir = join(process.cwd(), "node_modules", ".jen", "cache");
   if (!existsSync(cacheDir)) {
     mkdirSync(cacheDir, { recursive: true });
   }
-  // Flatten path to avoid directory structure issues.
+
+  // Flatten path and append file hash for uniqueness
   const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
-  return join(cacheDir, flatName + ".mjs");
+  const fileHash = getFileHash(filePath);
+  const cacheName = `${flatName}_${fileHash}`;
+
+  const cachePath = join(cacheDir, cacheName + ".mjs");
+  const metaPath = join(cacheDir, cacheName + ".meta");
+
+  return { cachePath, metaPath };
+}
+
+/**
+ * Checks if cache is still valid (file hasn't changed).
+ * Compares file hash and modification time from metadata.
+ *
+ * @param filePath The absolute path to the source file.
+ * @param metaPath The absolute path to the metadata file.
+ * @returns true if cache is valid, false if file changed or metadata missing.
+ */
+function isCacheValid(filePath: string, metaPath: string): boolean {
+  try {
+    const meta = JSON.parse(readFileSync(metaPath, "utf-8"));
+    const currentHash = getFileHash(filePath);
+    const currentMtime = getFileMtime(filePath);
+
+    // Check if file hash or mtime changed
+    return meta.fileHash === currentHash && meta.fileMtime === currentMtime;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Writes cache metadata to track file state.
+ * Stores file hash, mtime, and cache time for future validation.
+ *
+ * @param filePath The absolute path to the source file.
+ * @param metaPath The absolute path to the metadata file.
+ */
+function writeCacheMeta(filePath: string, metaPath: string): void {
+  try {
+    const meta = {
+      filePath,
+      fileHash: getFileHash(filePath),
+      fileMtime: getFileMtime(filePath),
+      cacheTime: Date.now(),
+    };
+    writeFileSync(metaPath, JSON.stringify(meta, null, 2));
+  } catch (err) {
+    // Non-critical: log but don't fail transpilation
+    console.warn(`Failed to write cache metadata: ${metaPath}`, err);
+  }
 }
 
 /**
@@ -133,19 +261,46 @@ export async function renderRouteToHtml(opts: {
   );
 
   if (requiresTranspile) {
-    const outfile = getCachePath(route.filePath);
-    await esbuild.build({
-      entryPoints: [route.filePath],
-      outfile,
-      format: "esm",
-      platform: "node", // Node platform for SSR supports built-ins like fs, path, etc.
-      target: "es2022",
-      bundle: true, // Bundle all local imports into a single file for simplicity.
-      external: ["preact", "preact-render-to-string", "jenjs"], // Keep framework imports external.
-      write: true,
-      plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-    });
-    moduleUrl = outfile;
+    const { cachePath, metaPath } = getCachePath(route.filePath);
+
+    // Check if valid cache exists (file hasn't changed)
+    if (existsSync(cachePath) && isCacheValid(route.filePath, metaPath)) {
+      moduleUrl = cachePath;
+    } else {
+      // Use deduplication map to prevent concurrent transpile races
+      const cacheKey = cachePath;
+
+      if (transpileInProgress.has(cacheKey)) {
+        // Another request is already transpiling this file, wait for it
+        moduleUrl = await transpileInProgress.get(cacheKey)!;
+      } else {
+        // Start transpilation and store promise for deduplication
+        const transpilePromise = (async () => {
+          try {
+            await esbuild.build({
+              entryPoints: [route.filePath],
+              outfile: cachePath,
+              format: "esm",
+              platform: "node", // Node platform for SSR supports built-ins like fs, path, etc.
+              target: "es2022",
+              bundle: true, // Bundle all local imports into a single file for simplicity.
+              external: ["preact", "preact-render-to-string", "jenjs"], // Keep framework imports external.
+              write: true,
+              plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+            });
+            // Write metadata after successful transpilation
+            writeCacheMeta(route.filePath, metaPath);
+            return cachePath;
+          } finally {
+            // Remove from in-progress map when done
+            transpileInProgress.delete(cacheKey);
+          }
+        })();
+
+        transpileInProgress.set(cacheKey, transpilePromise);
+        moduleUrl = await transpilePromise;
+      }
+    }
   }
 
   // Cache busting via query parameter ensures fresh module evaluation even if file is unchanged.
@@ -289,13 +444,18 @@ ${headParts.join("\n")}
   // Only inject hydration script if enabled for this route.
   // Hydration-disabled routes are purely static and require no JavaScript.
   if (shouldHydrate) {
-    // Serialize loader and route data for the client. Must escape </script to prevent injection attacks.
-    // The client uses this data to reconstruct the component tree and populate props.
-    const frameworkDataStr = JSON.stringify(
-      { data, params, query },
-      null,
-      2,
-    ).replace(/<\/script/gi, "<\\/script");
+    // Validate data size before serialization to prevent DoS attacks.
+    const dataToSerialize = { data, params, query };
+    const frameworkData = recursivelyEscapeStrings(dataToSerialize);
+    const frameworkDataStr = JSON.stringify(frameworkData, null, 2);
+
+    // Check size of serialized data
+    if (frameworkDataStr.length > MAX_DATA_SIZE) {
+      throw new Error(
+        `Framework data exceeds maximum size of ${MAX_DATA_SIZE} bytes. ` +
+        `Current size: ${frameworkDataStr.length} bytes. This may indicate a DoS attempt or excessive data in loader/middleware.`,
+      );
+    }
 
     const hydrateFile = `/__hydrate?file=${encodeURIComponent(route.filePath)}`;
 

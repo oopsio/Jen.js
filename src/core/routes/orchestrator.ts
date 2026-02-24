@@ -88,13 +88,13 @@ export class AdvancedRouter {
     headers: Record<string, string>,
     cookies: Record<string, string>,
   ): Promise<RouteResolutionResult> {
-    log.debug(`[Router] Resolving: ${pathname}`);
+    log.info(`[Router] Resolving: ${pathname}`);
 
     // Step 1: Check application-level redirects
     if (this.config.redirects) {
       const redirect = getRedirect(pathname, this.config.redirects);
       if (redirect) {
-        log.debug(`[Router] Redirect: ${pathname} -> ${redirect.to}`);
+        log.info(`[Router] Redirect: ${pathname} -> ${redirect.to}`);
         return {
           type: "redirect",
           location: redirect.to,
@@ -106,7 +106,7 @@ export class AdvancedRouter {
     // Step 2: Match against routes
     const match = matchRoute(this.routes, pathname);
     if (!match) {
-      log.debug(`[Router] No route match for: ${pathname}`);
+      log.info(`[Router] No route match for: ${pathname}`);
       return { type: "not_found", pathname };
     }
 
@@ -134,7 +134,7 @@ export class AdvancedRouter {
           : advancedConfig.redirect.to;
 
       const status = advancedConfig.redirect.status ?? 301;
-      log.debug(
+      log.info(
         `[Router] Route redirect: ${pathname} -> ${target} (${status})`,
       );
       return {
@@ -172,7 +172,7 @@ export class AdvancedRouter {
         const result = await guard(guardCtx);
         if (result !== true) {
           // Guard blocked or redirected
-          log.debug(
+          log.info(
             `[Router] Guard blocked: ${pathname} (status: ${result.status})`,
           );
           return {
@@ -184,7 +184,7 @@ export class AdvancedRouter {
       }
     }
 
-    log.debug(`[Router] Matched: ${pathname} -> ${match.route.urlPath}`);
+    log.info(`[Router] Matched: ${pathname} -> ${match.route.urlPath}`);
     return {
       type: "matched",
       route: match.route,
@@ -203,10 +203,10 @@ export class AdvancedRouter {
     const notFoundConfig = getNotFoundHandler(this.config, pathname);
 
     if (notFoundConfig) {
-      log.debug(`[Router] Using custom 404 handler for: ${pathname}`);
+      log.info(`[Router] Using custom 404 handler for: ${pathname}`);
       send404(res, notFoundConfig, pathname);
     } else {
-      log.debug(`[Router] Using default 404 handler for: ${pathname}`);
+      log.info(`[Router] Using default 404 handler for: ${pathname}`);
       const html = createDefault404Html(pathname);
       send404(res, { html }, pathname);
     }
@@ -220,7 +220,7 @@ export class AdvancedRouter {
    * @param status HTTP status code
    */
   handleRedirect(res: ServerResponse, location: string, status: number): void {
-    log.debug(`[Router] Sending redirect: ${location} (${status})`);
+    log.info(`[Router] Sending redirect: ${location} (${status})`);
     sendRedirect(res, location, status);
   }
 }

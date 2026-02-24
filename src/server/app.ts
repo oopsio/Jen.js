@@ -17,10 +17,70 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { existsSync, readFileSync, watch } from "node:fs";
+import { existsSync, readFileSync, watch, FSWatcher } from "node:fs";
 import { join, extname } from "node:path";
 
 import sirv from "sirv";
+
+/**
+ * Manages the lifecycle of file watchers and HMR connections.
+ * Ensures proper cleanup on shutdown to prevent memory leaks.
+ */
+class AppLifecycle {
+  private watcher: FSWatcher | null = null;
+  private debounceTimer: NodeJS.Timeout | null = null;
+  private hmrClients = new Set<ServerResponse>();
+
+  setWatcher(watcher: FSWatcher) {
+    this.watcher = watcher;
+  }
+
+  setDebounceTimer(timer: NodeJS.Timeout) {
+    this.debounceTimer = timer;
+  }
+
+  addHmrClient(client: ServerResponse) {
+    this.hmrClients.add(client);
+  }
+
+  removeHmrClient(client: ServerResponse) {
+    this.hmrClients.delete(client);
+  }
+
+  getHmrClients() {
+    return this.hmrClients;
+  }
+
+  /**
+   * Properly closes all resources.
+   * Called on server shutdown.
+   */
+  async close() {
+    // Clear debounce timer
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
+
+    // Close all HMR connections
+    for (const client of this.hmrClients) {
+      if (!client.writableEnded && !client.destroyed) {
+        client.end();
+      }
+    }
+    this.hmrClients.clear();
+
+    // Close file watcher
+    if (this.watcher) {
+      return new Promise<void>((resolve) => {
+        this.watcher!.close(() => {
+          this.watcher = null;
+          resolve();
+        });
+      });
+    }
+  }
+}
 
 import { createScssCompiler } from "../css/compiler.js";
 import type { FrameworkConfig } from "../core/config.js";
@@ -51,6 +111,133 @@ import { createServerActionsMiddleware } from "../server-actions/middleware.js";
  * Each middleware receives the request context and a next() function to pass to the next middleware.
  */
 type Middleware = (ctx: any, next: () => Promise<void>) => Promise<void>;
+
+/**
+ * HTML template for 500 Internal Server Error responses.
+ * Used when middleware or request handlers throw uncaught exceptions.
+ */
+const ERROR_500_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500 - Internal Server Error</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #d32f2f;
+      margin: 0 0 20px 0;
+      font-size: 32px;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .error-details {
+      background: #fafafa;
+      border-left: 4px solid #d32f2f;
+      padding: 15px;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 12px;
+      color: #333;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>500 - Internal Server Error</h1>
+    <p>The server encountered an unexpected error while processing your request.</p>
+    <p>Our team has been notified. Please try again later.</p>
+    <div class="error-details" id="details" style="display:none;"></div>
+  </div>
+</body>
+</html>`;
+
+/**
+ * Sends a safe 500 error response, checking if headers have already been sent.
+ * If headers were sent, attempts to destroy the socket to prevent further data transmission.
+ * Logs the error with stack trace for debugging.
+ * 
+ * @param res Node.js ServerResponse object
+ * @param error Error object or string to log
+ * @param showDetails Whether to include error details in response (dev mode)
+ */
+function sendSafeError(
+  res: ServerResponse,
+  error: Error | string,
+  showDetails: boolean = false,
+) {
+  const errorMsg = error instanceof Error ? error.message : String(error);
+  const errorStack = error instanceof Error ? error.stack : "";
+
+  // Log error with full stack trace
+  log.error(`[Error] ${errorMsg}`);
+  if (errorStack) {
+    log.error(`Stack:\n${errorStack}`);
+  }
+
+  // If headers already sent, destroy socket to prevent data corruption
+  if (res.headersSent) {
+    log.error("[Error Response] Headers already sent, destroying socket");
+    if (res.socket && !res.socket.destroyed) {
+      res.socket.destroy();
+    }
+    return;
+  }
+
+  // Send 500 response with safe error template
+  try {
+    let html = ERROR_500_TEMPLATE;
+    
+    if (showDetails && errorStack) {
+      // In dev mode, include error details
+      html = html.replace(
+        'id="details" style="display:none;"',
+        'id="details"',
+      );
+      html = html.replace(
+        "<script>",
+        `<script>
+document.getElementById('details').textContent = ${JSON.stringify(errorStack)};
+`,
+      );
+    }
+
+    res.statusCode = 500;
+    res.setHeader("content-type", "text/html; charset=utf-8");
+    res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+    res.end(html);
+  } catch (e) {
+    // If error sending response, just try to end the response
+    log.error(`[Error Response] Failed to send error page: ${e}`);
+    try {
+      res.end();
+    } catch {
+      // Last resort: destroy socket
+      if (res.socket && !res.socket.destroyed) {
+        res.socket.destroy();
+      }
+    }
+  }
+}
 
 /**
  * Server mode determines rendering strategy and asset serving behavior.
@@ -95,25 +282,17 @@ export async function createApp(opts: {
   const { config, mode, viteServer } = opts;
 
   /**
-   * Set of active Server-Sent Events (SSE) connections for Hot Module Replacement.
-   * Clients maintain a persistent SSE connection to receive change notifications.
-   * Each response object in this set receives change events for CSS updates and full reloads.
+   * Lifecycle manager for watchers and HMR connections.
+   * Ensures proper cleanup on app shutdown.
    */
-  const hmrClients = new Set<ServerResponse>();
+  const lifecycle = new AppLifecycle();
 
   if (mode === "dev") {
     const sitePath = join(process.cwd(), config.siteDir);
     log.info(`[HMR] Watching ${sitePath} for changes...`);
 
-    /**
-     * Debounce timer prevents multiple rapid change notifications.
-     * Filesystem watchers often emit multiple events for a single file change.
-     * This delay coalesces rapid changes into a single notification (100ms threshold).
-     */
-    let debounceTimer: NodeJS.Timeout;
-
     try {
-      watch(sitePath, { recursive: true }, (eventType, filename) => {
+      const watcher = watch(sitePath, { recursive: true }, (eventType, filename) => {
         if (!filename) return;
 
         /**
@@ -133,9 +312,13 @@ export async function createApp(opts: {
           return;
         }
 
-        // Debounce to avoid double events
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
+        /**
+         * Debounce timer prevents multiple rapid change notifications.
+         * Filesystem watchers often emit multiple events for a single file change.
+         * This delay coalesces rapid changes into a single notification (100ms threshold).
+         * maxWait cap prevents indefinite waiting on continuous changes.
+         */
+        let debounceTimer = setTimeout(() => {
           const ext = extname(filename);
           // Normalize path
           const fullPath = join(sitePath, filename);
@@ -149,10 +332,12 @@ export async function createApp(opts: {
              */
             const cssName = filename.replace(/\.scss$/, ".css");
 
-            for (const client of hmrClients) {
-              client.write(
-                `event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`,
-              );
+            for (const client of lifecycle.getHmrClients()) {
+              if (!client.writableEnded && !client.destroyed) {
+                client.write(
+                  `event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`,
+                );
+              }
             }
           } else {
             /**
@@ -165,12 +350,23 @@ export async function createApp(opts: {
             if (ext === ".svelte") invalidateSvelteCache(fullPath);
 
             // Full reload for JS/TS/Vue/Svelte/Other
-            for (const client of hmrClients) {
-              client.write(`event: reload\ndata: {}\n\n`);
+            for (const client of lifecycle.getHmrClients()) {
+              if (!client.writableEnded && !client.destroyed) {
+                client.write(`event: reload\ndata: {}\n\n`);
+              }
             }
           }
         }, 100);
+
+        // Use unref() to allow Node.js to exit if this is the only pending operation
+        if (debounceTimer.unref) {
+          debounceTimer.unref();
+        }
+        lifecycle.setDebounceTimer(debounceTimer);
       });
+
+      // Store watcher for cleanup on shutdown
+      lifecycle.setWatcher(watcher);
     } catch (err) {
       log.warn(`[HMR] Watch failed: ${err}`);
     }
@@ -205,29 +401,34 @@ export async function createApp(opts: {
 
   const middlewares: Middleware[] = [
     async (ctx, next) => {
-      log.info(`${ctx.req.method} ${ctx.url.pathname}`);
-      await next();
+      try {
+        log.info(`${ctx.req.method} ${ctx.url.pathname}`);
+        await next();
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
     },
 
     async (ctx, next) => {
-      // runtime internal modules
-      if (ctx.url.pathname === "/__runtime/hydrate.js") {
-        ctx.res.statusCode = 200;
-        ctx.res.setHeader(
-          "content-type",
-          "application/javascript; charset=utf-8",
-        );
-        ctx.res.end(runtimeHydrateModule());
-        return;
-      }
+      try {
+        // runtime internal modules
+        if (ctx.url.pathname === "/__runtime/hydrate.js") {
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader(
+            "content-type",
+            "application/javascript; charset=utf-8",
+          );
+          ctx.res.end(runtimeHydrateModule());
+          return;
+        }
 
-      if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
-        ctx.res.statusCode = 200;
-        ctx.res.setHeader(
-          "content-type",
-          "application/javascript; charset=utf-8",
-        );
-        const islandCode = `
+        if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader(
+            "content-type",
+            "application/javascript; charset=utf-8",
+          );
+          const islandCode = `
 import { hydrate } from "https://esm.sh/preact@10";
 import { h } from "https://esm.sh/preact@10";
 
@@ -333,11 +534,17 @@ initializeIslands();
         ctx.res.setHeader("connection", "keep-alive");
 
         ctx.res.write("data: connected\n\n");
-        hmrClients.add(ctx.res);
+        lifecycle.addHmrClient(ctx.res);
 
         ctx.req.on("close", () => {
-          hmrClients.delete(ctx.res);
+          lifecycle.removeHmrClient(ctx.res);
         });
+
+        // Cleanup on response error
+        ctx.res.on("error", () => {
+          lifecycle.removeHmrClient(ctx.res);
+        });
+
         return;
       }
 
@@ -362,155 +569,182 @@ initializeIslands();
       }
 
       await next();
-    },
-
-    async (ctx, next) => {
-      // Font serving (with proper cache headers)
-      const handled = await serveFonts(ctx.req, ctx.res);
-      if (handled) return;
-      await next();
-    },
-
-    async (ctx, next) => {
-      // Server actions
-      await serverActionsMiddleware(ctx, next);
-    },
-
-    async (ctx, next) => {
-      // API routes
-      const handled = await tryHandleApiRoute({
-        req: ctx.req,
-        res: ctx.res,
-        siteDir: config.siteDir,
-      });
-      if (handled) return;
-      await next();
-    },
-
-    async (ctx, next) => {
-      // dist
-      if (mode === "prod") {
-        await new Promise<void>((resolve) => {
-          serveDist(ctx.req as any, ctx.res as any, () => resolve());
-        });
-        if (ctx.res.writableEnded || ctx.res.headersSent) return;
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
       }
-      await next();
     },
 
     async (ctx, next) => {
-      // SCSS Compilation (Dev)
-      if (mode === "dev" && ctx.url.pathname.endsWith(".css")) {
-        let scssFile: string | null = null;
+      try {
+        // Font serving (with proper cache headers)
+        const handled = await serveFonts(ctx.req, ctx.res);
+        if (handled) return;
+        await next();
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
+    },
 
-        const basePath = resolve(process.cwd());
+    async (ctx, next) => {
+      try {
+        // Server actions
+        await serverActionsMiddleware(ctx, next);
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
+    },
 
-        if (ctx.url.pathname === "/styles.css") {
-          // Global SCSS
-          if (config.css?.globalScss) {
-            // Already includes siteDir if needed, but add it if it doesn't
-            const scssPath = config.css.globalScss.startsWith(config.siteDir)
-              ? config.css.globalScss
-              : join(config.siteDir, config.css.globalScss);
-            scssFile = join(basePath, scssPath);
-            console.log(
-              "[DEBUG CSS] Looking for global SCSS:",
-              scssFile,
-              "exists:",
-              existsSync(scssFile),
-            );
-          } else {
-            console.log("[DEBUG CSS] No config.css.globalScss found");
-          }
-        } else {
-          // Map /foo.css -> siteDir/foo.scss
-          const rel = ctx.url.pathname.slice(1);
-          const tryPath = join(
-            basePath,
-            config.siteDir,
-            rel.replace(/\.css$/, ".scss"),
-          );
-          if (existsSync(tryPath)) {
-            scssFile = tryPath;
-          }
-        }
+    async (ctx, next) => {
+      try {
+        // API routes
+        const handled = await tryHandleApiRoute({
+          req: ctx.req,
+          res: ctx.res,
+          siteDir: config.siteDir,
+        });
+        if (handled) return;
+        await next();
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
+    },
 
-        if (scssFile && existsSync(scssFile)) {
-          const compiler = createScssCompiler();
-          const result = compiler.compile({
-            inputPath: scssFile,
-            minified: false,
-            sourceMap: true,
+    async (ctx, next) => {
+      try {
+        // dist
+        if (mode === "prod") {
+          await new Promise<void>((resolve) => {
+            serveDist(ctx.req as any, ctx.res as any, () => resolve());
           });
+          if (ctx.res.writableEnded || ctx.res.headersSent) return;
+        }
+        await next();
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
+    },
 
-          if (result.error) {
-            ctx.res.statusCode = 500;
-            ctx.res.setHeader("content-type", "text/css");
-            ctx.res.end(
-              `/* SCSS Error: ${result.error.replace(
-                /\*\//g,
-                "* /",
-              )} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error
-                .replace(/\\/g, "\\\\")
-                .replace(
-                  /"/g,
-                  '\\"',
-                )}"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`,
+    async (ctx, next) => {
+      try {
+        // SCSS Compilation (Dev)
+        if (mode === "dev" && ctx.url.pathname.endsWith(".css")) {
+          let scssFile: string | null = null;
+
+          const basePath = resolve(process.cwd());
+
+          if (ctx.url.pathname === "/styles.css") {
+            // Global SCSS
+            if (config.css?.globalScss) {
+              // Already includes siteDir if needed, but add it if it doesn't
+              const scssPath = config.css.globalScss.startsWith(config.siteDir)
+                ? config.css.globalScss
+                : join(config.siteDir, config.css.globalScss);
+              scssFile = join(basePath, scssPath);
+              console.log(
+                "[DEBUG CSS] Looking for global SCSS:",
+                scssFile,
+                "exists:",
+                existsSync(scssFile),
+              );
+            } else {
+              console.log("[DEBUG CSS] No config.css.globalScss found");
+            }
+          } else {
+            // Map /foo.css -> siteDir/foo.scss
+            const rel = ctx.url.pathname.slice(1);
+            const tryPath = join(
+              basePath,
+              config.siteDir,
+              rel.replace(/\.css$/, ".scss"),
             );
+            if (existsSync(tryPath)) {
+              scssFile = tryPath;
+            }
+          }
+
+          if (scssFile && existsSync(scssFile)) {
+            const compiler = createScssCompiler();
+            const result = compiler.compile({
+              inputPath: scssFile,
+              minified: false,
+              sourceMap: true,
+            });
+
+            if (result.error) {
+              ctx.res.statusCode = 500;
+              ctx.res.setHeader("content-type", "text/css");
+              ctx.res.end(
+                `/* SCSS Error: ${result.error.replace(
+                  /\*\//g,
+                  "* /",
+                )} */ body::before { position:fixed; top:0; left:0; width:100%; content: "SCSS Error: ${result.error
+                  .replace(/\\/g, "\\\\")
+                  .replace(
+                    /"/g,
+                    '\\"',
+                  )}"; display: block; background: red; color: white; padding: 1em; z-index:9999; white-space: pre-wrap; }`,
+              );
+              return;
+            }
+
+            ctx.res.statusCode = 200;
+            ctx.res.setHeader("content-type", "text/css");
+            ctx.res.end(result.css);
             return;
           }
+        }
+        await next();
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
+    },
 
-          ctx.res.statusCode = 200;
-          ctx.res.setHeader("content-type", "text/css");
-          ctx.res.end(result.css);
+    async (ctx, next) => {
+      try {
+        // site assets in dev
+        if (mode === "dev") {
+          await new Promise<void>((resolve) => {
+            serveAssets(ctx.req as any, ctx.res as any, () => resolve());
+          });
+          if (ctx.res.writableEnded || ctx.res.headersSent) return;
+        }
+        await next();
+      } catch (err) {
+        sendSafeError(ctx.res, err, mode === "dev");
+      }
+    },
+
+    async (ctx, next) => {
+      try {
+        // Advanced routing with guards, redirects, and 404 handling
+        if (ctx.req.method !== "GET") return next();
+
+        const reqHeaders = headersToObject(ctx.req.headers);
+        const cookies = parseCookies(ctx.req);
+
+        // Use advanced router to resolve the route
+        const resolution = await router.resolve(
+          ctx.url.pathname,
+          ctx.url,
+          reqHeaders,
+          cookies,
+        );
+
+        if (resolution.type === "redirect") {
+          // Handle redirects (both app-level and route-level)
+          router.handleRedirect(ctx.res, resolution.location, resolution.status);
           return;
         }
-      }
-      await next();
-    },
 
-    async (ctx, next) => {
-      // site assets in dev
-      if (mode === "dev") {
-        await new Promise<void>((resolve) => {
-          serveAssets(ctx.req as any, ctx.res as any, () => resolve());
-        });
-        if (ctx.res.writableEnded || ctx.res.headersSent) return;
-      }
-      await next();
-    },
+        if (resolution.type === "not_found") {
+          // Handle 404 responses
+          await router.handle404(ctx.res, resolution.pathname);
+          return;
+        }
 
-    async (ctx, next) => {
-      // Advanced routing with guards, redirects, and 404 handling
-      if (ctx.req.method !== "GET") return next();
+        // Route matched - render the page
+        if (resolution.type !== "matched") return next();
 
-      const reqHeaders = headersToObject(ctx.req.headers);
-      const cookies = parseCookies(ctx.req);
-
-      // Use advanced router to resolve the route
-      const resolution = await router.resolve(
-        ctx.url.pathname,
-        ctx.url,
-        reqHeaders,
-        cookies,
-      );
-
-      if (resolution.type === "redirect") {
-        // Handle redirects (both app-level and route-level)
-        router.handleRedirect(ctx.res, resolution.location, resolution.status);
-        return;
-      }
-
-      if (resolution.type === "not_found") {
-        // Handle 404 responses
-        await router.handle404(ctx.res, resolution.pathname);
-        return;
-      }
-
-      // Route matched - render the page
-      if (resolution.type !== "matched") return next();
-
-      try {
         const html = await renderRouteToHtml({
           config,
           route: resolution.route,
@@ -537,10 +771,10 @@ initializeIslands();
         ctx.res.end(finalHtml);
       } catch (err: any) {
         // Middleware may have sent a response (redirect/json)
-        if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
+        if (err && (err.message === "__REDIRECT__" || err.message === "__JSON__")) {
           return; // Response already sent
         }
-        throw err;
+        sendSafeError(ctx.res, err, mode === "dev");
       }
     },
 
@@ -553,6 +787,14 @@ initializeIslands();
   return {
     async handle(req: IncomingMessage, res: ServerResponse) {
       await kernel.handle(req, res);
+    },
+
+    /**
+     * Gracefully closes the app and cleans up resources.
+     * Should be called on server shutdown.
+     */
+    async close() {
+      await lifecycle.close();
     },
   };
 }

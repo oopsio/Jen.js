@@ -17,7 +17,7 @@
  */
 
 import { h } from "preact";
-import type { LoaderContext, RouteModule } from "../../src/core/types.js";
+import type { LoaderContext, RouteModule } from "../../../src/core/types.js";
 
 /**
  * Simulated blog post database.

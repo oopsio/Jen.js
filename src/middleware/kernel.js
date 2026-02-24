@@ -19,6 +19,7 @@
 import { Pipeline } from "./pipeline.js";
 import { MiddlewareRegistry } from "./registry.js";
 import { Context } from "./context.js";
+import { log } from "../shared/log.js";
 
 /**
  * Core HTTP request handler that manages middleware execution and request context.
@@ -66,6 +67,7 @@ export class Kernel {
   /**
    * Processes an HTTP request through the global middleware pipeline.
    * Creates a Context wrapping the request/response, composes middlewares, and executes them.
+   * Catches any uncaught errors and sends a safe 500 response.
    *
    * @param req Node.js IncomingMessage (HTTP request object)
    * @param res Node.js ServerResponse (HTTP response object)
@@ -78,15 +80,89 @@ export class Kernel {
    * });
    */
   async handle(req, res) {
-    const ctx = new Context(req, res);
-    const fn = Pipeline.compose(this.globalMiddleware);
-    await fn(ctx, async () => {});
+    try {
+      const ctx = new Context(req, res);
+      const fn = Pipeline.compose(this.globalMiddleware);
+      await fn(ctx, async () => {});
+    } catch (err) {
+      // Uncaught error in middleware pipeline
+      log.error(`[Kernel] Uncaught error: ${err}`);
+      if (err && err.stack) {
+        log.error(`Stack: ${err.stack}`);
+      }
+
+      // If headers already sent, destroy socket
+      if (res.headersSent) {
+        log.error("[Kernel] Headers already sent, destroying socket");
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
+        }
+        return;
+      }
+
+      // Try to send a safe 500 response
+      try {
+        res.statusCode = 500;
+        res.setHeader("content-type", "text/html; charset=utf-8");
+        res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+        res.end(
+          `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500 - Internal Server Error</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #d32f2f;
+      margin: 0 0 20px 0;
+      font-size: 32px;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>500 - Internal Server Error</h1>
+    <p>The server encountered an unexpected error while processing your request.</p>
+    <p>Our team has been notified. Please try again later.</p>
+  </div>
+</body>
+</html>`,
+        );
+      } catch (e) {
+        log.error(`[Kernel] Failed to send error response: ${e}`);
+        // Last resort: destroy socket
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
+        }
+      }
+    }
   }
 
   /**
    * Processes a request through global middleware plus a registered middleware group.
    * Retrieves middleware from the registry by group name and composes them with global middleware.
    * Useful for route-specific or feature-specific middleware chains.
+   * Catches any uncaught errors and sends a safe 500 response.
    *
    * @param req Node.js IncomingMessage
    * @param res Node.js ServerResponse
@@ -99,10 +175,48 @@ export class Kernel {
    * await kernel.handleWithGroup(req, res, "apiMiddleware");
    */
   async handleWithGroup(req, res, groupName) {
-    const ctx = new Context(req, res);
-    const registry = MiddlewareRegistry.get();
-    const groupMw = registry.getGroup(groupName);
-    const fn = Pipeline.compose([...this.globalMiddleware, ...groupMw]);
-    await fn(ctx, async () => {});
+    try {
+      const ctx = new Context(req, res);
+      const registry = MiddlewareRegistry.get();
+      const groupMw = registry.getGroup(groupName);
+      const fn = Pipeline.compose([...this.globalMiddleware, ...groupMw]);
+      await fn(ctx, async () => {});
+    } catch (err) {
+      // Uncaught error in middleware pipeline
+      log.error(
+        `[Kernel] Uncaught error in middleware group "${groupName}": ${err}`,
+      );
+      if (err && err.stack) {
+        log.error(`Stack: ${err.stack}`);
+      }
+
+      // If headers already sent, destroy socket
+      if (res.headersSent) {
+        log.error("[Kernel] Headers already sent, destroying socket");
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
+        }
+        return;
+      }
+
+      // Try to send a safe 500 response
+      try {
+        res.statusCode = 500;
+        res.setHeader("content-type", "application/json");
+        res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+        res.end(
+          JSON.stringify({
+            error: "Internal Server Error",
+            message: "An unexpected error occurred while processing your request.",
+          }),
+        );
+      } catch (e) {
+        log.error(`[Kernel] Failed to send error response: ${e}`);
+        // Last resort: destroy socket
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
+        }
+      }
+    }
   }
 }

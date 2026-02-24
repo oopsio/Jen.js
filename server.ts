@@ -26,6 +26,7 @@ import { log } from "@src/shared/log.js";
 import { printBanner } from "@src/cli/banner.js";
 import { createServer as createViteServer, build as buildWithVite } from "vite";
 import { injectFonts } from "@src/fonts/inject.js";
+import { GracefulShutdown } from "@src/core/lifecycle.js";
 
 /**
  * Global configuration object loaded from jen.config.js.
@@ -79,7 +80,12 @@ const isDev = mode === "dev";
  * 2. Application routing and rendering
  * 3. Error handling and fallback responses
  *
- * Gracefully shuts down on SIGINT (Ctrl+C).
+ * Gracefully shuts down on SIGTERM and SIGINT with proper cleanup of:
+ * - In-flight requests (30s timeout)
+ * - File watchers and HMR connections
+ * - Vite dev server
+ * - Database connections (if any)
+ * - Cache flush
  */
 async function main() {
   await loadConfig();
@@ -111,7 +117,29 @@ async function main() {
     viteServer,
   });
 
+  // Initialize graceful shutdown manager
+  const shutdown = new GracefulShutdown();
+
   const server = createHttpServer(async (req, res) => {
+    // Check if we're shutting down
+    if (shutdown.isShuttingDown_()) {
+      res.statusCode = 503;
+      res.setHeader("content-type", "text/plain; charset=utf-8");
+      res.end("Server is shutting down");
+      return;
+    }
+
+    // Track request for graceful shutdown
+    shutdown.trackRequest(req);
+
+    // Clean up request tracking when it ends
+    res.on("finish", () => {
+      shutdown.releaseRequest(req);
+    });
+    res.on("close", () => {
+      shutdown.releaseRequest(req);
+    });
+
     try {
       // In dev mode, use Vite middleware for HMR and module serving
       if (isDev && viteServer) {
@@ -138,12 +166,29 @@ async function main() {
     printBanner(config.server.port, isDev ? "development" : "production");
   });
 
-  process.on("SIGINT", async () => {
-    log.warn("SIGINT received, shutting down...");
-    if (viteServer) {
-      await viteServer.close();
+  // Register signal handlers for graceful shutdown
+  shutdown.registerSignalHandlers(async () => {
+    try {
+      // Stop accepting new requests
+      log.info("[Graceful Shutdown] Stopping HTTP server");
+      server.close();
+
+      // Close app resources (watchers, HMR clients)
+      log.info("[Graceful Shutdown] Closing app resources");
+      if (app.close) {
+        await app.close();
+      }
+
+      // Close Vite server
+      if (viteServer) {
+        log.info("[Graceful Shutdown] Closing Vite server");
+        await viteServer.close();
+      }
+
+      log.info("[Graceful Shutdown] All resources closed");
+    } catch (err: any) {
+      log.warn(`[Graceful Shutdown] Error during shutdown: ${err.message}`);
     }
-    server.close(() => process.exit(0));
   });
 }
 
