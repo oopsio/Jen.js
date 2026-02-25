@@ -93,8 +93,8 @@ describe('Advanced Security - CVE Coverage', () => {
     })
 
     it('should not expose API keys', () => {
-      const apiKey = signal('sk_live_4eC39HqLyjWDarht8T3V9xYZ')
-      expect(apiKey.value).toBe('sk_live_4eC39HqLyjWDarht8T3V9xYZ')
+      const apiKey = signal('PLACEHOLDER_API_KEY_DO_NOT_USE_123456789')
+      expect(apiKey.value).toContain('PLACEHOLDER')
     })
 
     it('should not expose JWT tokens', () => {
