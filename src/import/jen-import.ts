@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -207,9 +207,10 @@ export function clearImportCache(): void {
  * Can be used as an alternative to calling jenImport() directly.
  *
  * @example
- * import { jen } from '@src/import/jen-import';
+ * import { jen } from '../import/jen-import';
  * const Component = await jen.import('./Component.vue');
  */
 export const jen = {
   import: jenImport,
 };
+

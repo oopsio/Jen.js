@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Server-side rendering (SSR) example for jen.js with dynamic data loading",
   "scripts": {
-    "dev": "npx tsx server.ts dev",
+    "dev": "node server.js dev",
     "start": "npx tsx server.ts start",
     "build": "npx tsx build.ts"
   },

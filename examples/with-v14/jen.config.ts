@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -42,7 +42,7 @@ const config: FrameworkConfig = {
     cacheControl: "public, max-age=3600",
   },
   server: {
-    port: 3002,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 0,
     hostname: "localhost",
   },
   dev: {
@@ -51,3 +51,4 @@ const config: FrameworkConfig = {
 };
 
 export default config;
+

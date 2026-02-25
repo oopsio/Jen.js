@@ -219,20 +219,22 @@ export class DevTools {
     let initialX = 0;
     let initialY = 0;
 
-    header.addEventListener("mousedown", (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest(".jen-devtools-controls")) return;
+    header.addEventListener("mousedown", ((e: Event) => {
+      const me = e as MouseEvent;
+      if ((me.target as HTMLElement).closest(".jen-devtools-controls")) return;
       isDragging = true;
-      initialX = e.clientX - currentX;
-      initialY = e.clientY - currentY;
-    });
+      initialX = me.clientX - currentX;
+      initialY = me.clientY - currentY;
+    }) as EventListener);
 
-    document.addEventListener("mousemove", (e: MouseEvent) => {
+    document.addEventListener("mousemove", ((e: Event) => {
       if (!isDragging || !this.panel) return;
-      currentX = e.clientX - initialX;
-      currentY = e.clientY - initialY;
+      const me = e as MouseEvent;
+      currentX = me.clientX - initialX;
+      currentY = me.clientY - initialY;
       this.panel.style.left = `${currentX}px`;
       this.panel.style.top = `${currentY}px`;
-    });
+    }) as EventListener);
 
     document.addEventListener("mouseup", () => {
       isDragging = false;
@@ -253,21 +255,23 @@ export class DevTools {
     let initialX = 0;
     let initialY = 0;
 
-    handle.addEventListener("mousedown", (e: MouseEvent) => {
+    handle.addEventListener("mousedown", ((e: Event) => {
+      const me = e as MouseEvent;
       isResizing = true;
-      initialX = e.clientX;
-      initialY = e.clientY;
-    });
+      initialX = me.clientX;
+      initialY = me.clientY;
+    }) as EventListener);
 
-    document.addEventListener("mousemove", (e: MouseEvent) => {
+    document.addEventListener("mousemove", ((e: Event) => {
       if (!isResizing || !this.panel) return;
-      const deltaX = e.clientX - initialX;
-      const deltaY = e.clientY - initialY;
+      const me = e as MouseEvent;
+      const deltaX = me.clientX - initialX;
+      const deltaY = me.clientY - initialY;
       currentW = Math.max(400, this.config.size.width + deltaX);
       currentH = Math.max(300, this.config.size.height + deltaY);
       this.panel.style.width = `${currentW}px`;
       this.panel.style.height = `${currentH}px`;
-    });
+    }) as EventListener);
 
     document.addEventListener("mouseup", () => {
       if (isResizing) {
@@ -300,9 +304,9 @@ export class DevTools {
 
     // Click to select component
     tree.addEventListener("click", (e) => {
-      const node = (e.target as HTMLElement).closest(".jen-tree-node");
+      const node = (e.target as HTMLElement).closest(".jen-tree-node") as HTMLElement;
       if (node) {
-        const componentId = node.dataset.componentId;
+        const componentId = (node as any).dataset.componentId;
         if (componentId) {
           const component = this.componentTree.getComponentById(componentId);
           if (component) {
@@ -314,9 +318,9 @@ export class DevTools {
 
     // Hover to highlight DOM element
     tree.addEventListener("mouseover", (e) => {
-      const node = (e.target as HTMLElement).closest(".jen-tree-node");
+      const node = (e.target as HTMLElement).closest(".jen-tree-node") as HTMLElement;
       if (node) {
-        const componentId = node.dataset.componentId;
+        const componentId = (node as any).dataset.componentId;
         if (componentId) {
           const component = this.componentTree.getComponentById(componentId);
           if (component?.el) {
@@ -327,9 +331,9 @@ export class DevTools {
     });
 
     tree.addEventListener("mouseout", (e) => {
-      const node = (e.target as HTMLElement).closest(".jen-tree-node");
+      const node = (e.target as HTMLElement).closest(".jen-tree-node") as HTMLElement;
       if (node) {
-        const componentId = node.dataset.componentId;
+        const componentId = (node as any).dataset.componentId;
         if (componentId) {
           const component = this.componentTree.getComponentById(componentId);
           if (component?.el) {
@@ -377,13 +381,15 @@ export class DevTools {
     // Update tab buttons
     const tabs = this.panel.querySelectorAll(".jen-devtools-tab");
     tabs.forEach((tab) => {
-      tab.classList.toggle("active", tab.dataset.tab === tabName);
+      const tabEl = tab as HTMLElement;
+      tabEl.classList.toggle("active", (tabEl as any).dataset.tab === tabName);
     });
 
     // Update tab content
     const contents = this.panel.querySelectorAll(".jen-devtools-tab-content");
     contents.forEach((content) => {
-      content.classList.toggle("active", content.dataset.tab === tabName);
+      const contentEl = content as HTMLElement;
+      contentEl.classList.toggle("active", (contentEl as any).dataset.tab === tabName);
     });
 
     this.config.collapsedTabs[tabName] = false;

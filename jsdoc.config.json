@@ -1,0 +1,28 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.(js|ts|jsx|tsx)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "destination": "docs",
+    "recurse": true
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "babel": {
+    "parserOpts": {
+      "ecmaVersion": 2022,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "plugins": [
+        "typescript",
+        ["pipelineOperator", { "proposal": "hack", "topicToken": "#" }]
+      ]
+    },
+    "sourceType": "module"
+  }
+}

@@ -54,7 +54,7 @@ const config: FrameworkConfig = {
   },
 
   server: {
-    port: 9999,
+    port: 0, // 0 = OS auto-selects first available port
     hostname: "127.0.0.1",
   },
 

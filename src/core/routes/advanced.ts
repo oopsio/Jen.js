@@ -236,7 +236,7 @@ export function processQueryParams(
   query: Record<string, string>,
   schema: Record<string, QueryParamRule>,
 ): Record<string, any> {
-  const processed = { ...query };
+  const processed: Record<string, any> = { ...query };
 
   for (const [key, rule] of Object.entries(schema)) {
     let value = processed[key];

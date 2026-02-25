@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -17,7 +17,7 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { log } from "@src/shared/log.js";
+import { log } from "../shared/log.js";
 
 /**
  * Lifecycle manager for graceful shutdown of the HTTP server.
@@ -168,3 +168,4 @@ export class GracefulShutdown {
 }
 
 export default GracefulShutdown;
+

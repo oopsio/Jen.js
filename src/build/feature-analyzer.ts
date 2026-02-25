@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -16,13 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { FrameworkConfig } from "@src/core/config.js";
-import type { ResolvedFeatures, FeatureName, FeatureBuildMetadata } from "@src/core/features.js";
+import type { FrameworkConfig } from "../core/config.js";
+import type { ResolvedFeatures, FeatureName, FeatureBuildMetadata } from "../core/features.js";
 import {
   resolveFeatures,
   getEnabledFeatures,
   createBuildMetadata,
-} from "@src/core/features.js";
+} from "../core/features.js";
 
 /**
  * Build-time feature analyzer.
@@ -165,21 +165,21 @@ if (!${isEnabled}) {
     if (enabled.includes("api")) {
       code += `
 // API Routes Handler
-import { tryHandleApiRoute } from "@src/server/api-routes.js";
+import { tryHandleApiRoute } from "../server/api-routes.js";
 `;
     }
 
     if (enabled.includes("middleware")) {
       code += `
 // Middleware Handler
-import { Kernel } from "@src/middleware/kernel.js";
+import { Kernel } from "../middleware/kernel.js";
 `;
     }
 
     if (enabled.includes("cache")) {
       code += `
 // Cache Handler
-import { MemoryCache } from "@src/cache/memory.js";
+import { MemoryCache } from "../cache/memory.js";
 `;
     }
 
@@ -216,10 +216,10 @@ Feature Configuration Report
 Build Time: ${this.metadata.buildTime}
 
 Enabled (${enabled.length}):
-${enabled.length > 0 ? enabled.map((f) => `  ✓ ${f}`).join("\n") : "  (none - core only)"}
+${enabled.length > 0 ? enabled.map((f) => `  âœ“ ${f}`).join("\n") : "  (none - core only)"}
 
 Disabled (${disabled.length}):
-${disabled.length > 0 ? disabled.map((f) => `  ✗ ${f}`).join("\n") : "  (all features enabled)"}
+${disabled.length > 0 ? disabled.map((f) => `  âœ— ${f}`).join("\n") : "  (all features enabled)"}
 
 Bundle Impact:
   Core modules: Always included
@@ -228,3 +228,4 @@ Bundle Impact:
 `;
   }
 }
+

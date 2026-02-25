@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -138,9 +138,9 @@ export class CodeSplitter {
 
     // Runtime chunk patterns
     chunks.runtime = [
-      "@src/runtime/hydrate.js",
-      "@src/runtime/render.js",
-      "@src/runtime/ssr.js",
+      "../runtime/hydrate.js",
+      "../runtime/render.js",
+      "../runtime/ssr.js",
     ];
 
     // Common utilities patterns
@@ -152,7 +152,7 @@ export class CodeSplitter {
   /**
    * Generate esbuild splitting configuration
    */
-  generateSplittingConfig(): Partial<BuildOptions> {
+  generateSplittingConfig(): Partial<BuildOptions> & { manualChunks?: any } {
     return {
       splitting: true,
       format: "esm",
@@ -254,3 +254,4 @@ export function createSplitConfig(
     target: "es2022",
   };
 }
+

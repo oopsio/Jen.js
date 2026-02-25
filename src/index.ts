@@ -98,32 +98,20 @@ export type {
 // ============================================================================
 // Core middleware types and HTTP utilities for route handlers
 
-export type {
-  LoaderContext,
-  Loader,
-} from "./core/types.js";
-
 // ============================================================================
-// TYPED LOADERS (8 exports)
+// TYPED LOADERS (5 exports)
 // ============================================================================
 // Type-safe data loading with compile-time validation
 
 export {
-  createTypedLoader,
-  composeLoaders,
-  validateSchema,
-  withLoaderValidation,
-  withLoaderContext,
-  LoaderFactory,
-  isLoaderData,
+  defineLoader,
+  defineMiddleware,
+  validateLoaderData,
 } from "./core/loader-schema.js";
 
 export type {
-  LoaderSchema,
-  TypedLoader,
-  LoaderDataType,
-  LoaderComponentProps,
-  ComposeLoaders,
+  TypedPageProps,
+  ComposeDataSchemas,
 } from "./core/loader-schema.js";
 
 export type {
@@ -149,7 +137,14 @@ export {
 
 export type {
   PluginConfig,
-  PluginHooks,
+  JenPlugin,
+  PluginHookHandler,
+  PluginHookContext,
+  PluginContext,
+} from "./plugin/types.js";
+
+export {
+  HookStage,
 } from "./plugin/types.js";
 
 // ============================================================================

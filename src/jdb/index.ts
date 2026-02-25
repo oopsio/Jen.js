@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -31,7 +31,7 @@
  * - Simple JSON file format for easy inspection and migration
  *
  * @example
- * import { JDBEngine, type ICollection, type Document } from '@src/jdb';
+ * import { JDBEngine, type ICollection, type Document } from '../jdb';
  *
  * interface User extends Document {
  *   name: string;
@@ -51,3 +51,4 @@
 
 export * from "./types";
 export { JDBEngine } from "./engine";
+

@@ -2,7 +2,10 @@
  * Example server action: streaming response
  */
 
-import type { ServerActionContext } from "jenjs";
+// Temporary stub imports - these would be exported from the real jenjs package
+interface ServerActionContext {
+  stream: () => { writeJSON: (data: any) => void; close: () => void };
+}
 
 export const metadata = {
   name: "streamData",

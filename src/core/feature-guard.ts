@@ -148,7 +148,7 @@ export function guardedAsyncFunction<
   feature: FeatureName,
   fn: T,
   context?: string,
-): (...args: Parameters<T>) => ReturnType<T> {
+): T {
   return (async (...args: Parameters<T>) => {
     const features = args[0];
     guardFeature(features, feature, context);

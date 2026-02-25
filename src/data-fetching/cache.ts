@@ -257,12 +257,12 @@ export async function executeCacheStrategy<T>(
         const fresh = await fetchFn();
         await cache.set(key, fresh, ttl, tags);
         return { data: fresh, cached: false };
-      } catch {
+      } catch (error) {
         const cached = await cache.get<T>(key);
         if (cached !== null) {
           return { data: cached, cached: true };
         }
-        throw;
+        throw error;
       }
     }
 

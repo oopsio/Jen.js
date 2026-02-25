@@ -16,8 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { FrameworkConfig } from "@src/core/config.js";
-import { logger } from "@src/shared/log.js";
+import type { FrameworkConfig } from "../core/config.js";
+import { log } from "../shared/log.js";
 import type {
   JenPlugin,
   PluginContext,
@@ -63,15 +63,15 @@ export class PluginManager {
   async loadPlugins(plugins: (JenPlugin | string)[] = []): Promise<void> {
     try {
       for (const plugin of plugins) {
-        const resolved =
-          typeof plugin === "string" ? await this.resolvePlugin(plugin) : plugin;
-        this.plugins.push(resolved);
-        logger.debug(`[Plugin] Loaded: ${resolved.name}@${resolved.version}`);
-      }
-      this.initialized = true;
-    } catch (error) {
-      logger.error(`[Plugin] Failed to load plugins:`, error);
-      throw error;
+         const resolved =
+           typeof plugin === "string" ? await this.resolvePlugin(plugin) : plugin;
+         this.plugins.push(resolved);
+         log.info(`[Plugin] Loaded: ${resolved.name}@${resolved.version}`);
+       }
+       this.initialized = true;
+      } catch (error) {
+       log.error(`[Plugin] Failed to load plugins: ${error instanceof Error ? error.message : String(error)}`);
+       throw error;
     }
   }
 
@@ -110,20 +110,22 @@ export class PluginManager {
     };
 
     for (const plugin of this.plugins) {
-      if (plugin.init) {
-        try {
-          await plugin.init(context);
-          logger.debug(`[Plugin] Initialized: ${plugin.name}`);
-        } catch (error) {
-          logger.error(`[Plugin] Initialization failed for ${plugin.name}:`, error);
-          throw error;
-        }
-      }
+       if (plugin.init) {
+         try {
+           await plugin.init(context);
+           log.info(`[Plugin] Initialized: ${plugin.name}`);
+         } catch (error) {
+           log.error(`[Plugin] Initialization failed for ${plugin.name}: ${error instanceof Error ? error.message : String(error)}`);
+           throw error;
+         }
+       }
 
       // Register plugin hooks
       if (plugin.hooks) {
         for (const [stage, handler] of Object.entries(plugin.hooks)) {
-          this.registerHook(stage, handler);
+          if (handler) {
+            this.registerHook(stage, handler);
+          }
         }
       }
     }
@@ -150,19 +152,19 @@ export class PluginManager {
     }
 
     try {
-      // Execute hooks sequentially by default
-      for (const handler of handlers) {
-        try {
-          await handler(context);
-        } catch (error) {
-          logger.error(`[Plugin Hook] Error in ${stage}:`, error);
-          throw error;
-        }
-      }
-    } catch (error) {
-      logger.error(`[Plugin] Hook execution failed for stage: ${stage}`);
-      throw error;
-    }
+       // Execute hooks sequentially by default
+       for (const handler of handlers) {
+         try {
+           await handler(context);
+         } catch (error) {
+           log.error(`[Plugin Hook] Error in ${stage}: ${error instanceof Error ? error.message : String(error)}`);
+           throw error;
+         }
+       }
+     } catch (error) {
+       log.error(`[Plugin] Hook execution failed for stage: ${stage}`);
+       throw error;
+     }
   }
 
   /**

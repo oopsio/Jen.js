@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "fs";
+﻿import { readdirSync, statSync } from "fs";
 import { join, resolve, relative } from "path";
 import type { ApiHandler, ApiConfig } from "./router";
 
@@ -152,7 +152,7 @@ export class ApiLoader {
       // Convert Windows path to file:// URL
       let importPath = filePath;
       if (process.platform === "win32") {
-        // Normalize: backslashes → forward slashes
+        // Normalize: backslashes â†’ forward slashes
         const normalized = filePath.replace(/\\/g, "/");
         // Add file:// scheme (with third slash for absolute paths)
         importPath = "file:///" + normalized;
@@ -177,8 +177,8 @@ export class ApiLoader {
  * @example
  * ```ts
  * import express from 'express';
- * import { createApiMiddleware } from '@src/api/loader';
- * import { ApiRouter } from '@src/api/router';
+ * import { createApiMiddleware } from '../api/loader';
+ * import { ApiRouter } from '../api/router';
  *
  * const app = express();
  * const loader = new ApiLoader();
@@ -288,3 +288,4 @@ function matchPath(
 
   return null;
 }
+

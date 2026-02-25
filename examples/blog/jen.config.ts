@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Blog example configuration for Jen.js
  * Features: SSR, dynamic routes for posts, markdown processing
  */
@@ -42,9 +42,10 @@ const config: FrameworkConfig = {
   },
 
   server: {
-    port: 3001,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 0,
     hostname: "0.0.0.0",
   },
 };
 
 export default config;
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Jen.js API Routes System
  *
  * File-based API routing system inspired by Next.js API Routes.
@@ -18,7 +18,7 @@
  * @example Usage in handler
  * ```ts
  * // src/api/hello.ts
- * import type { ApiRequest, ApiResponse } from '@src/api';
+ * import type { ApiRequest, ApiResponse } from '../api';
  *
  * export default function handler(req: ApiRequest, res: ApiResponse) {
  *   res.status(200).json({ message: 'Hello from Jen.js!' });
@@ -55,3 +55,4 @@ export type {
   IncomingMessage as NodeRequest,
   ServerResponse as NodeResponse,
 } from "http";
+

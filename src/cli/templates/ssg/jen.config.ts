@@ -16,7 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { FrameworkConfig } from "@src/core/config";
+// @ts-ignore - Template file paths change based on destination
+import type { FrameworkConfig } from "../../../../core/config.js";
 
 const config: FrameworkConfig = {
   siteDir: "site",
@@ -51,3 +52,4 @@ const config: FrameworkConfig = {
 };
 
 export default config;
+

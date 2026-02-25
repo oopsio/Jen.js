@@ -41,7 +41,10 @@ import type { LoaderContext } from "./types.js";
 export function defineLoader<TData extends Record<string, any>>(
   handler: (ctx: LoaderContext) => Promise<TData> | TData,
 ): (ctx: LoaderContext) => Promise<TData> {
-  return handler;
+  return async (ctx) => {
+    const result = handler(ctx);
+    return Promise.resolve(result);
+  };
 }
 
 /**
@@ -65,14 +68,11 @@ export function validateLoaderData(
   for (const [key, type] of Object.entries(schema)) {
     const value = obj[key];
     // Determine actual type (arrays are objects, so treat both as "object")
-    let actualType = typeof value;
+    let actualType: string = typeof value;
     if (value === null) {
-      actualType = "null";
-    } else if (type === "array" && Array.isArray(value)) {
-      actualType = "array";
-    } else if (Array.isArray(value) && type === "object") {
-      // Arrays pass object validation (since arrays are objects)
-      actualType = "object";
+      actualType = "object"; // null is typeof 'object' in JavaScript
+    } else if (Array.isArray(value)) {
+      actualType = type === "array" ? "array" : "object";
     }
 
     if (actualType !== type) {
@@ -126,7 +126,10 @@ export type TypedPageProps<TData extends Record<string, any>> = {
 export function defineMiddleware<TData extends Record<string, any>>(
   handler: (ctx: any) => Promise<TData> | TData,
 ): (ctx: any) => Promise<TData> {
-  return handler;
+  return async (ctx) => {
+    const result = handler(ctx);
+    return Promise.resolve(result);
+  };
 }
 
 /**

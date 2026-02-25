@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -18,7 +18,7 @@
 
 import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { basename, extname, join, resolve } from "node:path";
-import { log } from "@src/shared/log.js";
+import { log } from "../shared/log.js";
 import type { FontsConfig } from "./types.js";
 
 /**
@@ -32,7 +32,7 @@ import type { FontsConfig } from "./types.js";
  *
  * @hackable Override or extend this in build scripts:
  * ```typescript
- * import { processFonts } from "@src/fonts/loader.js";
+ * import { processFonts } from "../fonts/loader.js";
  * const css = processFonts(config, customCacheDir);
  * // Modify CSS as needed before injecting
  * ```
@@ -246,3 +246,4 @@ export function extractFonts(
     localFontsCSS,
   };
 }
+

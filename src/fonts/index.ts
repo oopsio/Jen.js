@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -43,8 +43,8 @@
  * @example
  * ```typescript
  * // In build.js or custom script:
- * import { extractFonts } from "@src/fonts/loader.js";
- * import { fontServeMiddleware } from "@src/fonts/inject.js";
+ * import { extractFonts } from "../fonts/loader.js";
+ * import { fontServeMiddleware } from "../fonts/inject.js";
  *
  * // Get fonts without auto-injection
  * const { googleFontLinks, localFontsCSS } = extractFonts(fontsConfig, ".jen");
@@ -60,3 +60,4 @@
 export type { FontsConfig } from "./types.js";
 export { injectFonts, fontServeMiddleware } from "./inject.js";
 export { processFonts, generateGoogleFontLinks, extractFonts } from "./loader.js";
+

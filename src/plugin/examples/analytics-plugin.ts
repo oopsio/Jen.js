@@ -16,7 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { JenPlugin, PluginContext, PluginHookContext, HookStage } from "../types.js";
+import type { JenPlugin, PluginContext, PluginHookContext } from "../types.js";
+import { HookStage } from "../types.js";
 
 /**
  * Example Analytics Plugin for Jen.js
@@ -80,7 +81,7 @@ export function createAnalyticsPlugin(config: AnalyticsPluginConfig): JenPlugin 
     hooks: {
       // Track pageviews
       [HookStage.BEFORE_REQUEST]: async (context: PluginHookContext) => {
-        const path = context.request?.req.url || "/";
+        const path = (context.request as any)?.req?.url || "/";
 
         const event: AnalyticsEvent = {
           type: "pageview",

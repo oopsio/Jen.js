@@ -20,17 +20,37 @@ import { createServer as createHttpServer } from "node:http";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { existsSync } from "node:fs";
+import net from "node:net";
 
-import { createApp } from "../../src/server/app.js";
-import { log } from "../../src/shared/log.js";
-import { printBanner } from "../../src/cli/banner.js";
+import { createApp } from "../../dist/src/server/app.js";
+import { log } from "../../dist/src/shared/log.js";
+import { printBanner } from "../../dist/src/cli/banner.js";
 import { createServer as createViteServer, build as buildWithVite } from "vite";
+import { injectFonts } from "../../dist/src/fonts/inject.js";
+import { GracefulShutdown } from "../../dist/src/core/lifecycle.js";
+
+/**
+ * Find an available port (Windows fix for port 0 reservation issues)
+ */
+function findAvailablePort(hostname = "127.0.0.1") {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.listen(0, hostname, () => {
+      const port = server.address().port;
+      server.close(() => {
+        // Small delay before using the port to avoid Windows race condition
+        setTimeout(() => resolve(port), 50);
+      });
+    });
+    server.on("error", reject);
+  });
+}
 
 /**
  * Global configuration object loaded from jen.config.js.
  * Holds all framework settings including site directories, server ports, build options, etc.
  */
-let config: any = null;
+let config = null;
 
 /**
  * Loads the Jen.js framework configuration from jen.config.js.
@@ -46,24 +66,15 @@ async function loadConfig() {
     // Try loading config from CWD first (for examples)
     const cwdConfigPath = resolve(process.cwd(), "jen.config.js");
     if (existsSync(cwdConfigPath)) {
-      // Use file URL with cache-bust for dynamic imports
-      const url = new URL("file://" + cwdConfigPath.replace(/\\/g, "/"));
-      url.searchParams.set("t", Date.now().toString());
-      config = (await import(url.href)).default;
+      config = (await import(cwdConfigPath)).default;
     } else {
       // Fall back to root config
-      const rootPath = resolve(process.cwd(), "./jen.config.js");
-      const url = new URL("file://" + rootPath.replace(/\\/g, "/"));
-      url.searchParams.set("t", Date.now().toString());
-      config = (await import(url.href)).default;
+      config = (await import(resolve(process.cwd(), "../../jen.config.js")))
+        .default;
     }
   } catch (e) {
     // Final fallback
-    const fallbackUrl = new URL(
-      "file://" + resolve("./jen.config.js").replace(/\\/g, "/"),
-    );
-    fallbackUrl.searchParams.set("t", Date.now().toString());
-    config = (await import(fallbackUrl.href)).default;
+    config = (await import("./jen.config.js")).default;
   }
 }
 
@@ -87,21 +98,32 @@ const isDev = mode === "dev";
  * 2. Application routing and rendering
  * 3. Error handling and fallback responses
  *
- * Gracefully shuts down on SIGINT (Ctrl+C).
+ * Gracefully shuts down on SIGTERM and SIGINT with proper cleanup of:
+ * - In-flight requests (30s timeout)
+ * - File watchers and HMR connections
+ * - Vite dev server
+ * - Database connections (if any)
+ * - Cache flush
  */
 async function main() {
   await loadConfig();
 
-  let viteServer: any = null;
+  // Inject fonts configuration into config.inject.head
+  // This automatically adds Google Fonts links and local @font-face CSS
+  injectFonts(config);
+
+  let viteServer = null;
 
   // Initialize Vite server in dev mode
-  // Disabled for SSR example - Vite middleware doesn't work well with SSR routes
-  // In production, use separate dev server or build step
-  if (isDev && false) {
+  if (isDev) {
     viteServer = await createViteServer({
       server: {
         middlewareMode: true,
-        hmr: false,
+        hmr: {
+          protocol: "ws",
+          host: config.server.hostname,
+          port: config.server.port,
+        },
       },
       appType: "spa",
     });
@@ -113,14 +135,36 @@ async function main() {
     viteServer,
   });
 
+  // Initialize graceful shutdown manager
+  const shutdown = new GracefulShutdown();
+
   const server = createHttpServer(async (req, res) => {
+    // Check if we're shutting down
+    if (shutdown.isShuttingDown_()) {
+      res.statusCode = 503;
+      res.setHeader("content-type", "text/plain; charset=utf-8");
+      res.end("Server is shutting down");
+      return;
+    }
+
+    // Track request for graceful shutdown
+    shutdown.trackRequest(req);
+
+    // Clean up request tracking when it ends
+    res.on("finish", () => {
+      shutdown.releaseRequest(req);
+    });
+    res.on("close", () => {
+      shutdown.releaseRequest(req);
+    });
+
     try {
       // In dev mode, use Vite middleware for HMR and module serving
       if (isDev && viteServer) {
         // Let Vite handle HMR and module requests
         viteServer.middlewares(req, res, () => {
           // If Vite didn't handle it, pass to app
-          app.handle(req, res).catch((err: any) => {
+          app.handle(req, res).catch((err) => {
             res.statusCode = 500;
             res.setHeader("content-type", "text/plain; charset=utf-8");
             res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
@@ -129,23 +173,55 @@ async function main() {
       } else {
         await app.handle(req, res);
       }
-    } catch (err: any) {
+    } catch (err) {
       res.statusCode = 500;
       res.setHeader("content-type", "text/plain; charset=utf-8");
       res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
     }
   });
 
-  server.listen(config.server.port, config.server.hostname, () => {
-    printBanner(config.server.port, isDev ? "development" : "production");
+  // Find an available port if config specifies port 0
+  const portToUse = config.server.port === 0 
+    ? await findAvailablePort(config.server.hostname)
+    : config.server.port;
+
+  server.listen(portToUse, config.server.hostname, () => {
+    const actualPort = server.address().port;
+    printBanner(actualPort, isDev ? "development" : "production");
   });
 
-  process.on("SIGINT", async () => {
-    log.warn("SIGINT received, shutting down...");
-    if (viteServer) {
-      await viteServer.close();
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      log.error(`[Server] Port ${portToUse} is in use. Try setting PORT environment variable.`);
+    } else {
+      log.error(`[Server] Error: ${err.message}`);
     }
-    server.close(() => process.exit(0));
+    process.exit(1);
+  });
+
+  // Register signal handlers for graceful shutdown
+  shutdown.registerSignalHandlers(async () => {
+    try {
+      // Stop accepting new requests
+      log.info("[Graceful Shutdown] Stopping HTTP server");
+      server.close();
+
+      // Close app resources (watchers, HMR clients)
+      log.info("[Graceful Shutdown] Closing app resources");
+      if (app.close) {
+        await app.close();
+      }
+
+      // Close Vite server
+      if (viteServer) {
+        log.info("[Graceful Shutdown] Closing Vite server");
+        await viteServer.close();
+      }
+
+      log.info("[Graceful Shutdown] All resources closed");
+    } catch (err) {
+      log.warn(`[Graceful Shutdown] Error during shutdown: ${err.message}`);
+    }
   });
 }
 
@@ -159,6 +235,10 @@ async function main() {
  */
 async function buildOnly() {
   await loadConfig();
+
+  // Inject fonts configuration into config.inject.head
+  injectFonts(config);
+
   try {
     log.info("Building with Vite...");
     await buildWithVite({
@@ -176,7 +256,7 @@ async function buildOnly() {
       },
     });
     log.info("Build complete!");
-  } catch (err: any) {
+  } catch (err) {
     log.error(`Build failed: ${err.message}`);
     process.exit(1);
   }

@@ -2,8 +2,13 @@
  * Example server action: publish a blog post
  */
 
-import type { ServerActionContext } from "jenjs";
-import { required, minLength } from "jenjs";
+// Temporary stub imports - these validators would be exported from the real jenjs package
+interface ServerActionContext {
+  body: Record<string, any>;
+}
+
+const required = () => (val: any) => val != null;
+const minLength = (min: number) => (val: string) => val?.length >= min;
 
 export const metadata = {
   name: "publishPost",

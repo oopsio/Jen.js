@@ -16,7 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { JenPlugin, PluginContext, PluginHookContext, HookStage } from "../types.js";
+import type { JenPlugin, PluginContext, PluginHookContext } from "../types.js";
+import { HookStage } from "../types.js";
 
 /**
  * Example CDN Upload Plugin for Jen.js

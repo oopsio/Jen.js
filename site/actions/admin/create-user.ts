@@ -2,8 +2,16 @@
  * Example server action: admin-only action with validation
  */
 
-import type { ServerActionContext } from "jenjs";
-import { required, email, minLength, enumValue } from "jenjs";
+// Temporary stub imports - these validators would be exported from the real jenjs package
+interface ServerActionContext {
+  body: Record<string, any>;
+  data?: Record<string, any>;
+}
+
+const required = () => (val: any) => val != null;
+const email = () => (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+const minLength = (min: number) => (val: string) => val?.length >= min;
+const enumValue = (values: string[]) => (val: string) => values.includes(val);
 
 export const metadata = {
   name: "createUser",

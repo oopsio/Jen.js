@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { FrameworkConfig } from "@src/core/config.js";
+import type { FrameworkConfig } from "../core/config.js";
 import { extractFonts } from "./loader.js";
 
 /**
@@ -33,8 +33,8 @@ import { extractFonts } from "./loader.js";
  * @example
  * ```typescript
  * // In build.js or server.js, customize font injection:
- * import { injectFonts } from "@src/fonts/inject.js";
- * import type { FrameworkConfig } from "@src/core/config.js";
+ * import { injectFonts } from "../fonts/inject.js";
+ * import type { FrameworkConfig } from "../core/config.js";
  *
  * export async function setupFonts(config: FrameworkConfig) {
  *   // Inject fonts with custom cache location
@@ -96,7 +96,7 @@ export function injectFonts(
  *
  * @example
  * ```typescript
- * import { fontServeMiddleware } from "@src/fonts/inject.js";
+ * import { fontServeMiddleware } from "../fonts/inject.js";
  * import { createServer } from "node:http";
  *
  * const server = createServer();
@@ -166,3 +166,4 @@ export function fontServeMiddleware(
     }
   };
 }
+

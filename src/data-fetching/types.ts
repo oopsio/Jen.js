@@ -116,7 +116,7 @@ export interface CacheEntry<T = any> {
  */
 export interface CacheBackend {
   get<T = any>(key: string): Promise<T | null>;
-  set<T = any>(key: string, value: T, ttl?: number): Promise<void>;
+  set<T = any>(key: string, value: T, ttl?: number, tags?: string[]): Promise<void>;
   delete(key: string): Promise<void>;
   clear(): Promise<void>;
   invalidate(tags: string[]): Promise<void>;
@@ -148,6 +148,7 @@ export interface DataFetchConfig extends FetchOptions {
     backoff?: "linear" | "exponential";
   };
   timeout?: number;
+  baseUrl?: string; // Base URL for relative requests
 }
 
 /**

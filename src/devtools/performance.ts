@@ -45,9 +45,10 @@ export class PerformanceMonitor {
 
   private recordMetrics() {
     // Record memory usage if available
-    if (performance.memory) {
+    const memory = (performance as any).memory;
+    if (memory) {
       // Memory is in bytes, convert to MB
-      const memoryMb = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+      const memoryMb = Math.round(memory.usedJSHeapSize / 1024 / 1024);
       return {
         fps: [...this.fps],
         renderTime: [...this.renderTimes],
@@ -59,8 +60,9 @@ export class PerformanceMonitor {
   }
 
   getMetrics(): PerformanceMetrics {
-    const memoryMb = performance.memory
-      ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)
+    const memory = (performance as any).memory;
+    const memoryMb = memory
+      ? Math.round(memory.usedJSHeapSize / 1024 / 1024)
       : 0;
 
     return {

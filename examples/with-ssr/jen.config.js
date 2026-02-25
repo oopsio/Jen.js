@@ -50,7 +50,7 @@ const config = {
   },
 
   server: {
-    port: 4000,
+    port: Math.floor(1000 + Math.random() * 9000),
     hostname: "127.0.0.1",
   },
 

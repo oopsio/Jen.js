@@ -23,6 +23,7 @@ import type {
   GraphQLResponse,
   CacheBackend,
   FetchInterceptor,
+  CacheConfig,
 } from "./types.js";
 import { RestFetcher } from "./rest.js";
 import { createCacheKey, executeCacheStrategy } from "./cache.js";
@@ -78,16 +79,19 @@ export class GraphQLClient {
    */
   async query<T = any>(
     request: GraphQLRequest | string,
-    config?: Partial<DataFetchConfig> & { cache?: Partial<any> },
+    config?: Partial<DataFetchConfig>,
   ): Promise<FetchResult<T>> {
     const gqlRequest = typeof request === "string" ? { query: request } : request;
 
     // Queries are safe to cache
-    const cacheConfig = {
+    const cacheConfig: Partial<CacheConfig> = {
       strategy: "cache-first" as const,
       ttl: 300000, // 5 minutes default
-      ...config?.cache,
     };
+    
+    if (config?.cache && typeof config.cache === "object") {
+      Object.assign(cacheConfig, config.cache);
+    }
 
     return this.execute<T>(gqlRequest, {
       ...config,
@@ -101,15 +105,18 @@ export class GraphQLClient {
    */
   async mutation<T = any>(
     request: GraphQLRequest | string,
-    config?: Partial<DataFetchConfig> & { cache?: Partial<any> },
+    config?: Partial<DataFetchConfig>,
   ): Promise<FetchResult<T>> {
     const gqlRequest = typeof request === "string" ? { query: request } : request;
 
     // Mutations should not be cached
-    const cacheConfig = {
+    const cacheConfig: Partial<CacheConfig> = {
       strategy: "no-cache" as const,
-      ...config?.cache,
     };
+    
+    if (config?.cache && typeof config.cache === "object") {
+      Object.assign(cacheConfig, config.cache);
+    }
 
     return this.execute<T>(gqlRequest, {
       ...config,

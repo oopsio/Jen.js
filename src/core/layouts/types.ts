@@ -36,7 +36,7 @@
  *     <html>
  *       <head><title>My Site</title></head>
  *       <body>
- *         <nav>{/* navigation */}</nav>
+ *         <nav>{'navigation'}</nav>
  *         {children}
  *       </body>
  *     </html>

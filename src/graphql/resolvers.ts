@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -27,7 +27,7 @@
  *
  * @example
  * // Custom resolver with database integration:
- * import { db } from '@src/jdb';
+ * import { db } from '../jdb';
  *
  * export const resolvers = {
  *   users: async () => {
@@ -78,3 +78,4 @@ export const resolvers = {
     return user;
   },
 };
+

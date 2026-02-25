@@ -179,14 +179,14 @@ export function renderWithLayoutStack(
  * @param layoutStack The resolved layout stack
  * @param pageHeadComponent Optional Head component from the page
  * @param props Props to pass to Head components
- * @returns Array of rendered Head HTML strings
+ * @returns Array of rendered Head VNodes
  */
 export function collectLayoutHeads(
   layoutStack: ResolvedLayoutStack,
   pageHeadComponent: any | undefined,
   props: { data?: any; params?: Record<string, string>; query?: Record<string, string> },
-): string[] {
-  const heads: string[] = [];
+): any[] {
+  const heads: any[] = [];
 
   // Collect heads from layouts (root to leaf)
   for (const layoutMod of layoutStack.modules) {

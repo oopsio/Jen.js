@@ -2,8 +2,13 @@
  * Example server action: subscribe to newsletter
  */
 
-import type { ServerActionContext } from "jenjs";
-import { required, email } from "jenjs";
+// Temporary stub imports - these validators would be exported from the real jenjs package
+interface ServerActionContext {
+  body: Record<string, any>;
+}
+
+const required = () => (val: any) => val != null;
+const email = () => (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
 
 export const metadata = {
   name: "subscribeNewsletter",

@@ -16,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { MiddlewareContext } from "@src/middleware/context.js";
 import type { SecurityConfig } from "./security-config.js";
 import { DEFAULT_SECURITY_CONFIG } from "./security-config.js";
-import { logger } from "@src/shared/log.js";
+import { log } from "../shared/log.js";
+import type { IncomingMessage, ServerResponse } from "http";
 
 /**
  * Security headers middleware for Jen.js.
@@ -45,7 +45,7 @@ export function securityHeadersMiddleware(config?: Partial<SecurityConfig>) {
     },
   };
 
-  return async (context: MiddlewareContext) => {
+  return async (context: { req: IncomingMessage; res: ServerResponse }) => {
     const headers = mergedConfig.headers || {};
 
     // Content Security Policy
@@ -157,7 +157,7 @@ function buildPermissionsPolicyHeader(config: {
  * Apply CORS headers to response.
  */
 function applyCORSHeaders(
-  context: MiddlewareContext,
+  context: { req: IncomingMessage; res: ServerResponse },
   config: {
     origins?: string | string[];
     methods?: string[];
@@ -214,7 +214,7 @@ export function createCSRFMiddleware(config?: { cookieName?: string; headerName?
   const cookieName = config?.cookieName || "__jen_csrf";
   const headerName = config?.headerName || "X-CSRF-Token";
 
-  return async (context: MiddlewareContext) => {
+  return async (context: { req: IncomingMessage & { csrfToken?: string; headers: Record<string, any>; method?: string }; res: ServerResponse }) => {
     // Generate CSRF token if not present
     const existingToken = context.req.headers.cookie
       ?.split(";")

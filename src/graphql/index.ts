@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -31,7 +31,7 @@
  *
  * @example
  * // In an API route:
- * import { runQuery } from '@src/graphql';
+ * import { runQuery } from '../graphql';
  *
  * export default {
  *   handler: async (ctx) => {
@@ -69,3 +69,4 @@ export async function runQuery(query: string, variables?: any) {
     "GraphQL implementation requires external library. Install: npm install graphql",
   );
 }
+

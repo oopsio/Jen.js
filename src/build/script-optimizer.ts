@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -95,8 +95,8 @@ export class ScriptOptimizer {
   /**
    * Generate esbuild configuration for optimized bundling
    */
-  generateEsbuildConfig(): Partial<BuildOptions> {
-    const config: Partial<BuildOptions> = {
+  generateEsbuildConfig(): Partial<BuildOptions> & { manualChunks?: Record<string, string[]> } {
+    const config: Partial<BuildOptions> & { manualChunks?: Record<string, string[]> } = {
       minify: true,
       format: "esm",
       target: "es2022",
@@ -122,8 +122,8 @@ export class ScriptOptimizer {
 
       if (this.config.splitChunks?.runtime) {
         manualChunks.runtime = [
-          "@src/runtime/hydrate.js",
-          "@src/runtime/render.js",
+          "../runtime/hydrate.js",
+          "../runtime/render.js",
         ];
       }
 
@@ -314,7 +314,7 @@ export const load${this.toPascalCase(chunkName)} = () => {
 - HTML pages: \`public, max-age=0, must-revalidate\`
 
 ## Invalidation
-- Content change → new hash → new filename → automatic cache miss
+- Content change â†’ new hash â†’ new filename â†’ automatic cache miss
 - No manual cache purging required
 - CDN respects Cache-Control headers
 
@@ -392,3 +392,4 @@ export function scriptOptimizerPlugin(
     },
   };
 }
+

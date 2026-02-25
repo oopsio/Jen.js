@@ -73,10 +73,12 @@ class AppLifecycle {
     // Close file watcher
     if (this.watcher) {
       return new Promise<void>((resolve) => {
-        this.watcher!.close(() => {
+        const w = this.watcher;
+        if (w) {
+          w.close();
           this.watcher = null;
-          resolve();
-        });
+        }
+        resolve();
       });
     }
   }
@@ -405,7 +407,7 @@ export async function createApp(opts: {
         log.info(`${ctx.req.method} ${ctx.url.pathname}`);
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -570,7 +572,7 @@ initializeIslands();
 
       await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -581,7 +583,7 @@ initializeIslands();
         if (handled) return;
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -590,7 +592,7 @@ initializeIslands();
         // Server actions
         await serverActionsMiddleware(ctx, next);
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -605,7 +607,7 @@ initializeIslands();
         if (handled) return;
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -620,7 +622,7 @@ initializeIslands();
         }
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -695,7 +697,7 @@ initializeIslands();
         }
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -710,7 +712,7 @@ initializeIslands();
         }
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 
@@ -774,7 +776,7 @@ initializeIslands();
         if (err && (err.message === "__REDIRECT__" || err.message === "__JSON__")) {
           return; // Response already sent
         }
-        sendSafeError(ctx.res, err, mode === "dev");
+        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
       }
     },
 

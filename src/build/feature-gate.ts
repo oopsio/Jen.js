@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { FrameworkConfig } from "@src/core/config.js";
-import type { ResolvedFeatures } from "@src/core/features.js";
-import { resolveFeatures, getEnabledFeatures } from "@src/core/features.js";
+import type { FrameworkConfig } from "../core/config.js";
+import type { ResolvedFeatures } from "../core/features.js";
+import { resolveFeatures, getEnabledFeatures } from "../core/features.js";
 
 /**
  * Feature gate compiler that generates optimized request handlers based on enabled features.
@@ -94,27 +94,27 @@ export const FEATURES = {
     const imports: string[] = [];
 
     if (enabled.includes("api")) {
-      imports.push('import { handleApiRoutes } from "@src/features/api/handler.js";');
+      imports.push('import { handleApiRoutes } from "../features/api/handler.js";');
     }
 
     if (enabled.includes("middleware")) {
-      imports.push('import { compiledMiddlewareChain } from "@src/features/middleware/compiled.js";');
+      imports.push('import { compiledMiddlewareChain } from "../features/middleware/compiled.js";');
     }
 
     if (enabled.includes("cache")) {
-      imports.push('import { getCachedResponse, setCachedResponse } from "@src/features/cache/handler.js";');
+      imports.push('import { getCachedResponse, setCachedResponse } from "../features/cache/handler.js";');
     }
 
     if (enabled.includes("streaming")) {
-      imports.push('import { StreamingRenderer } from "@src/features/streaming/renderer.js";');
+      imports.push('import { StreamingRenderer } from "../features/streaming/renderer.js";');
     }
 
     if (enabled.includes("auth")) {
-      imports.push('import { authMiddleware } from "@src/features/auth/middleware.js";');
+      imports.push('import { authMiddleware } from "../features/auth/middleware.js";');
     }
 
     // Always import core
-    imports.unshift('import type { RouteHandler } from "@src/core/types.js";');
+    imports.unshift('import type { RouteHandler } from "../core/types.js";');
 
     return imports.join("\n");
   }
@@ -292,3 +292,4 @@ export function featureGatePlugin(config: FrameworkConfig): any {
     },
   };
 }
+

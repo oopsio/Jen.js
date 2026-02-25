@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -56,7 +56,7 @@ const config: FrameworkConfig = {
   },
 
   server: {
-    port: 3000,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 0,
     hostname: "0.0.0.0",
   },
 
@@ -75,7 +75,7 @@ const config: FrameworkConfig = {
   dev: {
     enableSSR: true,
     liveReload: true,
-    port: 3000,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 0,
   },
 
   seo: {
@@ -86,3 +86,4 @@ const config: FrameworkConfig = {
 };
 
 export default config;
+

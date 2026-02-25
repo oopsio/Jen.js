@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Example: Script Optimization
  * 
  * Demonstrates tree-shaking, code splitting, lazy-loading, auto-hashing, and cache-busting
@@ -68,7 +68,7 @@ const config: FrameworkConfig = {
   },
 
   server: {
-    port: 5173,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 0,
     hostname: "0.0.0.0",
   },
 
@@ -89,7 +89,7 @@ const config: FrameworkConfig = {
   dev: {
     enableSSR: true,
     liveReload: true,
-    port: 5173,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 0,
   },
 
   seo: {
@@ -100,3 +100,4 @@ const config: FrameworkConfig = {
 };
 
 export default config;
+

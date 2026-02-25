@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -16,8 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { FrameworkConfig } from "@src/core/config.js";
-import type { MiddlewareContext } from "@src/middleware/context.js";
+import type { FrameworkConfig } from "../core/config.js";
 
 /**
  * Plugin lifecycle and hook system.
@@ -86,7 +85,7 @@ export interface PluginHookContext {
   /** Framework configuration */
   config: FrameworkConfig;
   /** Request context (if applicable) */
-  request?: MiddlewareContext;
+  request?: Record<string, unknown>;
   /** Hook-specific data */
   data?: Record<string, unknown>;
   /** Plugin can modify this data and it will be passed forward */
@@ -125,3 +124,4 @@ export interface PluginConfig {
     silent?: boolean;
   };
 }
+
