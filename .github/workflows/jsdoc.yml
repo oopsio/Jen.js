@@ -19,12 +19,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install TypeDoc
-        run: npm install typedoc --save-dev
-
       - name: Generate HTML docs
         run: npx typedoc --out docs "src/**/*.{ts,js}" --allowJs --excludePrivate --theme default
 
