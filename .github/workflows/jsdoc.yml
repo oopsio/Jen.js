@@ -1,0 +1,38 @@
+name: Generate Docs Artifact
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  typedoc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install TypeDoc
+        run: npm install typedoc --save-dev
+
+      - name: Generate HTML docs
+        run: npx typedoc --out docs "src/**/*.{ts,js}" --allowJs --excludePrivate --theme default
+
+      - name: Zip docs folder
+        run: zip -r docs.zip docs
+
+      - name: Upload docs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typedoc-html
+          path: docs.zip
