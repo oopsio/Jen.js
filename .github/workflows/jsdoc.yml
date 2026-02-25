@@ -20,7 +20,7 @@ jobs:
           node-version: 20
 
       - name: Generate HTML docs
-        run: npx typedoc --out docs "src/**/*.{ts,js}" --allowJs --excludePrivate --theme default
+        run: npx typedoc --out docs "src/**/*.{ts,js}" --excludePrivate --theme default
 
       - name: Zip docs folder
         run: zip -r docs.zip docs
