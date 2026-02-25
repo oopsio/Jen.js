@@ -164,6 +164,37 @@ export {
 } from "./runtime/islands.js";
 
 // ============================================================================
+// CLIENT ROUTING & STATE (8 exports + types)
+// ============================================================================
+// Minimal client-side router and signal-based reactive state
+
+export {
+  navigate,
+  getCurrentRoute,
+  onRouteChange,
+  initRouter,
+  type RouteChangeEvent,
+  type RouteChangeListener,
+} from "./client-routing/router.js";
+
+export {
+  signal,
+  computed,
+  bindSignal,
+  bindInput,
+  batch,
+  watch,
+  createStore,
+  type Signal,
+  type Subscriber,
+} from "./client-routing/signal.js";
+
+export {
+  Link,
+  type LinkProps,
+} from "./client-routing/Link.js";
+
+// ============================================================================
 // UTILITIES (2 exports)
 // ============================================================================
 // Common utilities for logging and framework usage
