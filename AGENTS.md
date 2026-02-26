@@ -1,5 +1,22 @@
 ﻿# AGENTS.md - Jen.js Framework Codebase
 
+## 🚫 Documentation Rule (CRITICAL)
+
+DO NOT create any `.md` or `.txt` files for documentation.
+
+- Do NOT scaffold README files.
+- Do NOT generate guides.
+- Do NOT create markdown documentation.
+- Do NOT output documentation files of any kind.
+- Do NOT suggest creating documentation files.
+
+The agent must respond ONLY in chat.
+
+If documentation is needed, I will ask direct questions.
+Answers should be conversational and inline — never as files.
+
+---
+
 ## Build & Test Commands
 
 - `npm run dev` - Start dev server (runs `node server.ts dev`)
@@ -21,7 +38,7 @@
 
 **Jen.js** is a TypeScript-first framework for building static and server-rendered applications with Preact.
 
-**Core modules (src/):**
+### Core modules (src/):
 
 - `src/build/` - SSG pipeline, asset hashing, minification, islands hydration
 - `src/server/` - HTTP server app, runtime serving, API routes
@@ -37,9 +54,15 @@
 - `src/cli/` - CLI templates and banner output
 - `src/shared/` - Shared logging utilities
 
-**Key entry points:** `server.ts` (HTTP), `build.ts` (SSG), `bundle.js` (bundling), `jen.config.ts` (site config), `src/index.ts` (framework exports)
+### Key entry points
 
-**Repository layout:**
+- `server.ts` (HTTP)
+- `build.ts` (SSG)
+- `bundle.js` (bundling)
+- `jen.config.ts` (site config)
+- `src/index.ts` (framework exports)
+
+## Repository layout
 
 - `packages/` - Monorepo packages (`create-jen-app`, `jenjs`, `jenjs-ghpackages`)
 - `jenpack/` and `preactsc/` - Packaging/build tooling and examples
