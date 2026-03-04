@@ -25,8 +25,9 @@ import {
   readdirSync,
   statSync,
   readFileSync,
+  renameSync,
 } from "node:fs";
-import { join } from "node:path";
+import { join, dirname, basename, extname } from "node:path";
 import esbuild from "esbuild";
 import { createScssCompiler } from "../css/compiler.js";
 import {
@@ -40,6 +41,7 @@ import { resolveDistPath } from "../core/paths.js";
 import { log } from "../shared/log.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 import { injectFonts } from "../fonts/inject.js";
+import { AssetHasher } from "./asset-hashing.js";
 
 /**
  * Recursively copies a directory and all its contents.
@@ -129,31 +131,64 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   }
 
   // Copy static assets from the source assets directory to the built site.
-  copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
+  const assetsSrc = join(process.cwd(), config.siteDir, "assets");
+  const assetsDst = join(dist, "assets");
+  copyDir(assetsSrc, assetsDst);
+
+  // Asset hashing with Rust utility if enabled
+  if (config.build?.hashAssets) {
+    log.info("Hashing assets with Rust...");
+    const hashes = await AssetHasher.hashDirectory(assetsDst);
+    log.info(`Hashed ${Object.keys(hashes).length} assets.`);
+
+    if (config.build?.generateManifest) {
+      writeFileSync(join(dist, "asset-manifest.json"), JSON.stringify(hashes, null, 2));
+      log.info("Generated asset-manifest.json");
+    }
+
+    // Rename assets with their hashes
+    for (const [relPath, hash] of Object.entries(hashes)) {
+      const fullPath = join(assetsDst, relPath);
+      const ext = extname(fullPath);
+      const dir = dirname(fullPath);
+      const name = basename(fullPath, ext);
+      const newPath = join(dir, `${name}.${hash}${ext}`);
+      
+      if (existsSync(fullPath)) {
+        try {
+          renameSync(fullPath, newPath);
+        } catch (err: any) {
+          log.warn(`Failed to rename asset ${relPath}: ${err.message}`);
+        }
+      }
+    }
+  }
 
   // Bundle Vue and Svelte components found in the site directory.
   // These are transpiled to JavaScript modules for client-side use in interactive pages.
-  const siteSourceDir = join(process.cwd(), config.siteDir);
-  const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
-    (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
-  );
+  if (config.features?.compilers !== false) {
+    const siteSourceDir = join(process.cwd(), config.siteDir);
+    const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
+      (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
+    );
 
-  if (vueFiles.length > 0) {
-    log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
-    try {
-      await esbuild.build({
-        entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
-        outdir: join(dist, "components"),
-        format: "esm",
-        target: "es2022",
-        bundle: false,
-        plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-        external: ["preact", "vue", "svelte"],
-        logLevel: "info",
-      });
-      log.info("Vue/Svelte components bundled successfully.");
-    } catch (err: any) {
-      log.warn(`Failed to bundle Vue/Svelte components: ${err.message}`);
+    if (vueFiles.length > 0) {
+      log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
+      try {
+        await esbuild.build({
+          entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
+          outdir: join(dist, "components"),
+          format: "esm",
+          target: "es2022",
+          bundle: false,
+          plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+          external: ["preact", "vue", "svelte"],
+          logLevel: "info",
+        });
+        log.info("Vue/Svelte components bundled successfully.");
+      } catch (err: any) {
+        log.warn(`Failed to bundle Vue/Svelte components: ${err.message}`);
+      }
     }
   }
 

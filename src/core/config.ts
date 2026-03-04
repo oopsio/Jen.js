@@ -394,4 +394,14 @@ export type FrameworkConfig = {
    * ```
    */
   assetOptimize?: AssetOptimizeConfig;
+
+  /**
+   * Internationalization configuration.
+   */
+  i18n?: {
+    /** Default locale to use if none matched. */
+    defaultLocale: string;
+    /** Supported locales for the application. */
+    locales: string[];
+  };
 };

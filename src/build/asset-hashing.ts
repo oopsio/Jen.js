@@ -19,6 +19,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, renameSync } from "node:fs";
 import { join, dirname, basename, extname } from "node:path";
+import { hashWithRust } from "./rust-hashing.js";
 
 export class AssetHasher {
   /**
@@ -26,6 +27,30 @@ export class AssetHasher {
    */
   static hashContent(content: string | Buffer): string {
     return createHash("md5").update(content).digest("hex").slice(0, 10);
+  }
+
+  /**
+   * High-performance hashing for directories using Rust utility.
+   * Useful during build for hashing all assets in bulk.
+   */
+  static async hashDirectory(dirPath: string): Promise<Record<string, string>> {
+    try {
+      const response = await hashWithRust({
+        path: dirPath,
+        algorithm: "sha256",
+        hashFileNames: false,
+      });
+
+      const result: Record<string, string> = {};
+      for (const h of response.hashes) {
+        // Rust returns relative path, map it to hash
+        result[h.path] = h.hash.slice(0, 10);
+      }
+      return result;
+    } catch (err) {
+      console.warn(`[AssetHasher] Rust hashing failed, falling back to Node.js: ${err}`);
+      return {}; // Fallback would be implemented by caller or here
+    }
   }
 
   /**

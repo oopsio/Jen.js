@@ -58,5 +58,15 @@
     "typescript-eslint": "^8.55.0",
     "vitepress": "2.0.0-alpha.16",
     "vitest": "^2.1.8"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "example/*",
+    "site/**",
+    "jenpack/**",
+    "bench/**",
+    "preactsc/**",
+    "docs/**",
+    "my-app/**"
+  ]
 }

@@ -107,6 +107,9 @@ import {
 } from "../compilers/esbuild-plugins.js";
 import { fontServeMiddleware } from "../fonts/inject.js";
 import { createServerActionsMiddleware } from "../server-actions/middleware.js";
+import { isFeatureEnabled } from "../core/features.js";
+import { runQuery } from "../graphql/index.js";
+import { I18n } from "../i18n/index.js";
 
 /**
  * Local middleware type for composing request handlers in the app middleware chain.
@@ -405,6 +408,16 @@ export async function createApp(opts: {
     async (ctx, next) => {
       try {
         log.info(`${ctx.req.method} ${ctx.url.pathname}`);
+        
+        // i18n middleware
+        if (config.features?.i18n !== false) {
+          const locales = config.i18n?.locales || ["en", "es"];
+          const defaultLocale = config.i18n?.defaultLocale || "en";
+          const firstSegment = ctx.url.pathname.split("/")[1];
+          const locale = locales.includes(firstSegment) ? firstSegment : defaultLocale;
+          ctx.i18n = new I18n(locale as any);
+        }
+
         await next();
       } catch (err) {
         sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
@@ -413,6 +426,27 @@ export async function createApp(opts: {
 
     async (ctx, next) => {
       try {
+        // GraphQL endpoint
+        if (ctx.url.pathname === "/graphql" && config.features?.graphql) {
+          if (ctx.req.method !== "POST") {
+            ctx.res.statusCode = 405;
+            ctx.res.end("Method Not Allowed");
+            return;
+          }
+
+          let body = "";
+          ctx.req.on("data", (chunk) => (body += chunk));
+          await new Promise((resolve) => ctx.req.on("end", resolve));
+          
+          const { query, variables } = JSON.parse(body);
+          const result = await runQuery(query, variables);
+          
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader("content-type", "application/json");
+          ctx.res.end(JSON.stringify(result));
+          return;
+        }
+
         // runtime internal modules
         if (ctx.url.pathname === "/__runtime/hydrate.js") {
           ctx.res.statusCode = 200;

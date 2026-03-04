@@ -42,7 +42,9 @@ export type FeatureName =
   | "graphql" // GraphQL schema and resolver support
   | "db" // Database drivers (SQL, MongoDB)
   | "i18n" // Internationalization and language routing
-  | "jdb"; // Embedded JSON database engine
+  | "jdb" // Embedded JSON database engine
+  | "compilers" // Custom compilers (Svelte, Vue)
+  | "import"; // Custom import system (jen-import)
 
 /**
  * Feature configuration that users provide in jen.config.ts.
@@ -79,6 +81,8 @@ export const DEFAULT_FEATURES: ResolvedFeatures = {
   db: false,
   i18n: false,
   jdb: false,
+  compilers: false,
+  import: false,
 };
 
 /**

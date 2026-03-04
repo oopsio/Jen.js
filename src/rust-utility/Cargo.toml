@@ -1,0 +1,20 @@
+[package]
+name = "jenjs-rust-util"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rayon = "1.7"
+sha2 = "0.10"
+walkdir = "2.3"
+anyhow = "1.0"
+hex = "0.4"
+
+[dev-dependencies]
+tempfile = "3.3"
+
+[[bin]]
+name = "jenjs-util"
+path = "src/main.rs"
