@@ -60,6 +60,7 @@ export function runtimeHydrateModule() {
   return `
 import { hydrate } from "https://esm.sh/preact@10.25.4";
 import { h } from "https://esm.sh/preact@10.25.4";
+import "https://esm.sh/preact@10.25.4/jsx-runtime";
 
 function getFrameworkData() {
   const el = document.getElementById("__FRAMEWORK_DATA__");
@@ -183,10 +184,16 @@ export function buildHydrationModule(routeIdOrPath: string) {
       return `export default function Page(){ return null }`;
     }
 
+    // Replace bare module specifiers with CDN URLs for browser compatibility
+    const mappedOutput = jsOutput
+      .replace(/from ["']preact\/jsx-runtime["']/g, 'from "https://esm.sh/preact@10.25.4/jsx-runtime"')
+      .replace(/from ["']preact\/hooks["']/g, 'from "https://esm.sh/preact@10.25.4/hooks"')
+      .replace(/from ["']preact(?!\/|["'])/g, 'from "https://esm.sh/preact@10.25.4"');
+
     // Cache result with ETag
-    const etag = etagOf(jsOutput);
-    cache.set(key, { js: jsOutput, etag });
-    return jsOutput;
+    const etag = etagOf(mappedOutput);
+    cache.set(key, { js: mappedOutput, etag });
+    return mappedOutput;
   } catch (err) {
     console.error("[HYDRATION] Build error for", filePath, ":", err);
     return `export default function Page(){ return null }`;

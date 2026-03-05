@@ -29,6 +29,7 @@ export function runtimeHydrateModule() {
   return `
 import { hydrate } from "https://esm.sh/preact@10.25.4";
 import { h } from "https://esm.sh/preact@10.25.4";
+import "https://esm.sh/preact@10.25.4/jsx-runtime";
 
 function getFrameworkData() {
   const el = document.getElementById("__FRAMEWORK_DATA__");
@@ -90,15 +91,14 @@ export function buildHydrationModule(filePath) {
       "preact-render-to-string",
     ],
   }).outputFiles?.[0]?.text;
-  const out =
-    `
-import { h } from "https://esm.sh/preact@10.25.4";
-import { Fragment } from "https://esm.sh/preact@10.25.4";
-import { jsx, jsxs } from "https://esm.sh/preact@10.25.4/jsx-runtime";
-` + js;
-  const etag = etagOf(out);
-  cache.set(key, { js: out, etag });
-  return out;
+  // Replace bare module specifiers with CDN URLs for browser compatibility
+  const mapped = js
+    .replace(/from ["']preact\/jsx-runtime["']/g, 'from "https://esm.sh/preact@10.25.4/jsx-runtime"')
+    .replace(/from ["']preact\/hooks["']/g, 'from "https://esm.sh/preact@10.25.4/hooks"')
+    .replace(/from ["']preact(?!\/|["'])/g, 'from "https://esm.sh/preact@10.25.4"');
+  const etag = etagOf(mapped);
+  cache.set(key, { js: mapped, etag });
+  return mapped;
 }
 export function getHydrationEtag(filePath) {
   const v = cache.get(filePath);

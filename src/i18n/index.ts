@@ -16,8 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import en from "./en.json";
-import es from "./es.json";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const en = JSON.parse(readFileSync(join(__dirname, "./en.json"), "utf-8"));
+const es = JSON.parse(readFileSync(join(__dirname, "./es.json"), "utf-8"));
 
 type Locale = "en" | "es";
 

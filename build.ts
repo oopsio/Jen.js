@@ -28,7 +28,9 @@
  * Useful for SEO, performance, and deployment to CDNs.
  */
 
-import config from "./jen.config.js";
-import { buildSite } from "./src/build/build.js";
+// @ts-ignore
+
+import config from "./jen.config.ts";
+import { buildSite } from "./dist/src/build/build.js";
 
 await buildSite({ config });
