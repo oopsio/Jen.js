@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *

@@ -65,7 +65,12 @@ const config: FrameworkConfig = {
       `<meta name="viewport" content="width=device-width,initial-scale=1">`,
       `<meta name="theme-color" content="#2563eb">`,
     ],
-    bodyEnd: [],
+    bodyEnd: [
+      // Polyfills for IE11+ and legacy browser support (Promise, fetch, Object.assign, etc)
+      `<script src="/polyfills.js"></script>`,
+      // Preact runtime bundle for client-side interactivity
+      `<script type="module" src="/preact-runtime.js"></script>`,
+    ],
   },
 
   css: {

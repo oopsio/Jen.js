@@ -435,7 +435,7 @@ export async function createApp(opts: {
           }
 
           let body = "";
-          ctx.req.on("data", (chunk) => (body += chunk));
+          ctx.req.on("data", (chunk: Buffer) => (body += chunk.toString()));
           await new Promise((resolve) => ctx.req.on("end", resolve));
           
           const { query, variables } = JSON.parse(body);

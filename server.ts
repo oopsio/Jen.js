@@ -163,7 +163,9 @@ async function main() {
   });
 
   server.listen(config.server.port, config.server.hostname, () => {
-    printBanner(config.server.port, isDev ? "development" : "production");
+    const addr = server.address();
+    const actualPort = typeof addr === 'object' && addr ? addr.port : config.server.port;
+    printBanner(actualPort, isDev ? "development" : "production");
   });
 
   // Register signal handlers for graceful shutdown

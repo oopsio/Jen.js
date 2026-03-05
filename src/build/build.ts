@@ -28,6 +28,7 @@ import {
   renameSync,
 } from "node:fs";
 import { join, dirname, basename, extname } from "node:path";
+import { fileURLToPath } from "node:url";
 import esbuild from "esbuild";
 import { createScssCompiler } from "../css/compiler.js";
 import {
@@ -42,6 +43,10 @@ import { log } from "../shared/log.js";
 import { renderRouteToHtml } from "../runtime/render.js";
 import { injectFonts } from "../fonts/inject.js";
 import { AssetHasher } from "./asset-hashing.js";
+
+// Get __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Recursively copies a directory and all its contents.
@@ -106,7 +111,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     const url = new URL("http://localhost" + r.urlPath);
 
     // Render the route to HTML. Empty req/res indicates SSG mode (no middleware execution).
-    const html = await renderRouteToHtml({
+    let html = await renderRouteToHtml({
       config,
       route: r,
       req: {} as any,
@@ -117,6 +122,19 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       headers: {},
       cookies: {},
     });
+
+    // Inject polyfills and Preact runtime script tags before closing body
+    // This ensures backwards compatibility for IE11+ and provides client interactivity
+    const polyfillsScript = `<script src="/polyfills.js"></script>`;
+    const preactScript = `<script type="module" src="/preact-runtime.js"></script>`;
+    const injectedScripts = `${polyfillsScript}${preactScript}`;
+    
+    // Insert before closing body tag if it exists, otherwise append to HTML
+    if (html.includes("</body>")) {
+      html = html.replace("</body>", `${injectedScripts}</body>`);
+    } else {
+      html = html + injectedScripts;
+    }
 
     // Calculate output path. Root route goes to index.html, nested routes get their own directories.
     const outPath =
@@ -192,6 +210,82 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     }
   }
 
+  // Bundle polyfills for backwards compatibility (IE11, legacy browsers)
+  // Try multiple paths: cwd, parent of cwd, framework root
+  const polyfillsPaths = [
+    join(process.cwd(), "src/runtime/polyfills.js"),
+    join(process.cwd(), "../src/runtime/polyfills.js"),
+    join(process.cwd(), "../../src/runtime/polyfills.js"),
+  ];
+  
+  let polyfillsPath: string | null = null;
+  for (const path of polyfillsPaths) {
+    if (existsSync(path)) {
+      polyfillsPath = path;
+      break;
+    }
+  }
+
+  if (polyfillsPath) {
+    log.info("Bundling polyfills for backwards compatibility...");
+    try {
+      await esbuild.build({
+        entryPoints: [polyfillsPath],
+        outfile: join(dist, "polyfills.js"),
+        format: "iife",
+        target: "es2015",
+        bundle: false,
+        minify: true,
+        sourcemap: false,
+        logLevel: "info",
+      });
+      log.info("✅ Polyfills bundled: polyfills.js");
+    } catch (err: any) {
+      log.warn(`Failed to bundle polyfills: ${err.message}`);
+    }
+  }
+
+  // Bundle Preact runtime and core dependencies into a single file
+  // This ensures all client-side interactivity has Preact available
+  const preactBundleEntry = join(
+    process.cwd(),
+    ".jen",
+    "preact-runtime-entry.js"
+  );
+  mkdirSync(join(process.cwd(), ".jen"), { recursive: true });
+
+  // Create temp entry point for Preact bundle
+  writeFileSync(
+    preactBundleEntry,
+    `
+  export * from 'preact';
+  export * from 'preact/hooks';
+  export * from 'preact/compat';
+
+  // Polyfill exports
+  if (typeof window !== 'undefined') {
+  window.__PREACT_BUNDLE__ = true;
+  }
+  `
+  );
+
+  log.info("Bundling Preact runtime...");
+  try {
+    await esbuild.build({
+      entryPoints: [preactBundleEntry],
+      outfile: join(dist, "preact-runtime.js"),
+      format: "esm",
+      target: "es2015",
+      bundle: true,
+      minify: true,
+      sourcemap: false,
+      logLevel: "info",
+    });
+    log.info("✅ Preact runtime bundled: preact-runtime.js");
+  } catch (err: any) {
+    log.warn(`Failed to bundle Preact runtime: ${err.message}`);
+  }
+
   // Compile the global SCSS file to CSS.
   // This stylesheet is injected into every page and contains framework-wide styles.
   // Minification is enabled for production builds.
@@ -216,4 +310,4 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   }
 
   log.info("Build complete.");
-}
+  }

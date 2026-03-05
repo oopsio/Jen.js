@@ -148,7 +148,10 @@ export function matchRoute(
   for (const r of routes) {
     const re = new RegExp(r.pattern);
     const m = pathname.match(re);
-    if (!m) continue;
+    if (!m) {
+      console.error(`[Route Match] Pattern "${r.pattern}" did not match "${pathname}"`);
+      continue;
+    }
 
     /**
      * Extract captured groups from the regex match.

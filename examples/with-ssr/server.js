@@ -38,8 +38,8 @@ function findAvailablePort(hostname = "127.0.0.1") {
     server.listen(0, hostname, () => {
       const port = server.address().port;
       server.close(() => {
-        // Small delay before using the port to avoid Windows race condition
-        setTimeout(() => resolve(port), 50);
+        // Delay before using the port to avoid Windows TIME_WAIT race condition
+        setTimeout(() => resolve(port), 500);
       });
     });
     server.on("error", reject);
@@ -181,23 +181,39 @@ async function main() {
   });
 
   // Find an available port if config specifies port 0
-  const portToUse = config.server.port === 0 
+  let portToUse = config.server.port === 0 
     ? await findAvailablePort(config.server.hostname)
     : config.server.port;
 
-  server.listen(portToUse, config.server.hostname, () => {
-    const actualPort = server.address().port;
-    printBanner(actualPort, isDev ? "development" : "production");
-  });
+  let retries = 0;
+  const maxRetries = 5;
 
-  server.on('error', (err) => {
+  function tryListen() {
+    server.listen(portToUse, config.server.hostname, () => {
+      printBanner(portToUse, isDev ? "development" : "production");
+    });
+  }
+
+  server.on('error', async (err) => {
     if (err.code === 'EADDRINUSE') {
-      log.error(`[Server] Port ${portToUse} is in use. Try setting PORT environment variable.`);
+      retries++;
+      if (retries < maxRetries) {
+        log.warn(`[Server] Port ${portToUse} in use, retrying... (${retries}/${maxRetries})`);
+        server.removeAllListeners('error');
+        await new Promise(r => setTimeout(r, 200 * retries)); // Exponential backoff
+        portToUse = await findAvailablePort(config.server.hostname);
+        tryListen();
+      } else {
+        log.error(`[Server] Failed to bind after ${maxRetries} retries. Try setting PORT environment variable.`);
+        process.exit(1);
+      }
     } else {
       log.error(`[Server] Error: ${err.message}`);
+      process.exit(1);
     }
-    process.exit(1);
   });
+
+  tryListen();
 
   // Register signal handlers for graceful shutdown
   shutdown.registerSignalHandlers(async () => {

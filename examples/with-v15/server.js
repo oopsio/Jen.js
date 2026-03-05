@@ -21,6 +21,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import esbuild from "esbuild";
 
+// Color codes for prettier logs
+const colors = {
+  reset: "\x1b[0m",
+  dim: "\x1b[2m",
+  cyan: "\x1b[36m",
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const currentDir = dirname(__filename);
 const rootDir = join(currentDir, "../..");
@@ -28,8 +35,12 @@ const rootDir = join(currentDir, "../..");
 const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";
 
+function ts() {
+  return new Date().toISOString();
+}
+
 async function main() {
-  console.log(`[SERVER] Starting in ${isDev ? "DEV" : "PROD"} mode...`);
+  console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting in ${isDev ? "DEV" : "PROD"} mode...`);
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
@@ -74,7 +85,8 @@ async function main() {
   });
 
   server.listen(config.server.port, config.server.hostname, () => {
-    printBanner(config.server.port, isDev ? "development" : "production");
+    const actualPort = server.address().port;
+    printBanner(actualPort, isDev ? "development" : "production");
   });
 }
 

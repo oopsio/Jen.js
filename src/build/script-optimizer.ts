@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  *
@@ -99,7 +99,7 @@ export class ScriptOptimizer {
     const config: Partial<BuildOptions> & { manualChunks?: Record<string, string[]> } = {
       minify: true,
       format: "esm",
-      target: "es2022",
+      target: "es2015",
       treeShaking: this.config.treeShaking,
     };
 
