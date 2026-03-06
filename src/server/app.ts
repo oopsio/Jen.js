@@ -18,7 +18,7 @@
 
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { existsSync, readFileSync, watch, FSWatcher } from "node:fs";
-import { join, extname } from "node:path";
+import { join, extname, resolve } from "node:path";
 import { createScssCompiler } from "../css/compiler.js";
 import type { FrameworkConfig } from "../core/config.js";
 import { scanRoutes } from "../core/routes/scan.js";
@@ -30,7 +30,6 @@ import { renderRouteToHtml } from "../runtime/render.js";
 import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
 import { headersToObject, parseCookies } from "../core/http.js";
 import { tryHandleApiRoute } from "./api-routes.js";
-import { resolve } from "node:path";
 import {
   buildHydrationModule,
   runtimeHydrateModule,
