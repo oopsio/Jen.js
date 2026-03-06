@@ -237,7 +237,7 @@ async function buildOnly() {
      await buildWithVite({
        build: {
          outDir: config.distDir || "dist",
-         minify: "swc",
+         minify: "terser",
          sourcemap: false,
          rollupOptions: {
            output: {

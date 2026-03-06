@@ -36,7 +36,7 @@ class TelemetryClient {
   constructor(version: string, options: TelemetryOptions = {}) {
     this.version = version;
     this.endpoint =
-      options.endpoint || "https://jenjs-telemetry.vercel.app/telemetry";
+      options.endpoint || "https://telemetry-six.vercel.app/telemetry";
     this.batchSize = options.batchSize || 50;
     this.batchInterval = options.batchInterval || 15 * 1000; // 15 seconds
     this.disabled =

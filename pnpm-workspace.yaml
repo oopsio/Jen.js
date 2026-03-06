@@ -7,7 +7,6 @@ packages:
   - "preactsc/**"
   - "docs/**"
   - "my-app/**"
-  - "src/telemetry/api"
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - esbuild
