@@ -20,12 +20,14 @@ import { buildSync } from "esbuild";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { basename, dirname } from "node:path";
-import { pathToFileURL } from "node:url";
+import { basename, dirname, resolve } from "node:path";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import {
   vueEsbuildPlugin,
   svelteEsbuildPlugin,
 } from "../compilers/esbuild-plugins.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Cache for compiled hydration modules.
@@ -56,11 +58,18 @@ function etagOf(s: string) {
  * @returns ES module code string for browser hydration runtime
  */
 export function runtimeHydrateModule() {
-  // Browser-safe runtime (ESM) using CDN preact (fast + zero bundler)
-  return `
-import { hydrate } from "https://esm.sh/preact@10.25.4";
-import { h } from "https://esm.sh/preact@10.25.4";
-import "https://esm.sh/preact@10.25.4/jsx-runtime";
+   // Browser-safe runtime (ESM) using local vendored preact code
+   // Inline preact directly from vendor directory for zero external dependencies
+   const preactCode = readFileSync(
+     resolve(__dirname, "../vendor/preact/preact.module.js"),
+     "utf-8"
+   );
+   
+   return `
+${preactCode}
+
+const { hydrate, h } = preact;
+delete globalThis.preact;
 
 function getFrameworkData() {
   const el = document.getElementById("__FRAMEWORK_DATA__");
@@ -184,20 +193,21 @@ export function buildHydrationModule(routeIdOrPath: string) {
       return `export default function Page(){ return null }`;
     }
 
-    // Replace bare module specifiers with CDN URLs for browser compatibility
-    const mappedOutput = jsOutput
-      .replace(
-        /from ["']preact\/jsx-runtime["']/g,
-        'from "https://esm.sh/preact@10.25.4/jsx-runtime"',
-      )
-      .replace(
-        /from ["']preact\/hooks["']/g,
-        'from "https://esm.sh/preact@10.25.4/hooks"',
-      )
-      .replace(
-        /from ["']preact(?!\/|["'])/g,
-        'from "https://esm.sh/preact@10.25.4"',
-      );
+    // Read vendored preact and inject it with proper globals
+    const preactCode = readFileSync(
+      resolve(__dirname, "../vendor/preact/preact.module.js"),
+      "utf-8"
+    );
+    
+    // Wrap the hydration module with inlined preact
+    const mappedOutput = `
+    ${preactCode}
+
+    ${jsOutput
+    .replace(/from ["']preact\/jsx-runtime["']/g, 'from "preact/jsx-runtime"')
+    .replace(/from ["']preact\/hooks["']/g, 'from "preact/hooks"')
+    .replace(/from ["']preact(?!\/|["'])/g, 'from "preact"')}
+    `;
 
     // Cache result with ETag
     const etag = etagOf(mappedOutput);
