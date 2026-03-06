@@ -197,7 +197,7 @@ async function main() {
 
 /**
  * Builds the site for production using Vite's build pipeline.
- * Minifies JavaScript using Terser and separates vendor code (Preact) into its own chunk.
+ * Minifies and transpiles JavaScript using SWC and separates vendor code (Preact) into its own chunk.
  *
  * Output directory is configured via config.distDir or defaults to "dist".
  *
@@ -214,7 +214,7 @@ async function buildOnly() {
     await buildWithVite({
       build: {
         outDir: config.distDir || "dist",
-        minify: "terser",
+        minify: "swc",
         sourcemap: false,
         rollupOptions: {
           output: {
