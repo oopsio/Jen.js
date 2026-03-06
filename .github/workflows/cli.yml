@@ -13,36 +13,29 @@ jobs:
           # macOS
           - os: macos
             runner: macos-latest
-            goos: darwin
-            goarch: amd64
+            rust_target: x86_64-apple-darwin
           - os: macos
             runner: macos-latest
-            goos: darwin
-            goarch: arm64
+            rust_target: aarch64-apple-darwin
 
           # Linux
           - os: linux
             runner: ubuntu-latest
-            goos: linux
-            goarch: amd64
+            rust_target: x86_64-unknown-linux-gnu
           - os: linux
             runner: ubuntu-latest
-            goos: linux
-            goarch: 386
+            rust_target: i686-unknown-linux-gnu
           - os: linux
             runner: ubuntu-latest
-            goos: linux
-            goarch: arm64
+            rust_target: aarch64-unknown-linux-gnu
 
           # Windows
           - os: windows
             runner: windows-latest
-            goos: windows
-            goarch: amd64
+            rust_target: x86_64-pc-windows-msvc
           - os: windows
             runner: windows-latest
-            goos: windows
-            goarch: 386
+            rust_target: i686-pc-windows-msvc
 
     runs-on: ${{ matrix.runner }}
 
@@ -50,10 +43,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
         with:
-          go-version: 1.23 # or your desired version
+          toolchain: stable
+          override: true
+
+      - name: Add target
+        run: rustup target add ${{ matrix.rust_target }}
 
       - name: Create build folder
         run: mkdir -p build
@@ -61,14 +58,15 @@ jobs:
       - name: Build Jen CLI
         shell: bash
         run: |
-          BIN_NAME=jen-${{ matrix.os }}-${{ matrix.goarch }}
-          if [ "${{ matrix.os }}" = "windows" ]; then
+          BIN_NAME=jen-${{ matrix.os }}-${{ matrix.rust_target }}
+          if [[ "${{ matrix.os }}" == "windows" ]]; then
             BIN_NAME=${BIN_NAME}.exe
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o build/$BIN_NAME packages/cli/main.go
+          cargo build --release --target ${{ matrix.rust_target }}
+          cp target/${{ matrix.rust_target }}/release/jen build/$BIN_NAME
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: jen-${{ matrix.os }}-${{ matrix.goarch }}
+          name: jen-${{ matrix.os }}-${{ matrix.rust_target }}
           path: build/*

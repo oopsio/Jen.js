@@ -51,7 +51,7 @@ impl LoggingDecorator {
 
     fn execute(&self) -> Result<ExitStatus, String> {
         println!("Executing Node.js command with args: {:?}", self.command.node_args());
-        run_node(&self.command)
+        run_node(self.command.as_ref())
     }
 }
 
