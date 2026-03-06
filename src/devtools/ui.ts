@@ -125,14 +125,16 @@ export function getHTML(): string {
 export function getStyles(): string {
   return `
 :root {
-  --jen-color-bg: #1e1e1e;
-  --jen-color-fg: #e8e8e8;
-  --jen-color-border: #3e3e3e;
-  --jen-color-accent: #007acc;
-  --jen-color-success: #4ec9b0;
-  --jen-color-error: #f48771;
-  --jen-color-warning: #dcdcaa;
-  --jen-color-info: #569cd6;
+  --jen-color-bg: #111111;
+  --jen-color-bg-secondary: #1a1a1a;
+  --jen-color-fg: #f0f0f0;
+  --jen-color-fg-muted: #a0a0a0;
+  --jen-color-border: #2a2a2a;
+  --jen-color-accent: #0ea5e9;
+  --jen-color-success: #10b981;
+  --jen-color-error: #ef4444;
+  --jen-color-warning: #f59e0b;
+  --jen-color-info: #3b82f6;
 }
 
 .light-theme {
@@ -161,15 +163,15 @@ export function getStyles(): string {
 }
 
 .jen-devtools-panel {
-  width: 800px;
-  height: 600px;
+  width: 900px;
+  height: 650px;
   position: fixed;
   bottom: 20px;
   right: 20px;
   background: var(--jen-color-bg);
   border: 1px solid var(--jen-color-border);
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -188,9 +190,9 @@ export function getStyles(): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--jen-color-border);
-  background: linear-gradient(to right, var(--jen-color-bg), var(--jen-color-bg));
+  background: var(--jen-color-bg-secondary);
   cursor: move;
   user-select: none;
 }
@@ -199,8 +201,9 @@ export function getStyles(): string {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 13px;
+  letter-spacing: 0.3px;
 }
 
 .jen-devtools-logo {
@@ -215,16 +218,17 @@ export function getStyles(): string {
 .jen-devtools-controls button {
   background: transparent;
   border: none;
-  color: var(--jen-color-fg);
+  color: var(--jen-color-fg-muted);
   cursor: pointer;
   font-size: 14px;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 4px;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .jen-devtools-controls button:hover {
   background: var(--jen-color-border);
+  color: var(--jen-color-fg);
 }
 
 .jen-devtools-content {
@@ -234,11 +238,12 @@ export function getStyles(): string {
 }
 
 .jen-devtools-sidebar {
-  width: 250px;
+  width: 280px;
   border-right: 1px solid var(--jen-color-border);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  background: var(--jen-color-bg-secondary);
 }
 
 .jen-devtools-search-container {
@@ -248,17 +253,23 @@ export function getStyles(): string {
 
 .jen-devtools-search {
   width: 100%;
-  padding: 6px 8px;
+  padding: 8px 10px;
   background: var(--jen-color-bg);
   border: 1px solid var(--jen-color-border);
-  border-radius: 4px;
+  border-radius: 6px;
   color: var(--jen-color-fg);
   font-size: 12px;
+  transition: all 0.2s;
+}
+
+.jen-devtools-search::placeholder {
+  color: var(--jen-color-fg-muted);
 }
 
 .jen-devtools-search:focus {
   outline: none;
   border-color: var(--jen-color-accent);
+  background: var(--jen-color-bg-secondary);
 }
 
 .jen-search-results {
@@ -344,8 +355,8 @@ export function getStyles(): string {
 .jen-devtools-tab {
   background: transparent;
   border: none;
-  color: var(--jen-color-fg);
-  padding: 10px 16px;
+  color: var(--jen-color-fg-muted);
+  padding: 12px 16px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -354,7 +365,7 @@ export function getStyles(): string {
 }
 
 .jen-devtools-tab:hover {
-  background: var(--jen-color-border);
+  color: var(--jen-color-fg);
 }
 
 .jen-devtools-tab.active {
@@ -373,6 +384,7 @@ export function getStyles(): string {
   display: none;
   overflow-y: auto;
   padding: 16px;
+  background: var(--jen-color-bg);
 }
 
 .jen-devtools-tab-content.active {
@@ -419,12 +431,13 @@ export function getStyles(): string {
 }
 
 .jen-inspector-section h4 {
-  margin: 0 0 8px 0;
-  font-size: 12px;
+  margin: 0 0 12px 0;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--jen-color-accent);
+  color: var(--jen-color-fg-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  opacity: 0.8;
 }
 
 .jen-inspector-props,
@@ -441,28 +454,31 @@ export function getStyles(): string {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px;
-  background: var(--jen-color-border);
-  border-radius: 4px;
+  padding: 8px;
+  background: var(--jen-color-bg-secondary);
+  border: 1px solid var(--jen-color-border);
+  border-radius: 6px;
 }
 
 .jen-prop-key,
 .jen-state-key {
-  font-weight: 600;
-  color: var(--jen-color-success);
+  font-weight: 500;
+  color: var(--jen-color-info);
   min-width: 100px;
+  font-size: 12px;
 }
 
 .jen-prop-value,
 .jen-state-value {
   flex: 1;
-  padding: 4px 6px;
+  padding: 6px 8px;
   background: var(--jen-color-bg);
   border: 1px solid var(--jen-color-border);
-  border-radius: 3px;
+  border-radius: 4px;
   color: var(--jen-color-fg);
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 11px;
+  transition: all 0.2s;
 }
 
 .jen-prop-value:focus,
@@ -679,18 +695,19 @@ export function getStyles(): string {
 }
 
 .jen-devtools-footer {
-  padding: 12px;
+  padding: 14px 16px;
   border-top: 1px solid var(--jen-color-border);
   display: flex;
   gap: 8px;
+  background: var(--jen-color-bg-secondary);
 }
 
 .jen-devtools-export {
-  padding: 6px 12px;
+  padding: 8px 14px;
   background: var(--jen-color-accent);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -698,7 +715,7 @@ export function getStyles(): string {
 }
 
 .jen-devtools-export:hover {
-  opacity: 0.9;
+  opacity: 0.85;
   transform: translateY(-1px);
 }
 
