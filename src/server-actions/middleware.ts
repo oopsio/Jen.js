@@ -28,18 +28,17 @@ import {
   matchServerAction,
   type ServerActionEntry,
 } from "./scan.js";
-import {
-  createServerActionContext,
-  executeServerAction,
-} from "./handler.js";
-import type {
-  ServerActionModule,
-  ServerActionContext,
-} from "./types.js";
+import { createServerActionContext, executeServerAction } from "./handler.js";
+import type { ServerActionModule, ServerActionContext } from "./types.js";
 import type { FrameworkConfig } from "../core/config.js";
 
 /** Cache directory for transpiled server actions. */
-const actionsCacheDir = join(process.cwd(), "node_modules", ".jen", "actions-cache");
+const actionsCacheDir = join(
+  process.cwd(),
+  "node_modules",
+  ".jen",
+  "actions-cache",
+);
 
 /**
  * Transpile a TypeScript server action file to JavaScript.
@@ -80,7 +79,9 @@ async function loadServerActionModule(
 
   try {
     // Cache-busting query param for dev mode
-    const mod = await import(pathToFileURL(moduleUrl).href + `?t=${Date.now()}`);
+    const mod = await import(
+      pathToFileURL(moduleUrl).href + `?t=${Date.now()}`
+    );
     return mod.default ? { default: mod.default, ...mod } : mod;
   } catch (err: any) {
     log.error(`Failed to load server action: ${err.message}`);
@@ -124,7 +125,9 @@ export async function createServerActionsMiddleware(opts: {
     if (!match) {
       ctx.res.statusCode = 404;
       ctx.res.setHeader("content-type", "application/json; charset=utf-8");
-      ctx.res.end(JSON.stringify({ success: false, message: "Action not found" }));
+      ctx.res.end(
+        JSON.stringify({ success: false, message: "Action not found" }),
+      );
       return;
     }
 

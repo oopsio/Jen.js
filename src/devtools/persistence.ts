@@ -36,7 +36,10 @@ export class PersistenceManager {
 
   saveComponentState(componentId: string, state: any) {
     try {
-      localStorage.setItem(`__jen_component_${componentId}__`, JSON.stringify(state));
+      localStorage.setItem(
+        `__jen_component_${componentId}__`,
+        JSON.stringify(state),
+      );
     } catch (e) {
       console.error("Failed to save component state:", e);
     }
@@ -53,7 +56,7 @@ export class PersistenceManager {
   clearAll() {
     try {
       const keys = Object.keys(localStorage).filter((k) =>
-        k.startsWith("__jen_")
+        k.startsWith("__jen_"),
       );
       keys.forEach((key) => localStorage.removeItem(key));
     } catch (e) {

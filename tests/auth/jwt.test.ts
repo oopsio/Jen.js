@@ -2,17 +2,25 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as crypto from "crypto";
 
 // Mock JWT functions for testing
-function createToken(payload: Record<string, any>, secret: string, expiresIn: number): string {
-  const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
+function createToken(
+  payload: Record<string, any>,
+  secret: string,
+  expiresIn: number,
+): string {
+  const header = Buffer.from(
+    JSON.stringify({ alg: "HS256", typ: "JWT" }),
+  ).toString("base64url");
   const now = Math.floor(Date.now() / 1000);
   const claims = { ...payload, iat: now, exp: now + expiresIn };
-  const encodedPayload = Buffer.from(JSON.stringify(claims)).toString("base64url");
-  
+  const encodedPayload = Buffer.from(JSON.stringify(claims)).toString(
+    "base64url",
+  );
+
   const signature = crypto
     .createHmac("sha256", secret)
     .update(`${header}.${encodedPayload}`)
     .digest("base64url");
-  
+
   return `${header}.${encodedPayload}.${signature}`;
 }
 
@@ -22,18 +30,18 @@ function verifyToken(token: string, secret: string): Record<string, any> {
     .createHmac("sha256", secret)
     .update(`${header}.${payload}`)
     .digest("base64url");
-  
+
   if (signature !== expectedSignature) {
     throw new Error("Invalid signature");
   }
-  
+
   const decoded = JSON.parse(Buffer.from(payload, "base64url").toString());
   const now = Math.floor(Date.now() / 1000);
-  
+
   if (decoded.exp < now) {
     throw new Error("Token expired");
   }
-  
+
   return decoded;
 }
 
@@ -82,7 +90,9 @@ describe("JWT Authentication", () => {
     it("should reject token with invalid signature", () => {
       const token = createToken(testPayload, secret, 3600);
       const tamperedToken = token.slice(0, -5) + "XXXXX";
-      expect(() => verifyToken(tamperedToken, secret)).toThrow("Invalid signature");
+      expect(() => verifyToken(tamperedToken, secret)).toThrow(
+        "Invalid signature",
+      );
     });
 
     it("should reject expired token", async () => {
@@ -93,7 +103,9 @@ describe("JWT Authentication", () => {
     it("should reject token with wrong secret", () => {
       const token = createToken(testPayload, secret, 3600);
       const wrongSecret = "different-secret";
-      expect(() => verifyToken(token, wrongSecret)).toThrow("Invalid signature");
+      expect(() => verifyToken(token, wrongSecret)).toThrow(
+        "Invalid signature",
+      );
     });
   });
 

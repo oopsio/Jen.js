@@ -59,7 +59,9 @@ const Minifier = {
 };
 
 async function main() {
-  console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting SSR+ISR server in ${isDev ? "DEV" : "PROD"} mode...`);
+  console.log(
+    `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting SSR+ISR server in ${isDev ? "DEV" : "PROD"} mode...`,
+  );
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
@@ -105,14 +107,20 @@ async function main() {
               chunk = Minifier.html(chunk.toString());
               res.removeHeader("content-length");
             } catch (e) {
-              console.error(`${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset} HTML Minification failed:`, e);
+              console.error(
+                `${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset} HTML Minification failed:`,
+                e,
+              );
             }
           } else if (type.includes("text/css")) {
             try {
               chunk = Minifier.css(chunk.toString());
               res.removeHeader("content-length");
             } catch (e) {
-              console.error(`${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset} CSS Minification failed:`, e);
+              console.error(
+                `${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset} CSS Minification failed:`,
+                e,
+              );
             }
           }
         }

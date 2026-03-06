@@ -66,7 +66,9 @@ interface AnalyticsEvent {
 /**
  * Create an analytics plugin.
  */
-export function createAnalyticsPlugin(config: AnalyticsPluginConfig): JenPlugin {
+export function createAnalyticsPlugin(
+  config: AnalyticsPluginConfig,
+): JenPlugin {
   const events: AnalyticsEvent[] = [];
 
   return {
@@ -75,7 +77,9 @@ export function createAnalyticsPlugin(config: AnalyticsPluginConfig): JenPlugin 
     description: "Track pageviews and events with analytics provider",
 
     async init(pluginContext: PluginContext) {
-      console.log(`[Analytics Plugin] Initialized with provider: ${config.provider}`);
+      console.log(
+        `[Analytics Plugin] Initialized with provider: ${config.provider}`,
+      );
     },
 
     hooks: {
@@ -127,7 +131,10 @@ export function createAnalyticsPlugin(config: AnalyticsPluginConfig): JenPlugin 
 /**
  * Track an analytics event.
  */
-async function trackEvent(event: AnalyticsEvent, config: AnalyticsPluginConfig): Promise<void> {
+async function trackEvent(
+  event: AnalyticsEvent,
+  config: AnalyticsPluginConfig,
+): Promise<void> {
   switch (config.provider) {
     case "google-analytics":
       await trackGoogleAnalytics(event, config);
@@ -149,7 +156,10 @@ async function trackEvent(event: AnalyticsEvent, config: AnalyticsPluginConfig):
 /**
  * Track event in Google Analytics.
  */
-async function trackGoogleAnalytics(event: AnalyticsEvent, config: AnalyticsPluginConfig): Promise<void> {
+async function trackGoogleAnalytics(
+  event: AnalyticsEvent,
+  config: AnalyticsPluginConfig,
+): Promise<void> {
   // Mock implementation - in production, use the GA SDK
   const trackingId = config.trackingId || "UA-XXXXXXXXX-X";
 
@@ -173,7 +183,9 @@ async function trackGoogleAnalytics(event: AnalyticsEvent, config: AnalyticsPlug
     params.append("aip", "1");
   }
 
-  console.log(`[Analytics] GA: ${event.type} → ${event.path || event.eventName}`);
+  console.log(
+    `[Analytics] GA: ${event.type} → ${event.path || event.eventName}`,
+  );
 
   // In production: fetch("https://www.google-analytics.com/collect", { method: "POST", body: params });
 }
@@ -181,7 +193,10 @@ async function trackGoogleAnalytics(event: AnalyticsEvent, config: AnalyticsPlug
 /**
  * Track event in Segment.
  */
-async function trackSegment(event: AnalyticsEvent, config: AnalyticsPluginConfig): Promise<void> {
+async function trackSegment(
+  event: AnalyticsEvent,
+  config: AnalyticsPluginConfig,
+): Promise<void> {
   // Mock implementation - in production, use the Segment SDK
   const apiKey = config.apiKey || "YOUR_SEGMENT_API_KEY";
 
@@ -195,11 +210,17 @@ async function trackSegment(event: AnalyticsEvent, config: AnalyticsPluginConfig
   };
 
   if (event.type === "pageview" && event.path) {
-    Object.assign(payload, { name: "Page Viewed", properties: { path: event.path } });
+    Object.assign(payload, {
+      name: "Page Viewed",
+      properties: { path: event.path },
+    });
   }
 
   if (event.type === "event" && event.eventName) {
-    Object.assign(payload, { event: event.eventName, properties: event.properties });
+    Object.assign(payload, {
+      event: event.eventName,
+      properties: event.properties,
+    });
   }
 
   console.log(`[Analytics] Segment: ${event.type}`);
@@ -210,7 +231,10 @@ async function trackSegment(event: AnalyticsEvent, config: AnalyticsPluginConfig
 /**
  * Track event in Mixpanel.
  */
-async function trackMixpanel(event: AnalyticsEvent, config: AnalyticsPluginConfig): Promise<void> {
+async function trackMixpanel(
+  event: AnalyticsEvent,
+  config: AnalyticsPluginConfig,
+): Promise<void> {
   // Mock implementation - in production, use the Mixpanel SDK
   const token = config.apiKey || "YOUR_MIXPANEL_TOKEN";
 
@@ -218,8 +242,8 @@ async function trackMixpanel(event: AnalyticsEvent, config: AnalyticsPluginConfi
     event: event.type === "pageview" ? "Page View" : event.eventName || "Event",
     properties: {
       token,
-      "distinct_id": generateClientId(),
-      "time": event.timestamp,
+      distinct_id: generateClientId(),
+      time: event.timestamp,
       ...(event.type === "pageview" && event.path ? { page: event.path } : {}),
       ...event.properties,
     },

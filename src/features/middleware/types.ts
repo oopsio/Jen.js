@@ -14,4 +14,7 @@ export interface MiddlewareFeature {
 /**
  * Middleware handler function
  */
-export type MiddlewareHandler = (context: any, next: () => Promise<void>) => Promise<void>;
+export type MiddlewareHandler = (
+  context: any,
+  next: () => Promise<void>,
+) => Promise<void>;

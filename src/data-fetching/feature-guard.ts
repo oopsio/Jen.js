@@ -18,14 +18,14 @@
 
 /**
  * Feature guards for data-fetching module.
- * 
+ *
  * The data-fetching feature must be enabled in jen.config.ts:
  * ```
  * features: {
  *   dataFetching: true
  * }
  * ```
- * 
+ *
  * This module would typically use the framework's feature gating system
  * to ensure the feature is enabled before allowing use of these utilities.
  */

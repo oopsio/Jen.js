@@ -93,9 +93,18 @@ export function buildHydrationModule(filePath) {
   }).outputFiles?.[0]?.text;
   // Replace bare module specifiers with CDN URLs for browser compatibility
   const mapped = js
-    .replace(/from ["']preact\/jsx-runtime["']/g, 'from "https://esm.sh/preact@10.25.4/jsx-runtime"')
-    .replace(/from ["']preact\/hooks["']/g, 'from "https://esm.sh/preact@10.25.4/hooks"')
-    .replace(/from ["']preact(?!\/|["'])/g, 'from "https://esm.sh/preact@10.25.4"');
+    .replace(
+      /from ["']preact\/jsx-runtime["']/g,
+      'from "https://esm.sh/preact@10.25.4/jsx-runtime"',
+    )
+    .replace(
+      /from ["']preact\/hooks["']/g,
+      'from "https://esm.sh/preact@10.25.4/hooks"',
+    )
+    .replace(
+      /from ["']preact(?!\/|["'])/g,
+      'from "https://esm.sh/preact@10.25.4"',
+    );
   const etag = etagOf(mapped);
   cache.set(key, { js: mapped, etag });
   return mapped;

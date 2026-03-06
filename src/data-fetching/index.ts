@@ -68,10 +68,7 @@ export {
 } from "./cache.js";
 
 // REST/HTTP exports
-export {
-  RestFetcher,
-  createRestFetcher,
-} from "./rest.js";
+export { RestFetcher, createRestFetcher } from "./rest.js";
 
 // GraphQL exports
 export {
@@ -92,9 +89,7 @@ export {
   createConditionalDataLoader,
   createResilientDataLoader,
 } from "./server.js";
-export type {
-  DataLoader,
-} from "./server.js";
+export type { DataLoader } from "./server.js";
 
 // Client-side exports
 export {

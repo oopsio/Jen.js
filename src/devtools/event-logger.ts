@@ -59,7 +59,7 @@ export class EventLogger {
     return this.logs.filter(
       (log) =>
         log.source.toLowerCase().includes(lowerQuery) ||
-        log.message.toLowerCase().includes(lowerQuery)
+        log.message.toLowerCase().includes(lowerQuery),
     );
   }
 

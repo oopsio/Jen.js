@@ -24,12 +24,16 @@ const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";
 
 async function main() {
-  console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting in ${isDev ? "DEV" : "PROD"} mode...`);
+  console.log(
+    `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting in ${isDev ? "DEV" : "PROD"} mode...`,
+  );
 
   // Transpile config
   const configPath = join(blogDir, "jen.config.ts");
   const outdir = join(blogDir, ".esbuild");
-  console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Transpiling config...`);
+  console.log(
+    `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Transpiling config...`,
+  );
 
   await esbuild.build({
     entryPoints: [configPath],
@@ -52,7 +56,9 @@ async function main() {
   const appModule = await import(appPath);
   const { createApp } = appModule;
 
-  console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Creating app...`);
+  console.log(
+    `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Creating app...`,
+  );
 
   const app = await createApp({
     config,
@@ -76,12 +82,17 @@ async function main() {
   });
 
   process.on("SIGINT", () => {
-    console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Shutting down...`);
+    console.log(
+      `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Shutting down...`,
+    );
     server.close(() => process.exit(0));
   });
 }
 
 main().catch((err) => {
-  console.error(`${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset}`, err);
+  console.error(
+    `${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset}`,
+    err,
+  );
   process.exit(1);
 });

@@ -127,7 +127,9 @@ export function initializeServerFetch(context: ServerFetchContext): void {
  * Gets the server data fetcher for use in loaders and middleware.
  * Must be called after initializeServerFetch().
  */
-export function getServerDataFetcher(loaderCtx?: LoaderContext): ServerDataFetcher {
+export function getServerDataFetcher(
+  loaderCtx?: LoaderContext,
+): ServerDataFetcher {
   if (!globalServerCache) {
     throw new Error(
       "Server fetch not initialized. Call initializeServerFetch() during app startup.",
@@ -161,9 +163,7 @@ export async function queryGraphQL<T = any>(
   loaderCtx?: LoaderContext,
 ) {
   const fetcher = getServerDataFetcher(loaderCtx);
-  return fetcher.graphql.query<T>(
-    { query, variables },
-  );
+  return fetcher.graphql.query<T>({ query, variables });
 }
 
 /**
@@ -194,9 +194,7 @@ export function createDataLoader<T = any>(
 /**
  * Parallel data loader for fetching multiple resources concurrently.
  */
-export function createParallelDataLoader<
-  T extends Record<string, any>,
->(
+export function createParallelDataLoader<T extends Record<string, any>>(
   loaders: Record<keyof T, DataLoader>,
 ): DataLoader<T> {
   return async (loaderCtx: LoaderContext) => {

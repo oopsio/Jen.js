@@ -24,7 +24,14 @@
 /**
  * HTTP request method type
  */
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+export type HttpMethod =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "DELETE"
+  | "PATCH"
+  | "HEAD"
+  | "OPTIONS";
 
 /**
  * Request options for data fetching
@@ -116,7 +123,12 @@ export interface CacheEntry<T = any> {
  */
 export interface CacheBackend {
   get<T = any>(key: string): Promise<T | null>;
-  set<T = any>(key: string, value: T, ttl?: number, tags?: string[]): Promise<void>;
+  set<T = any>(
+    key: string,
+    value: T,
+    ttl?: number,
+    tags?: string[],
+  ): Promise<void>;
   delete(key: string): Promise<void>;
   clear(): Promise<void>;
   invalidate(tags: string[]): Promise<void>;
@@ -125,7 +137,11 @@ export interface CacheBackend {
 /**
  * Cache strategy options
  */
-export type CacheStrategy = "no-cache" | "cache-first" | "stale-while-revalidate" | "network-first";
+export type CacheStrategy =
+  | "no-cache"
+  | "cache-first"
+  | "stale-while-revalidate"
+  | "network-first";
 
 /**
  * Cache configuration for fetch operations
@@ -156,7 +172,9 @@ export interface DataFetchConfig extends FetchOptions {
  */
 export interface FetchInterceptor {
   beforeRequest?(request: FetchOptions): FetchOptions | Promise<FetchOptions>;
-  afterResponse?<T>(response: FetchResult<T>): FetchResult<T> | Promise<FetchResult<T>>;
+  afterResponse?<T>(
+    response: FetchResult<T>,
+  ): FetchResult<T> | Promise<FetchResult<T>>;
   onError?(error: FetchError): FetchError | Promise<FetchError>;
 }
 

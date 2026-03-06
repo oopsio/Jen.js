@@ -28,13 +28,13 @@ import type { RouteEntry } from "../core/routes/scan.js";
  * @throws Error if the route module fails to compile, import, or render.
  */
 export declare function renderRouteToHtml(opts: {
-    config: FrameworkConfig;
-    route: RouteEntry;
-    req?: any;
-    res?: any;
-    url: URL;
-    params: Record<string, string>;
-    query: Record<string, string>;
-    headers: Record<string, string>;
-    cookies: Record<string, string>;
+  config: FrameworkConfig;
+  route: RouteEntry;
+  req?: any;
+  res?: any;
+  url: URL;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  headers: Record<string, string>;
+  cookies: Record<string, string>;
 }): Promise<string>;

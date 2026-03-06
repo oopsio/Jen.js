@@ -180,7 +180,7 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
  * Sends a safe 500 error response, checking if headers have already been sent.
  * If headers were sent, attempts to destroy the socket to prevent further data transmission.
  * Logs the error with stack trace for debugging.
- * 
+ *
  * @param res Node.js ServerResponse object
  * @param error Error object or string to log
  * @param showDetails Whether to include error details in response (dev mode)
@@ -211,13 +211,10 @@ function sendSafeError(
   // Send 500 response with safe error template
   try {
     let html = ERROR_500_TEMPLATE;
-    
+
     if (showDetails && errorStack) {
       // In dev mode, include error details
-      html = html.replace(
-        'id="details" style="display:none;"',
-        'id="details"',
-      );
+      html = html.replace('id="details" style="display:none;"', 'id="details"');
       html = html.replace(
         "<script>",
         `<script>
@@ -297,78 +294,82 @@ export async function createApp(opts: {
     log.info(`[HMR] Watching ${sitePath} for changes...`);
 
     try {
-      const watcher = watch(sitePath, { recursive: true }, (eventType, filename) => {
-        if (!filename) return;
+      const watcher = watch(
+        sitePath,
+        { recursive: true },
+        (eventType, filename) => {
+          if (!filename) return;
 
-        /**
-         * Filter out files that should not trigger HMR notifications.
-         * Temporary files, build artifacts, and hidden files cause infinite loops
-         * or are not meant for hot reload.
-         */
-        if (
-          filename.startsWith(".") ||
-          filename.includes("node_modules") ||
-          filename.endsWith("~") ||
-          filename.endsWith(".tmp") ||
-          filename.endsWith(".esbuild.mjs") || // Ignore build artifacts
-          filename.includes("\\.") || // Windows hidden files
-          filename.includes("/.") // Unix hidden files
-        ) {
-          return;
-        }
-
-        /**
-         * Debounce timer prevents multiple rapid change notifications.
-         * Filesystem watchers often emit multiple events for a single file change.
-         * This delay coalesces rapid changes into a single notification (100ms threshold).
-         * maxWait cap prevents indefinite waiting on continuous changes.
-         */
-        let debounceTimer = setTimeout(() => {
-          const ext = extname(filename);
-          // Normalize path
-          const fullPath = join(sitePath, filename);
-          log.info(`[HMR] Change detected: ${filename}`);
-
-          if (ext === ".css" || ext === ".scss") {
-            /**
-             * For CSS/SCSS changes, send a style-update event.
-             * This allows the client to reload CSS without full page reload,
-             * preserving component state and providing better developer experience.
-             */
-            const cssName = filename.replace(/\.scss$/, ".css");
-
-            for (const client of lifecycle.getHmrClients()) {
-              if (!client.writableEnded && !client.destroyed) {
-                client.write(
-                  `event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`,
-                );
-              }
-            }
-          } else {
-            /**
-             * For JavaScript/TypeScript/component changes, invalidate build caches
-             * and send a full reload event.
-             * Cache invalidation ensures the latest code is loaded on next request.
-             */
-            invalidateCache(fullPath);
-            if (ext === ".vue") invalidateVueCache(fullPath);
-            if (ext === ".svelte") invalidateSvelteCache(fullPath);
-
-            // Full reload for JS/TS/Vue/Svelte/Other
-            for (const client of lifecycle.getHmrClients()) {
-              if (!client.writableEnded && !client.destroyed) {
-                client.write(`event: reload\ndata: {}\n\n`);
-              }
-            }
+          /**
+           * Filter out files that should not trigger HMR notifications.
+           * Temporary files, build artifacts, and hidden files cause infinite loops
+           * or are not meant for hot reload.
+           */
+          if (
+            filename.startsWith(".") ||
+            filename.includes("node_modules") ||
+            filename.endsWith("~") ||
+            filename.endsWith(".tmp") ||
+            filename.endsWith(".esbuild.mjs") || // Ignore build artifacts
+            filename.includes("\\.") || // Windows hidden files
+            filename.includes("/.") // Unix hidden files
+          ) {
+            return;
           }
-        }, 100);
 
-        // Use unref() to allow Node.js to exit if this is the only pending operation
-        if (debounceTimer.unref) {
-          debounceTimer.unref();
-        }
-        lifecycle.setDebounceTimer(debounceTimer);
-      });
+          /**
+           * Debounce timer prevents multiple rapid change notifications.
+           * Filesystem watchers often emit multiple events for a single file change.
+           * This delay coalesces rapid changes into a single notification (100ms threshold).
+           * maxWait cap prevents indefinite waiting on continuous changes.
+           */
+          let debounceTimer = setTimeout(() => {
+            const ext = extname(filename);
+            // Normalize path
+            const fullPath = join(sitePath, filename);
+            log.info(`[HMR] Change detected: ${filename}`);
+
+            if (ext === ".css" || ext === ".scss") {
+              /**
+               * For CSS/SCSS changes, send a style-update event.
+               * This allows the client to reload CSS without full page reload,
+               * preserving component state and providing better developer experience.
+               */
+              const cssName = filename.replace(/\.scss$/, ".css");
+
+              for (const client of lifecycle.getHmrClients()) {
+                if (!client.writableEnded && !client.destroyed) {
+                  client.write(
+                    `event: style-update\ndata: ${JSON.stringify({ file: cssName })}\n\n`,
+                  );
+                }
+              }
+            } else {
+              /**
+               * For JavaScript/TypeScript/component changes, invalidate build caches
+               * and send a full reload event.
+               * Cache invalidation ensures the latest code is loaded on next request.
+               */
+              invalidateCache(fullPath);
+              if (ext === ".vue") invalidateVueCache(fullPath);
+              if (ext === ".svelte") invalidateSvelteCache(fullPath);
+
+              // Full reload for JS/TS/Vue/Svelte/Other
+              for (const client of lifecycle.getHmrClients()) {
+                if (!client.writableEnded && !client.destroyed) {
+                  client.write(`event: reload\ndata: {}\n\n`);
+                }
+              }
+            }
+          }, 100);
+
+          // Use unref() to allow Node.js to exit if this is the only pending operation
+          if (debounceTimer.unref) {
+            debounceTimer.unref();
+          }
+          lifecycle.setDebounceTimer(debounceTimer);
+        },
+      );
 
       // Store watcher for cleanup on shutdown
       lifecycle.setWatcher(watcher);
@@ -398,29 +399,41 @@ export async function createApp(opts: {
   });
 
   // Font serving middleware
-  const fontCacheDir = join(process.cwd(), config.build?.cacheDir ?? ".jen", "fonts");
+  const fontCacheDir = join(
+    process.cwd(),
+    config.build?.cacheDir ?? ".jen",
+    "fonts",
+  );
   const serveFonts = fontServeMiddleware(fontCacheDir);
 
   // Server actions middleware
-  const serverActionsMiddleware = await createServerActionsMiddleware({ config });
+  const serverActionsMiddleware = await createServerActionsMiddleware({
+    config,
+  });
 
   const middlewares: Middleware[] = [
     async (ctx, next) => {
       try {
         log.info(`${ctx.req.method} ${ctx.url.pathname}`);
-        
+
         // i18n middleware
         if (config.features?.i18n !== false) {
           const locales = config.i18n?.locales || ["en", "es"];
           const defaultLocale = config.i18n?.defaultLocale || "en";
           const firstSegment = ctx.url.pathname.split("/")[1];
-          const locale = locales.includes(firstSegment) ? firstSegment : defaultLocale;
+          const locale = locales.includes(firstSegment)
+            ? firstSegment
+            : defaultLocale;
           ctx.i18n = new I18n(locale as any);
         }
 
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -437,10 +450,10 @@ export async function createApp(opts: {
           let body = "";
           ctx.req.on("data", (chunk: Buffer) => (body += chunk.toString()));
           await new Promise((resolve) => ctx.req.on("end", resolve));
-          
+
           const { query, variables } = JSON.parse(body);
           const result = await runQuery(query, variables);
-          
+
           ctx.res.statusCode = 200;
           ctx.res.setHeader("content-type", "application/json");
           ctx.res.end(JSON.stringify(result));
@@ -558,55 +571,59 @@ export function initializeIslands() {
 
 initializeIslands();
 `;
-        ctx.res.end(islandCode);
-        return;
-      }
-
-      // HMR Endpoint (SSE)
-      if (ctx.url.pathname === "/__hmr" && mode === "dev") {
-        ctx.res.statusCode = 200;
-        ctx.res.setHeader("content-type", "text/event-stream");
-        ctx.res.setHeader("cache-control", "no-cache");
-        ctx.res.setHeader("connection", "keep-alive");
-
-        ctx.res.write("data: connected\n\n");
-        lifecycle.addHmrClient(ctx.res);
-
-        ctx.req.on("close", () => {
-          lifecycle.removeHmrClient(ctx.res);
-        });
-
-        // Cleanup on response error
-        ctx.res.on("error", () => {
-          lifecycle.removeHmrClient(ctx.res);
-        });
-
-        return;
-      }
-
-      if (ctx.url.pathname === "/__hydrate") {
-        const file = ctx.url.searchParams.get("file");
-        if (!file) {
-          ctx.res.statusCode = 400;
-          ctx.res.end("missing file");
+          ctx.res.end(islandCode);
           return;
         }
 
-        const js = buildHydrationModule(file);
+        // HMR Endpoint (SSE)
+        if (ctx.url.pathname === "/__hmr" && mode === "dev") {
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader("content-type", "text/event-stream");
+          ctx.res.setHeader("cache-control", "no-cache");
+          ctx.res.setHeader("connection", "keep-alive");
 
-        ctx.res.statusCode = 200;
-        ctx.res.setHeader(
-          "content-type",
-          "application/javascript; charset=utf-8",
-        );
-        ctx.res.setHeader("cache-control", "no-store");
-        ctx.res.end(js);
-        return;
-      }
+          ctx.res.write("data: connected\n\n");
+          lifecycle.addHmrClient(ctx.res);
 
-      await next();
+          ctx.req.on("close", () => {
+            lifecycle.removeHmrClient(ctx.res);
+          });
+
+          // Cleanup on response error
+          ctx.res.on("error", () => {
+            lifecycle.removeHmrClient(ctx.res);
+          });
+
+          return;
+        }
+
+        if (ctx.url.pathname === "/__hydrate") {
+          const file = ctx.url.searchParams.get("file");
+          if (!file) {
+            ctx.res.statusCode = 400;
+            ctx.res.end("missing file");
+            return;
+          }
+
+          const js = buildHydrationModule(file);
+
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader(
+            "content-type",
+            "application/javascript; charset=utf-8",
+          );
+          ctx.res.setHeader("cache-control", "no-store");
+          ctx.res.end(js);
+          return;
+        }
+
+        await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -617,7 +634,11 @@ initializeIslands();
         if (handled) return;
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -626,7 +647,11 @@ initializeIslands();
         // Server actions
         await serverActionsMiddleware(ctx, next);
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -641,7 +666,11 @@ initializeIslands();
         if (handled) return;
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -656,7 +685,11 @@ initializeIslands();
         }
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -731,7 +764,11 @@ initializeIslands();
         }
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -746,7 +783,11 @@ initializeIslands();
         }
         await next();
       } catch (err) {
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
 
@@ -768,7 +809,11 @@ initializeIslands();
 
         if (resolution.type === "redirect") {
           // Handle redirects (both app-level and route-level)
-          router.handleRedirect(ctx.res, resolution.location, resolution.status);
+          router.handleRedirect(
+            ctx.res,
+            resolution.location,
+            resolution.status,
+          );
           return;
         }
 
@@ -807,14 +852,19 @@ initializeIslands();
         ctx.res.end(finalHtml);
       } catch (err: any) {
         // Middleware may have sent a response (redirect/json)
-        if (err && (err.message === "__REDIRECT__" || err.message === "__JSON__")) {
+        if (
+          err &&
+          (err.message === "__REDIRECT__" || err.message === "__JSON__")
+        ) {
           return; // Response already sent
         }
-        sendSafeError(ctx.res, err instanceof Error ? err : new Error(String(err)), mode === "dev");
+        sendSafeError(
+          ctx.res,
+          err instanceof Error ? err : new Error(String(err)),
+          mode === "dev",
+        );
       }
     },
-
-
   ];
 
   const kernel = new Kernel();

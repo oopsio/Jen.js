@@ -48,4 +48,3 @@ const config: FrameworkConfig = {
 };
 
 export default config;
-

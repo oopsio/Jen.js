@@ -35,10 +35,10 @@ type AppMode = "dev" | "prod";
  * @throws {Error} If route scanning fails due to invalid route patterns
  */
 export declare function createApp(opts: {
-    config: FrameworkConfig;
-    mode: AppMode;
-    viteServer?: any;
+  config: FrameworkConfig;
+  mode: AppMode;
+  viteServer?: any;
 }): Promise<{
-    handle(req: IncomingMessage, res: ServerResponse): Promise<void>;
+  handle(req: IncomingMessage, res: ServerResponse): Promise<void>;
 }>;
 export {};

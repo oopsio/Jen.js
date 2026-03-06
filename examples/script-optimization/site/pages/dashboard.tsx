@@ -1,6 +1,6 @@
 /**
  * Dashboard Component - Lazy-loaded
- * 
+ *
  * This component is split into a separate chunk and loaded on demand
  * Reduces initial bundle size by deferring non-critical UI
  */
@@ -47,22 +47,34 @@ export default function Dashboard() {
     return h("div", { class: "error" }, "Failed to load dashboard");
   }
 
-  return h("div", { class: "dashboard" },
+  return h(
+    "div",
+    { class: "dashboard" },
     h("h2", null, "Dashboard"),
-    h("div", { class: "metrics" },
-      h("div", { class: "metric" },
+    h(
+      "div",
+      { class: "metrics" },
+      h(
+        "div",
+        { class: "metric" },
         h("h3", null, data.users),
         h("p", null, "Users"),
       ),
-      h("div", { class: "metric" },
+      h(
+        "div",
+        { class: "metric" },
         h("h3", null, "$" + data.revenue.toLocaleString()),
         h("p", null, "Revenue"),
       ),
-      h("div", { class: "metric" },
+      h(
+        "div",
+        { class: "metric" },
         h("h3", null, data.orders),
         h("p", null, "Orders"),
       ),
-      h("div", { class: "metric" },
+      h(
+        "div",
+        { class: "metric" },
         h("h3", null, data.conversionRate + "%"),
         h("p", null, "Conversion"),
       ),

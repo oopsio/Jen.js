@@ -14,32 +14,32 @@
  * Suitable for distributed/multi-process deployments where shared cache is needed.
  */
 export declare class RedisCache {
-    /**
-     * Connect to Redis server.
-     * Requires external redis library to be installed.
-     * @throws Always throws if called without external library.
-     */
-    connect(): Promise<void>;
-    /**
-     * Store a value in Redis with optional time-to-live.
-     * @param key - Cache key identifier.
-     * @param value - Value to store (should be serializable to JSON).
-     * @param ttlSec - Time-to-live in seconds. If omitted, key persists indefinitely.
-     * @throws Always throws if called without external library.
-     */
-    set(key: string, value: any, ttlSec?: number): Promise<void>;
-    /**
-     * Retrieve a value from Redis.
-     * @param key - Cache key identifier.
-     * @returns Stored value or undefined if key does not exist.
-     * @throws Always throws if called without external library.
-     */
-    get(key: string): Promise<void>;
-    /**
-     * Delete a value from Redis.
-     * Safe to call on non-existent keys (no-op in Redis).
-     * @param key - Cache key identifier.
-     * @throws Always throws if called without external library.
-     */
-    delete(key: string): Promise<void>;
+  /**
+   * Connect to Redis server.
+   * Requires external redis library to be installed.
+   * @throws Always throws if called without external library.
+   */
+  connect(): Promise<void>;
+  /**
+   * Store a value in Redis with optional time-to-live.
+   * @param key - Cache key identifier.
+   * @param value - Value to store (should be serializable to JSON).
+   * @param ttlSec - Time-to-live in seconds. If omitted, key persists indefinitely.
+   * @throws Always throws if called without external library.
+   */
+  set(key: string, value: any, ttlSec?: number): Promise<void>;
+  /**
+   * Retrieve a value from Redis.
+   * @param key - Cache key identifier.
+   * @returns Stored value or undefined if key does not exist.
+   * @throws Always throws if called without external library.
+   */
+  get(key: string): Promise<void>;
+  /**
+   * Delete a value from Redis.
+   * Safe to call on non-existent keys (no-op in Redis).
+   * @param key - Cache key identifier.
+   * @throws Always throws if called without external library.
+   */
+  delete(key: string): Promise<void>;
 }

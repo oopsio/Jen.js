@@ -121,7 +121,9 @@ function filePathToActionName(filePath: string): string {
  * @param config Framework configuration with siteDir
  * @returns Array of ServerActionEntry objects for all discovered actions
  */
-export function scanServerActions(config: FrameworkConfig): ServerActionEntry[] {
+export function scanServerActions(
+  config: FrameworkConfig,
+): ServerActionEntry[] {
   const actionsDir = join(process.cwd(), config.siteDir, "actions");
   const files = walk(actionsDir);
 
@@ -146,9 +148,11 @@ export function scanServerActions(config: FrameworkConfig): ServerActionEntry[] 
       "/" +
       withoutExt
         .split("/")
-        .map((part) => (part.startsWith("[") && part.endsWith("]")
-          ? ":" + part.slice(1, -1)
-          : part))
+        .map((part) =>
+          part.startsWith("[") && part.endsWith("]")
+            ? ":" + part.slice(1, -1)
+            : part,
+        )
         .join("/");
 
     // Generate action name

@@ -48,7 +48,7 @@ class GraphQLClient {
   async query<T>(
     query: string,
     variables?: Record<string, any>,
-    cache?: number
+    cache?: number,
   ): Promise<GraphQLResponse<T>> {
     const cacheKey = this.getCacheKey(query, variables);
 
@@ -81,7 +81,7 @@ class GraphQLClient {
 
   async mutation<T>(
     mutation: string,
-    variables?: Record<string, any>
+    variables?: Record<string, any>,
   ): Promise<GraphQLResponse<T>> {
     // Apply request interceptors
     for (const interceptor of this.requestInterceptors) {
@@ -93,7 +93,7 @@ class GraphQLClient {
   }
 
   async batch<T>(
-    operations: Array<{ query: string; variables?: Record<string, any> }>
+    operations: Array<{ query: string; variables?: Record<string, any> }>,
   ): Promise<GraphQLResponse<T>[]> {
     const results: GraphQLResponse<T>[] = [];
 
@@ -110,7 +110,7 @@ class GraphQLClient {
 
   private async simulateRequest<T>(
     query: string,
-    variables?: Record<string, any>
+    variables?: Record<string, any>,
   ): Promise<GraphQLResponse<T>> {
     return new Promise((resolve) => {
       setTimeout(() => {

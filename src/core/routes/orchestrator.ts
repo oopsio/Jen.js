@@ -134,9 +134,7 @@ export class AdvancedRouter {
           : advancedConfig.redirect.to;
 
       const status = advancedConfig.redirect.status ?? 301;
-      log.info(
-        `[Router] Route redirect: ${pathname} -> ${target} (${status})`,
-      );
+      log.info(`[Router] Route redirect: ${pathname} -> ${target} (${status})`);
       return {
         type: "redirect",
         location: target,
@@ -148,7 +146,9 @@ export class AdvancedRouter {
     if (advancedConfig.querySchema) {
       const validation = validateQueryParams(query, advancedConfig.querySchema);
       if (!validation.valid) {
-        log.warn(`[Router] Query validation failed: ${validation.errors.join(", ")}`);
+        log.warn(
+          `[Router] Query validation failed: ${validation.errors.join(", ")}`,
+        );
         // For now, log but don't block. In strict mode, this could return 400.
       }
 

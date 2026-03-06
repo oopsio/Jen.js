@@ -71,9 +71,7 @@ describe("Loader Schema", () => {
       expect(() => validateLoaderData("string", schema)).toThrow(
         /Expected object/,
       );
-      expect(() => validateLoaderData(null, schema)).toThrow(
-        /Expected object/,
-      );
+      expect(() => validateLoaderData(null, schema)).toThrow(/Expected object/);
     });
 
     it("should validate array types", () => {

@@ -113,8 +113,16 @@ describe("Performance: Benchmarks", () => {
       await router.match("GET", "/api/v1/resource500", ctx);
       tracker.mark("query-end");
 
-      const setupTime = tracker.measure("route_setup", "setup-start", "setup-end");
-      const queryTime = tracker.measure("route_query", "query-start", "query-end");
+      const setupTime = tracker.measure(
+        "route_setup",
+        "setup-start",
+        "setup-end",
+      );
+      const queryTime = tracker.measure(
+        "route_query",
+        "query-start",
+        "query-end",
+      );
 
       // Should handle 1000 routes efficiently
       expect(queryTime).toBeLessThan(50);
@@ -151,11 +159,12 @@ describe("Performance: Benchmarks", () => {
 
     it("should handle many middleware efficiently", async () => {
       const middlewareCount = 100;
-      const middlewares = Array.from({ length: middlewareCount }, (_, i) =>
-        async (ctx: any) => {
+      const middlewares = Array.from(
+        { length: middlewareCount },
+        (_, i) => async (ctx: any) => {
           ctx.locals = ctx.locals || {};
           ctx.locals[`mw${i}`] = true;
-        }
+        },
       );
 
       tracker.mark("start");
@@ -404,7 +413,7 @@ describe("Performance: Benchmarks", () => {
         const duration = tracker.measure(
           `iteration-${run}`,
           `start-${run}`,
-          `end-${run}`
+          `end-${run}`,
         );
         measurements.push(duration);
       }
@@ -412,7 +421,9 @@ describe("Performance: Benchmarks", () => {
       // All iterations should be roughly similar
       const avg = measurements.reduce((a, b) => a + b) / measurements.length;
       // Allow for natural variance in performance measurements
-      const hasHighVariance = measurements.some((m) => Math.abs(m - avg) > avg * 2);
+      const hasHighVariance = measurements.some(
+        (m) => Math.abs(m - avg) > avg * 2,
+      );
 
       expect(measurements).toHaveLength(5);
       expect(hasHighVariance).toBe(false); // No extreme variance

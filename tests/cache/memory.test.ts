@@ -23,24 +23,24 @@ class MemoryCache {
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
-    
+
     if (Date.now() > entry.expiresAt) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return entry.value as T;
   }
 
   has(key: string): boolean {
     const entry = this.cache.get(key);
     if (!entry) return false;
-    
+
     if (Date.now() > entry.expiresAt) {
       this.cache.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -168,7 +168,7 @@ describe("Memory Cache", () => {
     it("should return null for expired entries", async () => {
       const cache2 = new MemoryCache(50);
       cache2.set("key", "value");
-      
+
       await new Promise((resolve) => setTimeout(resolve, 100));
       expect(cache2.get("key")).toBeNull();
     });
@@ -178,7 +178,7 @@ describe("Memory Cache", () => {
     it("should delete a key", () => {
       cache.set("key", "value");
       expect(cache.has("key")).toBe(true);
-      
+
       const deleted = cache.delete("key");
       expect(deleted).toBe(true);
       expect(cache.has("key")).toBe(false);
@@ -193,7 +193,7 @@ describe("Memory Cache", () => {
       cache.set("key1", "value1");
       cache.set("key2", "value2");
       cache.set("key3", "value3");
-      
+
       cache.clear();
       expect(cache.get("key1")).toBeNull();
       expect(cache.get("key2")).toBeNull();
@@ -219,20 +219,20 @@ describe("Memory Cache", () => {
       const cache2 = new MemoryCache(50);
       cache2.set("key", "value");
       expect(cache2.has("key")).toBe(true);
-      
+
       await new Promise((resolve) => setTimeout(resolve, 100));
       expect(cache2.has("key")).toBe(false);
     });
 
     it("should return correct size", () => {
       expect(cache.size()).toBe(0);
-      
+
       cache.set("key1", "value1");
       expect(cache.size()).toBe(1);
-      
+
       cache.set("key2", "value2");
       expect(cache.size()).toBe(2);
-      
+
       cache.delete("key1");
       expect(cache.size()).toBe(1);
     });
@@ -241,7 +241,7 @@ describe("Memory Cache", () => {
       const cache2 = new MemoryCache(50);
       cache2.set("key", "value");
       expect(cache2.size()).toBe(1);
-      
+
       await new Promise((resolve) => setTimeout(resolve, 100));
       expect(cache2.size()).toBe(0);
     });
@@ -252,10 +252,10 @@ describe("Memory Cache", () => {
       const cache2 = new MemoryCache(100);
       cache2.set("key1", "value");
       cache2.set("key2", "value");
-      
+
       await new Promise((resolve) => setTimeout(resolve, 150));
       const pruned = cache2.prune();
-      
+
       expect(pruned).toBeGreaterThan(0);
       expect(cache2.has("key1")).toBe(false);
       expect(cache2.has("key2")).toBe(false);
@@ -264,10 +264,10 @@ describe("Memory Cache", () => {
     it("should not prune valid entries", () => {
       cache.set("key1", "value1");
       cache.set("key2", "value2");
-      
+
       const pruned = cache.prune();
       expect(pruned).toBe(0);
-      
+
       expect(cache.has("key1")).toBe(true);
       expect(cache.has("key2")).toBe(true);
     });
@@ -277,7 +277,7 @@ describe("Memory Cache", () => {
       cache2.set("key1", "value1");
       cache2.set("key2", "value2");
       cache2.set("key3", "value3");
-      
+
       await new Promise((resolve) => setTimeout(resolve, 100));
       const pruned = cache2.prune();
       expect(pruned).toBe(3);
@@ -287,16 +287,16 @@ describe("Memory Cache", () => {
   describe("Concurrency", () => {
     it("should handle concurrent reads and writes", async () => {
       const promises: Promise<any>[] = [];
-      
+
       for (let i = 0; i < 100; i++) {
         promises.push(
           Promise.resolve().then(() => {
             cache.set(`key${i}`, `value${i}`);
             return cache.get(`key${i}`);
-          })
+          }),
         );
       }
-      
+
       const results = await Promise.all(promises);
       expect(results.every((r) => r !== null)).toBe(true);
       expect(cache.size()).toBe(100);
@@ -308,7 +308,7 @@ describe("Memory Cache", () => {
         if (i % 10 === 0) cache.get(`key${i}`);
         if (i % 20 === 0) cache.delete(`key${i}`);
       }
-      
+
       expect(cache.size()).toBeGreaterThan(0);
       expect(cache.size()).toBeLessThanOrEqual(1000);
     });
@@ -325,7 +325,7 @@ describe("Memory Cache", () => {
       cache.set("key:with:colons", "value");
       cache.set("key/with/slashes", "value");
       cache.set("key@with@at", "value");
-      
+
       expect(cache.has("key:with:colons")).toBe(true);
       expect(cache.has("key/with/slashes")).toBe(true);
       expect(cache.has("key@with@at")).toBe(true);

@@ -50,10 +50,7 @@ export {
 } from "./scan.js";
 
 // Handler and context creation
-export {
-  createServerActionContext,
-  executeServerAction,
-} from "./handler.js";
+export { createServerActionContext, executeServerAction } from "./handler.js";
 
 // Middleware factory
 export { createServerActionsMiddleware } from "./middleware.js";

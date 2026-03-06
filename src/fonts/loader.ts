@@ -87,7 +87,7 @@ export function processFonts(
     // Parse font properties from filename
     // Convention: FontName-Weight-Style.ext or FontName-Weight.ext or FontName.ext
     // Examples: Roboto-Regular.woff2, Roboto-Bold-Italic.woff2, Inter-700.woff2
-    const nameWithoutExt = filename.slice(0, -(ext.length));
+    const nameWithoutExt = filename.slice(0, -ext.length);
     const parts = nameWithoutExt.split("-");
 
     let fontName = parts[0];
@@ -108,7 +108,10 @@ export function processFonts(
       // Detect italic/oblique
       if (stylePart.includes("italic") || weightPart.includes("italic")) {
         fontStyle = "italic";
-      } else if (stylePart.includes("oblique") || weightPart.includes("oblique")) {
+      } else if (
+        stylePart.includes("oblique") ||
+        weightPart.includes("oblique")
+      ) {
         fontStyle = "oblique";
       }
     }
@@ -153,7 +156,9 @@ export function processFonts(
  * // Modify before injection
  * ```
  */
-export function generateGoogleFontLinks(config: FontsConfig | undefined): string {
+export function generateGoogleFontLinks(
+  config: FontsConfig | undefined,
+): string {
   if (!config?.google || config.google.length === 0) {
     return "";
   }
@@ -184,7 +189,8 @@ export function generateGoogleFontLinks(config: FontsConfig | undefined): string
       let spec = `${family}`;
       if (italic) {
         spec += `:ital@1`;
-        if (italicWeights.length > 0) spec += `,wght@${italicWeights.join(";")}`;
+        if (italicWeights.length > 0)
+          spec += `,wght@${italicWeights.join(";")}`;
       }
       if (normalWeights.length > 0) {
         spec += `:wght@${normalWeights.join(";")}`;
@@ -246,4 +252,3 @@ export function extractFonts(
     localFontsCSS,
   };
 }
-

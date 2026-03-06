@@ -21,7 +21,7 @@ function generatePosts() {
   const postsDir = join(process.cwd(), "site/posts");
   const outDir = join(process.cwd(), "site/.generated");
   const siteDir = join(process.cwd(), "site");
-  
+
   // Create output directory
   mkdirSync(outDir, { recursive: true });
 
@@ -48,13 +48,13 @@ function generatePosts() {
   // Write JSON file
   const outFile = join(outDir, "posts.json");
   writeFileSync(outFile, JSON.stringify(posts, null, 2), "utf-8");
-  
+
   console.log(`✅ Generated ${posts.length} posts to ${outFile}`);
 
   // Generate individual post pages
   posts.forEach((post) => {
     const htmlContent = marked(post.content);
-    
+
     const pageContent = `import { h } from "preact";
 import { marked } from "marked";
 import Header from "./components/Header.js";

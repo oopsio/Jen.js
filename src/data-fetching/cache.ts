@@ -197,7 +197,9 @@ export function createCacheKey(
 
   if (options?.body) {
     const bodyStr =
-      typeof options.body === "string" ? options.body : JSON.stringify(options.body);
+      typeof options.body === "string"
+        ? options.body
+        : JSON.stringify(options.body);
     key += `|${hashString(bodyStr)}`;
   }
 

@@ -25,10 +25,7 @@ import { getHTML } from "./ui.js";
 import { createEventBus, type EventBus } from "./event-bus.js";
 import { PersistenceManager } from "./persistence.js";
 import { PluginSystem } from "./plugins.js";
-import {
-  ComponentTreeManager,
-  type ComponentNode,
-} from "./component-tree.js";
+import { ComponentTreeManager, type ComponentNode } from "./component-tree.js";
 import { EventLogger, type LogEntry } from "./event-logger.js";
 import { PerformanceMonitor } from "./performance.js";
 import { SearchManager } from "./search.js";
@@ -73,7 +70,9 @@ export class DevTools {
     }
   }
 
-  private initializeConfig(userConfig?: DevToolsConfig): Required<DevToolsConfig> {
+  private initializeConfig(
+    userConfig?: DevToolsConfig,
+  ): Required<DevToolsConfig> {
     const saved = this.persistence.loadConfig();
     const defaults: Required<DevToolsConfig> = {
       enabled: true,
@@ -178,9 +177,7 @@ export class DevTools {
     minimizeBtn?.addEventListener("click", () => this.toggleMinimize());
 
     // Theme toggle
-    const themeToggle = this.panel.querySelector(
-      ".jen-devtools-theme-toggle"
-    );
+    const themeToggle = this.panel.querySelector(".jen-devtools-theme-toggle");
     themeToggle?.addEventListener("click", () => this.cycleTheme());
 
     // Close button
@@ -304,7 +301,9 @@ export class DevTools {
 
     // Click to select component
     tree.addEventListener("click", (e) => {
-      const node = (e.target as HTMLElement).closest(".jen-tree-node") as HTMLElement;
+      const node = (e.target as HTMLElement).closest(
+        ".jen-tree-node",
+      ) as HTMLElement;
       if (node) {
         const componentId = (node as any).dataset.componentId;
         if (componentId) {
@@ -318,7 +317,9 @@ export class DevTools {
 
     // Hover to highlight DOM element
     tree.addEventListener("mouseover", (e) => {
-      const node = (e.target as HTMLElement).closest(".jen-tree-node") as HTMLElement;
+      const node = (e.target as HTMLElement).closest(
+        ".jen-tree-node",
+      ) as HTMLElement;
       if (node) {
         const componentId = (node as any).dataset.componentId;
         if (componentId) {
@@ -331,7 +332,9 @@ export class DevTools {
     });
 
     tree.addEventListener("mouseout", (e) => {
-      const node = (e.target as HTMLElement).closest(".jen-tree-node") as HTMLElement;
+      const node = (e.target as HTMLElement).closest(
+        ".jen-tree-node",
+      ) as HTMLElement;
       if (node) {
         const componentId = (node as any).dataset.componentId;
         if (componentId) {
@@ -364,7 +367,7 @@ export class DevTools {
     if (!this.panel) return;
 
     const searchInput = this.panel.querySelector(
-      ".jen-devtools-search"
+      ".jen-devtools-search",
     ) as HTMLInputElement;
     if (!searchInput) return;
 
@@ -389,7 +392,10 @@ export class DevTools {
     const contents = this.panel.querySelectorAll(".jen-devtools-tab-content");
     contents.forEach((content) => {
       const contentEl = content as HTMLElement;
-      contentEl.classList.toggle("active", (contentEl as any).dataset.tab === tabName);
+      contentEl.classList.toggle(
+        "active",
+        (contentEl as any).dataset.tab === tabName,
+      );
     });
 
     this.config.collapsedTabs[tabName] = false;
@@ -411,7 +417,9 @@ export class DevTools {
 
   private selectPreviousComponent() {
     if (!this.selectedComponent) return;
-    const prev = this.componentTree.getPreviousComponent(this.selectedComponent);
+    const prev = this.componentTree.getPreviousComponent(
+      this.selectedComponent,
+    );
     if (prev) {
       this.selectComponent(prev);
     }
@@ -439,7 +447,7 @@ export class DevTools {
     if (!this.panel || !this.selectedComponent) return;
 
     const inspector = this.panel.querySelector(
-      ".jen-devtools-inspector"
+      ".jen-devtools-inspector",
     ) as HTMLElement;
     if (!inspector) return;
 
@@ -496,7 +504,7 @@ export class DevTools {
         />
         <span class="jen-prop-type">${typeof value}</span>
       </div>
-    `
+    `,
       )
       .join("");
   }
@@ -516,7 +524,7 @@ export class DevTools {
         />
         <span class="jen-state-type">${typeof value}</span>
       </div>
-    `
+    `,
       )
       .join("");
   }
@@ -530,7 +538,7 @@ export class DevTools {
         <span class="jen-hook-type">${hook.type}</span>
         <span class="jen-hook-value">${this.serializeValue(hook.value)}</span>
       </div>
-    `
+    `,
       )
       .join("");
   }
@@ -545,7 +553,7 @@ export class DevTools {
       <div class="jen-event-item">
         <span class="jen-event-name">${event}</span>
       </div>
-    `
+    `,
       )
       .join("");
   }
@@ -554,7 +562,7 @@ export class DevTools {
     if (!this.panel) return;
 
     const treeContainer = this.panel.querySelector(
-      ".jen-devtools-tree"
+      ".jen-devtools-tree",
     ) as HTMLElement;
     if (!treeContainer) return;
 
@@ -565,13 +573,16 @@ export class DevTools {
   private renderTreeNodes(nodes: ComponentNode[]): string {
     return nodes
       .map((node) => {
-        const children = node.children ? this.renderTreeNodes(node.children) : "";
+        const children = node.children
+          ? this.renderTreeNodes(node.children)
+          : "";
         const isSelected = this.selectedComponent?.id === node.id;
-        const icon = node.children && node.children.length > 0
-          ? node.expanded
-            ? "▼"
-            : "▶"
-          : "•";
+        const icon =
+          node.children && node.children.length > 0
+            ? node.expanded
+              ? "▼"
+              : "▶"
+            : "•";
 
         return `
           <div class="jen-tree-node ${isSelected ? "selected" : ""}" data-component-id="${node.id}">
@@ -590,7 +601,7 @@ export class DevTools {
     if (!this.panel) return;
 
     const resultsContainer = this.panel.querySelector(
-      ".jen-search-results"
+      ".jen-search-results",
     ) as HTMLElement;
     if (!resultsContainer) return;
 
@@ -600,7 +611,7 @@ export class DevTools {
       <div class="jen-search-result" data-component-id="${result.id}">
         <span>${result.name}</span>
       </div>
-    `
+    `,
       )
       .join("");
   }
@@ -683,7 +694,7 @@ export class DevTools {
     el: HTMLElement,
     props: Record<string, any>,
     state?: Record<string, any>,
-    hooks?: any[]
+    hooks?: any[],
   ) {
     this.componentTree.addComponent({
       id,

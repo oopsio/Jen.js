@@ -10,7 +10,10 @@ export function Head() {
   return (
     <>
       <title>Blog - Jen.js</title>
-      <meta name="description" content={`${posts.length} articles about Jen.js and web development`} />
+      <meta
+        name="description"
+        content={`${posts.length} articles about Jen.js and web development`}
+      />
     </>
   );
 }
@@ -25,7 +28,9 @@ export default function BlogIndex() {
         <section className="page-header">
           <div className="container">
             <h1>Blog</h1>
-            <p>Articles about web development, design, and the Jen.js framework</p>
+            <p>
+              Articles about web development, design, and the Jen.js framework
+            </p>
           </div>
         </section>
 
@@ -34,9 +39,7 @@ export default function BlogIndex() {
           <div className="container">
             <div className="posts-grid">
               {posts.length > 0 ? (
-                posts.map((post: any) => (
-                  <BlogCard key={post.slug} {...post} />
-                ))
+                posts.map((post: any) => <BlogCard key={post.slug} {...post} />)
               ) : (
                 <div className="no-posts">
                   <p>No articles yet. Check back soon!</p>

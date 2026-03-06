@@ -1,6 +1,6 @@
 ﻿/*
  * Example: Script Optimization
- * 
+ *
  * Demonstrates tree-shaking, code splitting, lazy-loading, auto-hashing, and cache-busting
  */
 
@@ -100,4 +100,3 @@ const config: FrameworkConfig = {
 };
 
 export default config;
-

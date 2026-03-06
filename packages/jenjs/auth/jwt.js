@@ -30,7 +30,9 @@ const SECRET = process.env.JWT_SECRET;
 // Validate that JWT_SECRET is set. This environment variable is required for all token operations.
 // Without a secret, tokens cannot be securely signed or verified.
 if (!SECRET) {
-    throw new Error("CRITICAL: JWT_SECRET environment variable is required. Set JWT_SECRET in your .env file or environment.");
+  throw new Error(
+    "CRITICAL: JWT_SECRET environment variable is required. Set JWT_SECRET in your .env file or environment.",
+  );
 }
 /**
  * Creates a signed JWT token containing the provided payload.
@@ -47,7 +49,9 @@ if (!SECRET) {
  * // jwt.sign(payload, SECRET, { expiresIn });
  */
 export function signToken(payload, expiresIn = "1h") {
-    throw new Error("JWT implementation requires external library. Install: npm install jsonwebtoken");
+  throw new Error(
+    "JWT implementation requires external library. Install: npm install jsonwebtoken",
+  );
 }
 /**
  * Verifies and decodes a JWT token, returning the payload if valid.
@@ -64,5 +68,7 @@ export function signToken(payload, expiresIn = "1h") {
  * // jwt.verify(token, SECRET);
  */
 export function verifyToken(token) {
-    throw new Error("JWT implementation requires external library. Install: npm install jsonwebtoken");
+  throw new Error(
+    "JWT implementation requires external library. Install: npm install jsonwebtoken",
+  );
 }

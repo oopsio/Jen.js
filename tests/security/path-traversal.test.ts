@@ -58,11 +58,9 @@ describe("Security: Path Traversal Prevention", () => {
 
   describe("basic path traversal attacks", () => {
     it("should reject double dot sequences", () => {
-      expect(() => normalizePath("../../etc/passwd")).toThrow(
-        "Invalid path"
-      );
+      expect(() => normalizePath("../../etc/passwd")).toThrow("Invalid path");
       expect(() => normalizePath("../../../root/.ssh/id_rsa")).toThrow(
-        "Invalid path"
+        "Invalid path",
       );
     });
 
@@ -158,7 +156,7 @@ describe("Security: Path Traversal Prevention", () => {
       const safeExtensions = [".jpg", ".png", ".pdf", ".txt", ".md"];
       const filename = "document.pdf";
       const hasValidExtension = safeExtensions.some((ext) =>
-        filename.endsWith(ext)
+        filename.endsWith(ext),
       );
 
       expect(hasValidExtension).toBe(true);
@@ -168,7 +166,7 @@ describe("Security: Path Traversal Prevention", () => {
       const dangerousExtensions = [".php", ".exe", ".sh", ".bat", ".cmd"];
       const filename = "shell.php";
       const hasDangerousExtension = dangerousExtensions.some((ext) =>
-        filename.endsWith(ext)
+        filename.endsWith(ext),
       );
 
       expect(hasDangerousExtension).toBe(true);
@@ -248,10 +246,7 @@ describe("Security: Path Traversal Prevention", () => {
 
     it("should handle web root escaping", () => {
       const webRoot = "/var/www/html";
-      const attempts = [
-        "../../etc/passwd",
-        "..\\..\\windows\\system32",
-      ];
+      const attempts = ["../../etc/passwd", "..\\..\\windows\\system32"];
 
       attempts.forEach((attempt) => {
         expect(validatePath(webRoot, attempt)).toBe(false);

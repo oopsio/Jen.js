@@ -5,9 +5,9 @@ interface HeaderProps {
   description?: string;
 }
 
-export default function Header({ 
-  title = "Jen.js Blog", 
-  description = "Modern blogging with Jen.js"
+export default function Header({
+  title = "Jen.js Blog",
+  description = "Modern blogging with Jen.js",
 }: HeaderProps) {
   return (
     <header className="header">
@@ -19,10 +19,18 @@ export default function Header({
             </a>
           </div>
           <ul className="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/blog">Blog</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li>
+              <a href="/">Home</a>
+            </li>
+            <li>
+              <a href="/blog">Blog</a>
+            </li>
+            <li>
+              <a href="/about">About</a>
+            </li>
+            <li>
+              <a href="/contact">Contact</a>
+            </li>
           </ul>
         </nav>
       </div>

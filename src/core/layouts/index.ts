@@ -26,4 +26,8 @@ export type { LayoutModule, ResolvedLayoutStack } from "./types.js";
 
 export { scanLayouts, buildLayoutHierarchy } from "./scan.js";
 
-export { resolveLayoutStack, renderWithLayoutStack, collectLayoutHeads } from "./render.js";
+export {
+  resolveLayoutStack,
+  renderWithLayoutStack,
+  collectLayoutHeads,
+} from "./render.js";

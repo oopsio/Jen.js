@@ -17,14 +17,27 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { readFileSync, existsSync, statSync, writeFileSync, mkdirSync } from "node:fs";
+import {
+  readFileSync,
+  existsSync,
+  statSync,
+  writeFileSync,
+  mkdirSync,
+} from "node:fs";
 import { join, basename } from "node:path";
 import { createHash } from "node:crypto";
 import esbuild from "esbuild";
 import { pathToFileURL } from "node:url";
 
 /** Supported HTTP methods for API routes. */
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
+export type HttpMethod =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "DELETE"
+  | "PATCH"
+  | "HEAD"
+  | "OPTIONS";
 
 /** Query parameter type after coercion (strings remain strings, numeric strings stay strings). */
 export type QueryValue = string | number | boolean | null;
@@ -164,7 +177,11 @@ export function validateQuery(url: URL): Record<string, QueryValue> {
  * @returns true if body is valid
  * @throws ValidationError if body exceeds maxSize
  */
-export function validateBody(body: unknown, bodySize: number, maxSize: number = DEFAULT_MAX_BODY_SIZE): boolean {
+export function validateBody(
+  body: unknown,
+  bodySize: number,
+  maxSize: number = DEFAULT_MAX_BODY_SIZE,
+): boolean {
   if (bodySize > maxSize) {
     throw {
       error: "Payload too large",
@@ -256,7 +273,15 @@ export async function tryHandleApiRoute(opts: {
   const methodStr = (req.method ?? "GET").toUpperCase();
 
   // Validate method is one of the allowed HTTP methods
-  const allowedMethods: HttpMethod[] = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
+  const allowedMethods: HttpMethod[] = [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+    "PATCH",
+    "HEAD",
+    "OPTIONS",
+  ];
   const method = methodStr as HttpMethod;
   if (!allowedMethods.includes(method)) {
     res.statusCode = 405;
@@ -386,7 +411,12 @@ export async function tryHandleApiRoute(opts: {
   } catch (err: any) {
     res.statusCode = 400;
     res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: "Invalid query parameters", details: err.message }));
+    res.end(
+      JSON.stringify({
+        error: "Invalid query parameters",
+        details: err.message,
+      }),
+    );
     return true;
   }
 

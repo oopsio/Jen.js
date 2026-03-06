@@ -50,7 +50,7 @@ export class PluginManager {
   constructor(
     config: FrameworkConfig,
     rootDir: string,
-    mode: "development" | "production" = "development"
+    mode: "development" | "production" = "development",
   ) {
     this.config = config;
     this.rootDir = rootDir;
@@ -63,15 +63,19 @@ export class PluginManager {
   async loadPlugins(plugins: (JenPlugin | string)[] = []): Promise<void> {
     try {
       for (const plugin of plugins) {
-         const resolved =
-           typeof plugin === "string" ? await this.resolvePlugin(plugin) : plugin;
-         this.plugins.push(resolved);
-         log.info(`[Plugin] Loaded: ${resolved.name}@${resolved.version}`);
-       }
-       this.initialized = true;
-      } catch (error) {
-       log.error(`[Plugin] Failed to load plugins: ${error instanceof Error ? error.message : String(error)}`);
-       throw error;
+        const resolved =
+          typeof plugin === "string"
+            ? await this.resolvePlugin(plugin)
+            : plugin;
+        this.plugins.push(resolved);
+        log.info(`[Plugin] Loaded: ${resolved.name}@${resolved.version}`);
+      }
+      this.initialized = true;
+    } catch (error) {
+      log.error(
+        `[Plugin] Failed to load plugins: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw error;
     }
   }
 
@@ -85,7 +89,9 @@ export class PluginManager {
       return imported.default || imported;
     } catch {
       // Try to import from relative path
-      const path = pluginName.startsWith("/") ? pluginName : `${this.rootDir}/${pluginName}`;
+      const path = pluginName.startsWith("/")
+        ? pluginName
+        : `${this.rootDir}/${pluginName}`;
       const imported = await import(path);
       return imported.default || imported;
     }
@@ -110,15 +116,17 @@ export class PluginManager {
     };
 
     for (const plugin of this.plugins) {
-       if (plugin.init) {
-         try {
-           await plugin.init(context);
-           log.info(`[Plugin] Initialized: ${plugin.name}`);
-         } catch (error) {
-           log.error(`[Plugin] Initialization failed for ${plugin.name}: ${error instanceof Error ? error.message : String(error)}`);
-           throw error;
-         }
-       }
+      if (plugin.init) {
+        try {
+          await plugin.init(context);
+          log.info(`[Plugin] Initialized: ${plugin.name}`);
+        } catch (error) {
+          log.error(
+            `[Plugin] Initialization failed for ${plugin.name}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+          throw error;
+        }
+      }
 
       // Register plugin hooks
       if (plugin.hooks) {
@@ -152,19 +160,21 @@ export class PluginManager {
     }
 
     try {
-       // Execute hooks sequentially by default
-       for (const handler of handlers) {
-         try {
-           await handler(context);
-         } catch (error) {
-           log.error(`[Plugin Hook] Error in ${stage}: ${error instanceof Error ? error.message : String(error)}`);
-           throw error;
-         }
-       }
-     } catch (error) {
-       log.error(`[Plugin] Hook execution failed for stage: ${stage}`);
-       throw error;
-     }
+      // Execute hooks sequentially by default
+      for (const handler of handlers) {
+        try {
+          await handler(context);
+        } catch (error) {
+          log.error(
+            `[Plugin Hook] Error in ${stage}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+          throw error;
+        }
+      }
+    } catch (error) {
+      log.error(`[Plugin] Hook execution failed for stage: ${stage}`);
+      throw error;
+    }
   }
 
   /**
@@ -200,12 +210,12 @@ let globalPluginManager: PluginManager | null = null;
 export function getPluginManager(
   config?: FrameworkConfig,
   rootDir?: string,
-  mode?: "development" | "production"
+  mode?: "development" | "production",
 ): PluginManager {
   if (!globalPluginManager) {
     if (!config || !rootDir) {
       throw new Error(
-        "Plugin manager not initialized. Call getPluginManager with config and rootDir"
+        "Plugin manager not initialized. Call getPluginManager with config and rootDir",
       );
     }
     globalPluginManager = new PluginManager(config, rootDir, mode);

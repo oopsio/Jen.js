@@ -49,21 +49,21 @@ class MockRedisClient {
 
   async get(key: string): Promise<string | null> {
     if (!this.connected) throw new Error("Not connected");
-    
+
     const entry = this.store.get(key);
     if (!entry) return null;
-    
+
     if (entry.expiresAt && Date.now() > entry.expiresAt) {
       this.store.delete(key);
       return null;
     }
-    
+
     return entry.value;
   }
 
   async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
     if (!this.connected) throw new Error("Not connected");
-    
+
     const expiresAt = ttlSeconds ? Date.now() + ttlSeconds * 1000 : undefined;
     this.store.set(key, { value, expiresAt });
   }
@@ -75,24 +75,24 @@ class MockRedisClient {
 
   async exists(key: string): Promise<number> {
     if (!this.connected) throw new Error("Not connected");
-    
+
     const entry = this.store.get(key);
     if (!entry) return 0;
-    
+
     if (entry.expiresAt && Date.now() > entry.expiresAt) {
       this.store.delete(key);
       return 0;
     }
-    
+
     return 1;
   }
 
   async expire(key: string, seconds: number): Promise<number> {
     if (!this.connected) throw new Error("Not connected");
-    
+
     const entry = this.store.get(key);
     if (!entry) return 0;
-    
+
     entry.expiresAt = Date.now() + seconds * 1000;
     return 1;
   }
@@ -100,7 +100,7 @@ class MockRedisClient {
   async keys(pattern: string): Promise<string[]> {
     if (!this.connected) throw new Error("Not connected");
     return Array.from(this.store.keys()).filter((k) =>
-      new RegExp("^" + pattern.replace("*", ".*") + "$").test(k)
+      new RegExp("^" + pattern.replace("*", ".*") + "$").test(k),
     );
   }
 
@@ -139,7 +139,7 @@ describe("Redis Cache", () => {
     it("should disconnect from Redis", async () => {
       await client.connect();
       expect(client.isConnected()).toBe(true);
-      
+
       await client.disconnect();
       expect(client.isConnected()).toBe(false);
     });
@@ -153,7 +153,7 @@ describe("Redis Cache", () => {
       await client.connect();
       await client.set("key", "value");
       await client.disconnect();
-      
+
       await client.connect();
       const value = await client.get("key");
       expect(value).toBeNull();
@@ -213,7 +213,7 @@ describe("Redis Cache", () => {
     it("should set key with TTL", async () => {
       await client.set("key", "value", 1);
       expect(await client.exists("key")).toBe(1);
-      
+
       await new Promise((resolve) => setTimeout(resolve, 1100));
       const value = await client.get("key");
       expect(value).toBeNull();
@@ -223,7 +223,7 @@ describe("Redis Cache", () => {
       await client.set("key", "value");
       const result = await client.expire("key", 1);
       expect(result).toBe(1);
-      
+
       await new Promise((resolve) => setTimeout(resolve, 1100));
       const value = await client.get("key");
       expect(value).toBeNull();
@@ -281,7 +281,7 @@ describe("Redis Cache", () => {
       await client.set("key1", "value1");
       await client.set("key2", "value2");
       await client.set("key3", "value3");
-      
+
       const values = await client.mget("key1", "key2", "key3");
       expect(values).toEqual(["value1", "value2", "value3"]);
     });
@@ -292,7 +292,7 @@ describe("Redis Cache", () => {
         ["key2", "value2"],
         ["key3", "value3"],
       ]);
-      
+
       expect(await client.get("key1")).toBe("value1");
       expect(await client.get("key2")).toBe("value2");
       expect(await client.get("key3")).toBe("value3");
@@ -301,7 +301,7 @@ describe("Redis Cache", () => {
     it("should return mixed results with mget including non-existent keys", async () => {
       await client.set("key1", "value1");
       await client.set("key3", "value3");
-      
+
       const values = await client.mget("key1", "key2", "key3");
       expect(values).toEqual(["value1", null, "value3"]);
     });
@@ -320,7 +320,7 @@ describe("Redis Cache", () => {
       await client.set("user:1", "alice");
       await client.set("user:2", "bob");
       await client.set("post:1", "hello");
-      
+
       const keys = await client.keys("user:*");
       expect(keys).toContain("user:1");
       expect(keys).toContain("user:2");
@@ -330,7 +330,7 @@ describe("Redis Cache", () => {
     it("should find all keys with *", async () => {
       await client.set("key1", "value1");
       await client.set("key2", "value2");
-      
+
       const keys = await client.keys("*");
       expect(keys).toContain("key1");
       expect(keys).toContain("key2");
@@ -349,7 +349,7 @@ describe("Redis Cache", () => {
     it("should flush the database", async () => {
       await client.set("key1", "value1");
       await client.set("key2", "value2");
-      
+
       await client.flushdb();
       expect(await client.get("key1")).toBeNull();
       expect(await client.get("key2")).toBeNull();

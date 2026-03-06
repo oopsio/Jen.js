@@ -144,11 +144,7 @@ export function guardedFunction<T extends (...args: any[]) => any>(
  */
 export function guardedAsyncFunction<
   T extends (...args: any[]) => Promise<any>,
->(
-  feature: FeatureName,
-  fn: T,
-  context?: string,
-): T {
+>(feature: FeatureName, fn: T, context?: string): T {
   return (async (...args: Parameters<T>) => {
     const features = args[0];
     guardFeature(features, feature, context);

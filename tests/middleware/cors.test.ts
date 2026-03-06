@@ -72,13 +72,15 @@ function createCORSMiddleware(options: CORSOptions = {}) {
     // Handle preflight requests
     if (req.method === "OPTIONS") {
       response.headers["Access-Control-Allow-Methods"] = methods.join(", ");
-      response.headers["Access-Control-Allow-Headers"] = allowedHeaders.join(", ");
+      response.headers["Access-Control-Allow-Headers"] =
+        allowedHeaders.join(", ");
       response.headers["Access-Control-Max-Age"] = maxAge.toString();
       response.statusCode = 204;
     }
 
     if (exposedHeaders.length > 0) {
-      response.headers["Access-Control-Expose-Headers"] = exposedHeaders.join(", ");
+      response.headers["Access-Control-Expose-Headers"] =
+        exposedHeaders.join(", ");
     }
 
     return response;
@@ -95,7 +97,9 @@ describe("CORS Middleware", () => {
         origin: "https://example.com",
       });
 
-      expect(response.headers["Access-Control-Allow-Origin"]).toBe("https://example.com");
+      expect(response.headers["Access-Control-Allow-Origin"]).toBe(
+        "https://example.com",
+      );
       expect(response.statusCode).toBe(200);
     });
 
@@ -109,7 +113,9 @@ describe("CORS Middleware", () => {
         origin: "https://example.com",
       });
 
-      expect(response.headers["Access-Control-Allow-Methods"]).toBe("GET, POST");
+      expect(response.headers["Access-Control-Allow-Methods"]).toBe(
+        "GET, POST",
+      );
     });
 
     it("should set allowed headers", () => {
@@ -123,7 +129,7 @@ describe("CORS Middleware", () => {
       });
 
       expect(response.headers["Access-Control-Allow-Headers"]).toBe(
-        "Content-Type, Authorization"
+        "Content-Type, Authorization",
       );
     });
 
@@ -152,7 +158,9 @@ describe("CORS Middleware", () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.headers["Access-Control-Allow-Origin"]).toBe("https://example.com");
+      expect(response.headers["Access-Control-Allow-Origin"]).toBe(
+        "https://example.com",
+      );
     });
 
     it("should reject requests from disallowed origins", () => {
@@ -258,7 +266,9 @@ describe("CORS Middleware", () => {
         origin: "https://example.com",
       });
 
-      expect(response.headers["Access-Control-Allow-Credentials"]).toBeUndefined();
+      expect(
+        response.headers["Access-Control-Allow-Credentials"],
+      ).toBeUndefined();
     });
 
     it("should set credentials header when enabled", () => {
@@ -297,7 +307,7 @@ describe("CORS Middleware", () => {
       });
 
       expect(response.headers["Access-Control-Expose-Headers"]).toBe(
-        "X-Total-Count, X-Page-Number"
+        "X-Total-Count, X-Page-Number",
       );
     });
   });
@@ -314,7 +324,9 @@ describe("CORS Middleware", () => {
         origin: "https://example.com",
       });
 
-      expect(response.headers["Access-Control-Allow-Methods"]).toBe("GET, POST, PUT");
+      expect(response.headers["Access-Control-Allow-Methods"]).toBe(
+        "GET, POST, PUT",
+      );
     });
 
     it("should handle GET requests", () => {

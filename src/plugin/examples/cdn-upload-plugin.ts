@@ -75,7 +75,9 @@ export function createCDNUploadPlugin(config: CDNPluginConfig): JenPlugin {
 
         // Get the list of optimized assets from the build context
         const { distDir } = context.config;
-        const assets = (context.data?.assets as Array<{ path: string; content: Buffer }>) || [];
+        const assets =
+          (context.data?.assets as Array<{ path: string; content: Buffer }>) ||
+          [];
 
         for (const asset of assets) {
           try {
@@ -86,9 +88,13 @@ export function createCDNUploadPlugin(config: CDNPluginConfig): JenPlugin {
             if (!context.data?.assetUrls) {
               context.data = { ...context.data, assetUrls: {} };
             }
-            (context.data.assetUrls as Record<string, string>)[asset.path] = cdnUrl;
+            (context.data.assetUrls as Record<string, string>)[asset.path] =
+              cdnUrl;
           } catch (error) {
-            console.error(`[CDN Plugin] Failed to upload ${asset.path}:`, error);
+            console.error(
+              `[CDN Plugin] Failed to upload ${asset.path}:`,
+              error,
+            );
             throw error;
           }
         }
@@ -96,7 +102,8 @@ export function createCDNUploadPlugin(config: CDNPluginConfig): JenPlugin {
 
       // Hook to inject CDN URLs into HTML
       [HookStage.AFTER_RENDER]: async (context: PluginHookContext) => {
-        const assetUrls = (context.data?.assetUrls as Record<string, string>) || {};
+        const assetUrls =
+          (context.data?.assetUrls as Record<string, string>) || {};
 
         if (Object.keys(assetUrls).length > 0) {
           // Update HTML with CDN URLs
@@ -120,7 +127,7 @@ export function createCDNUploadPlugin(config: CDNPluginConfig): JenPlugin {
  */
 async function uploadAsset(
   file: { path: string; content: Buffer },
-  config: CDNPluginConfig
+  config: CDNPluginConfig,
 ): Promise<string> {
   switch (config.provider) {
     case "cloudinary":
@@ -142,7 +149,7 @@ async function uploadAsset(
  */
 async function uploadToCloudinary(
   file: { path: string; content: Buffer },
-  config: CDNPluginConfig
+  config: CDNPluginConfig,
 ): Promise<string> {
   // This is a mock implementation
   // In production, use the Cloudinary SDK
@@ -158,7 +165,7 @@ async function uploadToCloudinary(
  */
 async function uploadToS3(
   file: { path: string; content: Buffer },
-  config: CDNPluginConfig
+  config: CDNPluginConfig,
 ): Promise<string> {
   // This is a mock implementation
   // In production, use the AWS SDK

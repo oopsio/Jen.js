@@ -53,10 +53,7 @@ import { extractFonts } from "./loader.js";
  * }
  * ```
  */
-export function injectFonts(
-  config: FrameworkConfig,
-  cacheDir?: string,
-): void {
+export function injectFonts(config: FrameworkConfig, cacheDir?: string): void {
   const fontsCacheDir = cacheDir ?? config.build?.cacheDir ?? ".jen";
   const fonts = (config as any).fonts;
 
@@ -152,10 +149,7 @@ export function fontServeMiddleware(
 
       res.statusCode = 200;
       res.setHeader("content-type", mimeType);
-      res.setHeader(
-        "cache-control",
-        "public, max-age=31536000, immutable",
-      );
+      res.setHeader("cache-control", "public, max-age=31536000, immutable");
       res.setHeader("access-control-allow-origin", "*");
       res.end(content);
       return true;
@@ -166,4 +160,3 @@ export function fontServeMiddleware(
     }
   };
 }
-

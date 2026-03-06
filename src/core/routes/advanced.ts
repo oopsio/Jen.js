@@ -33,9 +33,9 @@ import type { RouteEntry } from "./scan.js";
  *   return true;
  * }
  */
-export type RouteGuard = (ctx: RouteGuardContext) => Promise<
-  true | RouteGuardResponse
->;
+export type RouteGuard = (
+  ctx: RouteGuardContext,
+) => Promise<true | RouteGuardResponse>;
 
 /**
  * Context passed to route guard functions
@@ -125,9 +125,7 @@ const advancedConfigCache = new Map<string, AdvancedRouteConfig>();
  * @param module Route module
  * @returns Advanced route configuration
  */
-export function extractAdvancedConfig(
-  module: any,
-): AdvancedRouteConfig {
+export function extractAdvancedConfig(module: any): AdvancedRouteConfig {
   return module?.routeConfig ?? {};
 }
 

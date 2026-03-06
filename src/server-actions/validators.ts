@@ -42,10 +42,7 @@ export function required(message = "This field is required"): ValidationRule {
 /**
  * Creates a minimum length validator for strings.
  */
-export function minLength(
-  min: number,
-  message?: string,
-): ValidationRule {
+export function minLength(min: number, message?: string): ValidationRule {
   return {
     name: "minLength",
     validate: (value: any) => {
@@ -61,10 +58,7 @@ export function minLength(
 /**
  * Creates a maximum length validator for strings.
  */
-export function maxLength(
-  max: number,
-  message?: string,
-): ValidationRule {
+export function maxLength(max: number, message?: string): ValidationRule {
   return {
     name: "maxLength",
     validate: (value: any) => {
@@ -116,10 +110,7 @@ export function url(message = "Invalid URL"): ValidationRule {
 /**
  * Creates a regex pattern validator.
  */
-export function pattern(
-  regex: RegExp,
-  message?: string,
-): ValidationRule {
+export function pattern(regex: RegExp, message?: string): ValidationRule {
   return {
     name: "pattern",
     validate: (value: any) => {
@@ -174,10 +165,7 @@ export function custom(
 /**
  * Creates an enum validator.
  */
-export function enumValue(
-  values: any[],
-  message?: string,
-): ValidationRule {
+export function enumValue(values: any[], message?: string): ValidationRule {
   return {
     name: "enum",
     validate: (value: any) => {
@@ -192,10 +180,7 @@ export function enumValue(
 /**
  * Creates a type validator.
  */
-export function type(
-  expectedType: string,
-  message?: string,
-): ValidationRule {
+export function type(expectedType: string, message?: string): ValidationRule {
   return {
     name: "type",
     validate: (value: any) => {

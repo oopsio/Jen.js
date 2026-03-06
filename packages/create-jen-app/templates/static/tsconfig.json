@@ -37,7 +37,7 @@
   ],
   "exclude": ["node_modules", "dist"],
   "paths": {
-      "jen": ["./src/*"],
-      "@/*": ["./src/*"]
-    }
+    "jen": ["./src/*"],
+    "@/*": ["./src/*"]
+  }
 }

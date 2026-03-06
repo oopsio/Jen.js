@@ -3,17 +3,24 @@
  * Copyright (C) 2026 oopsio
  */
 
-import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
-import { DevTools, initDevTools, getDevTools } from '../src/devtools/devtools.js';
-import { ComponentTreeManager, type ComponentNode } from '../src/devtools/component-tree.js';
-import { EventLogger } from '../src/devtools/event-logger.js';
-import { PerformanceMonitor } from '../src/devtools/performance.js';
-import { SearchManager } from '../src/devtools/search.js';
-import { PersistenceManager } from '../src/devtools/persistence.js';
-import { createEventBus } from '../src/devtools/event-bus.js';
+import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
+import {
+  DevTools,
+  initDevTools,
+  getDevTools,
+} from "../src/devtools/devtools.js";
+import {
+  ComponentTreeManager,
+  type ComponentNode,
+} from "../src/devtools/component-tree.js";
+import { EventLogger } from "../src/devtools/event-logger.js";
+import { PerformanceMonitor } from "../src/devtools/performance.js";
+import { SearchManager } from "../src/devtools/search.js";
+import { PersistenceManager } from "../src/devtools/persistence.js";
+import { createEventBus } from "../src/devtools/event-bus.js";
 
 // Mock localStorage for Node.js test environment
-if (typeof global.localStorage === 'undefined') {
+if (typeof global.localStorage === "undefined") {
   const mockStorage: Record<string, string> = {};
   global.localStorage = {
     getItem: (key: string) => mockStorage[key] || null,
@@ -24,7 +31,7 @@ if (typeof global.localStorage === 'undefined') {
       delete mockStorage[key];
     },
     clear: () => {
-      Object.keys(mockStorage).forEach(key => delete mockStorage[key]);
+      Object.keys(mockStorage).forEach((key) => delete mockStorage[key]);
     },
     key: (index: number) => {
       const keys = Object.keys(mockStorage);
@@ -34,8 +41,8 @@ if (typeof global.localStorage === 'undefined') {
   } as Storage;
 }
 
-describe('DevTools', () => {
-  describe('ComponentTreeManager', () => {
+describe("DevTools", () => {
+  describe("ComponentTreeManager", () => {
     let manager: ComponentTreeManager;
 
     beforeEach(() => {
@@ -43,13 +50,13 @@ describe('DevTools', () => {
       manager = new ComponentTreeManager(bus);
     });
 
-    it('should add and retrieve components', () => {
+    it("should add and retrieve components", () => {
       const component: ComponentNode = {
-        id: 'test-1',
-        name: 'TestComponent',
-        type: 'component',
+        id: "test-1",
+        name: "TestComponent",
+        type: "component",
         el: null,
-        props: { foo: 'bar' },
+        props: { foo: "bar" },
         state: {},
         hooks: [],
         events: [],
@@ -59,17 +66,17 @@ describe('DevTools', () => {
       };
 
       manager.addComponent(component);
-      const retrieved = manager.getComponentById('test-1');
+      const retrieved = manager.getComponentById("test-1");
 
       expect(retrieved).toBeDefined();
-      expect(retrieved?.name).toBe('TestComponent');
+      expect(retrieved?.name).toBe("TestComponent");
     });
 
-    it('should manage component hierarchy', () => {
+    it("should manage component hierarchy", () => {
       const parent: ComponentNode = {
-        id: 'parent',
-        name: 'Parent',
-        type: 'component',
+        id: "parent",
+        name: "Parent",
+        type: "component",
         el: null,
         props: {},
         state: {},
@@ -81,9 +88,9 @@ describe('DevTools', () => {
       };
 
       const child: ComponentNode = {
-        id: 'child',
-        name: 'Child',
-        type: 'component',
+        id: "child",
+        name: "Child",
+        type: "component",
         el: null,
         props: {},
         state: {},
@@ -102,14 +109,14 @@ describe('DevTools', () => {
       const tree = manager.getTree();
       expect(tree).toHaveLength(1);
       expect(tree[0].children).toHaveLength(1);
-      expect(tree[0].children[0].name).toBe('Child');
+      expect(tree[0].children[0].name).toBe("Child");
     });
 
-    it('should remove components', () => {
+    it("should remove components", () => {
       const component: ComponentNode = {
-        id: 'test-2',
-        name: 'TestComponent',
-        type: 'component',
+        id: "test-2",
+        name: "TestComponent",
+        type: "component",
         el: null,
         props: {},
         state: {},
@@ -121,17 +128,17 @@ describe('DevTools', () => {
       };
 
       manager.addComponent(component);
-      expect(manager.getComponentById('test-2')).toBeDefined();
+      expect(manager.getComponentById("test-2")).toBeDefined();
 
-      manager.removeComponent('test-2');
-      expect(manager.getComponentById('test-2')).toBeUndefined();
+      manager.removeComponent("test-2");
+      expect(manager.getComponentById("test-2")).toBeUndefined();
     });
 
-    it('should navigate components with arrow keys', () => {
+    it("should navigate components with arrow keys", () => {
       const comp1: ComponentNode = {
-        id: 'comp-1',
-        name: 'Component1',
-        type: 'component',
+        id: "comp-1",
+        name: "Component1",
+        type: "component",
         el: null,
         props: {},
         state: {},
@@ -143,9 +150,9 @@ describe('DevTools', () => {
       };
 
       const comp2: ComponentNode = {
-        id: 'comp-2',
-        name: 'Component2',
-        type: 'component',
+        id: "comp-2",
+        name: "Component2",
+        type: "component",
         el: null,
         props: {},
         state: {},
@@ -160,60 +167,60 @@ describe('DevTools', () => {
       manager.addComponent(comp2);
 
       const next = manager.getNextComponent(comp1);
-      expect(next?.id).toBe('comp-2');
+      expect(next?.id).toBe("comp-2");
 
       const prev = manager.getPreviousComponent(comp2);
-      expect(prev?.id).toBe('comp-1');
+      expect(prev?.id).toBe("comp-1");
     });
   });
 
-  describe('EventLogger', () => {
+  describe("EventLogger", () => {
     let logger: EventLogger;
 
     beforeEach(() => {
       logger = new EventLogger();
     });
 
-    it('should log events', () => {
-      logger.log('component-1', 'click', { x: 100, y: 200 });
+    it("should log events", () => {
+      logger.log("component-1", "click", { x: 100, y: 200 });
 
       const logs = logger.getLogs();
       expect(logs).toHaveLength(1);
-      expect(logs[0].source).toBe('component-1');
-      expect(logs[0].type).toBe('click');
+      expect(logs[0].source).toBe("component-1");
+      expect(logs[0].type).toBe("click");
     });
 
-    it('should filter logs by source', () => {
-      logger.log('comp-1', 'click', {});
-      logger.log('comp-2', 'hover', {});
-      logger.log('comp-1', 'focus', {});
+    it("should filter logs by source", () => {
+      logger.log("comp-1", "click", {});
+      logger.log("comp-2", "hover", {});
+      logger.log("comp-1", "focus", {});
 
-      const comp1Logs = logger.getLogsBySource('comp-1');
+      const comp1Logs = logger.getLogsBySource("comp-1");
       expect(comp1Logs).toHaveLength(2);
     });
 
-    it('should search logs', () => {
-      logger.log('button', 'click', {});
-      logger.log('input', 'change', {});
-      logger.log('button', 'hover', {});
+    it("should search logs", () => {
+      logger.log("button", "click", {});
+      logger.log("input", "change", {});
+      logger.log("button", "hover", {});
 
-      const results = logger.search('button');
+      const results = logger.search("button");
       expect(results.length).toBeGreaterThan(0);
-      expect(results.some((r) => r.source === 'button')).toBe(true);
+      expect(results.some((r) => r.source === "button")).toBe(true);
     });
 
-    it('should maintain max log limit', () => {
+    it("should maintain max log limit", () => {
       // Log more than max (1000)
       for (let i = 0; i < 1100; i++) {
-        logger.log('source', 'event', {});
+        logger.log("source", "event", {});
       }
 
       const logs = logger.getLogs();
       expect(logs.length).toBeLessThanOrEqual(1000);
     });
 
-    it('should clear logs', () => {
-      logger.log('source', 'event', {});
+    it("should clear logs", () => {
+      logger.log("source", "event", {});
       expect(logger.getLogs().length).toBeGreaterThan(0);
 
       logger.clear();
@@ -221,14 +228,14 @@ describe('DevTools', () => {
     });
   });
 
-  describe('PerformanceMonitor', () => {
+  describe("PerformanceMonitor", () => {
     let monitor: PerformanceMonitor;
 
     beforeEach(() => {
       monitor = new PerformanceMonitor();
     });
 
-    it('should record FPS', () => {
+    it("should record FPS", () => {
       monitor.recordFPS(60);
       monitor.recordFPS(59);
       monitor.recordFPS(61);
@@ -237,7 +244,7 @@ describe('DevTools', () => {
       expect(metrics.fps.length).toBeGreaterThan(0);
     });
 
-    it('should record render time', () => {
+    it("should record render time", () => {
       monitor.recordRenderTime(16.67);
       monitor.recordRenderTime(17.5);
 
@@ -245,7 +252,7 @@ describe('DevTools', () => {
       expect(metrics.renderTime.length).toBeGreaterThan(0);
     });
 
-    it('should calculate average FPS', () => {
+    it("should calculate average FPS", () => {
       monitor.recordFPS(60);
       monitor.recordFPS(60);
       monitor.recordFPS(60);
@@ -254,14 +261,14 @@ describe('DevTools', () => {
       expect(avgFps).toBe(60);
     });
 
-    it('should get last recorded values', () => {
+    it("should get last recorded values", () => {
       monitor.recordFPS(50);
       monitor.recordFPS(60);
 
       expect(monitor.getLastFPS()).toBe(60);
     });
 
-    it('should reset metrics', () => {
+    it("should reset metrics", () => {
       monitor.recordFPS(60);
       monitor.recordRenderTime(16.67);
       expect(monitor.getMetrics().fps.length).toBeGreaterThan(0);
@@ -271,7 +278,7 @@ describe('DevTools', () => {
     });
   });
 
-  describe('SearchManager', () => {
+  describe("SearchManager", () => {
     let manager: ComponentTreeManager;
     let search: SearchManager;
 
@@ -281,11 +288,11 @@ describe('DevTools', () => {
       search = new SearchManager(manager);
 
       const comp1: ComponentNode = {
-        id: 'comp-1',
-        name: 'Button',
-        type: 'component',
+        id: "comp-1",
+        name: "Button",
+        type: "component",
         el: null,
-        props: { label: 'Click me' },
+        props: { label: "Click me" },
         state: {},
         hooks: [],
         events: [],
@@ -295,11 +302,11 @@ describe('DevTools', () => {
       };
 
       const comp2: ComponentNode = {
-        id: 'comp-2',
-        name: 'Input',
-        type: 'component',
+        id: "comp-2",
+        name: "Input",
+        type: "component",
         el: null,
-        props: { placeholder: 'Type here', type: 'text' },
+        props: { placeholder: "Type here", type: "text" },
         state: {},
         hooks: [],
         events: [],
@@ -312,25 +319,25 @@ describe('DevTools', () => {
       manager.addComponent(comp2);
     });
 
-    it('should search by component name', () => {
-      const results = search.searchByName('Button');
+    it("should search by component name", () => {
+      const results = search.searchByName("Button");
       expect(results).toHaveLength(1);
-      expect(results[0].id).toBe('comp-1');
+      expect(results[0].id).toBe("comp-1");
     });
 
-    it('should search by prop value', () => {
-      const results = search.searchByProp('placeholder', 'Type here');
+    it("should search by prop value", () => {
+      const results = search.searchByProp("placeholder", "Type here");
       expect(results).toHaveLength(1);
-      expect(results[0].id).toBe('comp-2');
+      expect(results[0].id).toBe("comp-2");
     });
 
-    it('should global search', () => {
-      const results = search.search('Button');
+    it("should global search", () => {
+      const results = search.search("Button");
       expect(results.length).toBeGreaterThan(0);
     });
   });
 
-  describe('PersistenceManager', () => {
+  describe("PersistenceManager", () => {
     let manager: PersistenceManager;
 
     beforeEach(() => {
@@ -338,41 +345,41 @@ describe('DevTools', () => {
       manager.clearAll();
     });
 
-    it('should save and load config', () => {
-      const config = { theme: 'dark' as const, enabled: true };
+    it("should save and load config", () => {
+      const config = { theme: "dark" as const, enabled: true };
       manager.saveConfig(config);
 
       const loaded = manager.loadConfig();
-      expect(loaded.theme).toBe('dark');
+      expect(loaded.theme).toBe("dark");
       expect(loaded.enabled).toBe(true);
     });
 
-    it('should save and load component state', () => {
-      const state = { count: 5, text: 'hello' };
-      manager.saveComponentState('comp-1', state);
+    it("should save and load component state", () => {
+      const state = { count: 5, text: "hello" };
+      manager.saveComponentState("comp-1", state);
 
-      const loaded = manager.loadComponentState('comp-1');
+      const loaded = manager.loadComponentState("comp-1");
       expect(loaded).toEqual(state);
     });
 
-    it('should clear component state', () => {
-      manager.saveComponentState('comp-1', { value: 1 });
-      manager.clearComponentState('comp-1');
+    it("should clear component state", () => {
+      manager.saveComponentState("comp-1", { value: 1 });
+      manager.clearComponentState("comp-1");
 
-      const loaded = manager.loadComponentState('comp-1');
+      const loaded = manager.loadComponentState("comp-1");
       expect(loaded).toBeNull();
     });
 
-    it('should handle localStorage errors gracefully', () => {
+    it("should handle localStorage errors gracefully", () => {
       // Skip test in non-browser environments
-      if (typeof localStorage === 'undefined') {
+      if (typeof localStorage === "undefined") {
         vi.skip();
         return;
       }
       // Simulate localStorage.setItem throwing
       const originalSetItem = localStorage.setItem;
       localStorage.setItem = vi.fn(() => {
-        throw new Error('QuotaExceededError');
+        throw new Error("QuotaExceededError");
       });
 
       expect(() => {
@@ -383,71 +390,71 @@ describe('DevTools', () => {
     });
   });
 
-  describe('Global DevTools Instance', () => {
-    it('should initialize global instance', () => {
+  describe("Global DevTools Instance", () => {
+    it("should initialize global instance", () => {
       const devtools = initDevTools({ enabled: false });
       expect(devtools).toBeDefined();
     });
 
-    it('should retrieve global instance', () => {
+    it("should retrieve global instance", () => {
       const instance = getDevTools();
       expect(instance).toBeDefined();
     });
 
-    it('should only create one global instance', () => {
+    it("should only create one global instance", () => {
       const devtools1 = getDevTools();
       const devtools2 = getDevTools();
       expect(devtools1).toBe(devtools2);
     });
   });
 
-  describe('EventBus', () => {
-    it('should emit and receive events', () => {
+  describe("EventBus", () => {
+    it("should emit and receive events", () => {
       const bus = createEventBus();
       const callback = vi.fn();
 
-      bus.on('test-event', callback);
-      bus.emit('test-event', { data: 'test' });
+      bus.on("test-event", callback);
+      bus.emit("test-event", { data: "test" });
 
-      expect(callback).toHaveBeenCalledWith({ data: 'test' });
+      expect(callback).toHaveBeenCalledWith({ data: "test" });
     });
 
-    it('should unsubscribe from events', () => {
+    it("should unsubscribe from events", () => {
       const bus = createEventBus();
       const callback = vi.fn();
 
-      bus.on('test-event', callback);
-      bus.off('test-event', callback);
-      bus.emit('test-event', {});
+      bus.on("test-event", callback);
+      bus.off("test-event", callback);
+      bus.emit("test-event", {});
 
       expect(callback).not.toHaveBeenCalled();
     });
 
-    it('should handle multiple listeners', () => {
+    it("should handle multiple listeners", () => {
       const bus = createEventBus();
       const callback1 = vi.fn();
       const callback2 = vi.fn();
 
-      bus.on('test-event', callback1);
-      bus.on('test-event', callback2);
-      bus.emit('test-event', {});
+      bus.on("test-event", callback1);
+      bus.on("test-event", callback2);
+      bus.emit("test-event", {});
 
       expect(callback1).toHaveBeenCalled();
       expect(callback2).toHaveBeenCalled();
     });
 
-    it('should handle listener errors gracefully', () => {
+    it("should handle listener errors gracefully", () => {
       const bus = createEventBus();
       const errorCallback = vi.fn(() => {
-        throw new Error('Test error');
+        throw new Error("Test error");
       });
       const goodCallback = vi.fn();
 
-      bus.on('test-event', errorCallback);
-      bus.on('test-event', goodCallback);
+      bus.on("test-event", errorCallback);
+      bus.on("test-event", goodCallback);
 
       expect(() => {
-        bus.emit('test-event', {});
+        bus.emit("test-event", {});
       }).not.toThrow();
 
       expect(goodCallback).toHaveBeenCalled();

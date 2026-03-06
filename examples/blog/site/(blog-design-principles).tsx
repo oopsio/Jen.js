@@ -86,13 +86,18 @@ export function Head() {
   return (
     <>
       <title>Web Design Principles - Jen.js Blog</title>
-      <meta name="description" content="Key principles for creating beautiful, user-friendly websites" />
+      <meta
+        name="description"
+        content="Key principles for creating beautiful, user-friendly websites"
+      />
     </>
   );
 }
 
 export default function BlogPost() {
-  const formattedDate = new Date("Thu Feb 19 2026 05:30:00 GMT+0530 (India Standard Time)").toLocaleDateString("en-US", {
+  const formattedDate = new Date(
+    "Thu Feb 19 2026 05:30:00 GMT+0530 (India Standard Time)",
+  ).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -109,7 +114,9 @@ export default function BlogPost() {
               <h1>Web Design Principles</h1>
               <div className="post-meta">
                 <span className="author">By Alex Rivera</span>
-                <time dateTime="Thu Feb 19 2026 05:30:00 GMT+0530 (India Standard Time)">{formattedDate}</time>
+                <time dateTime="Thu Feb 19 2026 05:30:00 GMT+0530 (India Standard Time)">
+                  {formattedDate}
+                </time>
               </div>
             </div>
 
@@ -125,7 +132,9 @@ export default function BlogPost() {
               <p className="author-bio">
                 Written by <strong>Alex Rivera</strong>
               </p>
-              <a href="/blog" className="back-link">← Back to all posts</a>
+              <a href="/blog" className="back-link">
+                ← Back to all posts
+              </a>
             </div>
           </div>
         </article>

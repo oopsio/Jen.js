@@ -33,10 +33,10 @@ describe("XSS & DoS Security", () => {
     it("should escape <script> tags in loader data", async () => {
       const payload = "<script>alert('xss')</script>";
       const dataStr = JSON.stringify({ data: payload });
-      
+
       // Recursive escaping should convert < and > to entities
       expect(dataStr).toContain("<script>");
-      
+
       // After escaping
       const escaped = dataStr
         .replaceAll("&", "&amp;")
@@ -44,7 +44,7 @@ describe("XSS & DoS Security", () => {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-      
+
       expect(escaped).toContain("&lt;script&gt;");
       expect(escaped).not.toContain("<script>");
     });
@@ -57,22 +57,16 @@ describe("XSS & DoS Security", () => {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-      
+
       expect(escaped).toBe("&lt;!-- injection --&gt;");
     });
 
     it("should escape closing script tags with various cases", () => {
-      const payloads = [
-        "</script>",
-        "</SCRIPT>",
-        "</ScRipt>",
-      ];
+      const payloads = ["</script>", "</SCRIPT>", "</ScRipt>"];
 
       payloads.forEach((payload) => {
-        const escaped = payload
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;");
-        
+        const escaped = payload.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
         expect(escaped).not.toContain("</script>");
         expect(escaped).not.toContain("</SCRIPT>");
         expect(escaped).toContain("&lt;");
@@ -80,12 +74,12 @@ describe("XSS & DoS Security", () => {
     });
 
     it("should escape onclick attributes", () => {
-      const payload = 'onclick="alert(\'xss\')"';
+      const payload = "onclick=\"alert('xss')\"";
       const escaped = payload
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-      
-      expect(escaped).toBe('onclick=&quot;alert(&#39;xss&#39;)&quot;');
+
+      expect(escaped).toBe("onclick=&quot;alert(&#39;xss&#39;)&quot;");
     });
 
     it("should escape data: URI schemes", () => {
@@ -94,7 +88,7 @@ describe("XSS & DoS Security", () => {
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
-      
+
       expect(escaped).toContain("&lt;script&gt;");
     });
 
@@ -171,15 +165,17 @@ describe("XSS & DoS Security", () => {
     });
 
     it("should handle multiple special characters", () => {
-      const payload = 'Test & "quotes" \'apostrophes\'';
+      const payload = "Test & \"quotes\" 'apostrophes'";
       let escaped = payload
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-      
-      expect(escaped).toBe("Test &amp; &quot;quotes&quot; &#39;apostrophes&#39;");
+
+      expect(escaped).toBe(
+        "Test &amp; &quot;quotes&quot; &#39;apostrophes&#39;",
+      );
     });
   });
 
@@ -187,10 +183,8 @@ describe("XSS & DoS Security", () => {
     it("should escape unicode-encoded scripts", () => {
       // \\u003c = <, \\u003e = >
       const payload = "\\u003cscript\\u003e";
-      const escaped = payload
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-      
+      const escaped = payload.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
       // After escaping, the backslash literals remain, safe
       expect(escaped).toBe("\\u003cscript\\u003e");
     });
@@ -278,7 +272,7 @@ describe("XSS & DoS Security", () => {
     it("should prevent breaking out of script tag with </script>", () => {
       const data = { payload: "</script><script>alert(1)</script>" };
       const serialized = JSON.stringify(data);
-      
+
       // Replace </script regardless of case
       const safe = serialized.replace(/<\/script/gi, "<\\/script");
       expect(safe).not.toContain("</script>");
@@ -286,10 +280,8 @@ describe("XSS & DoS Security", () => {
 
     it("should handle newlines and special whitespace in payload", () => {
       const payload = "</script>\n<script>alert(1)</script>";
-      const escaped = payload
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
-      
+      const escaped = payload.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
       expect(escaped).not.toContain("</script>");
       expect(escaped).toContain("\n"); // Newlines are safe
     });
@@ -331,7 +323,7 @@ describe("XSS & DoS Security", () => {
         "javascript:alert('xss')",
         "vbscript:msgbox('xss')",
       ];
-      
+
       protocolVectors.forEach((vector) => {
         const escaped = vector
           .replaceAll("&", "&amp;")
@@ -339,7 +331,7 @@ describe("XSS & DoS Security", () => {
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#39;");
-        
+
         // These are safe when escaped and placed in an HTML attribute (browser won't execute them)
         expect(escaped).toContain("&#39;"); // Quotes are escaped
       });

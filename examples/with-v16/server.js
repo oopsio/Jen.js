@@ -38,7 +38,9 @@ const mode = process.argv[2] ?? "dev";
 const isDev = mode === "dev";
 
 async function main() {
-  console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting in ${isDev ? "DEV" : "PROD"} mode...`);
+  console.log(
+    `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting in ${isDev ? "DEV" : "PROD"} mode...`,
+  );
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");

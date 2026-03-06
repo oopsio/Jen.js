@@ -81,31 +81,31 @@ export type RouteModule = {
    *
    * @see ../middleware-hooks.ts for RouteMiddleware interface
    */
-   middleware?: any;
+  middleware?: any;
 
-   /**
-    * Advanced routing configuration for this route.
-    * Enables middleware guards, redirects, 404 handling, and query validation.
-    *
-    * @example
-    * ```typescript
-    * export const routeConfig: AdvancedRouteConfig = {
-    *   guards: [
-    *     async (ctx) => {
-    *       if (!ctx.cookies.sessionId) {
-    *         return { status: 302, location: '/login' };
-    *       }
-    *       return true;
-    *     }
-    *   ],
-    *   querySchema: {
-    *     limit: { type: 'number', default: 10 },
-    *     offset: { type: 'number', default: 0 }
-    *   }
-    * };
-    * ```
-    */
-   routeConfig?: AdvancedRouteConfig;
+  /**
+   * Advanced routing configuration for this route.
+   * Enables middleware guards, redirects, 404 handling, and query validation.
+   *
+   * @example
+   * ```typescript
+   * export const routeConfig: AdvancedRouteConfig = {
+   *   guards: [
+   *     async (ctx) => {
+   *       if (!ctx.cookies.sessionId) {
+   *         return { status: 302, location: '/login' };
+   *       }
+   *       return true;
+   *     }
+   *   ],
+   *   querySchema: {
+   *     limit: { type: 'number', default: 10 },
+   *     offset: { type: 'number', default: 0 }
+   *   }
+   * };
+   * ```
+   */
+  routeConfig?: AdvancedRouteConfig;
 
   /**
    * Data loading function called before rendering the page.

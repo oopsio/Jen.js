@@ -80,7 +80,11 @@ class Validator {
       }
 
       // Check pattern
-      if (rule.pattern && typeof value === "string" && !rule.pattern.test(value)) {
+      if (
+        rule.pattern &&
+        typeof value === "string" &&
+        !rule.pattern.test(value)
+      ) {
         errors.push(`${field} format is invalid`);
       }
     }
@@ -238,7 +242,9 @@ describe("Security: Request Validation & Sanitization", () => {
         pattern: emailPattern,
       });
 
-      expect(validator.validate({ email: "user@example.com" }).valid).toBe(true);
+      expect(validator.validate({ email: "user@example.com" }).valid).toBe(
+        true,
+      );
       expect(validator.validate({ email: "invalid-email" }).valid).toBe(false);
     });
 
@@ -250,7 +256,7 @@ describe("Security: Request Validation & Sanitization", () => {
       });
 
       expect(validator.validate({ website: "https://example.com" }).valid).toBe(
-        true
+        true,
       );
       expect(validator.validate({ website: "not a url" }).valid).toBe(false);
     });
@@ -399,11 +405,7 @@ describe("Security: Request Validation & Sanitization", () => {
     });
 
     it("should validate MIME types", () => {
-      const allowedMimeTypes = [
-        "image/jpeg",
-        "image/png",
-        "application/pdf",
-      ];
+      const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
 
       const isAllowedMime = (mimeType: string) =>
         allowedMimeTypes.includes(mimeType);
@@ -442,7 +444,7 @@ describe("Security: Request Validation & Sanitization", () => {
       };
 
       expect(tryParseJSON('{"name":"John"}')).toBe(true);
-      expect(tryParseJSON('invalid json')).toBe(false);
+      expect(tryParseJSON("invalid json")).toBe(false);
     });
 
     it("should limit JSON depth to prevent DoS", () => {

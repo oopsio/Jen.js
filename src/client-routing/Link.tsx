@@ -16,13 +16,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ComponentChildren, h } from 'preact'
+import { ComponentChildren, h } from "preact";
 
 export interface LinkProps {
-  href: string
-  children: ComponentChildren
-  class?: string
-  [key: string]: any
+  href: string;
+  children: ComponentChildren;
+  class?: string;
+  [key: string]: any;
 }
 
 /**
@@ -32,12 +32,12 @@ export interface LinkProps {
  */
 export function Link({ href, children, ...props }: LinkProps) {
   return h(
-    'a',
+    "a",
     {
       href,
-      'data-jen-link': true,
+      "data-jen-link": true,
       ...props,
     },
-    children
-  )
+    children,
+  );
 }

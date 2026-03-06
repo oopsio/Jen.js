@@ -207,7 +207,8 @@ export class Kernel {
         res.end(
           JSON.stringify({
             error: "Internal Server Error",
-            message: "An unexpected error occurred while processing your request.",
+            message:
+              "An unexpected error occurred while processing your request.",
           }),
         );
       } catch (e) {

@@ -22,7 +22,8 @@ class RestClient {
   private baseURL: string;
   private defaultHeaders: Record<string, string>;
   private cache = new Map<string, { data: any; expiresAt: number }>();
-  private requestInterceptors: Array<(config: RequestConfig) => RequestConfig> = [];
+  private requestInterceptors: Array<(config: RequestConfig) => RequestConfig> =
+    [];
   private responseInterceptors: Array<(response: any) => any> = [];
 
   constructor(baseURL: string, defaultHeaders: Record<string, string> = {}) {
@@ -50,7 +51,11 @@ class RestClient {
     return this.responseInterceptors.reduce((res, fn) => fn(res), response);
   }
 
-  async request<T>(method: string, path: string, config: RequestConfig = {}): Promise<Response<T>> {
+  async request<T>(
+    method: string,
+    path: string,
+    config: RequestConfig = {},
+  ): Promise<Response<T>> {
     const url = `${this.baseURL}${path}`;
     const cacheKey = this.getCacheKey(method, url);
 
@@ -79,7 +84,12 @@ class RestClient {
         let finalResponse = this.applyResponseInterceptors(response);
 
         // Cache successful GET requests
-        if (config.cache !== false && method === "GET" && response.status >= 200 && response.status < 300) {
+        if (
+          config.cache !== false &&
+          method === "GET" &&
+          response.status >= 200 &&
+          response.status < 300
+        ) {
           const ttl = config.cacheTTL ?? 60000; // 1 minute default
           this.cache.set(cacheKey, {
             data: finalResponse,
@@ -91,17 +101,24 @@ class RestClient {
       } catch (error) {
         attempt++;
         if (attempt > maxRetries) {
-          throw new Error(`Request failed after ${maxRetries + 1} attempts: ${error}`);
+          throw new Error(
+            `Request failed after ${maxRetries + 1} attempts: ${error}`,
+          );
         }
         // Exponential backoff
-        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempt) * 100));
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, attempt) * 100),
+        );
       }
     }
 
     throw new Error("Request failed");
   }
 
-  private async simulateRequest<T>(url: string, config: RequestConfig): Promise<Response<T>> {
+  private async simulateRequest<T>(
+    url: string,
+    config: RequestConfig,
+  ): Promise<Response<T>> {
     return new Promise((resolve, reject) => {
       // Simulate network delay
       setTimeout(() => {
@@ -287,7 +304,9 @@ describe("REST Client", () => {
 
     it("should retry failed requests", async () => {
       // Should throw after max retries
-      await expect(client.get("/timeout", { retries: 0 })).rejects.toThrow("Request failed");
+      await expect(client.get("/timeout", { retries: 0 })).rejects.toThrow(
+        "Request failed",
+      );
     });
   });
 

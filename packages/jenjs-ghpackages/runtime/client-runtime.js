@@ -31,14 +31,12 @@
  * @returns Framework data object { data, params, query } or null if not found.
  */
 export function getFrameworkData() {
-    const el = document.getElementById("__FRAMEWORK_DATA__");
-    if (!el)
-        return null;
-    try {
-        return JSON.parse(el.textContent || "null");
-    }
-    catch {
-        // Silently return null if JSON is invalid; page hydrates with default props
-        return null;
-    }
+  const el = document.getElementById("__FRAMEWORK_DATA__");
+  if (!el) return null;
+  try {
+    return JSON.parse(el.textContent || "null");
+  } catch {
+    // Silently return null if JSON is invalid; page hydrates with default props
+    return null;
+  }
 }

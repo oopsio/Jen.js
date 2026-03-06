@@ -74,7 +74,9 @@ export interface JenPlugin {
 /**
  * Hook handler function signature.
  */
-export type PluginHookHandler = (context: PluginHookContext) => Promise<void> | void;
+export type PluginHookHandler = (
+  context: PluginHookContext,
+) => Promise<void> | void;
 
 /**
  * Context passed to plugin hooks.
@@ -124,4 +126,3 @@ export interface PluginConfig {
     silent?: boolean;
   };
 }
-

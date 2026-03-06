@@ -21,15 +21,20 @@ export default function Home() {
   return (
     <div className="page home-page">
       <Header />
-      
+
       <main>
         {/* Hero Section */}
         <section className="hero">
           <div className="container">
             <div className="hero-content">
               <h1>Welcome to Jen.js Blog</h1>
-              <p>Discover articles about web development, design, and modern frameworks</p>
-              <a href="/blog" className="cta-button">Explore Blog</a>
+              <p>
+                Discover articles about web development, design, and modern
+                frameworks
+              </p>
+              <a href="/blog" className="cta-button">
+                Explore Blog
+              </a>
             </div>
           </div>
         </section>
@@ -59,7 +64,9 @@ export default function Home() {
             </div>
             {posts.length > 3 && (
               <div className="view-all">
-                <a href="/blog" className="link-button">View All Articles →</a>
+                <a href="/blog" className="link-button">
+                  View All Articles →
+                </a>
               </div>
             )}
           </div>
@@ -69,8 +76,16 @@ export default function Home() {
         <section className="cta-section">
           <div className="container">
             <h2>Built with Jen.js</h2>
-            <p>This blog is built with Jen.js, a fast, modern web framework for TypeScript lovers.</p>
-            <a href="https://github.com/oopsio/jen.js" target="_blank" rel="noopener" className="cta-button secondary">
+            <p>
+              This blog is built with Jen.js, a fast, modern web framework for
+              TypeScript lovers.
+            </p>
+            <a
+              href="https://github.com/oopsio/jen.js"
+              target="_blank"
+              rel="noopener"
+              className="cta-button secondary"
+            >
               Learn More
             </a>
           </div>

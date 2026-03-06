@@ -153,7 +153,9 @@ describe("Integration: Middleware Composition", () => {
       });
 
       const publicPaths = ["/public", "/about"];
-      const shouldAuth = !publicPaths.some((p) => ctx.request.path.startsWith(p));
+      const shouldAuth = !publicPaths.some((p) =>
+        ctx.request.path.startsWith(p),
+      );
 
       if (shouldAuth) {
         await authMw(ctx);
@@ -294,7 +296,7 @@ describe("Integration: Middleware Composition", () => {
       await mw(ctx2);
 
       expect((ctx1.locals as any).requestId).not.toBe(
-        (ctx2.locals as any).requestId
+        (ctx2.locals as any).requestId,
       );
     });
   });

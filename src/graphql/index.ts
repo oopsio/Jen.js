@@ -69,4 +69,3 @@ export async function runQuery(query: string, variables?: any) {
     "GraphQL implementation requires external library. Install: npm install graphql",
   );
 }
-

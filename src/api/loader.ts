@@ -288,4 +288,3 @@ function matchPath(
 
   return null;
 }
-

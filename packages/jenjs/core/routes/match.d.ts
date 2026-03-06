@@ -4,21 +4,21 @@ import type { RouteEntry } from "./scan.js";
  * Contains the matched route and extracted URL parameters.
  */
 export type MatchResult = {
-    /**
-     * The route entry that matched the URL pathname.
-     * Includes all route metadata: file path, URL pattern, regex, parameter names.
-     */
-    route: RouteEntry;
-    /**
-     * Extracted URL parameters as key-value pairs.
-     * Keys correspond to parameter names from the route pattern.
-     * Values are URL-decoded strings extracted from the pathname.
-     *
-     * @example
-     * For route "/posts/:id" matching "/posts/42", yields { id: "42" }
-     * For route "/docs/*rest" matching "/docs/api/fetch", yields { rest: "api/fetch" }
-     */
-    params: Record<string, string>;
+  /**
+   * The route entry that matched the URL pathname.
+   * Includes all route metadata: file path, URL pattern, regex, parameter names.
+   */
+  route: RouteEntry;
+  /**
+   * Extracted URL parameters as key-value pairs.
+   * Keys correspond to parameter names from the route pattern.
+   * Values are URL-decoded strings extracted from the pathname.
+   *
+   * @example
+   * For route "/posts/:id" matching "/posts/42", yields { id: "42" }
+   * For route "/docs/*rest" matching "/docs/api/fetch", yields { rest: "api/fetch" }
+   */
+  params: Record<string, string>;
 };
 /**
  * Matches a URL pathname against a list of routes and returns the matching route with extracted parameters.
@@ -48,4 +48,7 @@ export type MatchResult = {
  *   console.log(match.params.id);       // "42"
  * }
  */
-export declare function matchRoute(routes: RouteEntry[], pathname: string): MatchResult | null;
+export declare function matchRoute(
+  routes: RouteEntry[],
+  pathname: string,
+): MatchResult | null;

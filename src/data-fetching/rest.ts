@@ -118,7 +118,10 @@ export class RestFetcher {
   /**
    * Core fetch method with cache, retry, and interceptor support.
    */
-  async fetch<T = any>(url: string, config?: DataFetchConfig): Promise<FetchResult<T>> {
+  async fetch<T = any>(
+    url: string,
+    config?: DataFetchConfig,
+  ): Promise<FetchResult<T>> {
     const fullUrl = this.resolveUrl(url);
     const method = config?.method || "GET";
 
@@ -151,12 +154,16 @@ export class RestFetcher {
       // Check cache first if enabled
       const cacheStrategy =
         typeof config?.cache === "boolean"
-          ? (config.cache ? "cache-first" : "no-cache")
-          : (config?.cache?.strategy || "no-cache");
+          ? config.cache
+            ? "cache-first"
+            : "no-cache"
+          : config?.cache?.strategy || "no-cache";
 
       const cacheKey = createCacheKey(fullUrl, options);
-      const cacheTags = (typeof config?.cache === "object" && config.cache.tags) || [];
-      const cacheTtl = (typeof config?.cache === "object" && config.cache.ttl) || 60000;
+      const cacheTags =
+        (typeof config?.cache === "object" && config.cache.tags) || [];
+      const cacheTtl =
+        (typeof config?.cache === "object" && config.cache.ttl) || 60000;
 
       let result: FetchResult<T>;
 
@@ -285,11 +292,16 @@ export class RestFetcher {
 
     if (options.body) {
       fetchOpts.body =
-        typeof options.body === "string" ? options.body : JSON.stringify(options.body);
+        typeof options.body === "string"
+          ? options.body
+          : JSON.stringify(options.body);
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 30000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      options.timeout || 30000,
+    );
 
     try {
       const response = await fetch(url, {

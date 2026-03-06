@@ -24,46 +24,46 @@
  * - Tree-shakable
  */
 
-export type Subscriber = () => void
-export type SignalGetter<T> = () => T
+export type Subscriber = () => void;
+export type SignalGetter<T> = () => T;
 
 export interface Signal<T> {
-  value: T
-  subscribe(fn: Subscriber): () => void
-  notify(): void
+  value: T;
+  subscribe(fn: Subscriber): () => void;
+  notify(): void;
 }
 
 /**
  * Create a reactive signal
  */
 export function signal<T>(initialValue: T): Signal<T> {
-  let value = initialValue
-  const subscribers: Set<Subscriber> = new Set()
+  let value = initialValue;
+  const subscribers: Set<Subscriber> = new Set();
 
   return {
     get value(): T {
-      return value
+      return value;
     },
     set value(newValue: T) {
       if (newValue !== value) {
-        value = newValue
-        this.notify()
+        value = newValue;
+        this.notify();
       }
     },
     subscribe(fn: Subscriber) {
-      subscribers.add(fn)
-      return () => subscribers.delete(fn)
+      subscribers.add(fn);
+      return () => subscribers.delete(fn);
     },
     notify() {
-      subscribers.forEach(fn => {
+      subscribers.forEach((fn) => {
         try {
-          fn()
+          fn();
         } catch (error) {
-          console.error('[jen-signal] Subscriber error:', error)
+          console.error("[jen-signal] Subscriber error:", error);
         }
-      })
+      });
     },
-  }
+  };
 }
 
 /**
@@ -71,61 +71,58 @@ export function signal<T>(initialValue: T): Signal<T> {
  * Automatically tracks signal dependencies
  */
 export function computed<T>(fn: SignalGetter<T>): Signal<T> {
-  let cachedValue = fn()
-  const subs: Set<Subscriber> = new Set()
-  let dependencies: Set<Signal<any>> = new Set()
+  let cachedValue = fn();
+  const subs: Set<Subscriber> = new Set();
+  let dependencies: Set<Signal<any>> = new Set();
 
   const updateValue = () => {
-    const newValue = fn()
+    const newValue = fn();
     if (newValue !== cachedValue) {
-      cachedValue = newValue
-      notifySubs()
+      cachedValue = newValue;
+      notifySubs();
     }
-  }
+  };
 
   const notifySubs = () => {
-    subs.forEach(sub => {
+    subs.forEach((sub) => {
       try {
-        sub()
+        sub();
       } catch (error) {
-        console.error('[jen-signal] Subscriber error:', error)
+        console.error("[jen-signal] Subscriber error:", error);
       }
-    })
-  }
+    });
+  };
 
   return {
     get value(): T {
-      return cachedValue
+      return cachedValue;
     },
     set value(_: T) {
       // Computed signals are read-only
-      console.warn('[jen-signal] Cannot set value on computed signal')
+      console.warn("[jen-signal] Cannot set value on computed signal");
     },
     subscribe(fn: Subscriber) {
-      subs.add(fn)
-      return () => subs.delete(fn)
+      subs.add(fn);
+      return () => subs.delete(fn);
     },
     notify() {
-      updateValue()
+      updateValue();
     },
-  }
+  };
 }
 
 /**
  * Bind a signal to a DOM element
  * Updates text content when signal changes
  */
-export function bindSignal(
-  element: Element,
-  sig: Signal<any>
-): () => void {
+export function bindSignal(element: Element, sig: Signal<any>): () => void {
   // Set initial value
-  element.textContent = String(sig.value)
+  element.textContent = String(sig.value);
 
   // Subscribe to changes
   return sig.subscribe(() => {
-    element.textContent = String(sig.value)
-  })
+    element.textContent = String(sig.value);
+  });
 }
 
 /**
@@ -133,35 +130,35 @@ export function bindSignal(
  */
 export function bindInput(
   input: HTMLInputElement,
-  sig: Signal<any>
+  sig: Signal<any>,
 ): () => void {
   // Set initial value
-  input.value = String(sig.value)
+  input.value = String(sig.value);
 
   // Subscribe to signal changes
   const unsubscribe = sig.subscribe(() => {
-    input.value = String(sig.value)
-  })
+    input.value = String(sig.value);
+  });
 
   // Update signal on input change
   const handleChange = () => {
-    const newVal = input.type === 'checkbox' ? input.checked : input.value
+    const newVal = input.type === "checkbox" ? input.checked : input.value;
     // Try to coerce to original type
-    if (typeof sig.value === 'number') {
-      sig.value = Number(newVal)
+    if (typeof sig.value === "number") {
+      sig.value = Number(newVal);
     } else {
-      sig.value = newVal
+      sig.value = newVal;
     }
-  }
+  };
 
-  input.addEventListener('change', handleChange)
-  input.addEventListener('input', handleChange)
+  input.addEventListener("change", handleChange);
+  input.addEventListener("input", handleChange);
 
   return () => {
-    unsubscribe()
-    input.removeEventListener('change', handleChange)
-    input.removeEventListener('input', handleChange)
-  }
+    unsubscribe();
+    input.removeEventListener("change", handleChange);
+    input.removeEventListener("input", handleChange);
+  };
 }
 
 /**
@@ -169,33 +166,36 @@ export function bindInput(
  * Only notify once after all updates
  */
 export function batch(fn: () => void): void {
-  fn()
+  fn();
 }
 
 /**
  * Watch a signal and run effects
  */
-export function watch(sig: Signal<any>, effect: (value: any) => void): () => void {
+export function watch(
+  sig: Signal<any>,
+  effect: (value: any) => void,
+): () => void {
   // Run effect immediately
-  effect(sig.value)
+  effect(sig.value);
 
   // Subscribe to changes
   return sig.subscribe(() => {
-    effect(sig.value)
-  })
+    effect(sig.value);
+  });
 }
 
 /**
  * Create a store (collection of signals)
  */
 export function createStore<T extends Record<string, any>>(
-  initial: T
+  initial: T,
 ): { [K in keyof T]: Signal<T[K]> } {
-  const store: any = {}
+  const store: any = {};
 
   for (const key in initial) {
-    store[key] = signal(initial[key])
+    store[key] = signal(initial[key]);
   }
 
-  return store
+  return store;
 }

@@ -8,9 +8,7 @@
     "destination": "docs",
     "recurse": true
   },
-  "plugins": [
-    "plugins/markdown"
-  ],
+  "plugins": ["plugins/markdown"],
   "babel": {
     "parserOpts": {
       "ecmaVersion": 2022,

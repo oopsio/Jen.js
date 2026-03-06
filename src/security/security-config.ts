@@ -216,9 +216,9 @@ export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
     permissionsPolicy: {
       enabled: true,
       directives: {
-        "geolocation": ["none"],
-        "microphone": ["none"],
-        "camera": ["none"],
+        geolocation: ["none"],
+        microphone: ["none"],
+        camera: ["none"],
       },
     },
   },

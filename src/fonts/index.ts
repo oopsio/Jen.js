@@ -59,5 +59,8 @@
 
 export type { FontsConfig } from "./types.js";
 export { injectFonts, fontServeMiddleware } from "./inject.js";
-export { processFonts, generateGoogleFontLinks, extractFonts } from "./loader.js";
-
+export {
+  processFonts,
+  generateGoogleFontLinks,
+  extractFonts,
+} from "./loader.js";

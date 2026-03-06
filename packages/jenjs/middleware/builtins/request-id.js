@@ -35,12 +35,12 @@ import { randomUUID } from "node:crypto";
  * // Available in ctx.state.requestId for logging and tracing
  */
 export async function requestId(ctx, next) {
-    // Use client-provided request ID if available (supports request tracing across service boundaries)
-    // Otherwise generate a new UUID for this request
-    const id = ctx.req.headers["x-request-id"] || randomUUID();
-    // Set response header so client can track the request
-    ctx.response.header("X-Request-ID", id);
-    // Attach to context state for access by other middleware (especially logger)
-    ctx.state.requestId = id;
-    await next();
+  // Use client-provided request ID if available (supports request tracing across service boundaries)
+  // Otherwise generate a new UUID for this request
+  const id = ctx.req.headers["x-request-id"] || randomUUID();
+  // Set response header so client can track the request
+  ctx.response.header("X-Request-ID", id);
+  // Attach to context state for access by other middleware (especially logger)
+  ctx.state.requestId = id;
+  await next();
 }

@@ -59,13 +59,18 @@ export function Head() {
   return (
     <>
       <title>Getting Started with Jen.js - Jen.js Blog</title>
-      <meta name="description" content="Learn how to build fast, modern web applications with Jen.js framework" />
+      <meta
+        name="description"
+        content="Learn how to build fast, modern web applications with Jen.js framework"
+      />
     </>
   );
 }
 
 export default function BlogPost() {
-  const formattedDate = new Date("Sun Feb 22 2026 05:30:00 GMT+0530 (India Standard Time)").toLocaleDateString("en-US", {
+  const formattedDate = new Date(
+    "Sun Feb 22 2026 05:30:00 GMT+0530 (India Standard Time)",
+  ).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -82,7 +87,9 @@ export default function BlogPost() {
               <h1>Getting Started with Jen.js</h1>
               <div className="post-meta">
                 <span className="author">By Jen Team</span>
-                <time dateTime="Sun Feb 22 2026 05:30:00 GMT+0530 (India Standard Time)">{formattedDate}</time>
+                <time dateTime="Sun Feb 22 2026 05:30:00 GMT+0530 (India Standard Time)">
+                  {formattedDate}
+                </time>
               </div>
             </div>
 
@@ -98,7 +105,9 @@ export default function BlogPost() {
               <p className="author-bio">
                 Written by <strong>Jen Team</strong>
               </p>
-              <a href="/blog" className="back-link">← Back to all posts</a>
+              <a href="/blog" className="back-link">
+                ← Back to all posts
+              </a>
             </div>
           </div>
         </article>

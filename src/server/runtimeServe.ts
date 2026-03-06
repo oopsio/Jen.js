@@ -186,9 +186,18 @@ export function buildHydrationModule(routeIdOrPath: string) {
 
     // Replace bare module specifiers with CDN URLs for browser compatibility
     const mappedOutput = jsOutput
-      .replace(/from ["']preact\/jsx-runtime["']/g, 'from "https://esm.sh/preact@10.25.4/jsx-runtime"')
-      .replace(/from ["']preact\/hooks["']/g, 'from "https://esm.sh/preact@10.25.4/hooks"')
-      .replace(/from ["']preact(?!\/|["'])/g, 'from "https://esm.sh/preact@10.25.4"');
+      .replace(
+        /from ["']preact\/jsx-runtime["']/g,
+        'from "https://esm.sh/preact@10.25.4/jsx-runtime"',
+      )
+      .replace(
+        /from ["']preact\/hooks["']/g,
+        'from "https://esm.sh/preact@10.25.4/hooks"',
+      )
+      .replace(
+        /from ["']preact(?!\/|["'])/g,
+        'from "https://esm.sh/preact@10.25.4"',
+      );
 
     // Cache result with ETag
     const etag = etagOf(mappedOutput);

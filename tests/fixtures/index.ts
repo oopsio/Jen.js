@@ -63,9 +63,7 @@ export interface MockContext {
 /**
  * Create a minimal config fixture
  */
-export function createMockConfig(
-  overrides?: Partial<MockConfig>
-): MockConfig {
+export function createMockConfig(overrides?: Partial<MockConfig>): MockConfig {
   return {
     dev: true,
     root: "/workspace",
@@ -85,7 +83,7 @@ export function createMockConfig(
  * Create a mock HTTP request
  */
 export function createMockRequest(
-  overrides?: Partial<MockRequest>
+  overrides?: Partial<MockRequest>,
 ): MockRequest {
   return {
     method: "GET",
@@ -105,7 +103,7 @@ export function createMockRequest(
  * Create a mock HTTP response
  */
 export function createMockResponse(
-  overrides?: Partial<MockResponse>
+  overrides?: Partial<MockResponse>,
 ): MockResponse {
   return {
     status: 200,
@@ -142,7 +140,7 @@ export function createMockContext(overrides?: {
  */
 export function createMockMiddleware(
   name: string,
-  fn?: (ctx: MockContext) => void | Promise<void>
+  fn?: (ctx: MockContext) => void | Promise<void>,
 ) {
   return async (ctx: MockContext) => {
     if (fn) {
@@ -177,7 +175,7 @@ export class MockRouter {
 
   async match(method: string, path: string, ctx: MockContext) {
     const route = this.routes.find(
-      (r) => r.method === method && this.matchPath(r.path, path)
+      (r) => r.method === method && this.matchPath(r.path, path),
     );
     if (!route) return null;
 
@@ -229,14 +227,14 @@ export function createMockDatabase(): MockDatabase {
       const rows = tables.get(table) || [];
       if (!where) return rows;
       return rows.filter((row) =>
-        Object.entries(where).every(([key, value]) => row[key] === value)
+        Object.entries(where).every(([key, value]) => row[key] === value),
       );
     },
     update(table: string, data: any, where?: any) {
       const rows = tables.get(table) || [];
       const filtered = where
         ? rows.filter((row) =>
-            Object.entries(where).every(([key, value]) => row[key] === value)
+            Object.entries(where).every(([key, value]) => row[key] === value),
           )
         : rows;
       filtered.forEach((row) => Object.assign(row, data));
@@ -246,7 +244,7 @@ export function createMockDatabase(): MockDatabase {
       const rows = tables.get(table) || [];
       const filtered = where
         ? rows.filter((row) =>
-            Object.entries(where).every(([key, value]) => row[key] === value)
+            Object.entries(where).every(([key, value]) => row[key] === value),
           )
         : [];
       const count = filtered.length;
@@ -290,7 +288,7 @@ export function createMockUser(overrides?: Partial<MockUser>): MockUser {
 export function createMockToken(user: MockUser, expiresIn = 3600): string {
   // Simple mock - real implementation would use JWT library
   const header = Buffer.from(JSON.stringify({ alg: "HS256" })).toString(
-    "base64"
+    "base64",
   );
   const payload = Buffer.from(
     JSON.stringify({
@@ -299,7 +297,7 @@ export function createMockToken(user: MockUser, expiresIn = 3600): string {
       email: user.email,
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + expiresIn,
-    })
+    }),
   ).toString("base64");
   const signature = "mock_signature";
   return `${header}.${payload}.${signature}`;
@@ -321,9 +319,7 @@ export class PerformanceTracker {
     const endTime = this.marks.get(to);
 
     if (startTime === undefined || endTime === undefined) {
-      throw new Error(
-        `Mark not found: ${!startTime ? from : to}`
-      );
+      throw new Error(`Mark not found: ${!startTime ? from : to}`);
     }
 
     const duration = endTime - startTime;

@@ -39,10 +39,7 @@ function generateCSRFToken(store: CSRFTokenStore): string {
   return token;
 }
 
-function verifyCSRFToken(
-  store: CSRFTokenStore,
-  token: string
-): boolean {
+function verifyCSRFToken(store: CSRFTokenStore, token: string): boolean {
   const stored = store.tokens.get(store.sessionId);
   if (!stored) return false;
 
@@ -162,8 +159,7 @@ describe("Security: CSRF Protection", () => {
         },
       });
 
-      const hasCSRFToken =
-        ctx.request.headers["csrf-token"] !== undefined;
+      const hasCSRFToken = ctx.request.headers["csrf-token"] !== undefined;
       expect(hasCSRFToken).toBe(true);
     });
 
@@ -176,8 +172,7 @@ describe("Security: CSRF Protection", () => {
         },
       });
 
-      const hasCSRFToken =
-        ctx.request.headers["csrf-token"] !== undefined;
+      const hasCSRFToken = ctx.request.headers["csrf-token"] !== undefined;
       expect(hasCSRFToken).toBe(false);
     });
 
@@ -294,10 +289,7 @@ describe("Security: CSRF Protection", () => {
         },
       });
 
-      const isValid = verifyCSRFToken(
-        store,
-        ctx.request.headers["csrf-token"]
-      );
+      const isValid = verifyCSRFToken(store, ctx.request.headers["csrf-token"]);
       expect(isValid).toBe(true);
     });
 

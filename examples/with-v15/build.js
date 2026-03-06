@@ -39,9 +39,10 @@ function getAllFiles(dir, extensions = null) {
   for (const entry of readdirSync(dir)) {
     const fullPath = join(dir, entry);
     const stat = statSync(fullPath);
-    if (stat.isDirectory()) files = files.concat(getAllFiles(fullPath, extensions));
+    if (stat.isDirectory())
+      files = files.concat(getAllFiles(fullPath, extensions));
     else if (stat.isFile()) {
-      if (!extensions || extensions.some(ext => fullPath.endsWith(ext))) {
+      if (!extensions || extensions.some((ext) => fullPath.endsWith(ext))) {
         files.push(fullPath);
       }
     }
@@ -56,7 +57,7 @@ async function renameWithHash(filePath, content) {
   const name = basename(filePath, ext);
   const dir = dirname(filePath);
   const newPath = join(dir, `${name}.${hash}${ext}`);
-  
+
   if (newPath !== filePath) {
     await fs.rename(filePath, newPath);
     return { oldPath: filePath, newPath, hash };
@@ -132,7 +133,10 @@ async function main() {
   for (const filePath of cssFiles) {
     const content = await fs.readFile(filePath, "utf-8");
     const renamed = await renameWithHash(filePath, content);
-    manifest[renamed.oldPath] = { hash: renamed.hash, newPath: renamed.newPath };
+    manifest[renamed.oldPath] = {
+      hash: renamed.hash,
+      newPath: renamed.newPath,
+    };
     const relPath = renamed.oldPath.replace(distDir, "").replace(/\\/g, "/");
     const newRelPath = renamed.newPath.replace(distDir, "").replace(/\\/g, "/");
     fileMap[relPath] = newRelPath;
@@ -143,7 +147,10 @@ async function main() {
   for (const filePath of jsFiles) {
     const content = await fs.readFile(filePath, "utf-8");
     const renamed = await renameWithHash(filePath, content);
-    manifest[renamed.oldPath] = { hash: renamed.hash, newPath: renamed.newPath };
+    manifest[renamed.oldPath] = {
+      hash: renamed.hash,
+      newPath: renamed.newPath,
+    };
     const relPath = renamed.oldPath.replace(distDir, "").replace(/\\/g, "/");
     const newRelPath = renamed.newPath.replace(distDir, "").replace(/\\/g, "/");
     fileMap[relPath] = newRelPath;
@@ -155,16 +162,19 @@ async function main() {
   for (const filePath of htmlFiles) {
     await minifyHTMLFile(filePath);
     let content = await fs.readFile(filePath, "utf-8");
-    
+
     // Replace old file paths with hashed paths
     for (const [oldPath, newPath] of Object.entries(fileMap)) {
       content = content.replaceAll(`href="${oldPath}"`, `href="${newPath}"`);
       content = content.replaceAll(`src="${oldPath}"`, `src="${newPath}"`);
     }
-    
+
     await fs.writeFile(filePath, content, "utf-8");
     const renamed = await renameWithHash(filePath, content);
-    manifest[renamed.oldPath] = { hash: renamed.hash, newPath: renamed.newPath };
+    manifest[renamed.oldPath] = {
+      hash: renamed.hash,
+      newPath: renamed.newPath,
+    };
     console.log(`✅ Minified & hashed: ${renamed.newPath}`);
   }
 

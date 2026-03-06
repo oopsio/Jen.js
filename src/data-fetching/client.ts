@@ -16,7 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ClientFetchContext, DataFetchConfig, FetchResult } from "./types.js";
+import type {
+  ClientFetchContext,
+  DataFetchConfig,
+  FetchResult,
+} from "./types.js";
 import { RestFetcher } from "./rest.js";
 import { GraphQLClient } from "./graphql.js";
 
@@ -181,7 +185,7 @@ export function useData<T = any>(
   // This is a simplified API description
   // Full implementation would use Preact hooks (useEffect, useState)
   return {
-    data: options?.initialData || null as T | null,
+    data: options?.initialData || (null as T | null),
     error: null as Error | null,
     loading: false,
     refetch: async () => {

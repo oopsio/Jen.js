@@ -9,13 +9,13 @@ interface BlogCardProps {
   featured?: boolean;
 }
 
-export default function BlogCard({ 
-  title, 
-  excerpt, 
-  author, 
+export default function BlogCard({
+  title,
+  excerpt,
+  author,
   date,
   slug,
-  featured = false
+  featured = false,
 }: BlogCardProps) {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "numeric",

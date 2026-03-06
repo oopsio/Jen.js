@@ -160,7 +160,9 @@ export function buildLayoutHierarchy(
   const applicable: LayoutEntry[] = [];
 
   // Check root layout first
-  const rootLayout = layoutEntries.find((l) => l.depth === 0 && l.dirPath === "");
+  const rootLayout = layoutEntries.find(
+    (l) => l.depth === 0 && l.dirPath === "",
+  );
   if (rootLayout) {
     applicable.push(rootLayout);
   }

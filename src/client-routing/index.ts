@@ -24,7 +24,7 @@ export {
   initRouter,
   type RouteChangeEvent,
   type RouteChangeListener,
-} from './router.js'
+} from "./router.js";
 
 // Signal/State exports
 export {
@@ -37,7 +37,7 @@ export {
   createStore,
   type Signal,
   type Subscriber,
-} from './signal.js'
+} from "./signal.js";
 
 // Component exports
-export { Link, type LinkProps } from './Link.js'
+export { Link, type LinkProps } from "./Link.js";

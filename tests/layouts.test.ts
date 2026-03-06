@@ -43,7 +43,10 @@ describe("Nested Layouts System", () => {
       mkdirSync(join(testDir, "pages"), { recursive: true });
       mkdirSync(join(testDir, "pages", "blog"), { recursive: true });
 
-      writeFileSync(join(testDir, "(layout).tsx"), "export default () => null;");
+      writeFileSync(
+        join(testDir, "(layout).tsx"),
+        "export default () => null;",
+      );
       writeFileSync(
         join(testDir, "pages", "(layout).tsx"),
         "export default () => null;",
@@ -71,7 +74,10 @@ describe("Nested Layouts System", () => {
         },
       } as any;
 
-      writeFileSync(join(testDir, "(layout).tsx"), "export default () => null;");
+      writeFileSync(
+        join(testDir, "(layout).tsx"),
+        "export default () => null;",
+      );
       writeFileSync(join(testDir, "(layout).ts"), "export default () => null;");
 
       const layouts = scanLayouts(config);
@@ -125,7 +131,11 @@ describe("Nested Layouts System", () => {
 
       const layouts = scanLayouts(config);
       const routePath = join(testDir, "pages", "blog", "(post).tsx");
-      const hierarchy = buildLayoutHierarchy(layouts, routePath, "test-layouts-temp");
+      const hierarchy = buildLayoutHierarchy(
+        layouts,
+        routePath,
+        "test-layouts-temp",
+      );
 
       expect(hierarchy.length).toBe(3);
       expect(hierarchy[0].dirPath).toBe("");
@@ -150,7 +160,11 @@ describe("Nested Layouts System", () => {
 
       const layouts = scanLayouts(config);
       const routePath = join(testDir, "(home).tsx");
-      const hierarchy = buildLayoutHierarchy(layouts, routePath, "test-layouts-temp");
+      const hierarchy = buildLayoutHierarchy(
+        layouts,
+        routePath,
+        "test-layouts-temp",
+      );
 
       expect(hierarchy.length).toBe(1);
       expect(hierarchy[0].dirPath).toBe("");
@@ -174,7 +188,11 @@ describe("Nested Layouts System", () => {
 
       const layouts = scanLayouts(config);
       const routePath = join(testDir, "pages", "blog", "(post).tsx");
-      const hierarchy = buildLayoutHierarchy(layouts, routePath, "test-layouts-temp");
+      const hierarchy = buildLayoutHierarchy(
+        layouts,
+        routePath,
+        "test-layouts-temp",
+      );
 
       expect(hierarchy.length).toBe(2);
       expect(hierarchy[0].dirPath).toBe("");
@@ -212,15 +230,27 @@ describe("Nested Layouts System", () => {
 
       const RootLayout = (props: any) => {
         receivedProps.push({ role: "root", props });
-        return h("div", { "data-root": JSON.stringify(props.data) }, props.children);
+        return h(
+          "div",
+          { "data-root": JSON.stringify(props.data) },
+          props.children,
+        );
       };
       const ChildLayout = (props: any) => {
         receivedProps.push({ role: "child", props });
-        return h("div", { "data-child": JSON.stringify(props.params) }, props.children);
+        return h(
+          "div",
+          { "data-child": JSON.stringify(props.params) },
+          props.children,
+        );
       };
       const Page = (props: any) => {
         receivedProps.push({ role: "page", props });
-        return h("div", { "data-page": JSON.stringify(props.query) }, "Content");
+        return h(
+          "div",
+          { "data-page": JSON.stringify(props.query) },
+          "Content",
+        );
       };
 
       const layoutStack = {

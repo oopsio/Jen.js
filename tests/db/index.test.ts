@@ -102,7 +102,10 @@ class Database {
     return results;
   }
 
-  async findOne(table: string, where: Record<string, any>): Promise<Record | null> {
+  async findOne(
+    table: string,
+    where: Record<string, any>,
+  ): Promise<Record | null> {
     if (!this.connected) throw new Error("Not connected");
 
     const store = this.ensureTable(table);
@@ -126,7 +129,11 @@ class Database {
     return store.get(id) || null;
   }
 
-  async update(table: string, id: string, data: Partial<Record>): Promise<Record | null> {
+  async update(
+    table: string,
+    id: string,
+    data: Partial<Record>,
+  ): Promise<Record | null> {
     if (!this.connected) throw new Error("Not connected");
 
     const store = this.ensureTable(table);
@@ -197,9 +204,9 @@ describe("Database", () => {
     });
 
     it("should throw when operating on disconnected database", async () => {
-      await expect(db.insert("users", { id: "1", name: "Test" })).rejects.toThrow(
-        "Not connected"
-      );
+      await expect(
+        db.insert("users", { id: "1", name: "Test" }),
+      ).rejects.toThrow("Not connected");
     });
   });
 
@@ -300,8 +307,16 @@ describe("Database", () => {
   describe("Find One", () => {
     beforeEach(async () => {
       await db.connect();
-      await db.insert("users", { id: "1", name: "Alice", email: "alice@example.com" });
-      await db.insert("users", { id: "2", name: "Bob", email: "bob@example.com" });
+      await db.insert("users", {
+        id: "1",
+        name: "Alice",
+        email: "alice@example.com",
+      });
+      await db.insert("users", {
+        id: "2",
+        name: "Bob",
+        email: "bob@example.com",
+      });
     });
 
     afterEach(async () => {
@@ -500,7 +515,11 @@ describe("Database", () => {
     });
 
     it("should handle null values", async () => {
-      const record = await db.insert("users", { id: "1", name: "Alice", email: null });
+      const record = await db.insert("users", {
+        id: "1",
+        name: "Alice",
+        email: null,
+      });
       expect(record.email).toBeNull();
     });
 

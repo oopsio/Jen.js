@@ -151,7 +151,11 @@ export async function resolveLayoutStack(
 export function renderWithLayoutStack(
   layoutStack: ResolvedLayoutStack,
   pageComponent: any,
-  props: { data?: any; params?: Record<string, string>; query?: Record<string, string> },
+  props: {
+    data?: any;
+    params?: Record<string, string>;
+    query?: Record<string, string>;
+  },
 ) {
   // Start with the page component as the innermost content
   let content = h(pageComponent as any, props);
@@ -184,7 +188,11 @@ export function renderWithLayoutStack(
 export function collectLayoutHeads(
   layoutStack: ResolvedLayoutStack,
   pageHeadComponent: any | undefined,
-  props: { data?: any; params?: Record<string, string>; query?: Record<string, string> },
+  props: {
+    data?: any;
+    params?: Record<string, string>;
+    query?: Record<string, string>;
+  },
 ): any[] {
   const heads: any[] = [];
 

@@ -17,12 +17,18 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { validateQuery, validateBody, DEFAULT_MAX_BODY_SIZE } from "@src/server/api-routes.js";
+import {
+  validateQuery,
+  validateBody,
+  DEFAULT_MAX_BODY_SIZE,
+} from "@src/server/api-routes.js";
 
 describe("API Routes Validation", () => {
   describe("validateQuery", () => {
     it("should coerce string values to appropriate types", () => {
-      const url = new URL("http://localhost?count=10&active=true&disabled=false&name=john&empty=");
+      const url = new URL(
+        "http://localhost?count=10&active=true&disabled=false&name=john&empty=",
+      );
       const query = validateQuery(url);
 
       expect(query.count).toBe(10);
@@ -41,17 +47,21 @@ describe("API Routes Validation", () => {
     });
 
     it("should handle numeric-like strings as numbers", () => {
-      const url = new URL("http://localhost?int=42&float=3.14&negative=-5&hex=0xFF");
+      const url = new URL(
+        "http://localhost?int=42&float=3.14&negative=-5&hex=0xFF",
+      );
       const query = validateQuery(url);
 
       expect(query.int).toBe(42);
       expect(query.float).toBe(3.14);
       expect(query.negative).toBe(-5);
-      expect(query.hex).toBe(0xFF);
+      expect(query.hex).toBe(0xff);
     });
 
     it("should preserve string values that are not type-coercible", () => {
-      const url = new URL("http://localhost?slug=hello-world&email=user@example.com&text=hello123");
+      const url = new URL(
+        "http://localhost?slug=hello-world&email=user@example.com&text=hello123",
+      );
       const query = validateQuery(url);
 
       expect(query.slug).toBe("hello-world");
@@ -82,7 +92,9 @@ describe("API Routes Validation", () => {
       const body = { data: "test" };
       const size = 100; // 100 bytes
 
-      expect(() => validateBody(body, size, DEFAULT_MAX_BODY_SIZE)).not.toThrow();
+      expect(() =>
+        validateBody(body, size, DEFAULT_MAX_BODY_SIZE),
+      ).not.toThrow();
     });
 
     it("should accept body exactly at default max size", () => {
@@ -151,7 +163,15 @@ describe("API Routes Validation", () => {
   describe("Type safety", () => {
     it("should have HttpMethod literal union type exported", () => {
       // This is a compile-time check but we verify the values are available
-      const validMethods = ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"];
+      const validMethods = [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "HEAD",
+        "OPTIONS",
+      ];
       expect(validMethods).toHaveLength(7);
     });
 
@@ -183,7 +203,9 @@ describe("API Routes Validation", () => {
     });
 
     it("should handle special characters in query values", () => {
-      const url = new URL("http://localhost?text=hello%20world&special=%26%3D%3F");
+      const url = new URL(
+        "http://localhost?text=hello%20world&special=%26%3D%3F",
+      );
       const query = validateQuery(url);
 
       expect(query.text).toBe("hello world");

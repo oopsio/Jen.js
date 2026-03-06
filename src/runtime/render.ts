@@ -37,7 +37,13 @@ import { h } from "preact";
 import renderToString from "preact-render-to-string";
 import { pathToFileURL } from "node:url";
 import { join, dirname, basename } from "node:path";
-import { mkdirSync, existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  existsSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { createHash } from "node:crypto";
 import esbuild from "esbuild";
 import {
@@ -147,7 +153,10 @@ function getFileMtime(filePath: string): number {
  * @param filePath The absolute path to the original source file.
  * @returns Object with cache file path and metadata file path.
  */
-function getCachePath(filePath: string): { cachePath: string; metaPath: string } {
+function getCachePath(filePath: string): {
+  cachePath: string;
+  metaPath: string;
+} {
   const cacheDir = join(process.cwd(), "node_modules", ".jen", "cache");
   if (!existsSync(cacheDir)) {
     mkdirSync(cacheDir, { recursive: true });
@@ -249,7 +258,11 @@ export async function renderRouteToHtml(opts: {
 
   // Scan and build layout hierarchy for this route
   const layoutEntries = scanLayouts(config);
-  const applicableLayouts = buildLayoutHierarchy(layoutEntries, route.filePath, config.siteDir);
+  const applicableLayouts = buildLayoutHierarchy(
+    layoutEntries,
+    route.filePath,
+    config.siteDir,
+  );
   const layoutStack = await resolveLayoutStack(applicableLayouts);
 
   // Transpile route file if needed. TypeScript and JSX require compilation to JavaScript.
@@ -415,7 +428,11 @@ export async function renderRouteToHtml(opts: {
   headParts.push(...config.inject.head);
 
   // Collect heads from layout stack
-  const layoutHeads = collectLayoutHeads(layoutStack, mod.Head, { data, params, query });
+  const layoutHeads = collectLayoutHeads(layoutStack, mod.Head, {
+    data,
+    params,
+    query,
+  });
   for (const headNode of layoutHeads) {
     try {
       const headHtml = renderToString(headNode);
@@ -453,7 +470,7 @@ ${headParts.join("\n")}
     if (frameworkDataStr.length > MAX_DATA_SIZE) {
       throw new Error(
         `Framework data exceeds maximum size of ${MAX_DATA_SIZE} bytes. ` +
-        `Current size: ${frameworkDataStr.length} bytes. This may indicate a DoS attempt or excessive data in loader/middleware.`,
+          `Current size: ${frameworkDataStr.length} bytes. This may indicate a DoS attempt or excessive data in loader/middleware.`,
       );
     }
 

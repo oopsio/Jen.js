@@ -88,7 +88,9 @@ class FontLoader {
   }
 
   generateFontFace(font: LoadedFont): string {
-    const familyStr = font.family.includes(" ") ? `"${font.family}"` : font.family;
+    const familyStr = font.family.includes(" ")
+      ? `"${font.family}"`
+      : font.family;
     let css = "";
 
     for (const weight of font.weights) {
@@ -399,13 +401,8 @@ describe("Font Loader", () => {
     });
 
     it("should handle fonts with special display modes", () => {
-      const modes: Array<"auto" | "block" | "swap" | "fallback" | "optional"> = [
-        "auto",
-        "block",
-        "swap",
-        "fallback",
-        "optional",
-      ];
+      const modes: Array<"auto" | "block" | "swap" | "fallback" | "optional"> =
+        ["auto", "block", "swap", "fallback", "optional"];
       for (const mode of modes) {
         loader.addFont({
           family: `Font${mode}`,

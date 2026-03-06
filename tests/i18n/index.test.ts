@@ -57,7 +57,7 @@ class I18n {
     let current = obj;
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
-      if (!(key in current) || typeof current[key] !== 'object') {
+      if (!(key in current) || typeof current[key] !== "object") {
         current[key] = {};
       }
       current = current[key];
@@ -171,7 +171,9 @@ describe("Internationalization (i18n)", () => {
     });
 
     it("should throw on invalid locale", () => {
-      expect(() => i18n.setLocale("invalid")).toThrow('Locale "invalid" not found');
+      expect(() => i18n.setLocale("invalid")).toThrow(
+        'Locale "invalid" not found',
+      );
     });
 
     it("should return available locales", () => {
@@ -329,9 +331,9 @@ describe("Internationalization (i18n)", () => {
 
     it("should handle special characters in translations", () => {
       i18n.addTranslations("en", {
-        special: "Hello! @#$%^&*() <> \"quotes\"",
+        special: 'Hello! @#$%^&*() <> "quotes"',
       });
-      expect(i18n.t("special")).toBe("Hello! @#$%^&*() <> \"quotes\"");
+      expect(i18n.t("special")).toBe('Hello! @#$%^&*() <> "quotes"');
     });
 
     it("should handle very long translation keys", () => {

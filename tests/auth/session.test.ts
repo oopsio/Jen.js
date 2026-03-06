@@ -123,7 +123,7 @@ describe("Session Management", () => {
       const sessionId = store.create("user123");
       const session = store.get(sessionId);
       const after = Date.now();
-      
+
       expect(session?.expiresAt).toBeGreaterThanOrEqual(before + 3600000);
       expect(session?.expiresAt).toBeLessThanOrEqual(after + 3600000);
     });
@@ -145,7 +145,7 @@ describe("Session Management", () => {
     it("should return null for expired session", () => {
       const store2 = new SessionStore(100); // 100ms TTL
       const sessionId = store2.create("user123");
-      
+
       return new Promise((resolve) => {
         setTimeout(() => {
           const session = store2.get(sessionId);
@@ -160,7 +160,7 @@ describe("Session Management", () => {
       const sessionId = store.create("user123", { counter: 0 });
       const session1 = store.get(sessionId);
       const expiresAt = session1?.expiresAt;
-      
+
       const session2 = store.get(sessionId);
       expect(session2?.expiresAt).toBe(expiresAt);
     });
@@ -171,15 +171,18 @@ describe("Session Management", () => {
       const sessionId = store.create("user123", { role: "user" });
       const success = store.update(sessionId, { role: "admin" });
       expect(success).toBe(true);
-      
+
       const session = store.get(sessionId);
       expect(session?.data.role).toBe("admin");
     });
 
     it("should merge session data on update", () => {
-      const sessionId = store.create("user123", { role: "user", email: "old@example.com" });
+      const sessionId = store.create("user123", {
+        role: "user",
+        email: "old@example.com",
+      });
       store.update(sessionId, { role: "admin" });
-      
+
       const session = store.get(sessionId);
       expect(session?.data.role).toBe("admin");
       expect(session?.data.email).toBe("old@example.com");
@@ -194,14 +197,14 @@ describe("Session Management", () => {
       const sessionId = store.create("user123");
       const session1 = store.get(sessionId);
       const expires1 = session1?.expiresAt;
-      
+
       // Wait a bit to ensure time passes
       await new Promise((resolve) => setTimeout(resolve, 5));
-      
+
       store.update(sessionId, { marker: "updated" });
       const session2 = store.get(sessionId);
       const expires2 = session2?.expiresAt;
-      
+
       expect(expires2! > expires1!).toBe(true);
     });
   });
@@ -211,7 +214,7 @@ describe("Session Management", () => {
       const sessionId = store.create("user123");
       const success = store.delete(sessionId);
       expect(success).toBe(true);
-      
+
       const session = store.get(sessionId);
       expect(session).toBeNull();
     });
@@ -224,9 +227,9 @@ describe("Session Management", () => {
     it("should not affect other sessions on delete", () => {
       const id1 = store.create("user1");
       const id2 = store.create("user2");
-      
+
       store.delete(id1);
-      
+
       expect(store.get(id1)).toBeNull();
       expect(store.get(id2)).not.toBeNull();
     });
@@ -237,14 +240,14 @@ describe("Session Management", () => {
       const sessionId = store.create("user123");
       const session1 = store.get(sessionId);
       const expires1 = session1?.expiresAt;
-      
+
       // Wait a bit to ensure time passes
       await new Promise((resolve) => setTimeout(resolve, 5));
-      
+
       store.refresh(sessionId);
       const session2 = store.get(sessionId);
       const expires2 = session2?.expiresAt;
-      
+
       expect(expires2! > expires1!).toBe(true);
     });
 
@@ -256,10 +259,10 @@ describe("Session Management", () => {
     it("should not modify session data on refresh", () => {
       const data = { role: "admin", email: "user@example.com" };
       const sessionId = store.create("user123", data);
-      
+
       store.refresh(sessionId);
       const session = store.get(sessionId);
-      
+
       expect(session?.data).toEqual(data);
     });
   });

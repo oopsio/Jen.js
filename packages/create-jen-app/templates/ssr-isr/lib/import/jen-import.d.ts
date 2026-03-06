@@ -21,11 +21,14 @@
  * const Utils = await jenImport("./utils.ts", { cache: true });
  * const Fresh = await jenImport("./component.tsx", { forceRecompile: true });
  */
-export declare function jenImport(specifier: string, opts?: {
+export declare function jenImport(
+  specifier: string,
+  opts?: {
     baseDir?: string;
     cache?: boolean;
     forceRecompile?: boolean;
-}): Promise<any>;
+  },
+): Promise<any>;
 /**
  * Invalidate the import cache for a specific file.
  * Forces the next import to recompile the module from source.
@@ -49,5 +52,5 @@ export declare function clearImportCache(): void;
  * const Component = await jen.import('./Component.vue');
  */
 export declare const jen: {
-    import: typeof jenImport;
+  import: typeof jenImport;
 };

@@ -35,18 +35,21 @@ const apiCacheDir = join(process.cwd(), "node_modules", ".jen", "api-cache");
  * @throws If esbuild fails to transpile
  */
 async function transpileApiRoute(filePath) {
-    const outfile = join(apiCacheDir, basename(filePath).replace(/\.ts$/, `.${Date.now()}.mjs`));
-    await esbuild.build({
-        entryPoints: [filePath],
-        outfile,
-        format: "esm",
-        platform: "node",
-        target: "es2022",
-        bundle: true,
-        external: ["preact", "preact-render-to-string", "jenjs"],
-        write: true,
-    });
-    return outfile;
+  const outfile = join(
+    apiCacheDir,
+    basename(filePath).replace(/\.ts$/, `.${Date.now()}.mjs`),
+  );
+  await esbuild.build({
+    entryPoints: [filePath],
+    outfile,
+    format: "esm",
+    platform: "node",
+    target: "es2022",
+    bundle: true,
+    external: ["preact", "preact-render-to-string", "jenjs"],
+    write: true,
+  });
+  return outfile;
 }
 /**
  * Attempt to route and handle an API request.
@@ -80,130 +83,137 @@ async function transpileApiRoute(filePath) {
  * @returns true if handled, false if no API route found
  */
 export async function tryHandleApiRoute(opts) {
-    const { req, res, siteDir } = opts;
-    const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
-    const method = (req.method ?? "GET").toUpperCase();
-    // Only handle /api/* requests
-    if (!url.pathname.startsWith("/api/"))
-        return false;
-    // Extract path segments after /api/ prefix
-    const pathParts = url.pathname
-        .slice("/api/".length)
-        .split("/")
-        .filter(Boolean);
-    // /api/ with no segments is 404
-    if (pathParts.length === 0) {
-        res.statusCode = 404;
-        res.setHeader("content-type", "application/json; charset=utf-8");
-        res.end(JSON.stringify({ error: "API route not found" }));
-        return true;
-    }
-    // Resolve route file (exact match or dynamic)
-    let apiFile = null;
-    let routeParams = {};
-    // Try exact file match: /api/hello/world → api/hello/world.ts
-    const exactPath = join(process.cwd(), siteDir, "api", `${pathParts.join("/")}.ts`);
-    if (existsSync(exactPath)) {
-        apiFile = exactPath;
-    }
-    else {
-        // Try dynamic route match: /api/users/123 → api/users/[id].ts
-        const basePath = join(process.cwd(), siteDir, "api");
-        for (let i = pathParts.length; i >= 1; i--) {
-            const staticSegments = pathParts.slice(0, i);
-            const dynamicSegments = pathParts.slice(i);
-            // Simple approach: check api/[param].ts for /api/123
-            // TODO: Support nested dynamic routes like api/users/[id]/posts/[postId].ts
-            if (staticSegments.length === 0 && dynamicSegments.length === 1) {
-                const paramFile = join(basePath, `[${dynamicSegments[0]}].ts`);
-                if (existsSync(paramFile)) {
-                    apiFile = paramFile;
-                    routeParams[dynamicSegments[0]] = dynamicSegments[0];
-                    break;
-                }
-            }
+  const { req, res, siteDir } = opts;
+  const url = new URL(
+    req.url ?? "/",
+    `http://${req.headers.host ?? "localhost"}`,
+  );
+  const method = (req.method ?? "GET").toUpperCase();
+  // Only handle /api/* requests
+  if (!url.pathname.startsWith("/api/")) return false;
+  // Extract path segments after /api/ prefix
+  const pathParts = url.pathname
+    .slice("/api/".length)
+    .split("/")
+    .filter(Boolean);
+  // /api/ with no segments is 404
+  if (pathParts.length === 0) {
+    res.statusCode = 404;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ error: "API route not found" }));
+    return true;
+  }
+  // Resolve route file (exact match or dynamic)
+  let apiFile = null;
+  let routeParams = {};
+  // Try exact file match: /api/hello/world → api/hello/world.ts
+  const exactPath = join(
+    process.cwd(),
+    siteDir,
+    "api",
+    `${pathParts.join("/")}.ts`,
+  );
+  if (existsSync(exactPath)) {
+    apiFile = exactPath;
+  } else {
+    // Try dynamic route match: /api/users/123 → api/users/[id].ts
+    const basePath = join(process.cwd(), siteDir, "api");
+    for (let i = pathParts.length; i >= 1; i--) {
+      const staticSegments = pathParts.slice(0, i);
+      const dynamicSegments = pathParts.slice(i);
+      // Simple approach: check api/[param].ts for /api/123
+      // TODO: Support nested dynamic routes like api/users/[id]/posts/[postId].ts
+      if (staticSegments.length === 0 && dynamicSegments.length === 1) {
+        const paramFile = join(basePath, `[${dynamicSegments[0]}].ts`);
+        if (existsSync(paramFile)) {
+          apiFile = paramFile;
+          routeParams[dynamicSegments[0]] = dynamicSegments[0];
+          break;
         }
+      }
     }
-    if (!apiFile) {
-        res.statusCode = 404;
-        res.setHeader("content-type", "application/json; charset=utf-8");
-        res.end(JSON.stringify({ error: "API route not found" }));
-        return true;
+  }
+  if (!apiFile) {
+    res.statusCode = 404;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ error: "API route not found" }));
+    return true;
+  }
+  // Transpile TypeScript to JavaScript
+  let moduleUrl = apiFile;
+  if (apiFile.endsWith(".ts")) {
+    moduleUrl = await transpileApiRoute(apiFile);
+  }
+  // Load module and get method handlers
+  let mod;
+  try {
+    // Cache-busting query param ensures fresh module (important in dev mode)
+    mod = await import(pathToFileURL(moduleUrl).href + `?t=${Date.now()}`);
+  } catch (err) {
+    res.statusCode = 500;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(
+      JSON.stringify({
+        error: "Failed to load API route",
+        details: err.message,
+      }),
+    );
+    return true;
+  }
+  // Get handler for the HTTP method
+  const handler = mod[method];
+  if (!handler) {
+    res.statusCode = 405;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.setHeader("allow", Object.keys(mod).join(", "));
+    res.end(JSON.stringify({ error: `${method} not allowed` }));
+    return true;
+  }
+  // Parse request body
+  const body = await readRequestBody(req);
+  // Build handler context
+  const ctx = {
+    req,
+    res,
+    url,
+    method,
+    query: Object.fromEntries(url.searchParams.entries()),
+    body,
+    params: routeParams,
+  };
+  // Execute handler and serialize response
+  try {
+    const result = await handler(ctx);
+    // If handler manually wrote response, don't double-send
+    if (res.writableEnded) return true;
+    // Serialize Response object
+    if (result instanceof Response) {
+      res.statusCode = result.status;
+      result.headers.forEach((v, k) => res.setHeader(k, v));
+      const buf = Buffer.from(await result.arrayBuffer());
+      res.end(buf);
+      return true;
     }
-    // Transpile TypeScript to JavaScript
-    let moduleUrl = apiFile;
-    if (apiFile.endsWith(".ts")) {
-        moduleUrl = await transpileApiRoute(apiFile);
+    // Serialize string as plain text
+    if (typeof result === "string") {
+      res.statusCode = 200;
+      res.setHeader("content-type", "text/plain; charset=utf-8");
+      res.end(result);
+      return true;
     }
-    // Load module and get method handlers
-    let mod;
-    try {
-        // Cache-busting query param ensures fresh module (important in dev mode)
-        mod = await import(pathToFileURL(moduleUrl).href + `?t=${Date.now()}`);
-    }
-    catch (err) {
-        res.statusCode = 500;
-        res.setHeader("content-type", "application/json; charset=utf-8");
-        res.end(JSON.stringify({
-            error: "Failed to load API route",
-            details: err.message,
-        }));
-        return true;
-    }
-    // Get handler for the HTTP method
-    const handler = mod[method];
-    if (!handler) {
-        res.statusCode = 405;
-        res.setHeader("content-type", "application/json; charset=utf-8");
-        res.setHeader("allow", Object.keys(mod).join(", "));
-        res.end(JSON.stringify({ error: `${method} not allowed` }));
-        return true;
-    }
-    // Parse request body
-    const body = await readRequestBody(req);
-    // Build handler context
-    const ctx = {
-        req,
-        res,
-        url,
-        method,
-        query: Object.fromEntries(url.searchParams.entries()),
-        body,
-        params: routeParams,
-    };
-    // Execute handler and serialize response
-    try {
-        const result = await handler(ctx);
-        // If handler manually wrote response, don't double-send
-        if (res.writableEnded)
-            return true;
-        // Serialize Response object
-        if (result instanceof Response) {
-            res.statusCode = result.status;
-            result.headers.forEach((v, k) => res.setHeader(k, v));
-            const buf = Buffer.from(await result.arrayBuffer());
-            res.end(buf);
-            return true;
-        }
-        // Serialize string as plain text
-        if (typeof result === "string") {
-            res.statusCode = 200;
-            res.setHeader("content-type", "text/plain; charset=utf-8");
-            res.end(result);
-            return true;
-        }
-        // Serialize object as JSON (null is valid)
-        res.statusCode = 200;
-        res.setHeader("content-type", "application/json; charset=utf-8");
-        res.end(JSON.stringify(result ?? null));
-        return true;
-    }
-    catch (err) {
-        res.statusCode = 500;
-        res.setHeader("content-type", "application/json; charset=utf-8");
-        res.end(JSON.stringify({ error: "Internal server error", details: err.message }));
-        return true;
-    }
+    // Serialize object as JSON (null is valid)
+    res.statusCode = 200;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(JSON.stringify(result ?? null));
+    return true;
+  } catch (err) {
+    res.statusCode = 500;
+    res.setHeader("content-type", "application/json; charset=utf-8");
+    res.end(
+      JSON.stringify({ error: "Internal server error", details: err.message }),
+    );
+    return true;
+  }
 }
 /**
  * Parse request body based on Content-Type header.
@@ -219,29 +229,26 @@ export async function tryHandleApiRoute(opts) {
  * @returns Parsed body object or null
  */
 async function readRequestBody(req) {
-    const method = (req.method ?? "GET").toUpperCase();
-    // Methods without bodies per HTTP spec
-    if (method === "GET" || method === "HEAD")
-        return null;
-    // Read all body chunks
-    const chunks = [];
-    for await (const chunk of req) {
-        chunks.push(Buffer.from(chunk));
+  const method = (req.method ?? "GET").toUpperCase();
+  // Methods without bodies per HTTP spec
+  if (method === "GET" || method === "HEAD") return null;
+  // Read all body chunks
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.from(chunk));
+  }
+  if (chunks.length === 0) return null;
+  const raw = Buffer.concat(chunks).toString("utf8");
+  const ct = (req.headers["content-type"] ?? "").toString();
+  // Try to parse JSON
+  if (ct.includes("application/json")) {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      // Return raw body if JSON parsing fails
+      return { __raw: raw };
     }
-    if (chunks.length === 0)
-        return null;
-    const raw = Buffer.concat(chunks).toString("utf8");
-    const ct = (req.headers["content-type"] ?? "").toString();
-    // Try to parse JSON
-    if (ct.includes("application/json")) {
-        try {
-            return JSON.parse(raw);
-        }
-        catch {
-            // Return raw body if JSON parsing fails
-            return { __raw: raw };
-        }
-    }
-    // Return raw body for non-JSON content
-    return { __raw: raw };
+  }
+  // Return raw body for non-JSON content
+  return { __raw: raw };
 }

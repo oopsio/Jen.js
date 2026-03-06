@@ -164,7 +164,8 @@ async function main() {
 
   server.listen(config.server.port, config.server.hostname, () => {
     const addr = server.address();
-    const actualPort = typeof addr === 'object' && addr ? addr.port : config.server.port;
+    const actualPort =
+      typeof addr === "object" && addr ? addr.port : config.server.port;
     printBanner(actualPort, isDev ? "development" : "production");
   });
 

@@ -69,7 +69,9 @@ describe("Server Actions", () => {
 
       const actions = scanServerActions(config);
       const greetAction = actions.find((a) => a.actionPath === "/greet");
-      const publishAction = actions.find((a) => a.actionPath === "/blog/publish");
+      const publishAction = actions.find(
+        (a) => a.actionPath === "/blog/publish",
+      );
 
       expect(greetAction?.name).toBe("greet");
       expect(publishAction?.name).toBe("blog.publish");
@@ -172,13 +174,10 @@ describe("Server Actions", () => {
     });
 
     it("should support custom validators", () => {
-      const rule = custom(
-        (v) => {
-          if (v.length < 3) return "Min 3 chars";
-          return true;
-        },
-        "Invalid username"
-      );
+      const rule = custom((v) => {
+        if (v.length < 3) return "Min 3 chars";
+        return true;
+      }, "Invalid username");
 
       expect(rule.validate("ab")).toBeDefined();
       expect(rule.validate("abc")).toBeUndefined();
@@ -207,17 +206,14 @@ describe("Server Actions", () => {
       // Valid input
       const validResult = ctx.validate(
         { email: "user@example.com", name: "John" },
-        schema
+        schema,
       );
 
       expect(validResult.success).toBe(true);
       expect(validResult.errors).toEqual({});
 
       // Invalid input - missing email
-      const invalidResult = ctx.validate(
-        { email: "", name: "John" },
-        schema
-      );
+      const invalidResult = ctx.validate({ email: "", name: "John" }, schema);
 
       expect(invalidResult.success).toBe(false);
       expect(invalidResult.errors.email).toBeDefined();
@@ -225,7 +221,7 @@ describe("Server Actions", () => {
       // Invalid input - invalid email format
       const badEmailResult = ctx.validate(
         { email: "invalid", name: "John" },
-        schema
+        schema,
       );
 
       expect(badEmailResult.success).toBe(false);

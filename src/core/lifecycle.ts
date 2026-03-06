@@ -113,7 +113,9 @@ export class GracefulShutdown {
     }
 
     this.isShuttingDown = true;
-    log.warn(`[Graceful Shutdown] ${signal} received, starting graceful shutdown`);
+    log.warn(
+      `[Graceful Shutdown] ${signal} received, starting graceful shutdown`,
+    );
     log.info(
       `[Graceful Shutdown] ${this.activeRequests.size} active request(s)`,
     );
@@ -168,4 +170,3 @@ export class GracefulShutdown {
 }
 
 export default GracefulShutdown;
-

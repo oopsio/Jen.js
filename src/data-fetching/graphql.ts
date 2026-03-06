@@ -57,7 +57,9 @@ export class GraphQLClient {
     this.restFetcher = new RestFetcher({
       cache: opts.cache,
       interceptors: opts.interceptors,
-      baseUrl: opts.endpoint.includes("http") ? undefined : "https://api.example.com",
+      baseUrl: opts.endpoint.includes("http")
+        ? undefined
+        : "https://api.example.com",
       defaultHeaders: {
         "content-type": "application/json",
         ...opts.defaultHeaders,
@@ -81,14 +83,15 @@ export class GraphQLClient {
     request: GraphQLRequest | string,
     config?: Partial<DataFetchConfig>,
   ): Promise<FetchResult<T>> {
-    const gqlRequest = typeof request === "string" ? { query: request } : request;
+    const gqlRequest =
+      typeof request === "string" ? { query: request } : request;
 
     // Queries are safe to cache
     const cacheConfig: Partial<CacheConfig> = {
       strategy: "cache-first" as const,
       ttl: 300000, // 5 minutes default
     };
-    
+
     if (config?.cache && typeof config.cache === "object") {
       Object.assign(cacheConfig, config.cache);
     }
@@ -107,13 +110,14 @@ export class GraphQLClient {
     request: GraphQLRequest | string,
     config?: Partial<DataFetchConfig>,
   ): Promise<FetchResult<T>> {
-    const gqlRequest = typeof request === "string" ? { query: request } : request;
+    const gqlRequest =
+      typeof request === "string" ? { query: request } : request;
 
     // Mutations should not be cached
     const cacheConfig: Partial<CacheConfig> = {
       strategy: "no-cache" as const,
     };
-    
+
     if (config?.cache && typeof config.cache === "object") {
       Object.assign(cacheConfig, config.cache);
     }
@@ -142,13 +146,16 @@ export class GraphQLClient {
       let data: T;
 
       if (cacheStrategy !== "no-cache") {
-        const { data: cachedData, cached } = await executeCacheStrategy(cacheStrategy, {
-          key: cacheKey,
-          cache: this.cache,
-          fetchFn: () => this.performRequest(request),
-          ttl: cacheTtl,
-          tags: cacheTags,
-        });
+        const { data: cachedData, cached } = await executeCacheStrategy(
+          cacheStrategy,
+          {
+            key: cacheKey,
+            cache: this.cache,
+            fetchFn: () => this.performRequest(request),
+            ttl: cacheTtl,
+            tags: cacheTags,
+          },
+        );
         data = cachedData;
       } else {
         data = await this.performRequest(request);
@@ -328,7 +335,10 @@ export class GraphQLQueryBuilder {
   /**
    * Builds the final GraphQL request.
    */
-  build(operationType: "query" | "mutation" = "query", operationName?: string): GraphQLRequest {
+  build(
+    operationType: "query" | "mutation" = "query",
+    operationName?: string,
+  ): GraphQLRequest {
     const opName = operationName || "Operation";
     const vars = Object.entries(this.variables).map(
       ([name, value]) => `$${name}: ${typeof value}`,

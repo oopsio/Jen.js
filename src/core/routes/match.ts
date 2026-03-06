@@ -74,22 +74,38 @@ export function validateRouteParam(
 ): void {
   // Check for null bytes
   if (paramValue.includes("\0")) {
-    throw new InvalidRouteParamError(paramName, paramValue, "contains null bytes");
+    throw new InvalidRouteParamError(
+      paramName,
+      paramValue,
+      "contains null bytes",
+    );
   }
 
   // Check for leading forward slash (absolute path)
   if (paramValue.startsWith("/")) {
-    throw new InvalidRouteParamError(paramName, paramValue, "cannot start with /");
+    throw new InvalidRouteParamError(
+      paramName,
+      paramValue,
+      "cannot start with /",
+    );
   }
 
   // Check for directory traversal: ".." as a complete component or at any position
   if (paramValue.includes("..")) {
-    throw new InvalidRouteParamError(paramName, paramValue, "contains .. (directory traversal)");
+    throw new InvalidRouteParamError(
+      paramName,
+      paramValue,
+      "contains .. (directory traversal)",
+    );
   }
 
   // Check for backslash (Windows path separator) to prevent escaping
   if (paramValue.includes("\\")) {
-    throw new InvalidRouteParamError(paramName, paramValue, "contains backslash");
+    throw new InvalidRouteParamError(
+      paramName,
+      paramValue,
+      "contains backslash",
+    );
   }
 
   // For catch-all parameters, allow more flexible paths with /, but still reject dangerous patterns
@@ -149,7 +165,9 @@ export function matchRoute(
     const re = new RegExp(r.pattern);
     const m = pathname.match(re);
     if (!m) {
-      console.error(`[Route Match] Pattern "${r.pattern}" did not match "${pathname}"`);
+      console.error(
+        `[Route Match] Pattern "${r.pattern}" did not match "${pathname}"`,
+      );
       continue;
     }
 

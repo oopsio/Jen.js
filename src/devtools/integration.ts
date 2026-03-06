@@ -16,7 +16,7 @@ import { injectStyles } from "./ui.js";
  */
 export function withDevTools<P extends Record<string, any>>(
   Component: (props: P) => any,
-  devtools: DevTools
+  devtools: DevTools,
 ) {
   return function WrappedComponent(props: P) {
     const id = `${Component.name}-${Math.random().toString(36).substr(2, 9)}`;
@@ -34,7 +34,7 @@ export function withDevTools<P extends Record<string, any>>(
           Component.name || "Anonymous",
           el,
           props,
-          {}
+          {},
         );
       }
     }, 0);
@@ -52,7 +52,7 @@ export function withDevTools<P extends Record<string, any>>(
  */
 export function useDevToolsIntegration(
   componentName: string,
-  devtools: DevTools
+  devtools: DevTools,
 ) {
   const id = `${componentName}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -97,7 +97,7 @@ export function createMonitoredListener(
   devtools: DevTools,
   componentId: string,
   eventName: string,
-  handler: (event: Event) => void
+  handler: (event: Event) => void,
 ) {
   return (event: Event) => {
     devtools.logEvent(componentId, eventName, {
@@ -115,13 +115,16 @@ export function createMonitoredListener(
 export function monitorDOMChanges(
   devtools: DevTools,
   componentId: string,
-  element: HTMLElement
+  element: HTMLElement,
 ) {
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       devtools.logEvent(componentId, "dom-mutation", {
         type: mutation.type,
-        target: mutation.target instanceof HTMLElement ? mutation.target.tagName : "unknown",
+        target:
+          mutation.target instanceof HTMLElement
+            ? mutation.target.tagName
+            : "unknown",
         addedNodes: mutation.addedNodes.length,
         removedNodes: mutation.removedNodes.length,
       });
@@ -172,20 +175,16 @@ export function createLogger(devtools: DevTools, componentId: string) {
 export function measureComponentRender(
   devtools: DevTools,
   componentName: string,
-  renderFn: () => any
+  renderFn: () => any,
 ) {
   const start = performance.now();
   const result = renderFn();
   const duration = performance.now() - start;
 
-  devtools.logEvent(
-    componentName,
-    "render",
-    {
-      duration,
-      timestamp: Date.now(),
-    }
-  );
+  devtools.logEvent(componentName, "render", {
+    duration,
+    timestamp: Date.now(),
+  });
 
   return result;
 }

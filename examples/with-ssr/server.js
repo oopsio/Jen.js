@@ -181,9 +181,10 @@ async function main() {
   });
 
   // Find an available port if config specifies port 0
-  let portToUse = config.server.port === 0 
-    ? await findAvailablePort(config.server.hostname)
-    : config.server.port;
+  let portToUse =
+    config.server.port === 0
+      ? await findAvailablePort(config.server.hostname)
+      : config.server.port;
 
   let retries = 0;
   const maxRetries = 5;
@@ -194,17 +195,21 @@ async function main() {
     });
   }
 
-  server.on('error', async (err) => {
-    if (err.code === 'EADDRINUSE') {
+  server.on("error", async (err) => {
+    if (err.code === "EADDRINUSE") {
       retries++;
       if (retries < maxRetries) {
-        log.warn(`[Server] Port ${portToUse} in use, retrying... (${retries}/${maxRetries})`);
-        server.removeAllListeners('error');
-        await new Promise(r => setTimeout(r, 200 * retries)); // Exponential backoff
+        log.warn(
+          `[Server] Port ${portToUse} in use, retrying... (${retries}/${maxRetries})`,
+        );
+        server.removeAllListeners("error");
+        await new Promise((r) => setTimeout(r, 200 * retries)); // Exponential backoff
         portToUse = await findAvailablePort(config.server.hostname);
         tryListen();
       } else {
-        log.error(`[Server] Failed to bind after ${maxRetries} retries. Try setting PORT environment variable.`);
+        log.error(
+          `[Server] Failed to bind after ${maxRetries} retries. Try setting PORT environment variable.`,
+        );
         process.exit(1);
       }
     } else {

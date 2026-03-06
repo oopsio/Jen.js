@@ -1,6 +1,6 @@
 /**
  * Home Page - Example script optimization
- * 
+ *
  * Features demonstrated:
  * - Tree-shaking: Only enabled features included
  * - Code splitting: Route-specific code in separate chunk
@@ -29,10 +29,14 @@ export default function HomePage() {
     }
   };
 
-  return h("div", { class: "container" },
+  return h(
+    "div",
+    { class: "container" },
     h("h1", null, "Script Optimization Example"),
     h("p", null, "This example demonstrates:"),
-    h("ul", null,
+    h(
+      "ul",
+      null,
       h("li", null, "Tree-shaking: Disabled features removed from bundle"),
       h("li", null, "Code splitting: Route chunks + vendor chunk"),
       h("li", null, "Lazy-loading: Dashboard loads on demand"),
@@ -40,7 +44,9 @@ export default function HomePage() {
       h("li", null, "Cache-busting: Long-term caching with content hashes"),
     ),
     h("h2", null, "Performance Metrics"),
-    h("dl", null,
+    h(
+      "dl",
+      null,
       h("dt", null, "Initial Bundle Size"),
       h("dd", null, "~15 KB (gzipped)"),
       h("dt", null, "Lazy Dashboard"),
@@ -48,16 +54,18 @@ export default function HomePage() {
     ),
     h("h2", null, "Lazy-Loaded Content"),
     !showDashboard
-      ? h("button", { onClick: handleLoadDashboard, class: "btn btn-primary" },
-          "Load Dashboard (lazy)")
-      : h("div", { class: "dashboard-container" },
+      ? h(
+          "button",
+          { onClick: handleLoadDashboard, class: "btn btn-primary" },
+          "Load Dashboard (lazy)",
+        )
+      : h(
+          "div",
+          { class: "dashboard-container" },
           h("p", null, "Dashboard loaded!"),
           h("pre", null, "Check the Network tab to see lazy chunks loaded."),
         ),
-    error && h("div", { class: "error" },
-      h("strong", null, "Error: "),
-      error,
-    ),
+    error && h("div", { class: "error" }, h("strong", null, "Error: "), error),
   );
 }
 

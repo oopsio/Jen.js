@@ -4,20 +4,20 @@ import type { IncomingMessage, ServerResponse } from "node:http";
  * Contains request data and response objects passed to all API handler functions.
  */
 export interface ApiRouteContext {
-    /** Node.js IncomingMessage with raw request properties. */
-    req: IncomingMessage;
-    /** Node.js ServerResponse for writing response. */
-    res: ServerResponse;
-    /** Request URL object with pathname, search, query parameters. */
-    url: URL;
-    /** HTTP method in uppercase (GET, POST, PUT, DELETE, PATCH, etc.). */
-    method: string;
-    /** Query string parameters parsed from URL (?key=value). */
-    query: Record<string, string>;
-    /** Parsed request body (JSON if Content-Type is application/json, else raw string). */
-    body: any;
-    /** Route path parameters extracted from dynamic segments (e.g., [id], [slug]). */
-    params: Record<string, string>;
+  /** Node.js IncomingMessage with raw request properties. */
+  req: IncomingMessage;
+  /** Node.js ServerResponse for writing response. */
+  res: ServerResponse;
+  /** Request URL object with pathname, search, query parameters. */
+  url: URL;
+  /** HTTP method in uppercase (GET, POST, PUT, DELETE, PATCH, etc.). */
+  method: string;
+  /** Query string parameters parsed from URL (?key=value). */
+  query: Record<string, string>;
+  /** Parsed request body (JSON if Content-Type is application/json, else raw string). */
+  body: any;
+  /** Route path parameters extracted from dynamic segments (e.g., [id], [slug]). */
+  params: Record<string, string>;
 }
 /**
  * API handler function executed for a specific HTTP method.
@@ -35,7 +35,14 @@ export interface ApiRouteContext {
  * @param ctx - Execution context with request and response objects
  * @returns Result value or promise resolving to result
  */
-export type ApiHandler = (ctx: ApiRouteContext) => Promise<Response | string | Record<string, any> | null> | Response | string | Record<string, any> | null;
+export type ApiHandler = (
+  ctx: ApiRouteContext,
+) =>
+  | Promise<Response | string | Record<string, any> | null>
+  | Response
+  | string
+  | Record<string, any>
+  | null;
 /**
  * API route module interface.
  * Exported from api/*.ts files as named exports for each HTTP method.
@@ -59,13 +66,13 @@ export type ApiHandler = (ctx: ApiRouteContext) => Promise<Response | string | R
  * - OPTIONS: Describe available methods
  */
 export interface ApiRouteModule {
-    GET?: ApiHandler;
-    POST?: ApiHandler;
-    PUT?: ApiHandler;
-    DELETE?: ApiHandler;
-    PATCH?: ApiHandler;
-    HEAD?: ApiHandler;
-    OPTIONS?: ApiHandler;
+  GET?: ApiHandler;
+  POST?: ApiHandler;
+  PUT?: ApiHandler;
+  DELETE?: ApiHandler;
+  PATCH?: ApiHandler;
+  HEAD?: ApiHandler;
+  OPTIONS?: ApiHandler;
 }
 /**
  * Attempt to route and handle an API request.
@@ -99,7 +106,7 @@ export interface ApiRouteModule {
  * @returns true if handled, false if no API route found
  */
 export declare function tryHandleApiRoute(opts: {
-    req: IncomingMessage;
-    res: ServerResponse;
-    siteDir: string;
+  req: IncomingMessage;
+  res: ServerResponse;
+  siteDir: string;
 }): Promise<boolean>;

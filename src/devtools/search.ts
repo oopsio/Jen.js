@@ -78,16 +78,16 @@ export class SearchManager {
 
   searchByName(name: string): ComponentNode[] {
     const lowerName = name.toLowerCase();
-    return this.tree.getAllComponents().filter((c) =>
-      c.name.toLowerCase().includes(lowerName)
-    );
+    return this.tree
+      .getAllComponents()
+      .filter((c) => c.name.toLowerCase().includes(lowerName));
   }
 
   searchByType(type: string): ComponentNode[] {
     const lowerType = type.toLowerCase();
-    return this.tree.getAllComponents().filter((c) =>
-      c.type.toLowerCase().includes(lowerType)
-    );
+    return this.tree
+      .getAllComponents()
+      .filter((c) => c.type.toLowerCase().includes(lowerType));
   }
 
   searchByProp(propName: string, propValue?: any): ComponentNode[] {

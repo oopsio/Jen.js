@@ -21,7 +21,7 @@ import path from "path";
 
 export default defineConfig({
   test: {
-    reporters: ['html'],
+    reporters: ["html"],
     environment: "node",
     globals: true,
     include: ["tests/**/*.test.ts", "tests/**/*.spec.ts"],

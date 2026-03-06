@@ -71,7 +71,7 @@ describe("ScriptOptimizer", () => {
     const tags = optimizer.generateScriptTags(chunks, { preload: true });
 
     expect(tags).toHaveLength(2); // 1 preload + 1 script
-    expect(tags[0]).toContain("rel=\"preload\"");
+    expect(tags[0]).toContain('rel="preload"');
     expect(tags[1]).toContain("<script");
   });
 
@@ -93,9 +93,7 @@ describe("CodeSplitter", () => {
       "vendor",
     );
     expect(splitter.determineChunk("src/runtime/hydrate.js")).toBe("runtime");
-    expect(splitter.determineChunk("src/components/button.tsx")).toBe(
-      "common",
-    );
+    expect(splitter.determineChunk("src/components/button.tsx")).toBe("common");
   });
 
   it("should generate manual chunks", () => {
@@ -194,7 +192,7 @@ describe("LazyLoader", () => {
     });
 
     const tags = loader.generateLazyScriptTags();
-    expect(tags).toContain("rel=\"prefetch\"");
+    expect(tags).toContain('rel="prefetch"');
     expect(tags).toContain("dashboard.js");
   });
 

@@ -33,7 +33,7 @@ import { join } from "node:path";
  * // Returns: /absolute/path/to/project/src/pages/index.tsx
  */
 export function resolveSitePath(config, ...p) {
-    return join(process.cwd(), config.siteDir, ...p);
+  return join(process.cwd(), config.siteDir, ...p);
 }
 /**
  * Resolve an absolute path relative to the configured distribution/build output directory.
@@ -52,5 +52,5 @@ export function resolveSitePath(config, ...p) {
  * // Returns: /absolute/path/to/project/dist/styles.css
  */
 export function resolveDistPath(config, ...p) {
-    return join(process.cwd(), config.distDir, ...p);
+  return join(process.cwd(), config.distDir, ...p);
 }

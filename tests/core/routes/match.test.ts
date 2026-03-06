@@ -37,7 +37,9 @@ describe("validateRouteParam", () => {
     });
 
     it("allows dots", () => {
-      expect(() => validateRouteParam("file", "document.pdf", false)).not.toThrow();
+      expect(() =>
+        validateRouteParam("file", "document.pdf", false),
+      ).not.toThrow();
     });
   });
 
@@ -129,14 +131,18 @@ describe("validateRouteParam", () => {
 
   describe("catch-all parameters", () => {
     it("allows slashes in catch-all params", () => {
-      expect(() => validateRouteParam("rest", "api/v1/docs", true)).not.toThrow();
-      expect(() => validateRouteParam("rest", "path/to/file", true)).not.toThrow();
+      expect(() =>
+        validateRouteParam("rest", "api/v1/docs", true),
+      ).not.toThrow();
+      expect(() =>
+        validateRouteParam("rest", "path/to/file", true),
+      ).not.toThrow();
     });
 
     it("still rejects .. in catch-all", () => {
-      expect(() => validateRouteParam("rest", "../../etc/passwd", true)).toThrow(
-        InvalidRouteParamError,
-      );
+      expect(() =>
+        validateRouteParam("rest", "../../etc/passwd", true),
+      ).toThrow(InvalidRouteParamError);
       expect(() => validateRouteParam("rest", "api/../admin", true)).toThrow(
         InvalidRouteParamError,
       );
@@ -157,7 +163,11 @@ describe("validateRouteParam", () => {
 });
 
 describe("matchRoute", () => {
-  const mockRoute = (pattern: string, urlPath: string, paramNames: string[]): RouteEntry => ({
+  const mockRoute = (
+    pattern: string,
+    urlPath: string,
+    paramNames: string[],
+  ): RouteEntry => ({
     filePath: "/src/pages/test.tsx",
     urlPath,
     pattern,
@@ -210,7 +220,9 @@ describe("matchRoute", () => {
         mockRoute("^/files/([^/]+)$", "/files/:name", ["name"]),
       ];
       // Direct match with .. in the param - regex only allows non-/ chars, so only .. will match
-      expect(() => matchRoute(routes, "/files/..")).toThrow(InvalidRouteParamError);
+      expect(() => matchRoute(routes, "/files/..")).toThrow(
+        InvalidRouteParamError,
+      );
     });
 
     it("rejects absolute paths", () => {

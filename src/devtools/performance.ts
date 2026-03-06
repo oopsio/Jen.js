@@ -82,7 +82,7 @@ export class PerformanceMonitor {
   getAverageRenderTime(): number {
     if (this.renderTimes.length === 0) return 0;
     return Math.round(
-      this.renderTimes.reduce((a, b) => a + b, 0) / this.renderTimes.length
+      this.renderTimes.reduce((a, b) => a + b, 0) / this.renderTimes.length,
     );
   }
 
