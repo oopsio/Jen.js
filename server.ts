@@ -30,10 +30,21 @@ import { GracefulShutdown } from "@src/core/lifecycle.js";
 import { createTelemetry } from "@src/telemetry/client.js";
 
 // Initialize telemetry (disabled by default in local dev)
+const telemetryDisabled =
+  process.env.CI !== "true" && process.env.TELEMETRY_ENABLED !== "1";
+
 const telemetry = createTelemetry("0.1.0", {
-  endpoint: "https://jenjs-telemetry.vercel.app/telemetry",
-  disabled: process.env.CI !== "true" && process.env.TELEMETRY_ENABLED !== "1",
+  endpoint: "https://telemetry-six.vercel.app/telemetry",
+  disabled: telemetryDisabled,
 });
+
+// Print telemetry message if enabled
+if (!telemetryDisabled) {
+  console.log(
+    "\nJen.js collects anonymous telemetry data to improve the framework.\n" +
+      "to opt-out: TELEMETRY_ENABLED=1 npm run dev\n"
+  );
+}
 
 /**
  * Global configuration object loaded from jen.config.js.
