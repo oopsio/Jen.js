@@ -19,7 +19,32 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { existsSync, readFileSync, watch, FSWatcher } from "node:fs";
 import { join, extname } from "node:path";
-
+import { createScssCompiler } from "../css/compiler.js";
+import type { FrameworkConfig } from "../core/config.js";
+import { scanRoutes } from "../core/routes/scan.js";
+import { matchRoute } from "../core/routes/match.js";
+import { createAdvancedRouter } from "../core/routes/orchestrator.js";
+import { log } from "../shared/log.js";
+import { Kernel } from "../middleware/kernel.js";
+import { renderRouteToHtml } from "../runtime/render.js";
+import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
+import { headersToObject, parseCookies } from "../core/http.js";
+import { tryHandleApiRoute } from "./api-routes.js";
+import { resolve } from "node:path";
+import {
+  buildHydrationModule,
+  runtimeHydrateModule,
+  invalidateCache,
+} from "./runtimeServe.js";
+import {
+  invalidateVueCache,
+  invalidateSvelteCache,
+} from "../compilers/esbuild-plugins.js";
+import { fontServeMiddleware } from "../fonts/inject.js";
+import { createServerActionsMiddleware } from "../server-actions/middleware.js";
+import { isFeatureEnabled } from "../core/features.js";
+import { runQuery } from "../graphql/index.js";
+import { I18n } from "../i18n/index.js";
 import sirv from "sirv";
 
 /**
@@ -84,32 +109,7 @@ class AppLifecycle {
   }
 }
 
-import { createScssCompiler } from "../css/compiler.js";
-import type { FrameworkConfig } from "../core/config.js";
-import { scanRoutes } from "../core/routes/scan.js";
-import { matchRoute } from "../core/routes/match.js";
-import { createAdvancedRouter } from "../core/routes/orchestrator.js";
-import { log } from "../shared/log.js";
-import { Kernel } from "../middleware/kernel.js";
-import { renderRouteToHtml } from "../runtime/render.js";
-import { HMR_CLIENT_SCRIPT } from "../runtime/hmr.js";
-import { headersToObject, parseCookies } from "../core/http.js";
-import { tryHandleApiRoute } from "./api-routes.js";
-import { resolve } from "node:path";
-import {
-  buildHydrationModule,
-  runtimeHydrateModule,
-  invalidateCache,
-} from "./runtimeServe.js";
-import {
-  invalidateVueCache,
-  invalidateSvelteCache,
-} from "../compilers/esbuild-plugins.js";
-import { fontServeMiddleware } from "../fonts/inject.js";
-import { createServerActionsMiddleware } from "../server-actions/middleware.js";
-import { isFeatureEnabled } from "../core/features.js";
-import { runQuery } from "../graphql/index.js";
-import { I18n } from "../i18n/index.js";
+
 
 /**
  * Local middleware type for composing request handlers in the app middleware chain.
