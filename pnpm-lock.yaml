@@ -28,7 +28,7 @@ importers:
         version: 7.1.0(socks@2.8.7)
       mysql2:
         specifier: ^3.17.1
-        version: 3.19.0(@types/node@25.2.3)
+        version: 3.18.2(@types/node@25.2.3)
       pg:
         specifier: ^8.18.0
         version: 8.20.0
@@ -53,6 +53,9 @@ importers:
       svelte:
         specifier: ^5.51.1
         version: 5.53.7
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
       vite:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
@@ -6000,8 +6003,8 @@ packages:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  mysql2@3.19.0:
-    resolution: {integrity: sha512-760Ay9HViAUT7V8QkYxrIx/LHJPGWtE+D/31VuiDm1eu2IFaUIqMcK7+hVHnmgnC7JnnwreFKsZoa8K6BnGl8Q==}
+  mysql2@3.18.2:
+    resolution: {integrity: sha512-UfEShBFAZZEAKjySnTUuE7BgqkYT4mx+RjoJ5aqtmwSSvNcJ/QxQPXz/y3jSxNiVRedPfgccmuBtiPCSiEEytw==}
     engines: {node: '>= 8.0'}
     peerDependencies:
       '@types/node': '>= 8'

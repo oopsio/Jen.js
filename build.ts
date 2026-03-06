@@ -32,5 +32,46 @@
 
 import config from "./jen.config.ts";
 import { buildSite } from "./dist/src/build/build.js";
+import { createTelemetry } from "./dist/src/telemetry/client.js";
 
-await buildSite({ config });
+// Initialize telemetry
+const telemetry = createTelemetry("0.1.0", {
+  endpoint: "https://jenjs-telemetry.vercel.app/telemetry",
+  disabled: process.env.CI !== "true" && process.env.TELEMETRY_ENABLED !== "1",
+});
+
+// Track build-only command
+const buildStartTime = Date.now();
+telemetry.track({
+  command: "build:ssg",
+  os: process.platform,
+});
+
+try {
+  await buildSite({ config });
+
+  // Track successful build
+  const duration = Date.now() - buildStartTime;
+  telemetry.track({
+    command: "build:ssg",
+    success: true,
+    duration: Math.round(duration / 1000),
+    os: process.platform,
+  });
+
+  await telemetry.flush();
+} catch (err: any) {
+  // Track build failure
+  const duration = Date.now() - buildStartTime;
+  telemetry.track({
+    command: "build:ssg",
+    success: false,
+    duration: Math.round(duration / 1000),
+    error: err.message,
+    os: process.platform,
+  });
+
+  await telemetry.flush();
+
+  throw err;
+}
