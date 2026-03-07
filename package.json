@@ -21,7 +21,8 @@
     "dev:windows": "powershell -ExecutionPolicy Bypass -File scripts/dev.ps1",
     "build:unix": "bash scripts/build.sh",
     "build:windows": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:coverage": "npx vitest run --coverage"
   },
   "dependencies": {
     "@types/glob": "^9.0.0",
