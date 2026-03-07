@@ -31,8 +31,8 @@
 // @ts-ignore
 
 import config from "./jen.config.ts";
-import { buildSite } from "./dist/src/build/build.js";
-import { createTelemetry } from "./dist/src/telemetry/client.js";
+import { buildSite } from "./src/build/build.js";
+import { createTelemetry } from "./src/telemetry/client.js";
 
 // Initialize telemetry
 const telemetry = createTelemetry("0.1.0", {
