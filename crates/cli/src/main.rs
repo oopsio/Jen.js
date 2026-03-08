@@ -1,5 +1,5 @@
-use std::process::{Command, ExitStatus};
 use std::env;
+use std::process::{Command, ExitStatus};
 use std::sync::{Arc, Mutex};
 
 /// Abstract Command Trait (Strategy Pattern)
@@ -16,13 +16,19 @@ struct StartCommand;
 struct BuildCommand;
 
 impl CommandStrategy for DevCommand {
-    fn node_args(&self) -> Vec<&'static str> { vec!["server.js", "dev"] }
+    fn node_args(&self) -> Vec<&'static str> {
+        vec!["server.js", "dev"]
+    }
 }
 impl CommandStrategy for StartCommand {
-    fn node_args(&self) -> Vec<&'static str> { vec!["server.js"] }
+    fn node_args(&self) -> Vec<&'static str> {
+        vec!["server.js"]
+    }
 }
 impl CommandStrategy for BuildCommand {
-    fn node_args(&self) -> Vec<&'static str> { vec!["build.js"] }
+    fn node_args(&self) -> Vec<&'static str> {
+        vec!["build.js"]
+    }
 }
 
 /// Command Factory (Abstract Factory Pattern)
@@ -50,7 +56,10 @@ impl LoggingDecorator {
     }
 
     fn execute(&self) -> Result<ExitStatus, String> {
-        println!("Executing Node.js command with args: {:?}", self.command.node_args());
+        println!(
+            "Executing Node.js command with args: {:?}",
+            self.command.node_args()
+        );
         run_node(self.command.as_ref())
     }
 }
@@ -64,7 +73,8 @@ fn run_node(cmd: &dyn CommandStrategy) -> Result<ExitStatus, String> {
         .spawn()
         .map_err(|e| format!("Failed to start Node.js process: {}", e))?;
 
-    let status = child.wait()
+    let status = child
+        .wait()
         .map_err(|e| format!("Node.js process failed: {}", e))?;
 
     if !status.success() {

@@ -3,3 +3,5 @@ jenpack/** linguist-language=TypeScript
 *.js linguist-language=TypeScript
 **/vendor/** linguist-vendored
 apps/test-coverage/** linguist-generated
+apps/website linguist-generated
+apps/cli-rustdoc linguist-generated
