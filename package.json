@@ -22,7 +22,8 @@
     "build:unix": "bash scripts/build.sh",
     "build:windows": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1",
     "prepare": "husky",
-    "test:coverage": "npx vitest run --coverage"
+    "test:coverage": "npx vitest run --coverage",
+    "commit": "cross-env NODE_ENV=production node scripts/commit.js"
   },
   "dependencies": {
     "@types/glob": "^9.0.0",
