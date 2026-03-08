@@ -17,7 +17,7 @@
  */
 
 import { compile, compileString } from "sass";
-import { globSync } from "glob";
+import { globSync } from "../vendor/glob/glob.js";
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, extname, relative } from "node:path";
 import { log } from "../shared/log.js";
