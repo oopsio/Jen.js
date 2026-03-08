@@ -1,0 +1,86 @@
+[build]
+target-dir = "crates/cli/target"
+jobs = 4
+pipelined-compilation = true
+
+[net]
+# Connection settings
+git-fetch-with-cli = true
+offline = false
+retry = 3
+
+[term]
+# Output/display settings
+color = 'auto'
+progress.when = 'auto'
+progress.width = 100
+verbose = false
+
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+panic = 'unwind'
+incremental = true
+
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = "thin"
+panic = "abort"
+codegen-units = 256
+split-debuginfo = "packed"
+
+[profile.release-with-debug]
+inherits = "release"
+debug = true
+split-debuginfo = "packed"
+
+[profile.test]
+opt-level = 1
+debug = true
+debug-assertions = true
+overflow-checks = true
+lto = false
+panic = 'unwind'
+incremental = true
+
+[profile.bench]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = true
+codegen-units = 1
+incremental = false
+
+[alias]
+# Command aliases for convenience
+b = "build"
+br = "build --release"
+t = "test"
+tr = "test --release"
+c = "check"
+f = "fmt"
+l = "lint"
+cl = "clippy --all-targets --all-features"
+clr = "clippy --all-targets --all-features --release"
+doc = "doc --no-deps --open"
+
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[target.x86_64-apple-darwin]
+linker = "clang"
+
+[host]
+# Settings for the host platform
+debug = false
