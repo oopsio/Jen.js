@@ -1,0 +1,1 @@
+This file contains an example of the bundle-analyser's output. This bundle only contains 0 content.

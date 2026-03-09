@@ -33,10 +33,6 @@ const __dirname = dirname(__filename);
 /**
  * Recursively copies a directory and all its contents.
  * Used to copy static assets from the source directory to the build output.
- * Creates the destination directory structure as needed.
- *
- * @param src The source directory path.
- * @param dst The destination directory path.
  */
 function copyDir(src: string, dst: string) {
   if (!existsSync(src)) return;
@@ -53,30 +49,37 @@ function copyDir(src: string, dst: string) {
 }
 
 /**
+ * FIXED: Mock Response/Request to prevent crashes during SSG
+ * when components or middleware call res.setHeader()
+ */
+function createSsgMocks() {
+  return {
+    req: {
+      headers: {},
+      method: "GET",
+      url: "/",
+      cookies: {},
+    } as any,
+    res: {
+      setHeader: () => {},
+      getHeader: () => {},
+      getHeaders: () => ({}),
+      removeHeader: () => {},
+      writeHead: () => ({}),
+      end: () => {},
+      statusCode: 200,
+    } as any,
+  };
+}
+
+/**
  * Builds a static site by pre-rendering all routes to HTML files.
- * This is the core static site generation (SSG) function that runs at build time.
- * It performs the following steps:
- * 1. Clears the previous build output directory
- * 2. Discovers all route files in the configured site directory
- * 3. Renders each route to a static HTML file
- * 4. Copies static assets from the source directory
- * 5. Bundles Vue and Svelte components for client-side rehydration
- * 6. Compiles SCSS to CSS for the global stylesheet
- *
- * Routes are rendered with empty req/res objects (SSG mode) to avoid middleware execution.
- * This produces pure static HTML that can be served by any web server.
- * Hydration scripts are still injected if the route has hydrate:true, allowing for
- * optional client-side interactivity in otherwise static pages.
- *
- * @param opts Configuration object.
- * @param opts.config The Jen.js framework configuration.
- * @throws Logs warnings for missing assets or component bundling failures but does not stop the build.
  */
 export async function buildSite(opts: { config: FrameworkConfig }) {
   const { config } = opts;
+  const { req, res } = createSsgMocks();
 
   // Inject fonts configuration into config.inject.head
-  // This automatically adds Google Fonts links and local @font-face CSS
   injectFonts(config);
 
   // Clear and recreate the dist directory for a clean build.
@@ -89,15 +92,15 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   log.info(`Building SSG: ${routes.length} routes`);
 
   for (const r of routes) {
-    // Create a synthetic URL for each route. Used as the request URL during rendering.
+    // Create a synthetic URL for each route.
     const url = new URL("http://localhost" + r.urlPath);
 
-    // Render the route to HTML. Empty req/res indicates SSG mode (no middleware execution).
+    // Render the route to HTML.
     let html = await renderRouteToHtml({
       config,
       route: r,
-      req: {} as any,
-      res: {} as any,
+      req, // Using fixed mocks
+      res, // Using fixed mocks
       url,
       params: {},
       query: {},
@@ -105,32 +108,32 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       cookies: {},
     });
 
-    // Inject polyfills and Preact runtime script tags before closing body
-    // This ensures backwards compatibility for IE11+ and provides client interactivity
+    // Inject polyfills and Preact runtime script tags
     const polyfillsScript = `<script src="/polyfills.js"></script>`;
     const preactScript = `<script type="module" src="/preact-runtime.js"></script>`;
     const injectedScripts = `${polyfillsScript}${preactScript}`;
     
-    // Insert before closing body tag if it exists, otherwise append to HTML
-    if (html.includes("</body>")) {
-      html = html.replace("</body>", `${injectedScripts}</body>`);
+    // FIXED: Case-insensitive injection for </body>
+    const bodyRegex = /<\/body>/i;
+    if (bodyRegex.test(html)) {
+      html = html.replace(bodyRegex, (match) => `${injectedScripts}${match}`);
     } else {
       html = html + injectedScripts;
     }
 
-    // Calculate output path. Root route goes to index.html, nested routes get their own directories.
+    // Calculate output path. 
     const outPath =
       r.urlPath === "/"
         ? join(dist, "index.html")
-        : join(dist, r.urlPath.slice(1), "index.html");
+        : join(dist, r.urlPath.replace(/\/$/, ""), "index.html");
 
-    mkdirSync(join(outPath, ".."), { recursive: true });
+    mkdirSync(dirname(outPath), { recursive: true });
     writeFileSync(outPath, html, "utf8");
 
     log.info(`SSG: ${r.urlPath} -> ${outPath}`);
   }
 
-  // Copy static assets from the source assets directory to the built site.
+  // Copy static assets
   const assetsSrc = join(process.cwd(), config.siteDir, "assets");
   const assetsDst = join(dist, "assets");
   copyDir(assetsSrc, assetsDst);
@@ -141,18 +144,21 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     const hashes = await AssetHasher.hashDirectory(assetsDst);
     log.info(`Hashed ${Object.keys(hashes).length} assets.`);
 
-    if (config.build?.generateManifest) {
-      writeFileSync(join(dist, "asset-manifest.json"), JSON.stringify(hashes, null, 2));
-      log.info("Generated asset-manifest.json");
-    }
+    const manifest: Record<string, string> = {};
 
-    // Rename assets with their hashes
+    // Rename assets with their hashes and build manifest for HTML updating
     for (const [relPath, hash] of Object.entries(hashes)) {
       const fullPath = join(assetsDst, relPath);
       const ext = extname(fullPath);
       const dir = dirname(fullPath);
       const name = basename(fullPath, ext);
-      const newPath = join(dir, `${name}.${hash}${ext}`);
+      const newFileName = `${name}.${hash}${ext}`;
+      const newPath = join(dir, newFileName);
+      
+      // Store the mapping for HTML link replacement (normalized for web)
+      const oldPublicPath = `/assets/${relPath}`.replace(/\\/g, '/');
+      const newPublicPath = `/assets/${join(dirname(relPath), newFileName)}`.replace(/\\/g, '/');
+      manifest[oldPublicPath] = newPublicPath;
       
       if (existsSync(fullPath)) {
         try {
@@ -162,25 +168,46 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
         }
       }
     }
+
+    // FIXED: Update HTML files with new hashed paths so assets don't 404
+    const htmlFiles = readdirSync(dist, { recursive: true })
+      .filter(f => String(f).endsWith(".html"))
+      .map(f => join(dist, String(f)));
+
+    for (const file of htmlFiles) {
+      let content = readFileSync(file, "utf8");
+      let changed = false;
+      for (const [oldPath, newPath] of Object.entries(manifest)) {
+        if (content.includes(oldPath)) {
+          content = content.split(oldPath).join(newPath);
+          changed = true;
+        }
+      }
+      if (changed) writeFileSync(file, content);
+    }
+
+    if (config.build?.generateManifest) {
+      writeFileSync(join(dist, "asset-manifest.json"), JSON.stringify(hashes, null, 2));
+      log.info("Generated asset-manifest.json");
+    }
   }
 
-  // Bundle Vue and Svelte components found in the site directory.
-  // These are transpiled to JavaScript modules for client-side use in interactive pages.
+  // Bundle Vue and Svelte components
   if (config.features?.compilers !== false) {
     const siteSourceDir = join(process.cwd(), config.siteDir);
-    const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
-      (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
+    const componentFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
+      (f) => /\.(vue|svelte)$/.test(String(f)),
     );
 
-    if (vueFiles.length > 0) {
-      log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
+    if (componentFiles.length > 0) {
+      log.info(`Found ${componentFiles.length} Vue/Svelte components, bundling...`);
       try {
         await esbuild.build({
-          entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
+          entryPoints: componentFiles.map((f) => join(siteSourceDir, String(f))),
           outdir: join(dist, "components"),
           format: "esm",
           target: "es2022",
-          bundle: false,
+          bundle: true, // Increased to true to resolve internal deps
           plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
           external: ["preact", "vue", "svelte"],
           logLevel: "info",
@@ -192,8 +219,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     }
   }
 
-  // Bundle polyfills for backwards compatibility (IE11, legacy browsers)
-  // Try multiple paths: cwd, parent of cwd, framework root
+  // Bundle polyfills
   const polyfillsPaths = [
     join(process.cwd(), "src/runtime/polyfills.js"),
     join(process.cwd(), "../src/runtime/polyfills.js"),
@@ -210,50 +236,42 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
 
   if (polyfillsPath) {
     log.info("Bundling polyfills for backwards compatibility...");
+    const polyfillsMetaPath = join(dist, "polyfills-meta.json");
     try {
-      await esbuild.build({
+      const polyfillsMeta = await esbuild.build({
         entryPoints: [polyfillsPath],
         outfile: join(dist, "polyfills.js"),
         format: "iife",
         target: "es2015",
-        bundle: false,
+        bundle: true,
         minify: true,
         sourcemap: false,
         logLevel: "info",
+        metafile: true,
       });
+      if (polyfillsMeta.metafile) {
+        writeFileSync(polyfillsMetaPath, JSON.stringify(polyfillsMeta.metafile, null, 2));
+      }
       log.info("✅ Polyfills bundled: polyfills.js");
     } catch (err: any) {
       log.warn(`Failed to bundle polyfills: ${err.message}`);
     }
   }
 
-  // Bundle Preact runtime and core dependencies into a single file
-  // This ensures all client-side interactivity has Preact available
-  const preactBundleEntry = join(
-    process.cwd(),
-    ".jen",
-    "preact-runtime-entry.js"
-  );
-  mkdirSync(join(process.cwd(), ".jen"), { recursive: true });
+  // Bundle Preact runtime
+  const preactBundleEntry = join(process.cwd(), ".jen", "preact-runtime-entry.js");
+  mkdirSync(dirname(preactBundleEntry), { recursive: true });
 
-  // Create temp entry point for Preact bundle
   writeFileSync(
     preactBundleEntry,
-    `
-  export * from 'preact';
-  export * from 'preact/hooks';
-  export * from 'preact/compat';
-
-  // Polyfill exports
-  if (typeof window !== 'undefined') {
-  window.__PREACT_BUNDLE__ = true;
-  }
-  `
+    `export * from 'preact'; export * from 'preact/hooks'; export * from 'preact/compat';
+    if (typeof window !== 'undefined') { window.__PREACT_BUNDLE__ = true; }`
   );
 
   log.info("Bundling Preact runtime...");
+  const preactMetaPath = join(dist, "preact-runtime-meta.json");
   try {
-    await esbuild.build({
+    const preactMeta = await esbuild.build({
       entryPoints: [preactBundleEntry],
       outfile: join(dist, "preact-runtime.js"),
       format: "esm",
@@ -262,15 +280,17 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       minify: true,
       sourcemap: false,
       logLevel: "info",
+      metafile: true,
     });
-    log.info("✅ Preact runtime bundled: preact-runtime.js");
+    if (preactMeta.metafile) {
+      writeFileSync(preactMetaPath, JSON.stringify(preactMeta.metafile, null, 2));
+    }
+    log.info("Preact runtime bundled: preact-runtime.js");
   } catch (err: any) {
     log.warn(`Failed to bundle Preact runtime: ${err.message}`);
   }
 
-  // Compile the global SCSS file to CSS.
-  // This stylesheet is injected into every page and contains framework-wide styles.
-  // Minification is enabled for production builds.
+  // Compile global SCSS
   const scssPath = join(process.cwd(), config.css.globalScss);
   if (existsSync(scssPath)) {
     const compiler = createScssCompiler();
@@ -292,4 +312,4 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   }
 
   log.info("Build complete.");
-  }
+}
