@@ -205,3 +205,6 @@ Cargo.lock
 
 # Secrets
 security/problems.txt
+
+# Jen.js cache
+.jen

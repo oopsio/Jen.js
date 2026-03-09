@@ -31,6 +31,8 @@ struct DevCommand;
 struct StartCommand;
 #[derive(Debug)]
 struct BuildCommand;
+#[derive(Debug)]
+struct AnalyzeCommand;
 
 impl CommandStrategy for DevCommand {
     fn node_args(&self) -> Vec<&'static str> {
@@ -50,6 +52,12 @@ impl CommandStrategy for BuildCommand {
     }
 }
 
+impl CommandStrategy for AnalyzeCommand {
+    fn node_args(&self) -> Vec<&'static str> {
+        vec!["build.js", "analyze"]
+    }
+}
+
 struct CommandFactory;
 
 impl CommandFactory {
@@ -58,6 +66,7 @@ impl CommandFactory {
             "dev" => Ok(Arc::new(DevCommand)),
             "start" => Ok(Arc::new(StartCommand)),
             "build" => Ok(Arc::new(BuildCommand)),
+            "analyze" => Ok(Arc::new(AnalyzeCommand)),
             _ => Err(format!("Unknown command: {}", cmd)),
         }
     }
@@ -67,6 +76,7 @@ impl CommandFactory {
             ("dev", "Run development server"),
             ("start", "Start production server"),
             ("build", "Build static site"),
+            ("analyze", "Analyze bundle and generate report"),
         ]
     }
 }
@@ -103,6 +113,7 @@ enum MenuItem {
     Dev,
     Start,
     Build,
+    Analyze,
 }
 
 struct App {
@@ -127,15 +138,17 @@ impl App {
         self.selected = match self.selected {
             MenuItem::Dev => MenuItem::Start,
             MenuItem::Start => MenuItem::Build,
-            MenuItem::Build => MenuItem::Dev,
+            MenuItem::Build => MenuItem::Analyze,
+            MenuItem::Analyze => MenuItem::Dev,
         };
     }
 
     fn previous(&mut self) {
         self.selected = match self.selected {
-            MenuItem::Dev => MenuItem::Build,
+            MenuItem::Dev => MenuItem::Analyze,
             MenuItem::Start => MenuItem::Dev,
             MenuItem::Build => MenuItem::Start,
+            MenuItem::Analyze => MenuItem::Build,
         };
     }
 
@@ -144,6 +157,7 @@ impl App {
             MenuItem::Dev => "dev",
             MenuItem::Start => "start",
             MenuItem::Build => "build",
+            MenuItem::Analyze => "analyze",
         }
     }
 }
@@ -173,7 +187,12 @@ fn ui(f: &mut Frame, app: &App) {
     let header_text = vec![
         Line::from(vec![
             Span::styled("   ⚡ ", Style::default().fg(Color::Yellow)),
-            Span::styled("jen launcher", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "jen launcher",
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::styled(" ⚡", Style::default().fg(Color::Yellow)),
         ]),
         Line::from(""),
@@ -201,12 +220,19 @@ fn ui(f: &mut Frame, app: &App) {
             MenuItem::Dev => cmd == "dev",
             MenuItem::Start => cmd == "start",
             MenuItem::Build => cmd == "build",
+            MenuItem::Analyze => cmd == "analyze",
         };
 
         if is_selected {
             lines.push(Line::from(vec![
                 Span::styled("  ▶ ", Style::default().fg(Color::Yellow)),
-                Span::styled(cmd, Style::default().fg(Color::Black).bg(Color::Cyan).add_modifier(Modifier::BOLD)),
+                Span::styled(
+                    cmd,
+                    Style::default()
+                        .fg(Color::Black)
+                        .bg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                ),
                 Span::raw(" - "),
                 Span::styled(desc, Style::default().fg(Color::White)),
             ]));
@@ -261,12 +287,10 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, mut app: App) 
                     KeyCode::Enter => {
                         let cmd_name = app.command_name();
                         match CommandFactory::create_command(cmd_name) {
-                            Ok(cmd) => {
-                                match run_node(cmd.as_ref()) {
-                                    Ok(_) => app.status_message = format!("✓ '{}' completed", cmd_name),
-                                    Err(e) => app.status_message = format!("✗ Error: {}", e),
-                                }
-                            }
+                            Ok(cmd) => match run_node(cmd.as_ref()) {
+                                Ok(_) => app.status_message = format!("✓ '{}' completed", cmd_name),
+                                Err(e) => app.status_message = format!("✗ Error: {}", e),
+                            },
                             Err(e) => app.status_message = format!("✗ Error: {}", e),
                         }
                     }
