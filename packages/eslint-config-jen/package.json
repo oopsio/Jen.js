@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-jen",
+  "name": "@jenjs/eslint-config-jen",
   "version": "1.0.0",
   "description": "Comprehensive ESLint configuration for Jen.js projects",
   "type": "module",
