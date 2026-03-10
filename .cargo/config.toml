@@ -1,7 +1,6 @@
 [build]
 target-dir = "crates/cli/target"
 jobs = 4
-pipelined-compilation = true
 
 [net]
 # Connection settings
@@ -46,7 +45,6 @@ debug = true
 debug-assertions = true
 overflow-checks = true
 lto = false
-panic = 'unwind'
 incremental = true
 
 [profile.bench]

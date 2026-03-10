@@ -1,5 +1,5 @@
 website/** linguist-generated
-**/vendor/** linguist-vendored
+**/vendor/**/**/**/** linguist-vendored
 apps/test-coverage/** linguist-generated
 apps/website linguist-generated
 apps/cli-rustdoc linguist-generated
