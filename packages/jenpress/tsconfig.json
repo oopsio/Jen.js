@@ -8,7 +8,8 @@
     "sourceMap": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
