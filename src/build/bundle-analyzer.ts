@@ -244,20 +244,19 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-import { BundleReport } from "./bundle-analyzer-ui.js";
-
 export async function generateBundleReport(config: FrameworkConfig): Promise<string> {
   log.info("Analyzing bundle...");
   
   const analysis = await analyzeBundle(config);
-  const treemap = buildTreemap(analysis.modules);
-
-  const html = "<!DOCTYPE html>" + renderToString(BundleReport({ analysis, treemap }));
+  const treemapData = buildTreemap(analysis.modules);
   
-  return html;
-}
+  // Prepare data for template
+  const modulesJson = JSON.stringify(analysis.modules);
+  const treemapJson = JSON.stringify(treemapData);
+  const packagesJson = JSON.stringify(Object.fromEntries(analysis.packages));
+  const duplicatesJson = JSON.stringify(Object.fromEntries(analysis.duplicateModules));
 
-export async function runBundleAnalyzer(config: FrameworkConfig) {
+  const html = `
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg-primary);
@@ -998,12 +997,12 @@ export async function runBundleAnalyzer(config: FrameworkConfig) {
   return minifyHtml(html);
 }
 
-export async function runBundleAnalyzer(config: FrameworkConfig) {
+export async function runBundleAnalyzer(config: FrameworkConfig): Promise<string> {
   const dist = resolveDistPath(config);
   const reportPath = join(dist, "bundle-report.html");
 
-  const html = await generateBundleReport(config);
-  writeFileSync(reportPath, html, "utf-8");
+  const htmlContent = await generateBundleReport(config);
+  writeFileSync(reportPath, htmlContent, "utf-8");
 
   log.info(`Bundle report generated: ${reportPath}`);
   return reportPath;

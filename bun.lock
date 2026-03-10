@@ -10,6 +10,7 @@
         "@vercel/ncc": "^0.38.4",
         "@vue/compiler-sfc": "^3.4.0",
         "commander": "^14.0.3",
+        "core-js": "3",
         "esbuild": "^0.27.3",
         "glob": "^13.0.3",
         "html-minifier-terser": "^7.2.0",
@@ -229,7 +230,7 @@
         "jenjs-mcp": "dist/cli.js",
       },
       "dependencies": {
-        "@modelcontextprotocol/sdk": "^0.7.0",
+        "@modelcontextprotocol/sdk": "^1.27.1",
         "chalk": "^5.3.0",
         "commander": "^12.0.0",
         "glob": "^13.0.3",
@@ -1558,6 +1559,8 @@
     "cookie-signature": ["cookie-signature@1.2.2", "", {}, "sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg=="],
 
     "copy-paste": ["copy-paste@2.2.0", "", { "dependencies": { "iconv-lite": "^0.4.8" } }, "sha512-jqSL4r9DSeiIvJZStLzY/sMLt9ToTM7RsK237lYOTG+KcbQJHGala3R1TUpa8h1p9adswVgIdV4qGbseVhL4lg=="],
+
+    "core-js": ["core-js@3.48.0", "", {}, "sha512-zpEHTy1fjTMZCKLHUZoVeylt9XrzaIN2rbPXEt0k+q7JE5CkCZdo6bNq55bn24a69CH7ErAVLKijxJja4fw+UQ=="],
 
     "core-util-is": ["core-util-is@1.0.3", "", {}, "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ=="],
 
@@ -3426,8 +3429,6 @@
     "@inquirer/external-editor/chardet": ["chardet@2.1.1", "", {}, "sha512-PsezH1rqdV9VvyNhxxOW32/d75r01NY7TQCmOqomRo15ZSOKbpTFVsfjghxo6JloQUCGnH4k1LGu0R4yCLlWQQ=="],
 
     "@jenjs/jenpack/@types/node": ["@types/node@20.19.37", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-8kzdPJ3FsNsVIurqBs7oodNnCEVbni9yUEkaHbgptDACOPW04jimGagZ51E6+lXUwJjgnBw+hyko/lkFWCldqw=="],
-
-    "@jenjs/mcp/@modelcontextprotocol/sdk": ["@modelcontextprotocol/sdk@0.7.0", "", { "dependencies": { "content-type": "^1.0.5", "raw-body": "^3.0.0", "zod": "^3.23.8" } }, "sha512-YlnQf8//eDHClUM607vb/6+GHmCdMnIfOkN2pcpexN4go9sYHm2JfNnqc5ILS7M8enUlwe9dQO9886l3NO3rUw=="],
 
     "@jenjs/mcp/commander": ["commander@12.1.0", "", {}, "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="],
 

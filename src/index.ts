@@ -43,13 +43,15 @@ export { createApp } from "./server/app.js";
 export { buildSite } from "./build/build.js";
 
 // ============================================================================
-// UI COMPONENTS (3 exports + types)
+// CLIENT COMPONENTS (5 exports + types)
 // ============================================================================
 // Reusable Preact components for common patterns
 
-export { Image, Seo, PWA } from "./components.js";
+export { Image, Seo, PWA } from "./client/index.js";
+export { useRouter, useNavigation } from "./client/index.js";
 
-export type { ImageProps, SeoProps, PWAProps } from "./components.js";
+export type { ImageProps, SeoProps, PWAProps } from "./client/index.js";
+export type { RouterState } from "./client/index.js";
 
 // ============================================================================
 // MIDDLEWARE & REQUEST HANDLING (7 exports)

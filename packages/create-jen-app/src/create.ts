@@ -25,7 +25,7 @@ interface ProjectOptions {
   gitInit: boolean;
 }
 
-function validateProjectName(val: string) {
+function validateProjectName(val: string | undefined): string | undefined {
   if (!val) return "Project name is required";
   if (!/^[a-zA-Z0-9._-]+$/.test(val)) {
     return "Project name can only contain alphanumeric characters, dots, dashes and underscores";
