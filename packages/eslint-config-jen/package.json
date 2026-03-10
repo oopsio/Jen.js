@@ -1,0 +1,64 @@
+{
+  "name": "eslint-config-jen",
+  "version": "1.0.0",
+  "description": "Comprehensive ESLint configuration for Jen.js projects",
+  "type": "module",
+  "main": "index.ts",
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "index.ts",
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsx --transform-only index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0",
+    "@eslint/js": "^10.0.0",
+    "typescript-eslint": "^8.0.0",
+    "globals": "^17.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@eslint/js": {
+      "optional": false
+    },
+    "typescript-eslint": {
+      "optional": false
+    },
+    "globals": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/eslint": "^8.56.0",
+    "@types/node": "^25.2.3",
+    "eslint": "^10.0.0",
+    "globals": "^17.3.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.55.0"
+  },
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "jen.js",
+    "typescript",
+    "preact",
+    "clean-code"
+  ],
+  "author": "Jen.js Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oopsio/jen.js",
+    "directory": "packages/eslint-config-jen"
+  },
+  "homepage": "https://github.com/oopsio/jen.js"
+}
