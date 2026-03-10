@@ -32,7 +32,7 @@ const config = {
   },
 
   server: {
-    port: Math.floor(1000 + Math.random() * 9000),
+    port: 3000,
     hostname: "127.0.0.1",
   },
 

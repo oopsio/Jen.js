@@ -149,13 +149,14 @@ async function main() {
     try {
       // In dev mode, use Vite middleware for HMR and module serving
       if (isDev && viteServer) {
-        // Let Vite handle HMR and module requests
         viteServer.middlewares(req, res, () => {
           // If Vite didn't handle it, pass to app
           app.handle(req, res).catch((err: any) => {
-            res.statusCode = 500;
-            res.setHeader("content-type", "text/plain; charset=utf-8");
-            res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
+            if (!res.headersSent) {
+              res.statusCode = 500;
+              res.setHeader("content-type", "text/plain; charset=utf-8");
+              res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
+            }
           });
         });
       } else {
@@ -172,7 +173,13 @@ async function main() {
     const addr = server.address();
     const actualPort =
       typeof addr === "object" && addr ? addr.port : config.server.port;
+    log.info(`[Server] Listening on port ${actualPort}`);
     printBanner(actualPort, isDev ? "development" : "production");
+  });
+
+  // Log on first request to debug
+  server.once("request", () => {
+    log.info(`[Server] First request received`);
   });
 
   // Register signal handlers for graceful shutdown

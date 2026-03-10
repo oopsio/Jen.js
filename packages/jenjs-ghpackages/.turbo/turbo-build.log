@@ -1,5 +1,2 @@
-
-> @kessud2021/jenjs@0.1.1 build G:\jen.js\packages\jenjs-ghpackages
-> echo 'Built with Turborepo'
-
-'Built with Turborepo'
+$ echo 'Built with Turborepo'
+Built with Turborepo
