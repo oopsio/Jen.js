@@ -5,6 +5,7 @@
     "": {
       "name": "framework-monorepo",
       "dependencies": {
+        "@jenjs/flowgen": "^1.0.0",
         "@modelcontextprotocol/sdk": "^1.27.1",
         "@types/glob": "^9.0.0",
         "@vercel/ncc": "^0.38.4",
@@ -589,6 +590,8 @@
     "@jenjs/cli": ["@jenjs/cli@workspace:packages/cli-npm"],
 
     "@jenjs/eslint-config-jen": ["@jenjs/eslint-config-jen@workspace:packages/eslint-config-jen"],
+
+    "@jenjs/flowgen": ["@jenjs/flowgen@1.0.0", "", { "bin": { "flowgen": "cli.js" } }, "sha512-xYFuKiSNVgjcogqKjcbfBDZBihRyeXyuLvNSaZfOdh6sO9/v/J6P1naZ03xCZe00jC15o5dUfG4SXc5/70qbfg=="],
 
     "@jenjs/jenpack": ["@jenjs/jenpack@workspace:packages/jenpack"],
 

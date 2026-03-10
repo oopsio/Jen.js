@@ -26,6 +26,7 @@
     "commit": "cross-env NODE_ENV=production node scripts/commit.js"
   },
   "dependencies": {
+    "@jenjs/flowgen": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@types/glob": "^9.0.0",
     "@vercel/ncc": "^0.38.4",
