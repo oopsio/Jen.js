@@ -77,7 +77,8 @@ export class LazyLoader {
       // @lazy-load:"name"
       lazyComment: /@lazy-load:\s*"([^"]+)"/g,
       // React.lazy(() => import(...))
-      reactLazy: /React\.lazy\s*\(\s*\(\)\s*=>\s*import\s*\(\s*['"`]([^'"`]+)['"`]\s*\)\s*\)/g,
+      reactLazy:
+        /React\.lazy\s*\(\s*\(\)\s*=>\s*import\s*\(\s*['"`]([^'"`]+)['"`]\s*\)\s*\)/g,
     };
 
     // Detect dynamic imports
@@ -89,7 +90,11 @@ export class LazyLoader {
         id: path.replace(/[./]/g, "-"),
         name: path.split("/").pop() || "unknown",
         path,
-        chunkName: path.split("/").pop()?.replace(/\.[jt]sx?$/, "") || "chunk",
+        chunkName:
+          path
+            .split("/")
+            .pop()
+            ?.replace(/\.[jt]sx?$/, "") || "chunk",
       });
     }
 
@@ -351,6 +356,8 @@ export function withLazyFallback(Component, LoadingComponent = LazyLoading) {
 /**
  * Helper: Create lazy loader from config
  */
-export function createLazyLoader(strategy: "eager" | "lazy" | "progressive" = "lazy"): LazyLoader {
+export function createLazyLoader(
+  strategy: "eager" | "lazy" | "progressive" = "lazy",
+): LazyLoader {
   return new LazyLoader(strategy);
 }

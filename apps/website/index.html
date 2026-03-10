@@ -1,8 +1,239 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Jen.js: A TypeScript-first web framework for building static and server-rendered applications with Preact."><meta name="theme-color" content="#000000"><link rel="canonical" href="https://jen.js.org"><link rel="preconnect" href="https://rsms.me/"><link rel="stylesheet" href="https://rsms.me/inter/inter.css"><link href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500,600,700&display=swap" rel="stylesheet"><title>Jen.js — TypeScript-first Static &amp; SSR Framework</title><link rel="stylesheet" href="/_astro/docs.ikx-0NEr.css">
-<link rel="stylesheet" href="/_astro/index.BZmJVKmY.css"></head> <body>  <header class="header" data-astro-cid-3ef6ksr2> <div class="container" data-astro-cid-3ef6ksr2> <div class="header-content" data-astro-cid-3ef6ksr2> <div class="logo" data-astro-cid-3ef6ksr2> <a href="/" data-astro-cid-3ef6ksr2> <span class="logo-text" data-astro-cid-3ef6ksr2>Jen.js</span> </a> </div> <nav class="nav" data-astro-cid-3ef6ksr2> <a href="#features" class="nav-link" data-astro-cid-3ef6ksr2>Features</a> <a href="#quickstart" class="nav-link" data-astro-cid-3ef6ksr2>Quick Start</a> <a href="/docs" class="nav-link" data-astro-cid-3ef6ksr2>Docs</a> <a href="https://github.com/oopsio/jen.js" class="nav-link" target="_blank" data-astro-cid-3ef6ksr2>GitHub</a> <a href="https://github.com/oopsio/jen.js/discussions" class="nav-link" target="_blank" data-astro-cid-3ef6ksr2>Discussions</a> <button class="theme-toggle" aria-label="Toggle theme" onclick="window.toggleTheme()" id="theme-btn" data-astro-cid-3ef6ksr2> <span class="theme-icon" id="theme-icon" data-astro-cid-3ef6ksr2>🌙</span> </button> </nav> </div> </div> </header>  <section class="hero" data-astro-cid-bbe6dxrz> <div class="container" data-astro-cid-bbe6dxrz> <div class="hero-content" data-astro-cid-bbe6dxrz> <h1 class="hero-title" data-astro-cid-bbe6dxrz>TypeScript-first web framework</h1> <p class="hero-subtitle" data-astro-cid-bbe6dxrz>
-Build static and server-rendered applications with <strong data-astro-cid-bbe6dxrz>Preact</strong>. 
-        File-based routing, simple configuration, minimal overhead.
-</p> <div class="hero-cta" data-astro-cid-bbe6dxrz> <a href="https://github.com/oopsio/jen.js" class="btn btn-primary" data-astro-cid-bbe6dxrz>View on GitHub</a> <a href="#quickstart" class="btn btn-secondary" data-astro-cid-bbe6dxrz>Quick Start</a> </div> <div class="hero-meta" data-astro-cid-bbe6dxrz> <span data-astro-cid-bbe6dxrz>Built with Preact • TypeScript • Zero-config routing</span> </div> </div> </div> </section>  <section id="features" class="features" data-astro-cid-vnivfuh2> <div class="container" data-astro-cid-vnivfuh2> <h2 class="section-title" data-astro-cid-vnivfuh2>Why Jen.js?</h2> <div class="features-grid" data-astro-cid-vnivfuh2> <div class="feature-card" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>TypeScript-First</h3> <p data-astro-cid-vnivfuh2>Built for TypeScript. Strong type safety and excellent IDE support out of the box.</p> </div> <div class="feature-card" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>File-Based Routing</h3> <p data-astro-cid-vnivfuh2>Routes are automatically generated from your file structure. Simple and intuitive.</p> </div> <div class="feature-card" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>Zero Config</h3> <p data-astro-cid-vnivfuh2>Sensible defaults. Start building immediately. Configure only when you need to.</p> </div> <div class="feature-card" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>Preact-Powered</h3> <p data-astro-cid-vnivfuh2>Lightweight component library. High performance. Compatible with React ecosystem.</p> </div> <div class="feature-card" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>Static & SSR</h3> <p data-astro-cid-vnivfuh2>Generate static sites or server-render your pages. Choose based on your needs.</p> </div> <div class="feature-card" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>Minimal Output</h3> <p data-astro-cid-vnivfuh2>Lean bundle sizes. Only ship what you need. Fast loading times guaranteed.</p> </div> </div> <div class="comparison" data-astro-cid-vnivfuh2> <h3 data-astro-cid-vnivfuh2>Hello World Bundle Size</h3> <div class="comparison-content" data-astro-cid-vnivfuh2> <div class="comparison-item" data-astro-cid-vnivfuh2> <span class="framework" data-astro-cid-vnivfuh2>Next.js App Router</span> <span class="size" data-astro-cid-vnivfuh2>747.50 KB</span> </div> <div class="comparison-item" data-astro-cid-vnivfuh2> <span class="framework" data-astro-cid-vnivfuh2>Nuxt 3</span> <span class="size" data-astro-cid-vnivfuh2>150.95 KB</span> </div> <div class="comparison-item" data-astro-cid-vnivfuh2> <span class="framework" data-astro-cid-vnivfuh2>SvelteKit</span> <span class="size" data-astro-cid-vnivfuh2>66.90 KB</span> </div> <div class="comparison-item highlight" data-astro-cid-vnivfuh2> <span class="framework" data-astro-cid-vnivfuh2>Jen.js</span> <span class="size" data-astro-cid-vnivfuh2>188 Bytes</span> </div> </div> </div> </div> </section>  <section id="quickstart" class="quickstart" data-astro-cid-d3yughyh> <div class="container" data-astro-cid-d3yughyh> <h2 class="section-title" data-astro-cid-d3yughyh>Quick Start</h2> <div class="quickstart-content" data-astro-cid-d3yughyh> <div class="quickstart-steps" data-astro-cid-d3yughyh> <h3 data-astro-cid-d3yughyh>Get started in 3 steps</h3> <div class="step" data-astro-cid-d3yughyh> <div class="step-number" data-astro-cid-d3yughyh>1</div> <div class="step-content" data-astro-cid-d3yughyh> <h4 data-astro-cid-d3yughyh>Install</h4> <div class="code-block" data-astro-cid-jgrc2lfe>  <div class="code-content" data-astro-cid-jgrc2lfe><pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span></span></code></pre></div> </div>  </div> </div> <div class="step" data-astro-cid-d3yughyh> <div class="step-number" data-astro-cid-d3yughyh>2</div> <div class="step-content" data-astro-cid-d3yughyh> <h4 data-astro-cid-d3yughyh>Develop</h4> <div class="code-block" data-astro-cid-jgrc2lfe>  <div class="code-content" data-astro-cid-jgrc2lfe><pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> dev</span></span></code></pre></div> </div>  </div> </div> <div class="step" data-astro-cid-d3yughyh> <div class="step-number" data-astro-cid-d3yughyh>3</div> <div class="step-content" data-astro-cid-d3yughyh> <h4 data-astro-cid-d3yughyh>Build</h4> <div class="code-block" data-astro-cid-jgrc2lfe>  <div class="code-content" data-astro-cid-jgrc2lfe><pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> build</span></span></code></pre></div> </div>  </div> </div> </div> <div class="quickstart-example" data-astro-cid-d3yughyh> <h3 data-astro-cid-d3yughyh>Example Component</h3> <div class="code-block" data-astro-cid-jgrc2lfe> <div class="code-title" data-astro-cid-jgrc2lfe>src/pages/index.jsx</div> <div class="code-content" data-astro-cid-jgrc2lfe><pre class="shiki github-dark" style="background-color:#24292e;color:#e1e4e8" tabindex="0"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { h } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'preact'</span><span style="color:#E1E4E8">;</span></span>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Jen.js: A TypeScript-first web framework for building static and server-rendered applications with Preact."
+    />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href="https://jen.js.org" />
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Jen.js — TypeScript-first Static &amp; SSR Framework</title>
+    <link rel="stylesheet" href="/_astro/docs.ikx-0NEr.css" />
+    <link rel="stylesheet" href="/_astro/index.BZmJVKmY.css" />
+  </head>
+  <body>
+    <header class="header" data-astro-cid-3ef6ksr2>
+      <div class="container" data-astro-cid-3ef6ksr2>
+        <div class="header-content" data-astro-cid-3ef6ksr2>
+          <div class="logo" data-astro-cid-3ef6ksr2>
+            <a href="/" data-astro-cid-3ef6ksr2>
+              <span class="logo-text" data-astro-cid-3ef6ksr2>Jen.js</span>
+            </a>
+          </div>
+          <nav class="nav" data-astro-cid-3ef6ksr2>
+            <a href="#features" class="nav-link" data-astro-cid-3ef6ksr2
+              >Features</a
+            >
+            <a href="#quickstart" class="nav-link" data-astro-cid-3ef6ksr2
+              >Quick Start</a
+            >
+            <a href="/docs" class="nav-link" data-astro-cid-3ef6ksr2>Docs</a>
+            <a
+              href="https://github.com/oopsio/jen.js"
+              class="nav-link"
+              target="_blank"
+              data-astro-cid-3ef6ksr2
+              >GitHub</a
+            >
+            <a
+              href="https://github.com/oopsio/jen.js/discussions"
+              class="nav-link"
+              target="_blank"
+              data-astro-cid-3ef6ksr2
+              >Discussions</a
+            >
+            <button
+              class="theme-toggle"
+              aria-label="Toggle theme"
+              onclick="window.toggleTheme()"
+              id="theme-btn"
+              data-astro-cid-3ef6ksr2
+            >
+              <span class="theme-icon" id="theme-icon" data-astro-cid-3ef6ksr2
+                >🌙</span
+              >
+            </button>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <section class="hero" data-astro-cid-bbe6dxrz>
+      <div class="container" data-astro-cid-bbe6dxrz>
+        <div class="hero-content" data-astro-cid-bbe6dxrz>
+          <h1 class="hero-title" data-astro-cid-bbe6dxrz>
+            TypeScript-first web framework
+          </h1>
+          <p class="hero-subtitle" data-astro-cid-bbe6dxrz>
+            Build static and server-rendered applications with
+            <strong data-astro-cid-bbe6dxrz>Preact</strong>. File-based routing,
+            simple configuration, minimal overhead.
+          </p>
+          <div class="hero-cta" data-astro-cid-bbe6dxrz>
+            <a
+              href="https://github.com/oopsio/jen.js"
+              class="btn btn-primary"
+              data-astro-cid-bbe6dxrz
+              >View on GitHub</a
+            >
+            <a
+              href="#quickstart"
+              class="btn btn-secondary"
+              data-astro-cid-bbe6dxrz
+              >Quick Start</a
+            >
+          </div>
+          <div class="hero-meta" data-astro-cid-bbe6dxrz>
+            <span data-astro-cid-bbe6dxrz
+              >Built with Preact • TypeScript • Zero-config routing</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="features" class="features" data-astro-cid-vnivfuh2>
+      <div class="container" data-astro-cid-vnivfuh2>
+        <h2 class="section-title" data-astro-cid-vnivfuh2>Why Jen.js?</h2>
+        <div class="features-grid" data-astro-cid-vnivfuh2>
+          <div class="feature-card" data-astro-cid-vnivfuh2>
+            <h3 data-astro-cid-vnivfuh2>TypeScript-First</h3>
+            <p data-astro-cid-vnivfuh2>
+              Built for TypeScript. Strong type safety and excellent IDE support
+              out of the box.
+            </p>
+          </div>
+          <div class="feature-card" data-astro-cid-vnivfuh2>
+            <h3 data-astro-cid-vnivfuh2>File-Based Routing</h3>
+            <p data-astro-cid-vnivfuh2>
+              Routes are automatically generated from your file structure.
+              Simple and intuitive.
+            </p>
+          </div>
+          <div class="feature-card" data-astro-cid-vnivfuh2>
+            <h3 data-astro-cid-vnivfuh2>Zero Config</h3>
+            <p data-astro-cid-vnivfuh2>
+              Sensible defaults. Start building immediately. Configure only when
+              you need to.
+            </p>
+          </div>
+          <div class="feature-card" data-astro-cid-vnivfuh2>
+            <h3 data-astro-cid-vnivfuh2>Preact-Powered</h3>
+            <p data-astro-cid-vnivfuh2>
+              Lightweight component library. High performance. Compatible with
+              React ecosystem.
+            </p>
+          </div>
+          <div class="feature-card" data-astro-cid-vnivfuh2>
+            <h3 data-astro-cid-vnivfuh2>Static & SSR</h3>
+            <p data-astro-cid-vnivfuh2>
+              Generate static sites or server-render your pages. Choose based on
+              your needs.
+            </p>
+          </div>
+          <div class="feature-card" data-astro-cid-vnivfuh2>
+            <h3 data-astro-cid-vnivfuh2>Minimal Output</h3>
+            <p data-astro-cid-vnivfuh2>
+              Lean bundle sizes. Only ship what you need. Fast loading times
+              guaranteed.
+            </p>
+          </div>
+        </div>
+        <div class="comparison" data-astro-cid-vnivfuh2>
+          <h3 data-astro-cid-vnivfuh2>Hello World Bundle Size</h3>
+          <div class="comparison-content" data-astro-cid-vnivfuh2>
+            <div class="comparison-item" data-astro-cid-vnivfuh2>
+              <span class="framework" data-astro-cid-vnivfuh2
+                >Next.js App Router</span
+              >
+              <span class="size" data-astro-cid-vnivfuh2>747.50 KB</span>
+            </div>
+            <div class="comparison-item" data-astro-cid-vnivfuh2>
+              <span class="framework" data-astro-cid-vnivfuh2>Nuxt 3</span>
+              <span class="size" data-astro-cid-vnivfuh2>150.95 KB</span>
+            </div>
+            <div class="comparison-item" data-astro-cid-vnivfuh2>
+              <span class="framework" data-astro-cid-vnivfuh2>SvelteKit</span>
+              <span class="size" data-astro-cid-vnivfuh2>66.90 KB</span>
+            </div>
+            <div class="comparison-item highlight" data-astro-cid-vnivfuh2>
+              <span class="framework" data-astro-cid-vnivfuh2>Jen.js</span>
+              <span class="size" data-astro-cid-vnivfuh2>188 Bytes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="quickstart" class="quickstart" data-astro-cid-d3yughyh>
+      <div class="container" data-astro-cid-d3yughyh>
+        <h2 class="section-title" data-astro-cid-d3yughyh>Quick Start</h2>
+        <div class="quickstart-content" data-astro-cid-d3yughyh>
+          <div class="quickstart-steps" data-astro-cid-d3yughyh>
+            <h3 data-astro-cid-d3yughyh>Get started in 3 steps</h3>
+            <div class="step" data-astro-cid-d3yughyh>
+              <div class="step-number" data-astro-cid-d3yughyh>1</div>
+              <div class="step-content" data-astro-cid-d3yughyh>
+                <h4 data-astro-cid-d3yughyh>Install</h4>
+                <div class="code-block" data-astro-cid-jgrc2lfe>
+                  <div class="code-content" data-astro-cid-jgrc2lfe>
+                    <pre
+                      class="shiki github-dark"
+                      style="background-color: #24292e; color: #e1e4e8"
+                      tabindex="0"
+                    ><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span></span></code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="step" data-astro-cid-d3yughyh>
+              <div class="step-number" data-astro-cid-d3yughyh>2</div>
+              <div class="step-content" data-astro-cid-d3yughyh>
+                <h4 data-astro-cid-d3yughyh>Develop</h4>
+                <div class="code-block" data-astro-cid-jgrc2lfe>
+                  <div class="code-content" data-astro-cid-jgrc2lfe>
+                    <pre
+                      class="shiki github-dark"
+                      style="background-color: #24292e; color: #e1e4e8"
+                      tabindex="0"
+                    ><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> dev</span></span></code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="step" data-astro-cid-d3yughyh>
+              <div class="step-number" data-astro-cid-d3yughyh>3</div>
+              <div class="step-content" data-astro-cid-d3yughyh>
+                <h4 data-astro-cid-d3yughyh>Build</h4>
+                <div class="code-block" data-astro-cid-jgrc2lfe>
+                  <div class="code-content" data-astro-cid-jgrc2lfe>
+                    <pre
+                      class="shiki github-dark"
+                      style="background-color: #24292e; color: #e1e4e8"
+                      tabindex="0"
+                    ><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> build</span></span></code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="quickstart-example" data-astro-cid-d3yughyh>
+            <h3 data-astro-cid-d3yughyh>Example Component</h3>
+            <div class="code-block" data-astro-cid-jgrc2lfe>
+              <div class="code-title" data-astro-cid-jgrc2lfe>
+                src/pages/index.jsx
+              </div>
+              <div class="code-content" data-astro-cid-jgrc2lfe>
+                <pre
+                  class="shiki github-dark"
+                  style="background-color: #24292e; color: #e1e4e8"
+                  tabindex="0"
+                ><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> { h } </span><span style="color:#F97583">from</span><span style="color:#9ECBFF"> 'preact'</span><span style="color:#E1E4E8">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#F97583">export</span><span style="color:#F97583"> default</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> Home</span><span style="color:#E1E4E8">() {</span></span>
 <span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> (</span></span>
@@ -11,5 +242,176 @@ Build static and server-rendered applications with <strong data-astro-cid-bbe6dx
 <span class="line"><span style="color:#E1E4E8">      &#x3C;</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">>Build fast, lightweight web apps.&#x3C;/</span><span style="color:#85E89D">p</span><span style="color:#E1E4E8">></span></span>
 <span class="line"><span style="color:#E1E4E8">    &#x3C;/</span><span style="color:#85E89D">div</span><span style="color:#E1E4E8">></span></span>
 <span class="line"><span style="color:#E1E4E8">  );</span></span>
-<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre></div> </div>  </div> </div> <div class="learning-resources" data-astro-cid-d3yughyh> <h3 data-astro-cid-d3yughyh>Next Steps</h3> <ul data-astro-cid-d3yughyh> <li data-astro-cid-d3yughyh><a href="https://github.com/oopsio/jen.js#readme" target="_blank" data-astro-cid-d3yughyh>Read the README</a></li> <li data-astro-cid-d3yughyh><a href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md" target="_blank" data-astro-cid-d3yughyh>Contributing Guide</a></li> <li data-astro-cid-d3yughyh><a href="https://github.com/oopsio/jen.js/issues" target="_blank" data-astro-cid-d3yughyh>Report Issues</a></li> <li data-astro-cid-d3yughyh><a href="https://github.com/oopsio/jen.js/discussions" target="_blank" data-astro-cid-d3yughyh>Join Discussions</a></li> </ul> </div> </div> </section>  <footer class="footer" data-astro-cid-sz7xmlte> <div class="container" data-astro-cid-sz7xmlte> <div class="footer-content" data-astro-cid-sz7xmlte> <div class="footer-section" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Jen.js</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js" target="_blank" data-astro-cid-sz7xmlte>GitHub</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/issues" target="_blank" data-astro-cid-sz7xmlte>Issues</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/discussions" target="_blank" data-astro-cid-sz7xmlte>Discussions</a></li> </ul> </div> <div class="footer-section" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Resources</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js#readme" target="_blank" data-astro-cid-sz7xmlte>Documentation</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md" target="_blank" data-astro-cid-sz7xmlte>Contributing</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/CODE_OF_CONDUCT.md" target="_blank" data-astro-cid-sz7xmlte>Code of Conduct</a></li> </ul> </div> <div class="footer-section" data-astro-cid-sz7xmlte> <h4 data-astro-cid-sz7xmlte>Legal</h4> <ul data-astro-cid-sz7xmlte> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/LICENSE" target="_blank" data-astro-cid-sz7xmlte>License (GNU GPL 3.0)</a></li> <li data-astro-cid-sz7xmlte><a href="https://github.com/oopsio/jen.js/blob/main/SECURITY.md" target="_blank" data-astro-cid-sz7xmlte>Security</a></li> </ul> </div> </div> <div class="footer-bottom" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>&copy; 2025 Jen.js. All rights reserved.</p> <p class="footer-note" data-astro-cid-sz7xmlte>Built with Preact • TypeScript • Modern tooling</p> </div> </div> </footer>   <script type="module">function s(){const t=document.documentElement,e=document.getElementById("theme-icon");e&&(e.textContent=t.classList.contains("dark")?"☀️":"🌙")}function c(){const t=document.documentElement;localStorage.getItem("theme")==="light"?(t.classList.add("light"),t.classList.remove("dark")):(t.classList.add("dark"),t.classList.remove("light")),s()}window.toggleTheme=function(){const t=document.documentElement;t.classList.contains("dark")?(t.classList.remove("dark"),t.classList.add("light"),localStorage.setItem("theme","light")):(t.classList.add("dark"),t.classList.remove("light"),localStorage.setItem("theme","dark")),s()};c();</script> </body> </html> <script src="https://utteranc.es/client.js" repo="oopsio/Jen.js" issue-term="pathname" theme="preferred-color-scheme" crossorigin="anonymous" async>
-</script>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="learning-resources" data-astro-cid-d3yughyh>
+          <h3 data-astro-cid-d3yughyh>Next Steps</h3>
+          <ul data-astro-cid-d3yughyh>
+            <li data-astro-cid-d3yughyh>
+              <a
+                href="https://github.com/oopsio/jen.js#readme"
+                target="_blank"
+                data-astro-cid-d3yughyh
+                >Read the README</a
+              >
+            </li>
+            <li data-astro-cid-d3yughyh>
+              <a
+                href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md"
+                target="_blank"
+                data-astro-cid-d3yughyh
+                >Contributing Guide</a
+              >
+            </li>
+            <li data-astro-cid-d3yughyh>
+              <a
+                href="https://github.com/oopsio/jen.js/issues"
+                target="_blank"
+                data-astro-cid-d3yughyh
+                >Report Issues</a
+              >
+            </li>
+            <li data-astro-cid-d3yughyh>
+              <a
+                href="https://github.com/oopsio/jen.js/discussions"
+                target="_blank"
+                data-astro-cid-d3yughyh
+                >Join Discussions</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <footer class="footer" data-astro-cid-sz7xmlte>
+      <div class="container" data-astro-cid-sz7xmlte>
+        <div class="footer-content" data-astro-cid-sz7xmlte>
+          <div class="footer-section" data-astro-cid-sz7xmlte>
+            <h4 data-astro-cid-sz7xmlte>Jen.js</h4>
+            <ul data-astro-cid-sz7xmlte>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >GitHub</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/issues"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Issues</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/discussions"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Discussions</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section" data-astro-cid-sz7xmlte>
+            <h4 data-astro-cid-sz7xmlte>Resources</h4>
+            <ul data-astro-cid-sz7xmlte>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js#readme"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Documentation</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Contributing</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/CODE_OF_CONDUCT.md"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Code of Conduct</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section" data-astro-cid-sz7xmlte>
+            <h4 data-astro-cid-sz7xmlte>Legal</h4>
+            <ul data-astro-cid-sz7xmlte>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/LICENSE"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >License (GNU GPL 3.0)</a
+                >
+              </li>
+              <li data-astro-cid-sz7xmlte>
+                <a
+                  href="https://github.com/oopsio/jen.js/blob/main/SECURITY.md"
+                  target="_blank"
+                  data-astro-cid-sz7xmlte
+                  >Security</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom" data-astro-cid-sz7xmlte>
+          <p data-astro-cid-sz7xmlte>
+            &copy; 2025 Jen.js. All rights reserved.
+          </p>
+          <p class="footer-note" data-astro-cid-sz7xmlte>
+            Built with Preact • TypeScript • Modern tooling
+          </p>
+        </div>
+      </div>
+    </footer>
+    <script type="module">
+      function s() {
+        const t = document.documentElement,
+          e = document.getElementById("theme-icon");
+        e && (e.textContent = t.classList.contains("dark") ? "☀️" : "🌙");
+      }
+      function c() {
+        const t = document.documentElement;
+        (localStorage.getItem("theme") === "light"
+          ? (t.classList.add("light"), t.classList.remove("dark"))
+          : (t.classList.add("dark"), t.classList.remove("light")),
+          s());
+      }
+      window.toggleTheme = function () {
+        const t = document.documentElement;
+        (t.classList.contains("dark")
+          ? (t.classList.remove("dark"),
+            t.classList.add("light"),
+            localStorage.setItem("theme", "light"))
+          : (t.classList.add("dark"),
+            t.classList.remove("light"),
+            localStorage.setItem("theme", "dark")),
+          s());
+      };
+      c();
+    </script>
+  </body>
+</html>
+<script
+  src="https://utteranc.es/client.js"
+  repo="oopsio/Jen.js"
+  issue-term="pathname"
+  theme="preferred-color-scheme"
+  crossorigin="anonymous"
+  async
+></script>

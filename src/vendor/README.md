@@ -4,11 +4,11 @@ This directory contains **vendored third-party source code** used by the framewo
 
 Vendoring dependencies ensures the runtime:
 
-* works **without external CDNs**
-* behaves consistently across environments
-* works **offline**
-* avoids runtime network requests
-* prevents version drift
+- works **without external CDNs**
+- behaves consistently across environments
+- works **offline**
+- avoids runtime network requests
+- prevents version drift
 
 Only the **files required by the runtime** are included.
 
@@ -53,7 +53,7 @@ their respective `LICENSE` or `LICENSE.md` files.
 
 The remainder of this project is licensed under the Blue Oak Model License.
 
-*(license text unchanged below)*
+_(license text unchanged below)_
 
 ---
 
@@ -109,11 +109,11 @@ No contributor can revoke this license.
 
 ## No Liability
 
-***As far as the law allows, this software comes as is,
+**_As far as the law allows, this software comes as is,
 without any warranty or condition, and no contributor
 will be liable to anyone for any damages related to
 this software or this license, under any kind of
-legal claim.***
+legal claim._**
 
 ---
 
@@ -123,11 +123,11 @@ The framework vendors parts of **Dart Sass**.
 
 Sass is a CSS preprocessor that adds features such as:
 
-* variables
-* nesting
-* mixins
-* functions
-* modular stylesheets
+- variables
+- nesting
+- mixins
+- functions
+- modular stylesheets
 
 The vendored runtime allows the framework to compile `.scss` and `.sass` files without requiring users to install Sass separately.
 
@@ -172,12 +172,10 @@ To update vendored dependencies:
 
 3. Format the copied files for readability using either:
 
-* Prettier
-* [https://beautifier.io/](https://beautifier.io/)
+- Prettier
+- [https://beautifier.io/](https://beautifier.io/)
 
 4. Ensure the upstream **LICENSE file** is included.
 
 Do not modify vendored source files unless absolutely necessary.
 If changes are required, they should be documented clearly.
-
-

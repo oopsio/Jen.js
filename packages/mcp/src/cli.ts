@@ -39,9 +39,7 @@ program
     const config = loadProjectConfig(projectRoot);
 
     if (!config) {
-      console.error(
-        pc.red("✗ Could not find Jen.js project configuration"),
-      );
+      console.error(pc.red("✗ Could not find Jen.js project configuration"));
       process.exit(1);
     }
 
@@ -83,7 +81,9 @@ program
         break;
       case "deps":
         printSection("Dependencies");
-        console.log(`  ${pc.cyan("dependencies")}     ${Object.keys(config.dependencies || {}).length}`);
+        console.log(
+          `  ${pc.cyan("dependencies")}     ${Object.keys(config.dependencies || {}).length}`,
+        );
         console.log(
           `  ${pc.cyan("dev dependencies")} ${Object.keys(config.devDependencies || {}).length}`,
         );

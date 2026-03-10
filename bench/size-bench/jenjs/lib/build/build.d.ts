@@ -1,4 +1,4 @@
 import type { FrameworkConfig } from "../core/config.js";
 export declare function buildSite(opts: {
-    config: FrameworkConfig;
+  config: FrameworkConfig;
 }): Promise<void>;

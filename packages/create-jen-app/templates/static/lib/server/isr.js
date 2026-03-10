@@ -11,9 +11,9 @@ const isrCache = new Map();
  */
 let defaultRevalidateSeconds = 3600;
 let isrConfig = {
-    defaultRevalidateSeconds: 3600,
-    maxConcurrentRevalidations: 5,
-    debug: false,
+  defaultRevalidateSeconds: 3600,
+  maxConcurrentRevalidations: 5,
+  debug: false,
 };
 /** Counter to track concurrent revalidations */
 let concurrentRevalidations = 0;
@@ -34,10 +34,10 @@ let concurrentRevalidations = 0;
  * ```
  */
 export function setIsrConfig(config) {
-    isrConfig = { ...isrConfig, ...config };
-    if (config.defaultRevalidateSeconds !== undefined) {
-        defaultRevalidateSeconds = config.defaultRevalidateSeconds;
-    }
+  isrConfig = { ...isrConfig, ...config };
+  if (config.defaultRevalidateSeconds !== undefined) {
+    defaultRevalidateSeconds = config.defaultRevalidateSeconds;
+  }
 }
 /**
  * Get the current ISR configuration.
@@ -45,7 +45,7 @@ export function setIsrConfig(config) {
  * @returns Current ISR configuration
  */
 export function getIsrConfig() {
-    return { ...isrConfig };
+  return { ...isrConfig };
 }
 /**
  * Log debug message if ISR debug mode is enabled.
@@ -54,9 +54,9 @@ export function getIsrConfig() {
  * @param args Additional log arguments
  */
 function debugLog(message, ...args) {
-    if (isrConfig.debug) {
-        console.log(`[ISR] ${message}`, ...args);
-    }
+  if (isrConfig.debug) {
+    console.log(`[ISR] ${message}`, ...args);
+  }
 }
 /**
  * Determine if cached HTML has exceeded its revalidation TTL.
@@ -66,10 +66,11 @@ function debugLog(message, ...args) {
  * @returns true if revalidation is needed
  */
 function isRevalidationNeeded(entry) {
-    const now = Date.now();
-    const revalidateTtl = (entry.revalidateSeconds ?? defaultRevalidateSeconds) * 1000;
-    const age = now - entry.timestamp;
-    return age > revalidateTtl;
+  const now = Date.now();
+  const revalidateTtl =
+    (entry.revalidateSeconds ?? defaultRevalidateSeconds) * 1000;
+  const age = now - entry.timestamp;
+  return age > revalidateTtl;
 }
 /**
  * Enqueue a background revalidation task.
@@ -78,17 +79,16 @@ function isRevalidationNeeded(entry) {
  * @param fn Async function to execute in background
  */
 async function enqueueRevalidation(fn) {
-    // Wait for slot to become available if at capacity
-    while (concurrentRevalidations >= isrConfig.maxConcurrentRevalidations) {
-        await new Promise((resolve) => setTimeout(resolve, 10));
-    }
-    concurrentRevalidations++;
-    try {
-        await fn();
-    }
-    finally {
-        concurrentRevalidations--;
-    }
+  // Wait for slot to become available if at capacity
+  while (concurrentRevalidations >= isrConfig.maxConcurrentRevalidations) {
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  concurrentRevalidations++;
+  try {
+    await fn();
+  } finally {
+    concurrentRevalidations--;
+  }
 }
 /**
  * Main ISR entry point: fetch or generate cached HTML for a route.
@@ -137,61 +137,60 @@ async function enqueueRevalidation(fn) {
  * ```
  */
 export async function getIsrHtml(config, route, ctx, options) {
-    const pathname = ctx.url.pathname;
-    const now = Date.now();
-    // Lookup existing cache entry
-    const cached = isrCache.get(pathname);
-    // If we have cached content, serve it immediately
-    if (cached) {
-        debugLog(`Cache hit for ${pathname}`);
-        // Check if revalidation is needed (stale-while-revalidate pattern)
-        const needsRevalidation = isRevalidationNeeded(cached);
-        if (needsRevalidation && !cached.revalidating) {
-            debugLog(`Initiating background revalidation for ${pathname}`);
-            // Mark as revalidating and enqueue background task
-            cached.revalidating = true;
-            cached.revalidationPromise = enqueueRevalidation(async () => {
-                try {
-                    const freshHtml = await renderWithOptions(config, route, ctx, {
-                        cache: false,
-                    });
-                    cached.html = freshHtml;
-                    cached.timestamp = now;
-                    debugLog(`Background revalidation complete for ${pathname}`);
-                }
-                catch (err) {
-                    debugLog(`Background revalidation failed for ${pathname}:`, err);
-                    // Keep serving stale cache on error; don't propagate failure
-                }
-                finally {
-                    cached.revalidating = false;
-                }
-            });
+  const pathname = ctx.url.pathname;
+  const now = Date.now();
+  // Lookup existing cache entry
+  const cached = isrCache.get(pathname);
+  // If we have cached content, serve it immediately
+  if (cached) {
+    debugLog(`Cache hit for ${pathname}`);
+    // Check if revalidation is needed (stale-while-revalidate pattern)
+    const needsRevalidation = isRevalidationNeeded(cached);
+    if (needsRevalidation && !cached.revalidating) {
+      debugLog(`Initiating background revalidation for ${pathname}`);
+      // Mark as revalidating and enqueue background task
+      cached.revalidating = true;
+      cached.revalidationPromise = enqueueRevalidation(async () => {
+        try {
+          const freshHtml = await renderWithOptions(config, route, ctx, {
+            cache: false,
+          });
+          cached.html = freshHtml;
+          cached.timestamp = now;
+          debugLog(`Background revalidation complete for ${pathname}`);
+        } catch (err) {
+          debugLog(`Background revalidation failed for ${pathname}:`, err);
+          // Keep serving stale cache on error; don't propagate failure
+        } finally {
+          cached.revalidating = false;
         }
-        // Return cached HTML immediately (stale-while-revalidate pattern)
-        return cached.html;
+      });
     }
-    // No cache exists - render on-demand and cache result
-    debugLog(`Cache miss, rendering on-demand for ${pathname}`);
-    const html = await renderWithOptions(config, route, ctx, { cache: false });
-    // Determine revalidation TTL (order of precedence)
-    let revalidateTtl = defaultRevalidateSeconds;
-    if (options?.revalidate !== undefined) {
-        revalidateTtl = options.revalidate;
-    }
-    else if ("revalidateSeconds" in route &&
-        typeof route.revalidateSeconds === "number") {
-        revalidateTtl = route.revalidateSeconds;
-    }
-    // Store in ISR cache
-    isrCache.set(pathname, {
-        html,
-        timestamp: now,
-        revalidateSeconds: revalidateTtl,
-        revalidating: false,
-    });
-    debugLog(`Cached ${pathname} with TTL ${revalidateTtl}s`);
-    return html;
+    // Return cached HTML immediately (stale-while-revalidate pattern)
+    return cached.html;
+  }
+  // No cache exists - render on-demand and cache result
+  debugLog(`Cache miss, rendering on-demand for ${pathname}`);
+  const html = await renderWithOptions(config, route, ctx, { cache: false });
+  // Determine revalidation TTL (order of precedence)
+  let revalidateTtl = defaultRevalidateSeconds;
+  if (options?.revalidate !== undefined) {
+    revalidateTtl = options.revalidate;
+  } else if (
+    "revalidateSeconds" in route &&
+    typeof route.revalidateSeconds === "number"
+  ) {
+    revalidateTtl = route.revalidateSeconds;
+  }
+  // Store in ISR cache
+  isrCache.set(pathname, {
+    html,
+    timestamp: now,
+    revalidateSeconds: revalidateTtl,
+    revalidating: false,
+  });
+  debugLog(`Cached ${pathname} with TTL ${revalidateTtl}s`);
+  return html;
 }
 /**
  * Manually set or update ISR cache for a route.
@@ -219,15 +218,17 @@ export async function getIsrHtml(config, route, ctx, options) {
  * ```
  */
 export function setIsrCache(routePath, html, options) {
-    const now = Date.now();
-    const revalidateTtl = options?.revalidate ?? defaultRevalidateSeconds;
-    isrCache.set(routePath, {
-        html,
-        timestamp: now,
-        revalidateSeconds: revalidateTtl,
-        revalidating: false,
-    });
-    debugLog(`Manually set ISR cache for ${routePath} with TTL ${revalidateTtl}s`);
+  const now = Date.now();
+  const revalidateTtl = options?.revalidate ?? defaultRevalidateSeconds;
+  isrCache.set(routePath, {
+    html,
+    timestamp: now,
+    revalidateSeconds: revalidateTtl,
+    revalidating: false,
+  });
+  debugLog(
+    `Manually set ISR cache for ${routePath} with TTL ${revalidateTtl}s`,
+  );
 }
 /**
  * Invalidate ISR cache for a specific route.
@@ -247,8 +248,8 @@ export function setIsrCache(routePath, html, options) {
  * ```
  */
 export function invalidateIsrCache(routePath) {
-    isrCache.delete(routePath);
-    debugLog(`Invalidated ISR cache for ${routePath}`);
+  isrCache.delete(routePath);
+  debugLog(`Invalidated ISR cache for ${routePath}`);
 }
 /**
  * Clear the entire ISR cache.
@@ -264,8 +265,8 @@ export function invalidateIsrCache(routePath) {
  * ```
  */
 export function clearIsrCache() {
-    isrCache.clear();
-    debugLog("Cleared entire ISR cache");
+  isrCache.clear();
+  debugLog("Cleared entire ISR cache");
 }
 /**
  * Get comprehensive ISR cache statistics.
@@ -294,30 +295,31 @@ export function clearIsrCache() {
  * ```
  */
 export function getIsrStats() {
-    const now = Date.now();
-    const entries = [];
-    let revalidatingCount = 0;
-    for (const [pathname, entry] of isrCache.entries()) {
-        const age = (now - entry.timestamp) / 1000;
-        const revalidateSeconds = entry.revalidateSeconds ?? defaultRevalidateSeconds;
-        entries.push({
-            pathname,
-            age,
-            revalidateSeconds,
-            size: entry.html.length,
-            revalidating: entry.revalidating,
-        });
-        if (entry.revalidating) {
-            revalidatingCount++;
-        }
+  const now = Date.now();
+  const entries = [];
+  let revalidatingCount = 0;
+  for (const [pathname, entry] of isrCache.entries()) {
+    const age = (now - entry.timestamp) / 1000;
+    const revalidateSeconds =
+      entry.revalidateSeconds ?? defaultRevalidateSeconds;
+    entries.push({
+      pathname,
+      age,
+      revalidateSeconds,
+      size: entry.html.length,
+      revalidating: entry.revalidating,
+    });
+    if (entry.revalidating) {
+      revalidatingCount++;
     }
-    return {
-        size: isrCache.size,
-        entries,
-        revalidating: revalidatingCount,
-        maxConcurrentRevalidations: isrConfig.maxConcurrentRevalidations,
-        defaultRevalidateSeconds,
-    };
+  }
+  return {
+    size: isrCache.size,
+    entries,
+    revalidating: revalidatingCount,
+    maxConcurrentRevalidations: isrConfig.maxConcurrentRevalidations,
+    defaultRevalidateSeconds,
+  };
 }
 /**
  * Wait for all in-flight revalidations to complete.
@@ -339,24 +341,25 @@ export function getIsrStats() {
  * ```
  */
 export async function waitForRevalidations(timeout = 30000) {
-    const startTime = Date.now();
-    const promises = [];
-    for (const entry of isrCache.values()) {
-        if (entry.revalidating && entry.revalidationPromise) {
-            promises.push(entry.revalidationPromise);
-        }
+  const startTime = Date.now();
+  const promises = [];
+  for (const entry of isrCache.values()) {
+    if (entry.revalidating && entry.revalidationPromise) {
+      promises.push(entry.revalidationPromise);
     }
-    if (promises.length === 0) {
-        return;
-    }
-    try {
-        await Promise.race([
-            Promise.all(promises),
-            new Promise((_, reject) => setTimeout(() => reject(new Error("Revalidation timeout")), timeout)),
-        ]);
-    }
-    catch (err) {
-        const elapsed = Date.now() - startTime;
-        debugLog(`Revalidation wait timed out after ${elapsed}ms`);
-    }
+  }
+  if (promises.length === 0) {
+    return;
+  }
+  try {
+    await Promise.race([
+      Promise.all(promises),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Revalidation timeout")), timeout),
+      ),
+    ]);
+  } catch (err) {
+    const elapsed = Date.now() - startTime;
+    debugLog(`Revalidation wait timed out after ${elapsed}ms`);
+  }
 }

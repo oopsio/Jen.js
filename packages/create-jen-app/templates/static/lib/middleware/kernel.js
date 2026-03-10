@@ -19,70 +19,69 @@ import { log } from "../shared/log.js";
  * - Control flow via next() to continue to next middleware
  */
 export class Kernel {
-    /**
-     * Array of global middleware functions that run for every request.
-     * Middlewares are stored in order of registration (use() calls).
-     * Executed sequentially in Pipeline.compose().
-     */
-    globalMiddleware = [];
-    constructor() { }
-    /**
-     * Registers a middleware function to run for all requests.
-     * Middleware can be a function, a class constructor, or an object with handle() method.
-     *
-     * @param mw Middleware function: (ctx, next) => Promise<void>
-     *           Or class with: new MyMiddleware().handle(ctx, next)
-     *
-     * @example
-     * kernel.use(async (ctx, next) => {
-     *   console.log(`${ctx.req.method} ${ctx.url.pathname}`);
-     *   await next();
-     * });
-     */
-    use(mw) {
-        this.globalMiddleware.push(mw);
-    }
-    /**
-     * Processes an HTTP request through the global middleware pipeline.
-     * Creates a Context wrapping the request/response, composes middlewares, and executes them.
-     * Catches any uncaught errors and sends a safe 500 response.
-     *
-     * @param req Node.js IncomingMessage (HTTP request object)
-     * @param res Node.js ServerResponse (HTTP response object)
-     *
-     * @returns Promise that resolves when middleware chain completes
-     *
-     * @example
-     * const server = createServer((req, res) => {
-     *   kernel.handle(req, res);
-     * });
-     */
-    async handle(req, res) {
-        try {
-            const ctx = new Context(req, res);
-            const fn = Pipeline.compose(this.globalMiddleware);
-            await fn(ctx, async () => { });
+  /**
+   * Array of global middleware functions that run for every request.
+   * Middlewares are stored in order of registration (use() calls).
+   * Executed sequentially in Pipeline.compose().
+   */
+  globalMiddleware = [];
+  constructor() {}
+  /**
+   * Registers a middleware function to run for all requests.
+   * Middleware can be a function, a class constructor, or an object with handle() method.
+   *
+   * @param mw Middleware function: (ctx, next) => Promise<void>
+   *           Or class with: new MyMiddleware().handle(ctx, next)
+   *
+   * @example
+   * kernel.use(async (ctx, next) => {
+   *   console.log(`${ctx.req.method} ${ctx.url.pathname}`);
+   *   await next();
+   * });
+   */
+  use(mw) {
+    this.globalMiddleware.push(mw);
+  }
+  /**
+   * Processes an HTTP request through the global middleware pipeline.
+   * Creates a Context wrapping the request/response, composes middlewares, and executes them.
+   * Catches any uncaught errors and sends a safe 500 response.
+   *
+   * @param req Node.js IncomingMessage (HTTP request object)
+   * @param res Node.js ServerResponse (HTTP response object)
+   *
+   * @returns Promise that resolves when middleware chain completes
+   *
+   * @example
+   * const server = createServer((req, res) => {
+   *   kernel.handle(req, res);
+   * });
+   */
+  async handle(req, res) {
+    try {
+      const ctx = new Context(req, res);
+      const fn = Pipeline.compose(this.globalMiddleware);
+      await fn(ctx, async () => {});
+    } catch (err) {
+      // Uncaught error in middleware pipeline
+      log.error(`[Kernel] Uncaught error: ${err}`);
+      if (err && err.stack) {
+        log.error(`Stack: ${err.stack}`);
+      }
+      // If headers already sent, destroy socket
+      if (res.headersSent) {
+        log.error("[Kernel] Headers already sent, destroying socket");
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
         }
-        catch (err) {
-            // Uncaught error in middleware pipeline
-            log.error(`[Kernel] Uncaught error: ${err}`);
-            if (err && err.stack) {
-                log.error(`Stack: ${err.stack}`);
-            }
-            // If headers already sent, destroy socket
-            if (res.headersSent) {
-                log.error("[Kernel] Headers already sent, destroying socket");
-                if (res.socket && !res.socket.destroyed) {
-                    res.socket.destroy();
-                }
-                return;
-            }
-            // Try to send a safe 500 response
-            try {
-                res.statusCode = 500;
-                res.setHeader("content-type", "text/html; charset=utf-8");
-                res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
-                res.end(`<!DOCTYPE html>
+        return;
+      }
+      // Try to send a safe 500 response
+      try {
+        res.statusCode = 500;
+        res.setHeader("content-type", "text/html; charset=utf-8");
+        res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+        res.end(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -123,71 +122,73 @@ export class Kernel {
   </div>
 </body>
 </html>`);
-            }
-            catch (e) {
-                log.error(`[Kernel] Failed to send error response: ${e}`);
-                // Last resort: destroy socket
-                if (res.socket && !res.socket.destroyed) {
-                    res.socket.destroy();
-                }
-            }
+      } catch (e) {
+        log.error(`[Kernel] Failed to send error response: ${e}`);
+        // Last resort: destroy socket
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
         }
+      }
     }
-    /**
-     * Processes a request through global middleware plus a registered middleware group.
-     * Retrieves middleware from the registry by group name and composes them with global middleware.
-     * Useful for route-specific or feature-specific middleware chains.
-     * Catches any uncaught errors and sends a safe 500 response.
-     *
-     * @param req Node.js IncomingMessage
-     * @param res Node.js ServerResponse
-     * @param groupName Name of the middleware group registered in MiddlewareRegistry
-     *
-     * @returns Promise that resolves when complete middleware chain executes
-     *
-     * @example
-     * // Given a group named "apiMiddleware" with auth and logging
-     * await kernel.handleWithGroup(req, res, "apiMiddleware");
-     */
-    async handleWithGroup(req, res, groupName) {
-        try {
-            const ctx = new Context(req, res);
-            const registry = MiddlewareRegistry.get();
-            const groupMw = registry.getGroup(groupName);
-            const fn = Pipeline.compose([...this.globalMiddleware, ...groupMw]);
-            await fn(ctx, async () => { });
+  }
+  /**
+   * Processes a request through global middleware plus a registered middleware group.
+   * Retrieves middleware from the registry by group name and composes them with global middleware.
+   * Useful for route-specific or feature-specific middleware chains.
+   * Catches any uncaught errors and sends a safe 500 response.
+   *
+   * @param req Node.js IncomingMessage
+   * @param res Node.js ServerResponse
+   * @param groupName Name of the middleware group registered in MiddlewareRegistry
+   *
+   * @returns Promise that resolves when complete middleware chain executes
+   *
+   * @example
+   * // Given a group named "apiMiddleware" with auth and logging
+   * await kernel.handleWithGroup(req, res, "apiMiddleware");
+   */
+  async handleWithGroup(req, res, groupName) {
+    try {
+      const ctx = new Context(req, res);
+      const registry = MiddlewareRegistry.get();
+      const groupMw = registry.getGroup(groupName);
+      const fn = Pipeline.compose([...this.globalMiddleware, ...groupMw]);
+      await fn(ctx, async () => {});
+    } catch (err) {
+      // Uncaught error in middleware pipeline
+      log.error(
+        `[Kernel] Uncaught error in middleware group "${groupName}": ${err}`,
+      );
+      if (err && err.stack) {
+        log.error(`Stack: ${err.stack}`);
+      }
+      // If headers already sent, destroy socket
+      if (res.headersSent) {
+        log.error("[Kernel] Headers already sent, destroying socket");
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
         }
-        catch (err) {
-            // Uncaught error in middleware pipeline
-            log.error(`[Kernel] Uncaught error in middleware group "${groupName}": ${err}`);
-            if (err && err.stack) {
-                log.error(`Stack: ${err.stack}`);
-            }
-            // If headers already sent, destroy socket
-            if (res.headersSent) {
-                log.error("[Kernel] Headers already sent, destroying socket");
-                if (res.socket && !res.socket.destroyed) {
-                    res.socket.destroy();
-                }
-                return;
-            }
-            // Try to send a safe 500 response
-            try {
-                res.statusCode = 500;
-                res.setHeader("content-type", "application/json");
-                res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
-                res.end(JSON.stringify({
-                    error: "Internal Server Error",
-                    message: "An unexpected error occurred while processing your request.",
-                }));
-            }
-            catch (e) {
-                log.error(`[Kernel] Failed to send error response: ${e}`);
-                // Last resort: destroy socket
-                if (res.socket && !res.socket.destroyed) {
-                    res.socket.destroy();
-                }
-            }
+        return;
+      }
+      // Try to send a safe 500 response
+      try {
+        res.statusCode = 500;
+        res.setHeader("content-type", "application/json");
+        res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+        res.end(
+          JSON.stringify({
+            error: "Internal Server Error",
+            message:
+              "An unexpected error occurred while processing your request.",
+          }),
+        );
+      } catch (e) {
+        log.error(`[Kernel] Failed to send error response: ${e}`);
+        // Last resort: destroy socket
+        if (res.socket && !res.socket.destroyed) {
+          res.socket.destroy();
         }
+      }
     }
+  }
 }

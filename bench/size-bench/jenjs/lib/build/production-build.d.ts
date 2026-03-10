@@ -1,10 +1,10 @@
-import { FrameworkConfig } from '../core/config.js';
+import { FrameworkConfig } from "../core/config.js";
 export interface ProductionBuildConfig {
-    config: FrameworkConfig;
+  config: FrameworkConfig;
 }
 export declare class ProductionBuilder {
-    /**
-     * Run the production build sequence
-     */
-    static build(opts: ProductionBuildConfig): Promise<void>;
+  /**
+   * Run the production build sequence
+   */
+  static build(opts: ProductionBuildConfig): Promise<void>;
 }

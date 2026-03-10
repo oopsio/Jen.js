@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { h, type VNode } from "preact";
 import { useEffect } from "preact/hooks";
@@ -33,9 +33,11 @@ export function PWA({
   useEffect(() => {
     // Register service worker in browser
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register(swPath).catch((err) =>
-        console.error("Service worker registration failed:", err),
-      );
+      navigator.serviceWorker
+        .register(swPath)
+        .catch((err) =>
+          console.error("Service worker registration failed:", err),
+        );
     }
   }, [swPath]);
 

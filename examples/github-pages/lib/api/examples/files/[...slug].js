@@ -5,19 +5,18 @@
  * Matches: /api/files/a, /api/files/a/b, /api/files/a/b/c, etc.
  */
 export default async function handler(req, res) {
-    const { slug } = req.params;
-    // slug will be an array of path segments
-    // /api/files/docs/readme.md -> slug = ['docs', 'readme.md']
-    // /api/files/a/b/c -> slug = ['a', 'b', 'c']
-    const filePath = Array.isArray(slug) ? slug.join("/") : slug;
-    if (req.method === "GET") {
-        res.status(200).json({
-            message: "File resource",
-            path: filePath,
-            segments: slug,
-        });
-    }
-    else {
-        res.status(405).json({ error: "Method not allowed" });
-    }
+  const { slug } = req.params;
+  // slug will be an array of path segments
+  // /api/files/docs/readme.md -> slug = ['docs', 'readme.md']
+  // /api/files/a/b/c -> slug = ['a', 'b', 'c']
+  const filePath = Array.isArray(slug) ? slug.join("/") : slug;
+  if (req.method === "GET") {
+    res.status(200).json({
+      message: "File resource",
+      path: filePath,
+      segments: slug,
+    });
+  } else {
+    res.status(405).json({ error: "Method not allowed" });
+  }
 }

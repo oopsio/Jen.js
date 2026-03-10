@@ -1,7 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { h } from "preact";
-import { YouTube, GoogleMaps } from "../../packages/third-parties-embeds/src/index.js";
-import type { YouTubeEmbedProps, GoogleMapsEmbedProps } from "../../packages/third-parties-embeds/src/index.js";
+import {
+  YouTube,
+  GoogleMaps,
+} from "../../packages/third-parties-embeds/src/index.js";
+import type {
+  YouTubeEmbedProps,
+  GoogleMapsEmbedProps,
+} from "../../packages/third-parties-embeds/src/index.js";
 
 describe("@jenjs/third-parties-embeds", () => {
   describe("YouTube Component", () => {

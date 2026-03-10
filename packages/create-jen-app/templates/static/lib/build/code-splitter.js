@@ -9,188 +9,186 @@
  * - Entry: Main application bundle
  */
 export class CodeSplitter {
-    strategies = [];
-    routeAnalysis = new Map();
-    constructor() {
-        this.initializeDefaultStrategies();
+  strategies = [];
+  routeAnalysis = new Map();
+  constructor() {
+    this.initializeDefaultStrategies();
+  }
+  /**
+   * Initialize default splitting strategies in priority order
+   */
+  initializeDefaultStrategies() {
+    // Vendor chunks (highest priority - most stable)
+    this.strategies.push({
+      name: "vendor",
+      test: (path) => {
+        return /node_modules/.test(path) && !this.isFrameworkInternal(path);
+      },
+      priority: 100,
+    });
+    // Framework runtime (stable, shared across all pages)
+    this.strategies.push({
+      name: "runtime",
+      test: (path) => {
+        return (
+          this.isFrameworkInternal(path) && /runtime|hydrate|ssr/.test(path)
+        );
+      },
+      priority: 90,
+    });
+    // Common utilities (shared components)
+    this.strategies.push({
+      name: "common",
+      test: (path) => {
+        return /components|utils|helpers/.test(path);
+      },
+      priority: 80,
+    });
+    // Route-specific chunks (lazy-loaded)
+    this.strategies.push({
+      name: "route",
+      test: (path) => {
+        return /pages|routes|site/.test(path);
+      },
+      priority: 50,
+    });
+  }
+  /**
+   * Determine which chunk a module should belong to
+   */
+  determineChunk(modulePath) {
+    // Sort by priority (descending)
+    const sorted = [...this.strategies].sort((a, b) => b.priority - a.priority);
+    for (const strategy of sorted) {
+      if (strategy.test(modulePath)) {
+        return strategy.name;
+      }
     }
-    /**
-     * Initialize default splitting strategies in priority order
-     */
-    initializeDefaultStrategies() {
-        // Vendor chunks (highest priority - most stable)
-        this.strategies.push({
-            name: "vendor",
-            test: (path) => {
-                return /node_modules/.test(path) && !this.isFrameworkInternal(path);
-            },
-            priority: 100,
-        });
-        // Framework runtime (stable, shared across all pages)
-        this.strategies.push({
-            name: "runtime",
-            test: (path) => {
-                return (this.isFrameworkInternal(path) &&
-                    /runtime|hydrate|ssr/.test(path));
-            },
-            priority: 90,
-        });
-        // Common utilities (shared components)
-        this.strategies.push({
-            name: "common",
-            test: (path) => {
-                return /components|utils|helpers/.test(path);
-            },
-            priority: 80,
-        });
-        // Route-specific chunks (lazy-loaded)
-        this.strategies.push({
-            name: "route",
-            test: (path) => {
-                return /pages|routes|site/.test(path);
-            },
-            priority: 50,
-        });
+    return "entry"; // Default to main entry chunk
+  }
+  /**
+   * Analyze route dependencies for splitting decisions
+   *
+   * @param routePath Path to route file
+   * @param dependencies List of imported module paths
+   */
+  analyzeRouteDependencies(routePath, dependencies) {
+    this.routeAnalysis.set(routePath, dependencies);
+  }
+  /**
+   * Generate esbuild manual chunks configuration
+   *
+   * Implements intelligent bundling:
+   * - Vendor libraries in separate chunk (external dependencies)
+   * - Runtime/hydration in separate chunk (framework internals)
+   * - Common code in separate chunk (shared components)
+   * - Route-specific code in separate chunks (per-route lazy-loading)
+   */
+  generateManualChunks() {
+    const chunks = {};
+    // Vendor chunk patterns
+    chunks.vendor = [
+      "preact",
+      "preact/compat",
+      "preact/hooks",
+      "preact/compat/scheduler",
+      "htm",
+    ];
+    // Runtime chunk patterns
+    chunks.runtime = [
+      "../runtime/hydrate.js",
+      "../runtime/render.js",
+      "../runtime/ssr.js",
+    ];
+    // Common utilities patterns
+    chunks.common = [];
+    return chunks;
+  }
+  /**
+   * Generate esbuild splitting configuration
+   */
+  generateSplittingConfig() {
+    return {
+      splitting: true,
+      format: "esm",
+      chunkNames: "[name]-[hash]",
+      manualChunks: this.generateManualChunks(),
+    };
+  }
+  /**
+   * Generate chunk dependency graph for debugging
+   *
+   * Shows which chunks depend on which others, useful for:
+   * - Understanding load order
+   * - Optimizing prefetching
+   * - Detecting circular dependencies
+   */
+  generateDependencyGraph() {
+    let graph = "# Chunk Dependency Graph\n\n";
+    graph += "## Splitting Strategy\n";
+    graph += "- **vendor**: External dependencies (preact, utilities)\n";
+    graph += "- **runtime**: Framework runtime (hydration, SSR, hooks)\n";
+    graph += "- **common**: Shared components and utilities\n";
+    graph += "- **route**: Per-route lazy-loaded chunks\n";
+    graph += "- **entry**: Main application bundle\n\n";
+    graph += "## Load Order\n";
+    graph += "1. Entry (main bundle) - executes immediately\n";
+    graph += "2. Vendor - loaded on demand, cached long-term\n";
+    graph += "3. Runtime - loaded before any route rendering\n";
+    graph += "4. Common - loaded when needed by routes\n";
+    graph += "5. Route chunks - lazy-loaded per page\n\n";
+    graph += "## Cache Strategy\n";
+    graph +=
+      "- Vendor: `max-age=31536000, immutable` (1 year, never changes)\n";
+    graph += "- Runtime: `max-age=2592000` (30 days, updated with framework)\n";
+    graph += "- Entry: `max-age=3600` (1 hour, updated frequently)\n";
+    graph += "- Routes: `max-age=86400` (1 day, per-route updates)\n\n";
+    return graph;
+  }
+  /**
+   * Check if path is internal framework code
+   */
+  isFrameworkInternal(path) {
+    return /@src|src\//.test(path);
+  }
+  /**
+   * Register custom splitting strategy
+   */
+  registerStrategy(strategy) {
+    this.strategies.push(strategy);
+    // Re-sort by priority
+    this.strategies.sort((a, b) => b.priority - a.priority);
+  }
+  /**
+   * Generate splitting report
+   */
+  generateReport() {
+    let report = "# Code Splitting Report\n\n";
+    report += "## Active Strategies\n";
+    for (const strategy of this.strategies) {
+      report += `- **${strategy.name}** (priority: ${strategy.priority})\n`;
     }
-    /**
-     * Determine which chunk a module should belong to
-     */
-    determineChunk(modulePath) {
-        // Sort by priority (descending)
-        const sorted = [...this.strategies].sort((a, b) => b.priority - a.priority);
-        for (const strategy of sorted) {
-            if (strategy.test(modulePath)) {
-                return strategy.name;
-            }
-        }
-        return "entry"; // Default to main entry chunk
+    report += "\n## Route Analysis\n";
+    if (this.routeAnalysis.size === 0) {
+      report += "No routes analyzed yet.\n";
+    } else {
+      for (const [route, deps] of this.routeAnalysis) {
+        report += `- **${route}**: ${deps.length} dependencies\n`;
+      }
     }
-    /**
-     * Analyze route dependencies for splitting decisions
-     *
-     * @param routePath Path to route file
-     * @param dependencies List of imported module paths
-     */
-    analyzeRouteDependencies(routePath, dependencies) {
-        this.routeAnalysis.set(routePath, dependencies);
-    }
-    /**
-     * Generate esbuild manual chunks configuration
-     *
-     * Implements intelligent bundling:
-     * - Vendor libraries in separate chunk (external dependencies)
-     * - Runtime/hydration in separate chunk (framework internals)
-     * - Common code in separate chunk (shared components)
-     * - Route-specific code in separate chunks (per-route lazy-loading)
-     */
-    generateManualChunks() {
-        const chunks = {};
-        // Vendor chunk patterns
-        chunks.vendor = [
-            "preact",
-            "preact/compat",
-            "preact/hooks",
-            "preact/compat/scheduler",
-            "htm",
-        ];
-        // Runtime chunk patterns
-        chunks.runtime = [
-            "../runtime/hydrate.js",
-            "../runtime/render.js",
-            "../runtime/ssr.js",
-        ];
-        // Common utilities patterns
-        chunks.common = [];
-        return chunks;
-    }
-    /**
-     * Generate esbuild splitting configuration
-     */
-    generateSplittingConfig() {
-        return {
-            splitting: true,
-            format: "esm",
-            chunkNames: "[name]-[hash]",
-            manualChunks: this.generateManualChunks(),
-        };
-    }
-    /**
-     * Generate chunk dependency graph for debugging
-     *
-     * Shows which chunks depend on which others, useful for:
-     * - Understanding load order
-     * - Optimizing prefetching
-     * - Detecting circular dependencies
-     */
-    generateDependencyGraph() {
-        let graph = "# Chunk Dependency Graph\n\n";
-        graph += "## Splitting Strategy\n";
-        graph += "- **vendor**: External dependencies (preact, utilities)\n";
-        graph +=
-            "- **runtime**: Framework runtime (hydration, SSR, hooks)\n";
-        graph += "- **common**: Shared components and utilities\n";
-        graph += "- **route**: Per-route lazy-loaded chunks\n";
-        graph += "- **entry**: Main application bundle\n\n";
-        graph += "## Load Order\n";
-        graph += "1. Entry (main bundle) - executes immediately\n";
-        graph += "2. Vendor - loaded on demand, cached long-term\n";
-        graph += "3. Runtime - loaded before any route rendering\n";
-        graph += "4. Common - loaded when needed by routes\n";
-        graph += "5. Route chunks - lazy-loaded per page\n\n";
-        graph += "## Cache Strategy\n";
-        graph +=
-            "- Vendor: `max-age=31536000, immutable` (1 year, never changes)\n";
-        graph +=
-            "- Runtime: `max-age=2592000` (30 days, updated with framework)\n";
-        graph += "- Entry: `max-age=3600` (1 hour, updated frequently)\n";
-        graph += "- Routes: `max-age=86400` (1 day, per-route updates)\n\n";
-        return graph;
-    }
-    /**
-     * Check if path is internal framework code
-     */
-    isFrameworkInternal(path) {
-        return /@src|src\//.test(path);
-    }
-    /**
-     * Register custom splitting strategy
-     */
-    registerStrategy(strategy) {
-        this.strategies.push(strategy);
-        // Re-sort by priority
-        this.strategies.sort((a, b) => b.priority - a.priority);
-    }
-    /**
-     * Generate splitting report
-     */
-    generateReport() {
-        let report = "# Code Splitting Report\n\n";
-        report += "## Active Strategies\n";
-        for (const strategy of this.strategies) {
-            report += `- **${strategy.name}** (priority: ${strategy.priority})\n`;
-        }
-        report += "\n## Route Analysis\n";
-        if (this.routeAnalysis.size === 0) {
-            report += "No routes analyzed yet.\n";
-        }
-        else {
-            for (const [route, deps] of this.routeAnalysis) {
-                report += `- **${route}**: ${deps.length} dependencies\n`;
-            }
-        }
-        return report;
-    }
+    return report;
+  }
 }
 /**
  * Helper: Create esbuild configuration for code splitting
  */
 export function createSplitConfig(outdir = "dist") {
-    const splitter = new CodeSplitter();
-    return {
-        ...splitter.generateSplittingConfig(),
-        outdir,
-        minify: true,
-        format: "esm",
-        target: "es2022",
-    };
+  const splitter = new CodeSplitter();
+  return {
+    ...splitter.generateSplittingConfig(),
+    outdir,
+    minify: true,
+    format: "esm",
+    target: "es2022",
+  };
 }

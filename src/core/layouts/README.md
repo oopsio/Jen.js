@@ -223,7 +223,7 @@ export default function AdminLayout({ children, data }) {
   if (!data.isAdmin) {
     return <div>Access Denied</div>;
   }
-  
+
   return (
     <div class="admin-panel">
       <nav>{/* admin navigation */}</nav>
@@ -239,7 +239,7 @@ export default function AdminLayout({ children, data }) {
 // src/pages/(layout).tsx
 export default function PagesLayout({ children, params }) {
   const isBlogPost = params.slug?.startsWith("blog/");
-  
+
   return (
     <div class={`layout ${isBlogPost ? "blog-post" : "page"}`}>
       {children}
@@ -253,6 +253,7 @@ export default function PagesLayout({ children, params }) {
 ### Layout Discovery (`scanLayouts`)
 
 The `scanLayouts()` function:
+
 - Walks the siteDir directory tree recursively
 - Finds all files matching `(layout).tsx|ts|jsx|js` pattern
 - Creates LayoutEntry objects with depth and directory path information
@@ -261,6 +262,7 @@ The `scanLayouts()` function:
 ### Hierarchy Building (`buildLayoutHierarchy`)
 
 The `buildLayoutHierarchy()` function:
+
 - Takes a route file path
 - Traces the directory structure from root to the route's directory
 - Finds all applicable layouts at each level
@@ -269,6 +271,7 @@ The `buildLayoutHierarchy()` function:
 ### Layout Resolution (`resolveLayoutStack`)
 
 The `resolveLayoutStack()` function:
+
 - Takes LayoutEntry objects
 - Loads and compiles each layout module (TypeScript/JSX/Vue/Svelte)
 - Merges configuration from all layouts
@@ -277,6 +280,7 @@ The `resolveLayoutStack()` function:
 ### Rendering (`renderWithLayoutStack`)
 
 The `renderWithLayoutStack()` function:
+
 - Takes a layout stack, page component, and props
 - Composes layouts from leaf to root (creates Preact VNode tree)
 - Returns a VNode with proper nesting
@@ -301,6 +305,7 @@ The `renderWithLayoutStack()` function:
 ### Layouts not being applied
 
 Check that:
+
 1. Layout files are named exactly `(layout).tsx` (or other supported extension)
 2. They are in the correct directory structure relative to routes
 3. Default export is a valid Preact component
@@ -308,6 +313,7 @@ Check that:
 ### Configuration not merging
 
 Remember:
+
 - Configuration merging is shallow, not deep
 - Only the `layout` export is merged
 - Child values completely override parent values (no array merging)
@@ -315,5 +321,6 @@ Remember:
 ### Head elements duplicated
 
 Each layout's Head component is rendered; avoid duplicating common elements:
+
 - Put common head elements only in the root layout
 - Child layouts should only add specific elements

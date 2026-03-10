@@ -6,7 +6,7 @@
  * Generates the HTML for the DevTools panel
  */
 export function getHTML() {
-    return `
+  return `
 <div class="jen-devtools-panel">
   <div class="jen-devtools-header">
     <div class="jen-devtools-title">
@@ -121,7 +121,7 @@ export function getHTML() {
  * Generates the CSS for the DevTools panel
  */
 export function getStyles() {
-    return `
+  return `
 :root {
   --jen-color-bg: #111111;
   --jen-color-bg-secondary: #1a1a1a;
@@ -759,11 +759,11 @@ export function getStyles() {
  * Inject styles into the document
  */
 export function injectStyles() {
-    if (document.getElementById("__jen_devtools_styles__")) {
-        return; // Already injected
-    }
-    const styleEl = document.createElement("style");
-    styleEl.id = "__jen_devtools_styles__";
-    styleEl.textContent = getStyles();
-    document.head.appendChild(styleEl);
+  if (document.getElementById("__jen_devtools_styles__")) {
+    return; // Already injected
+  }
+  const styleEl = document.createElement("style");
+  styleEl.id = "__jen_devtools_styles__";
+  styleEl.textContent = getStyles();
+  document.head.appendChild(styleEl);
 }

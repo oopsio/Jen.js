@@ -5,9 +5,13 @@ import { h } from "preact";
  * Router auto-intercepts clicks
  */
 export function Link({ href, children, ...props }) {
-    return h("a", {
-        href,
-        "data-jen-link": true,
-        ...props,
-    }, children);
+  return h(
+    "a",
+    {
+      href,
+      "data-jen-link": true,
+      ...props,
+    },
+    children,
+  );
 }

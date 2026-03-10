@@ -26,10 +26,10 @@
  * @returns The same component with island metadata attached.
  */
 export function Island(Component, strategy) {
-    // Mark component metadata for server-side detection during SSR
-    Component.__island = true;
-    Component.__hydrationStrategy = strategy;
-    return Component;
+  // Mark component metadata for server-side detection during SSR
+  Component.__island = true;
+  Component.__hydrationStrategy = strategy;
+  return Component;
 }
 /**
  * Generate an HTML comment marker that encodes island metadata.
@@ -49,8 +49,8 @@ export function Island(Component, strategy) {
  * @returns HTML comment string encoding the island metadata.
  */
 export function createIslandMarker(id, componentPath, strategy, props) {
-    const propsJson = JSON.stringify(props).replace(/</g, "\\u003c");
-    return `<!--__ISLAND_${strategy.toUpperCase()}__:${id}:${componentPath}:${propsJson}-->`;
+  const propsJson = JSON.stringify(props).replace(/</g, "\\u003c");
+  return `<!--__ISLAND_${strategy.toUpperCase()}__:${id}:${componentPath}:${propsJson}-->`;
 }
 /**
  * Extract island metadata from server-rendered HTML.
@@ -69,38 +69,42 @@ export function createIslandMarker(id, componentPath, strategy, props) {
  * @returns Array of detected islands with complete metadata ready for hydration.
  */
 export function extractIslandsFromHtml(html) {
-    const islands = [];
-    // Regex to match: <!--__ISLAND_{LOAD|IDLE|VISIBLE}__:id:componentPath:propsJson-->
-    const regex = /<!--__ISLAND_(LOAD|IDLE|VISIBLE)__:([^:]+):([^:]+):(.+?)-->/g;
-    let match;
-    while ((match = regex.exec(html)) !== null) {
-        const strategy = match[1].toLowerCase();
-        const id = match[2];
-        const componentPath = match[3];
-        // Unescape '<' back to literal character
-        const propsStr = match[4].replace(/\\u003c/g, "<");
-        // Validate required fields
-        if (!id || !componentPath) {
-            console.warn("Invalid island marker: missing id or componentPath");
-            continue;
-        }
-        try {
-            // Parse props JSON and validate it's an object
-            const props = JSON.parse(propsStr);
-            if (typeof props !== "object" || props === null) {
-                console.warn(`Invalid props for island ${id}: expected object, got ${typeof props}`);
-                continue;
-            }
-            islands.push({
-                id,
-                component: componentPath,
-                strategy,
-                props,
-            });
-        }
-        catch (err) {
-            console.warn(`Failed to parse props for island ${id}:`, err instanceof Error ? err.message : String(err));
-        }
+  const islands = [];
+  // Regex to match: <!--__ISLAND_{LOAD|IDLE|VISIBLE}__:id:componentPath:propsJson-->
+  const regex = /<!--__ISLAND_(LOAD|IDLE|VISIBLE)__:([^:]+):([^:]+):(.+?)-->/g;
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const strategy = match[1].toLowerCase();
+    const id = match[2];
+    const componentPath = match[3];
+    // Unescape '<' back to literal character
+    const propsStr = match[4].replace(/\\u003c/g, "<");
+    // Validate required fields
+    if (!id || !componentPath) {
+      console.warn("Invalid island marker: missing id or componentPath");
+      continue;
     }
-    return islands;
+    try {
+      // Parse props JSON and validate it's an object
+      const props = JSON.parse(propsStr);
+      if (typeof props !== "object" || props === null) {
+        console.warn(
+          `Invalid props for island ${id}: expected object, got ${typeof props}`,
+        );
+        continue;
+      }
+      islands.push({
+        id,
+        component: componentPath,
+        strategy,
+        props,
+      });
+    } catch (err) {
+      console.warn(
+        `Failed to parse props for island ${id}:`,
+        err instanceof Error ? err.message : String(err),
+      );
+    }
+  }
+  return islands;
 }

@@ -36,6 +36,7 @@ cp src/telemetry/.env.example .env
 ```
 
 Edit and fill in:
+
 ```env
 GITHUB_TOKEN=ghp_your_token_here
 GITHUB_OWNER=your_github_username
@@ -57,12 +58,14 @@ GITHUB_REPO = jenjs-telemetry
 ## Step 4: Deploy to Vercel
 
 Option A: Using Vercel CLI
+
 ```bash
 npm install -g vercel
 vercel deploy
 ```
 
 Option B: Connect GitHub repo to Vercel
+
 1. Go to https://vercel.com/dashboard
 2. Click "New Project"
 3. Import the jen.js repository
@@ -74,19 +77,19 @@ Option B: Connect GitHub repo to Vercel
 In `src/index.ts` or `server.ts`:
 
 ```typescript
-import { createTelemetry } from './telemetry/client.js';
+import { createTelemetry } from "./telemetry/client.js";
 
-const telemetry = createTelemetry('0.1.0', {
-  endpoint: 'https://jenjs-telemetry.vercel.app/telemetry',
+const telemetry = createTelemetry("0.1.0", {
+  endpoint: "https://jenjs-telemetry.vercel.app/telemetry",
 });
 
 // Track dev command
-if (process.argv[2] === 'dev') {
-  telemetry.track({ command: 'dev' });
+if (process.argv[2] === "dev") {
+  telemetry.track({ command: "dev" });
 }
 
 // Ensure flush on exit
-process.on('exit', () => {
+process.on("exit", () => {
   telemetry.flush();
 });
 ```
@@ -126,12 +129,14 @@ curl http://localhost:3000/health
 ## Step 7: Monitor Telemetry
 
 Events are stored in GitHub repo as:
+
 ```
 telemetry/2026-03-06.json
 telemetry/2026-03-07.json
 ```
 
 Each file contains an array of events:
+
 ```json
 [
   {
@@ -154,11 +159,13 @@ Each file contains an array of events:
 ## Disable Telemetry
 
 Set environment variable:
+
 ```env
 TELEMETRY_DISABLED=1
 ```
 
 Or at runtime:
+
 ```typescript
 telemetry.disable();
 ```
@@ -170,6 +177,7 @@ telemetry.disable();
 Accept telemetry events.
 
 **Request:**
+
 ```json
 {
   "framework": "jenjs",
@@ -180,6 +188,7 @@ Accept telemetry events.
 ```
 
 **Responses:**
+
 - `200` - Success
 - `400` - Invalid payload
 - `429` - Rate limited
@@ -232,6 +241,7 @@ Private Repo (telemetry/YYYY-MM-DD.json)
 ### Rate limiting too aggressive
 
 Edit `src/telemetry/api/rate-limiter.ts`:
+
 ```typescript
 const REQUESTS_PER_MINUTE = 10; // Increase this
 ```

@@ -98,9 +98,7 @@ async function main() {
   const configFile = join(outdir, "jen.config.js");
   const config = (await import(pathToFileURL(configFile).href)).default;
 
-  const buildPath = pathToFileURL(
-    join(rootDir, "lib/build/build.js"),
-  ).href;
+  const buildPath = pathToFileURL(join(rootDir, "lib/build/build.js")).href;
   const { buildSite } = await import(buildPath);
 
   // Build the site (framework now handles polyfills + preact bundling)

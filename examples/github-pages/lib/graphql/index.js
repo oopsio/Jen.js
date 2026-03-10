@@ -46,5 +46,7 @@
  * }
  */
 export async function runQuery(query, variables) {
-    throw new Error("GraphQL implementation requires external library. Install: npm install graphql");
+  throw new Error(
+    "GraphQL implementation requires external library. Install: npm install graphql",
+  );
 }

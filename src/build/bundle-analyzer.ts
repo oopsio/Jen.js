@@ -68,7 +68,9 @@ function categorizeModule(modulePath: string): string {
   return "other";
 }
 
-export async function analyzeBundle(config: FrameworkConfig): Promise<BundleAnalysis> {
+export async function analyzeBundle(
+  config: FrameworkConfig,
+): Promise<BundleAnalysis> {
   const dist = resolveDistPath(config);
   const metaFiles = [
     join(dist, "preact-runtime-meta.json"),
@@ -92,31 +94,38 @@ export async function analyzeBundle(config: FrameworkConfig): Promise<BundleAnal
     try {
       const metaContent = readFileSync(metaFile, "utf-8");
       const meta = JSON.parse(metaContent);
-      
+
       const inputs = meta.inputs || {};
       const outputs = meta.outputs || {};
-      
-      for (const [outputPath, outputData] of Object.entries(outputs as Record<string, any>)) {
+
+      for (const [outputPath, outputData] of Object.entries(
+        outputs as Record<string, any>,
+      )) {
         const entryPoint = outputData.entryPoint;
         if (entryPoint) {
           entryPoints.push(entryPoint);
         }
       }
-      
-      for (const [inputPath, inputData] of Object.entries(inputs as Record<string, any>)) {
+
+      for (const [inputPath, inputData] of Object.entries(
+        inputs as Record<string, any>,
+      )) {
         const bytes = inputData.bytes || 0;
         if (bytes === 0) continue;
 
         const normalizedPath = inputPath.replace(/^<(.+)>$/, "$1");
-        
-        pathCountMap.set(normalizedPath, (pathCountMap.get(normalizedPath) || 0) + 1);
+
+        pathCountMap.set(
+          normalizedPath,
+          (pathCountMap.get(normalizedPath) || 0) + 1,
+        );
 
         let gzipBytes = 0;
         const fullInputPath = join(dist, "..", normalizedPath);
         if (existsSync(fullInputPath)) {
           const content = readFileSync(fullInputPath);
           gzipBytes = await gzipSize(content);
-        } 
+        }
         if (gzipBytes === 0) {
           gzipBytes = Math.floor(bytes * 0.3);
         }
@@ -190,8 +199,8 @@ function buildTreemap(modules: BundleModule[]): TreemapNode {
   for (const [pkg, mods] of packageGroups) {
     const pkgSize = mods.reduce((sum, m) => sum + m.size, 0);
     const totalSize = modules.reduce((sum, m) => sum + m.size, 0);
-    
-    const pkgChildren: TreemapNode[] = mods.map(m => ({
+
+    const pkgChildren: TreemapNode[] = mods.map((m) => ({
       name: m.name,
       path: m.path,
       value: m.size,
@@ -244,17 +253,21 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-export async function generateBundleReport(config: FrameworkConfig): Promise<string> {
+export async function generateBundleReport(
+  config: FrameworkConfig,
+): Promise<string> {
   log.info("Analyzing bundle...");
-  
+
   const analysis = await analyzeBundle(config);
   const treemapData = buildTreemap(analysis.modules);
-  
+
   // Prepare data for template
   const modulesJson = JSON.stringify(analysis.modules);
   const treemapJson = JSON.stringify(treemapData);
   const packagesJson = JSON.stringify(Object.fromEntries(analysis.packages));
-  const duplicatesJson = JSON.stringify(Object.fromEntries(analysis.duplicateModules));
+  const duplicatesJson = JSON.stringify(
+    Object.fromEntries(analysis.duplicateModules),
+  );
 
   const html = `
     body {
@@ -642,12 +655,16 @@ export async function generateBundleReport(config: FrameworkConfig): Promise<str
       <span class="stat-label">Packages</span>
       <span class="stat-value" id="packageCount">${analysis.packages.size}</span>
     </div>
-    ${analysis.duplicateModules.size > 0 ? `
+    ${
+      analysis.duplicateModules.size > 0
+        ? `
     <div class="stat">
       <span class="stat-label">Duplicates</span>
       <span class="stat-value" style="color: var(--warning)">${analysis.duplicateModules.size}</span>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
 
   <div class="controls">
@@ -997,7 +1014,9 @@ export async function generateBundleReport(config: FrameworkConfig): Promise<str
   return minifyHtml(html);
 }
 
-export async function runBundleAnalyzer(config: FrameworkConfig): Promise<string> {
+export async function runBundleAnalyzer(
+  config: FrameworkConfig,
+): Promise<string> {
   const dist = resolveDistPath(config);
   const reportPath = join(dist, "bundle-report.html");
 

@@ -1,14 +1,13 @@
-'use client';
+"use client";
 
 import { h, type VNode } from "preact";
 import { useRef, useEffect, useCallback, useState } from "preact/hooks";
 import type { JSX } from "preact";
 
-export interface LinkProps
-  extends Omit<
-    JSX.HTMLAttributes<HTMLAnchorElement>,
-    "href" | "onClick" | "ref"
-  > {
+export interface LinkProps extends Omit<
+  JSX.HTMLAttributes<HTMLAnchorElement>,
+  "href" | "onClick" | "ref"
+> {
   /** URL to navigate to */
   href: string;
   /** Replace history instead of pushing */
@@ -55,8 +54,14 @@ function isLocalUrl(href: string): boolean {
   }
   try {
     // Ensure it's a valid local URL
-    const url = new URL(href, typeof window !== "undefined" ? window.location.href : "http://localhost");
-    return url.hostname === (typeof window !== "undefined" ? window.location.hostname : "localhost");
+    const url = new URL(
+      href,
+      typeof window !== "undefined" ? window.location.href : "http://localhost",
+    );
+    return (
+      url.hostname ===
+      (typeof window !== "undefined" ? window.location.hostname : "localhost")
+    );
   } catch {
     return true; // Assume local if parsing fails
   }
@@ -135,10 +140,7 @@ function handleLinkClick(
   }
 
   // Allow modified clicks (meta, ctrl, shift, alt) and downloads
-  if (
-    isModifiedEvent(event) ||
-    target?.hasAttribute("download")
-  ) {
+  if (isModifiedEvent(event) || target?.hasAttribute("download")) {
     return;
   }
 

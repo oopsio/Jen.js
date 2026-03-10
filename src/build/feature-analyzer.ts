@@ -1,5 +1,9 @@
 import type { FrameworkConfig } from "../core/config.js";
-import type { ResolvedFeatures, FeatureName, FeatureBuildMetadata } from "../core/features.js";
+import type {
+  ResolvedFeatures,
+  FeatureName,
+  FeatureBuildMetadata,
+} from "../core/features.js";
 import {
   resolveFeatures,
   getEnabledFeatures,
@@ -73,7 +77,9 @@ export class FeatureAnalyzer {
    */
   generateFeatureFlagsCode(): string {
     const features = this.resolved;
-    const lines = Object.entries(features).map(([name, enabled]) => `  ${name}: ${enabled},`);
+    const lines = Object.entries(features).map(
+      ([name, enabled]) => `  ${name}: ${enabled},`,
+    );
 
     return `
 /**
@@ -210,4 +216,3 @@ Bundle Impact:
 `;
   }
 }
-

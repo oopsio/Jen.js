@@ -11,9 +11,9 @@ Markdown is a lightweight markup language that's perfect for writing content. Th
 
 ## Text Formatting
 
-You can make text **bold** using `**text**` or *italic* using `*text*`.
+You can make text **bold** using `**text**` or _italic_ using `*text*`.
 
-You can also combine them: ***bold and italic***.
+You can also combine them: **_bold and italic_**.
 
 ~~Strikethrough text~~ uses `~~text~~`.
 
@@ -21,10 +21,15 @@ You can also combine them: ***bold and italic***.
 
 ```markdown
 # Heading 1
+
 ## Heading 2
+
 ### Heading 3
+
 #### Heading 4
+
 ##### Heading 5
+
 ###### Heading 6
 ```
 
@@ -72,7 +77,7 @@ function greet(name: string): string {
 ## Tables
 
 | Feature | Jen.js | Next.js | Astro |
-|---------|--------|---------|-------|
+| ------- | ------ | ------- | ----- |
 | Speed   | ⚡     | ⚡      | ⚡    |
 | SSR     | ✓      | ✓       | ✓     |
 | Islands | ✓      | ✗       | ✓     |

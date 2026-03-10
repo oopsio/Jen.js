@@ -20,4 +20,8 @@ export {
   printWarning,
   printInfo,
 } from "./tui.js";
-export type { JenProjectConfig, ProjectStats, MCPResourcePath } from "./types.js";
+export type {
+  JenProjectConfig,
+  ProjectStats,
+  MCPResourcePath,
+} from "./types.js";

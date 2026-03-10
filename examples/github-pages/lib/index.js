@@ -39,25 +39,45 @@ export { useRouter, useNavigation } from "./client/index.js";
 // TYPED LOADERS (5 exports)
 // ============================================================================
 // Type-safe data loading with compile-time validation
-export { defineLoader, defineMiddleware, validateLoaderData, } from "./core/loader-schema.js";
+export {
+  defineLoader,
+  defineMiddleware,
+  validateLoaderData,
+} from "./core/loader-schema.js";
 export { parseCookies, headersToObject } from "./core/http.js";
 // ============================================================================
 // PLUGINS (3 exports)
 // ============================================================================
 // Plugin system for extending framework functionality
-export { getPluginManager, resetPluginManager, } from "./plugin/plugin-manager.js";
+export {
+  getPluginManager,
+  resetPluginManager,
+} from "./plugin/plugin-manager.js";
 export { HookStage } from "./plugin/types.js";
 // ============================================================================
 // RUNTIME & ISLANDS (2 exports)
 // ============================================================================
 // Client-side hydration and island components for interactivity
-export { Island, } from "./runtime/islands.js";
+export { Island } from "./runtime/islands.js";
 // ============================================================================
 // CLIENT ROUTING & STATE (8 exports + types)
 // ============================================================================
 // Minimal client-side router and signal-based reactive state
-export { navigate, getCurrentRoute, onRouteChange, initRouter, } from "./client-routing/router.js";
-export { signal, computed, bindSignal, bindInput, batch, watch, createStore, } from "./client-routing/signal.js";
+export {
+  navigate,
+  getCurrentRoute,
+  onRouteChange,
+  initRouter,
+} from "./client-routing/router.js";
+export {
+  signal,
+  computed,
+  bindSignal,
+  bindInput,
+  batch,
+  watch,
+  createStore,
+} from "./client-routing/signal.js";
 export { Link } from "./client-routing/Link.js";
 // ============================================================================
 // UTILITIES (2 exports)

@@ -20,5 +20,5 @@ import type { FrameworkConfig } from "../core/config.js";
  * @throws Logs warnings for missing assets or component bundling failures but does not stop the build.
  */
 export declare function buildSite(opts: {
-    config: FrameworkConfig;
+  config: FrameworkConfig;
 }): Promise<void>;

@@ -3,7 +3,10 @@ import { pathToFileURL } from "node:url";
 import esbuild from "esbuild";
 import { join } from "node:path";
 import { mkdirSync, existsSync } from "node:fs";
-import { vueEsbuildPlugin, svelteEsbuildPlugin, } from "../../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../../compilers/esbuild-plugins.js";
 /**
  * Resolves the cache directory path for compiled layout modules.
  * Similar to route module caching to avoid repeated compilation.
@@ -12,12 +15,12 @@ import { vueEsbuildPlugin, svelteEsbuildPlugin, } from "../../compilers/esbuild-
  * @returns The absolute path to the cached compiled output file
  */
 function getCachePath(filePath) {
-    const cacheDir = join(process.cwd(), "node_modules", ".jen", "cache");
-    if (!existsSync(cacheDir)) {
-        mkdirSync(cacheDir, { recursive: true });
-    }
-    const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
-    return join(cacheDir, flatName + ".layout.mjs");
+  const cacheDir = join(process.cwd(), "node_modules", ".jen", "cache");
+  if (!existsSync(cacheDir)) {
+    mkdirSync(cacheDir, { recursive: true });
+  }
+  const flatName = filePath.replace(/[\\/:]/g, "_").replace(/^_+/, "");
+  return join(cacheDir, flatName + ".layout.mjs");
 }
 /**
  * Loads and compiles a layout module from file.
@@ -28,36 +31,41 @@ function getCachePath(filePath) {
  * @throws Error if compilation or import fails
  */
 async function loadLayoutModule(filePath) {
-    let moduleUrl = filePath;
-    const ext = filePath.slice(-4).toLowerCase();
-    const requiresTranspile = [".tsx", ".ts", ".vue", ".svelte"].some((e) => filePath.toLowerCase().endsWith(e));
-    if (requiresTranspile) {
-        const outfile = getCachePath(filePath);
-        await esbuild.build({
-            entryPoints: [filePath],
-            outfile,
-            format: "esm",
-            platform: "node",
-            target: "es2022",
-            bundle: true,
-            external: ["preact", "preact-render-to-string", "jenjs"],
-            write: true,
-            plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-        });
-        moduleUrl = outfile;
-    }
-    let mod;
-    try {
-        mod = await import(pathToFileURL(moduleUrl).href + "?t=" + Date.now());
-    }
-    catch (err) {
-        throw new Error(`Failed to import layout module ${filePath}: ${err instanceof Error ? err.message : String(err)}`);
-    }
-    // Validate that default export exists
-    if (!mod.default) {
-        throw new Error(`Layout module ${filePath} does not export a default component`);
-    }
-    return mod;
+  let moduleUrl = filePath;
+  const ext = filePath.slice(-4).toLowerCase();
+  const requiresTranspile = [".tsx", ".ts", ".vue", ".svelte"].some((e) =>
+    filePath.toLowerCase().endsWith(e),
+  );
+  if (requiresTranspile) {
+    const outfile = getCachePath(filePath);
+    await esbuild.build({
+      entryPoints: [filePath],
+      outfile,
+      format: "esm",
+      platform: "node",
+      target: "es2022",
+      bundle: true,
+      external: ["preact", "preact-render-to-string", "jenjs"],
+      write: true,
+      plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+    });
+    moduleUrl = outfile;
+  }
+  let mod;
+  try {
+    mod = await import(pathToFileURL(moduleUrl).href + "?t=" + Date.now());
+  } catch (err) {
+    throw new Error(
+      `Failed to import layout module ${filePath}: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+  // Validate that default export exists
+  if (!mod.default) {
+    throw new Error(
+      `Layout module ${filePath} does not export a default component`,
+    );
+  }
+  return mod;
 }
 /**
  * Resolves the complete layout stack for a route.
@@ -70,24 +78,24 @@ async function loadLayoutModule(filePath) {
  * @throws Error if any layout file fails to load
  */
 export async function resolveLayoutStack(layoutEntries) {
-    const modules = [];
-    let mergedConfig = {};
-    // Load and process layouts in order (root to leaf)
-    for (const entry of layoutEntries) {
-        const mod = await loadLayoutModule(entry.filePath);
-        modules.push(mod);
-        // Merge configuration (child overrides parent)
-        if (mod.layout) {
-            mergedConfig = {
-                ...mergedConfig,
-                ...mod.layout,
-            };
-        }
+  const modules = [];
+  let mergedConfig = {};
+  // Load and process layouts in order (root to leaf)
+  for (const entry of layoutEntries) {
+    const mod = await loadLayoutModule(entry.filePath);
+    modules.push(mod);
+    // Merge configuration (child overrides parent)
+    if (mod.layout) {
+      mergedConfig = {
+        ...mergedConfig,
+        ...mod.layout,
+      };
     }
-    return {
-        modules,
-        config: mergedConfig,
-    };
+  }
+  return {
+    modules,
+    config: mergedConfig,
+  };
 }
 /**
  * Renders a component wrapped in a layout hierarchy.
@@ -108,19 +116,19 @@ export async function resolveLayoutStack(layoutEntries) {
  * @returns Preact VNode representing the composed layout tree
  */
 export function renderWithLayoutStack(layoutStack, pageComponent, props) {
-    // Start with the page component as the innermost content
-    let content = h(pageComponent, props);
-    // Wrap with layouts from deepest to root (reverse order)
-    for (let i = layoutStack.modules.length - 1; i >= 0; i--) {
-        const layoutMod = layoutStack.modules[i];
-        const Layout = layoutMod.default;
-        // Pass children and props to each layout
-        content = h(Layout, {
-            children: content,
-            ...props,
-        });
-    }
-    return content;
+  // Start with the page component as the innermost content
+  let content = h(pageComponent, props);
+  // Wrap with layouts from deepest to root (reverse order)
+  for (let i = layoutStack.modules.length - 1; i >= 0; i--) {
+    const layoutMod = layoutStack.modules[i];
+    const Layout = layoutMod.default;
+    // Pass children and props to each layout
+    content = h(Layout, {
+      children: content,
+      ...props,
+    });
+  }
+  return content;
 }
 /**
  * Collects all Head components from the layout stack.
@@ -133,18 +141,18 @@ export function renderWithLayoutStack(layoutStack, pageComponent, props) {
  * @returns Array of rendered Head VNodes
  */
 export function collectLayoutHeads(layoutStack, pageHeadComponent, props) {
-    const heads = [];
-    // Collect heads from layouts (root to leaf)
-    for (const layoutMod of layoutStack.modules) {
-        if (layoutMod.Head) {
-            const headNode = h(layoutMod.Head, props);
-            heads.push(headNode);
-        }
+  const heads = [];
+  // Collect heads from layouts (root to leaf)
+  for (const layoutMod of layoutStack.modules) {
+    if (layoutMod.Head) {
+      const headNode = h(layoutMod.Head, props);
+      heads.push(headNode);
     }
-    // Page head comes last
-    if (pageHeadComponent) {
-        const headNode = h(pageHeadComponent, props);
-        heads.push(headNode);
-    }
-    return heads;
+  }
+  // Page head comes last
+  if (pageHeadComponent) {
+    const headNode = h(pageHeadComponent, props);
+    heads.push(headNode);
+  }
+  return heads;
 }

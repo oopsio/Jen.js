@@ -1,4 +1,4 @@
-export { DevTools, initDevTools, getDevTools, } from "./devtools.js";
+export { DevTools, initDevTools, getDevTools } from "./devtools.js";
 export { getHTML, getStyles, injectStyles } from "./ui.js";
 export { createEventBus } from "./event-bus.js";
 export { PersistenceManager } from "./persistence.js";

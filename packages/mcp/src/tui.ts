@@ -8,9 +8,7 @@ import type { ProjectStats } from "./types.js";
 
 export function printHeader(): void {
   console.clear();
-  console.log(
-    pc.bold(pc.cyan("╔════════════════════════════════════════╗")),
-  );
+  console.log(pc.bold(pc.cyan("╔════════════════════════════════════════╗")));
   console.log(
     pc.bold(
       pc.cyan("║") +
@@ -18,9 +16,7 @@ export function printHeader(): void {
         pc.cyan("                ║"),
     ),
   );
-  console.log(
-    pc.bold(pc.cyan("╚════════════════════════════════════════╝")),
-  );
+  console.log(pc.bold(pc.cyan("╚════════════════════════════════════════╝")));
   console.log();
 }
 
@@ -188,9 +184,5 @@ export function printTable(
 export function printFooter(): void {
   console.log();
   console.log(pc.gray("─".repeat(40)));
-  console.log(
-    pc.dim(
-      `docs: ${pc.cyan("https://github.com/oopsio/jen.js")}`,
-    ),
-  );
+  console.log(pc.dim(`docs: ${pc.cyan("https://github.com/oopsio/jen.js")}`));
 }

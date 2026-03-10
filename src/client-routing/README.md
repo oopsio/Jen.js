@@ -26,22 +26,27 @@ The router enables client-side navigation with partial page updates. It intercep
 ### API
 
 ```typescript
-import { navigate, getCurrentRoute, onRouteChange, initRouter } from 'jen/router'
+import {
+  navigate,
+  getCurrentRoute,
+  onRouteChange,
+  initRouter,
+} from "jen/router";
 
 // Get current route
-const path = getCurrentRoute() // e.g., '/about'
+const path = getCurrentRoute(); // e.g., '/about'
 
 // Navigate programmatically
-await navigate('/about')
-await navigate('/about', { replace: true, scroll: true })
+await navigate("/about");
+await navigate("/about", { replace: true, scroll: true });
 
 // Listen to route changes
 const unsubscribe = onRouteChange(({ path, previousPath }) => {
-  console.log(`Navigated from ${previousPath} to ${path}`)
-})
+  console.log(`Navigated from ${previousPath} to ${path}`);
+});
 
 // Initialize router
-initRouter() // Sets up link interception and popstate listener
+initRouter(); // Sets up link interception and popstate listener
 ```
 
 ### Usage
@@ -49,7 +54,7 @@ initRouter() // Sets up link interception and popstate listener
 #### Link Component
 
 ```jsx
-import { Link } from 'jen/router'
+import { Link } from "jen/router";
 
 export default function Navigation() {
   return (
@@ -58,7 +63,7 @@ export default function Navigation() {
       <Link href="/about">About</Link>
       <Link href="/contact">Contact</Link>
     </nav>
-  )
+  );
 }
 ```
 
@@ -75,32 +80,32 @@ The router automatically intercepts clicks on elements with `data-jen-link`.
 #### Programmatic Navigation
 
 ```typescript
-import { navigate } from 'jen/router'
+import { navigate } from "jen/router";
 
 // Navigate and update page
 async function handleNavigation() {
-  await navigate('/products')
+  await navigate("/products");
   // Page content in #app will be updated
 }
 
 // Replace history instead of push
-await navigate('/products', { replace: true })
+await navigate("/products", { replace: true });
 
 // Disable scroll-to-top
-await navigate('/products', { scroll: false })
+await navigate("/products", { scroll: false });
 ```
 
 #### Route Change Listener
 
 ```typescript
-import { onRouteChange } from 'jen/router'
+import { onRouteChange } from "jen/router";
 
 const unsubscribe = onRouteChange(({ path, previousPath }) => {
-  analytics.track('navigation', { from: previousPath, to: path })
-})
+  analytics.track("navigation", { from: previousPath, to: path });
+});
 
 // Stop listening
-unsubscribe()
+unsubscribe();
 ```
 
 ### How It Works
@@ -143,58 +148,58 @@ import {
   createStore,
   bindSignal,
   bindInput,
-} from 'jen/signal'
+} from "jen/signal";
 
 // Create a reactive signal
-const count = signal(0)
+const count = signal(0);
 
 // Read value
-console.log(count.value) // 0
+console.log(count.value); // 0
 
 // Update value (triggers subscribers)
-count.value = 5
+count.value = 5;
 
 // Subscribe to changes
 const unsubscribe = count.subscribe(() => {
-  console.log('Count changed to:', count.value)
-})
+  console.log("Count changed to:", count.value);
+});
 
 // Unsubscribe
-unsubscribe()
+unsubscribe();
 
 // Create derived signals
-const doubled = computed(() => count.value * 2)
-console.log(doubled.value) // 10
+const doubled = computed(() => count.value * 2);
+console.log(doubled.value); // 10
 
 // Watch for changes and run effects
 const unwatch = watch(count, (value) => {
-  console.log('New count:', value)
-})
+  console.log("New count:", value);
+});
 
 // Create a store (collection of signals)
 const store = createStore({
-  user: { id: 1, name: 'John' },
+  user: { id: 1, name: "John" },
   posts: [],
   isLoading: false,
-})
+});
 
-store.user.value = { id: 2, name: 'Jane' }
-store.isLoading.value = true
+store.user.value = { id: 2, name: "Jane" };
+store.isLoading.value = true;
 ```
 
 ### DOM Binding
 
 ```typescript
 // Bind signal to element
-const count = signal(0)
-const elem = document.querySelector('#count')
-bindSignal(elem, count) // Sets textContent to count.value
-count.value++ // Updates DOM
+const count = signal(0);
+const elem = document.querySelector("#count");
+bindSignal(elem, count); // Sets textContent to count.value
+count.value++; // Updates DOM
 
 // Bind signal to input (two-way)
-const name = signal('')
-const input = document.querySelector('input')
-bindInput(input, name)
+const name = signal("");
+const input = document.querySelector("input");
+bindInput(input, name);
 // Changes to input update signal
 // Changes to signal update input
 ```
@@ -204,78 +209,75 @@ bindInput(input, name)
 #### Counter Pattern
 
 ```typescript
-const count = signal(0)
+const count = signal(0);
 
-const increment = () => count.value++
-const decrement = () => count.value--
-const reset = () => (count.value = 0)
+const increment = () => count.value++;
+const decrement = () => count.value--;
+const reset = () => (count.value = 0);
 ```
 
 #### Form State
 
 ```typescript
 const form = createStore({
-  username: '',
-  email: '',
+  username: "",
+  email: "",
   errors: {} as Record<string, string>,
-})
+});
 
 const validate = () => {
-  const errors: Record<string, string> = {}
-  
+  const errors: Record<string, string> = {};
+
   if (!form.username.value) {
-    errors.username = 'Required'
+    errors.username = "Required";
   }
-  if (!form.email.value.includes('@')) {
-    errors.email = 'Invalid email'
+  if (!form.email.value.includes("@")) {
+    errors.email = "Invalid email";
   }
-  
-  form.errors.value = errors
-  return Object.keys(errors).length === 0
-}
+
+  form.errors.value = errors;
+  return Object.keys(errors).length === 0;
+};
 ```
 
 #### Async Operations
 
 ```typescript
-const data = signal<any>(null)
-const loading = signal(false)
-const error = signal<string | null>(null)
+const data = signal<any>(null);
+const loading = signal(false);
+const error = signal<string | null>(null);
 
 const fetchData = async () => {
-  loading.value = true
-  error.value = null
-  
+  loading.value = true;
+  error.value = null;
+
   try {
-    const response = await fetch('/api/data')
-    data.value = await response.json()
+    const response = await fetch("/api/data");
+    data.value = await response.json();
   } catch (err) {
-    error.value = String(err)
+    error.value = String(err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 ```
 
 #### Todo List
 
 ```typescript
-const todos = signal<Array<{ id: number; text: string }>>([])
+const todos = signal<Array<{ id: number; text: string }>>([]);
 
 const addTodo = (text: string) => {
-  todos.value = [
-    ...todos.value,
-    { id: Date.now(), text },
-  ]
-}
+  todos.value = [...todos.value, { id: Date.now(), text }];
+};
 
 const removeTodo = (id: number) => {
-  todos.value = todos.value.filter(t => t.id !== id)
-}
+  todos.value = todos.value.filter((t) => t.id !== id);
+};
 
 watch(todos, (list) => {
-  console.log(`${list.length} todos`)
-})
+  console.log(`${list.length} todos`);
+});
 ```
 
 ## Implementation Details
@@ -300,18 +302,21 @@ watch(todos, (list) => {
 ### Size Analysis
 
 **Router** (4996 bytes source → ~1998 bytes minified → ~999 bytes gzipped)
+
 - `navigate()` function
 - History API handling
 - DOM fetch & update
 - Event delegation for links
 
 **Signal** (4546 bytes source → ~1818 bytes minified → ~909 bytes gzipped)
+
 - Core signal creation
 - Subscriber pattern
 - Helper functions
 - DOM binding utilities
 
 **Link Component** (1183 bytes → ~473 bytes minified → ~237 bytes gzipped)
+
 - Preact component
 - Markup compilation to `data-jen-link`
 
@@ -339,10 +344,10 @@ All functions are separately tree-shakable:
 
 ```typescript
 // Only includes navigate
-import { navigate } from 'jen/router'
+import { navigate } from "jen/router";
 
 // Only includes signal
-import { signal } from 'jen/signal'
+import { signal } from "jen/signal";
 
 // Everything gets tree-shaken except what you use
 ```
@@ -354,6 +359,7 @@ npm run test -- tests/client-routing/
 ```
 
 Tests include:
+
 - Unit tests for router and signals
 - Integration tests for patterns
 - Size benchmarks
@@ -363,22 +369,22 @@ All tests are ~63 passing with zero dependencies on external libraries.
 
 ## Comparison to Alternatives
 
-| Feature | Jen Router | React Router | Vue Router | Solid Router |
-|---------|-----------|-------------|-----------|-------------|
-| Bundle Size | 1 KB | 45 KB | 35 KB | 8 KB |
-| Runtime | History API | Custom | Custom | Custom |
-| VDOM | No | Yes | Yes | No |
-| SSR Ready | Yes | Yes | Yes | Yes |
-| Zero-Cost Abstraction | Yes | No | No | No |
-| Tree-Shakable | Yes | Partial | Partial | Yes |
+| Feature               | Jen Router  | React Router | Vue Router | Solid Router |
+| --------------------- | ----------- | ------------ | ---------- | ------------ |
+| Bundle Size           | 1 KB        | 45 KB        | 35 KB      | 8 KB         |
+| Runtime               | History API | Custom       | Custom     | Custom       |
+| VDOM                  | No          | Yes          | Yes        | No           |
+| SSR Ready             | Yes         | Yes          | Yes        | Yes          |
+| Zero-Cost Abstraction | Yes         | No           | No         | No           |
+| Tree-Shakable         | Yes         | Partial      | Partial    | Yes          |
 
-| Feature | Jen Signal | React Hooks | Vue Ref | Solid Signal |
-|---------|-----------|-----------|--------|-------------|
-| Bundle Size | 1 KB | (React) | 5 KB | 1.5 KB |
-| Fine-Grained | Yes | No | Yes | Yes |
-| VDOM | No | Yes | Yes | No |
-| Dependencies | None | None | None | None |
-| Learning Curve | Minimal | Medium | Minimal | Minimal |
+| Feature        | Jen Signal | React Hooks | Vue Ref | Solid Signal |
+| -------------- | ---------- | ----------- | ------- | ------------ |
+| Bundle Size    | 1 KB       | (React)     | 5 KB    | 1.5 KB       |
+| Fine-Grained   | Yes        | No          | Yes     | Yes          |
+| VDOM           | No         | Yes         | Yes     | No           |
+| Dependencies   | None       | None        | None    | None         |
+| Learning Curve | Minimal    | Medium      | Minimal | Minimal      |
 
 ## Philosophy
 

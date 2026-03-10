@@ -21,9 +21,7 @@ export interface TelemetryPayload {
 const MAX_STRING_LENGTH = 50;
 const MAX_EVENTS = 100;
 
-export function validatePayload(
-  payload: unknown
-): ValidationResult {
+export function validatePayload(payload: unknown): ValidationResult {
   // Handle array of events
   if (Array.isArray(payload)) {
     if (payload.length === 0) {

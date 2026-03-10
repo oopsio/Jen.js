@@ -82,13 +82,13 @@ pnpm add jen.js
 ### Basic Setup
 
 ```typescript
-import { initDevTools, injectStyles } from '@jen.js/devtools';
+import { initDevTools, injectStyles } from "@jen.js/devtools";
 
 // Inject styles and initialize DevTools
 injectStyles();
-const devtools = initDevTools({ 
+const devtools = initDevTools({
   enabled: true,
-  theme: 'dark' 
+  theme: "dark",
 });
 
 // Access the DevTools instance
@@ -100,51 +100,58 @@ console.log(devtools);
 ```typescript
 // Register a component for inspection
 devtools.registerComponent(
-  'my-component-1',           // unique id
-  'MyComponent',              // component name
-  element,                    // DOM element
-  { prop1: 'value' },        // props
-  { count: 0 },              // state
-  []                         // hooks
+  "my-component-1", // unique id
+  "MyComponent", // component name
+  element, // DOM element
+  { prop1: "value" }, // props
+  { count: 0 }, // state
+  [], // hooks
 );
 
 // Update component state
-devtools.updateComponentState('my-component-1', {
-  count: 1
+devtools.updateComponentState("my-component-1", {
+  count: 1,
 });
 
 // Log events
-devtools.logEvent('my-component-1', 'click', {
+devtools.logEvent("my-component-1", "click", {
   x: 100,
-  y: 200
+  y: 200,
 });
 ```
 
 ### Integration with Components
 
 ```typescript
-import { useDevToolsIntegration, createLogger } from '@jen.js/devtools/integration';
+import {
+  useDevToolsIntegration,
+  createLogger,
+} from "@jen.js/devtools/integration";
 
 function MyComponent(props) {
   const { componentId, trackState, trackEvent } = useDevToolsIntegration(
-    'MyComponent',
-    devtools
+    "MyComponent",
+    devtools,
   );
 
   const logger = createLogger(devtools, componentId);
 
   // Use logger instead of console
-  logger.log('Component mounted');
+  logger.log("Component mounted");
 
   return {
     render() {
-      return h('div', {
-        onClick: () => {
-          trackEvent('click', { timestamp: Date.now() });
-          logger.log('Clicked!');
-        }
-      }, 'Click me');
-    }
+      return h(
+        "div",
+        {
+          onClick: () => {
+            trackEvent("click", { timestamp: Date.now() });
+            logger.log("Clicked!");
+          },
+        },
+        "Click me",
+      );
+    },
   };
 }
 ```
@@ -189,34 +196,34 @@ injectStyles(): void
 
 ```typescript
 // Hook for tracking state and events
-useDevToolsIntegration(componentName, devtools)
+useDevToolsIntegration(componentName, devtools);
 
 // Wrap component with DevTools tracking
-withDevTools(Component, devtools)
+withDevTools(Component, devtools);
 
 // Create a monitored event listener
-createMonitoredListener(devtools, componentId, eventName, handler)
+createMonitoredListener(devtools, componentId, eventName, handler);
 
 // Monitor DOM changes
-monitorDOMChanges(devtools, componentId, element)
+monitorDOMChanges(devtools, componentId, element);
 
 // Create a DevTools-aware logger
-createLogger(devtools, componentId)
+createLogger(devtools, componentId);
 
 // Measure render performance
-measureComponentRender(devtools, componentName, renderFn)
+measureComponentRender(devtools, componentName, renderFn);
 ```
 
 ### Configuration
 
 ```typescript
 interface DevToolsConfig {
-  enabled?: boolean;              // Enable/disable DevTools
-  theme?: 'light' | 'dark';      // Theme preference
-  position?: { x: number; y: number };  // Initial position
-  size?: { width: number; height: number };  // Initial size
-  minimized?: boolean;            // Start minimized
-  collapsedTabs?: Record<string, boolean>;  // Collapsed tab states
+  enabled?: boolean; // Enable/disable DevTools
+  theme?: "light" | "dark"; // Theme preference
+  position?: { x: number; y: number }; // Initial position
+  size?: { width: number; height: number }; // Initial size
+  minimized?: boolean; // Start minimized
+  collapsedTabs?: Record<string, boolean>; // Collapsed tab states
 }
 ```
 
@@ -225,34 +232,34 @@ interface DevToolsConfig {
 ### Creating a Plugin
 
 ```typescript
-import { createPlugin } from '@jen.js/devtools';
+import { createPlugin } from "@jen.js/devtools";
 
 const myPlugin = createPlugin({
-  name: 'my-devtools-plugin',
-  version: '1.0.0',
+  name: "my-devtools-plugin",
+  version: "1.0.0",
   setup() {
-    console.log('Plugin setup');
+    console.log("Plugin setup");
   },
   teardown() {
-    console.log('Plugin teardown');
-  }
+    console.log("Plugin teardown");
+  },
 });
 
-devtools.registerPlugin('my-plugin', myPlugin);
+devtools.registerPlugin("my-plugin", myPlugin);
 ```
 
 ### Advanced Plugin
 
 ```typescript
-import { DevTools } from '@jen.js/devtools';
+import { DevTools } from "@jen.js/devtools";
 
 class MyPlugin {
   constructor(private devtools: DevTools) {}
 
   setup() {
     // Listen to DevTools events
-    this.devtools.getEventBus().on('component:registered', (data) => {
-      console.log('Component registered:', data);
+    this.devtools.getEventBus().on("component:registered", (data) => {
+      console.log("Component registered:", data);
     });
 
     // Add custom UI
@@ -268,23 +275,24 @@ class MyPlugin {
   }
 }
 
-devtools.registerPlugin('my-plugin', () => new MyPlugin(devtools));
+devtools.registerPlugin("my-plugin", () => new MyPlugin(devtools));
 ```
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+Shift+J` / `Cmd+Shift+J` | Toggle DevTools |
-| `Esc` | Close DevTools |
-| `↑` / `↓` | Navigate component tree |
-| `→` | Expand component |
-| `←` | Collapse component |
-| `Enter` | Toggle component expanded |
+| Shortcut                       | Action                    |
+| ------------------------------ | ------------------------- |
+| `Ctrl+Shift+J` / `Cmd+Shift+J` | Toggle DevTools           |
+| `Esc`                          | Close DevTools            |
+| `↑` / `↓`                      | Navigate component tree   |
+| `→`                            | Expand component          |
+| `←`                            | Collapse component        |
+| `Enter`                        | Toggle component expanded |
 
 ## Example Usage
 
 See `example.html` for a complete, working demo with:
+
 - Counter component with state tracking
 - Input field with change tracking
 - Dynamic list with add/remove operations
@@ -355,7 +363,7 @@ if (import.meta.env.DEV) {
 }
 
 // Or with process.env
-if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+if (typeof process !== "undefined" && process.env.NODE_ENV !== "production") {
   initDevTools();
 }
 ```

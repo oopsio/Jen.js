@@ -34,28 +34,28 @@ import { extractFonts } from "./loader.js";
  * ```
  */
 export function injectFonts(config, cacheDir) {
-    const fontsCacheDir = cacheDir ?? config.build?.cacheDir ?? ".jen";
-    const fonts = config.fonts;
-    if (!fonts) {
-        return; // No fonts configured
-    }
-    const { googleFontLinks, localFontsCSS } = extractFonts(fonts, fontsCacheDir);
-    // Initialize inject.head if not already present
-    if (!config.inject) {
-        config.inject = { head: [], bodyEnd: [] };
-    }
-    if (!config.inject.head) {
-        config.inject.head = [];
-    }
-    // Add Google Fonts link (if any)
-    if (googleFontLinks) {
-        config.inject.head.push(googleFontLinks);
-    }
-    // Add local fonts CSS as <style> tag (if any)
-    if (localFontsCSS) {
-        const styleTag = `<style>${localFontsCSS}</style>`;
-        config.inject.head.push(styleTag);
-    }
+  const fontsCacheDir = cacheDir ?? config.build?.cacheDir ?? ".jen";
+  const fonts = config.fonts;
+  if (!fonts) {
+    return; // No fonts configured
+  }
+  const { googleFontLinks, localFontsCSS } = extractFonts(fonts, fontsCacheDir);
+  // Initialize inject.head if not already present
+  if (!config.inject) {
+    config.inject = { head: [], bodyEnd: [] };
+  }
+  if (!config.inject.head) {
+    config.inject.head = [];
+  }
+  // Add Google Fonts link (if any)
+  if (googleFontLinks) {
+    config.inject.head.push(googleFontLinks);
+  }
+  // Add local fonts CSS as <style> tag (if any)
+  if (localFontsCSS) {
+    const styleTag = `<style>${localFontsCSS}</style>`;
+    config.inject.head.push(styleTag);
+  }
 }
 /**
  * Middleware for serving local fonts with proper cache headers.
@@ -83,44 +83,43 @@ export function injectFonts(config, cacheDir) {
  * ```
  */
 export function fontServeMiddleware(cacheDir) {
-    return async (req, res) => {
-        if (!req.url?.startsWith("/fonts/")) {
-            return false;
-        }
-        const { readFileSync, existsSync } = await import("node:fs");
-        const { basename, join } = await import("node:path");
-        const fontPath = basename(req.url);
-        // Security: Prevent directory traversal attacks
-        if (fontPath.includes("..") || fontPath.includes("/")) {
-            res.statusCode = 400;
-            res.end("Invalid font path");
-            return true;
-        }
-        const fullPath = join(cacheDir, fontPath);
-        if (!existsSync(fullPath)) {
-            return false; // Not a font file, let other middleware handle it
-        }
-        try {
-            const content = readFileSync(fullPath);
-            const ext = fontPath.split(".").pop()?.toLowerCase();
-            const mimeTypes = {
-                ttf: "font/ttf",
-                otf: "font/otf",
-                woff: "font/woff",
-                woff2: "font/woff2",
-            };
-            const mimeType = mimeTypes[ext || ""] || "application/octet-stream";
-            res.statusCode = 200;
-            res.setHeader("content-type", mimeType);
-            res.setHeader("cache-control", "public, max-age=31536000, immutable");
-            res.setHeader("access-control-allow-origin", "*");
-            res.end(content);
-            return true;
-        }
-        catch (err) {
-            res.statusCode = 500;
-            res.end("Font serving error");
-            return true;
-        }
-    };
+  return async (req, res) => {
+    if (!req.url?.startsWith("/fonts/")) {
+      return false;
+    }
+    const { readFileSync, existsSync } = await import("node:fs");
+    const { basename, join } = await import("node:path");
+    const fontPath = basename(req.url);
+    // Security: Prevent directory traversal attacks
+    if (fontPath.includes("..") || fontPath.includes("/")) {
+      res.statusCode = 400;
+      res.end("Invalid font path");
+      return true;
+    }
+    const fullPath = join(cacheDir, fontPath);
+    if (!existsSync(fullPath)) {
+      return false; // Not a font file, let other middleware handle it
+    }
+    try {
+      const content = readFileSync(fullPath);
+      const ext = fontPath.split(".").pop()?.toLowerCase();
+      const mimeTypes = {
+        ttf: "font/ttf",
+        otf: "font/otf",
+        woff: "font/woff",
+        woff2: "font/woff2",
+      };
+      const mimeType = mimeTypes[ext || ""] || "application/octet-stream";
+      res.statusCode = 200;
+      res.setHeader("content-type", mimeType);
+      res.setHeader("cache-control", "public, max-age=31536000, immutable");
+      res.setHeader("access-control-allow-origin", "*");
+      res.end(content);
+      return true;
+    } catch (err) {
+      res.statusCode = 500;
+      res.end("Font serving error");
+      return true;
+    }
+  };
 }

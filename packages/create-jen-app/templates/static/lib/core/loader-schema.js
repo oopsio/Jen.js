@@ -19,10 +19,10 @@
  * ```
  */
 export function defineLoader(handler) {
-    return async (ctx) => {
-        const result = handler(ctx);
-        return Promise.resolve(result);
-    };
+  return async (ctx) => {
+    const result = handler(ctx);
+    return Promise.resolve(result);
+  };
 }
 /**
  * Validates that loader data matches expected schema.
@@ -34,25 +34,26 @@ export function defineLoader(handler) {
  * ```
  */
 export function validateLoaderData(data, schema) {
-    if (typeof data !== "object" || data === null) {
-        throw new Error(`Expected object, got ${typeof data}`);
+  if (typeof data !== "object" || data === null) {
+    throw new Error(`Expected object, got ${typeof data}`);
+  }
+  const obj = data;
+  for (const [key, type] of Object.entries(schema)) {
+    const value = obj[key];
+    // Determine actual type (arrays are objects, so treat both as "object")
+    let actualType = typeof value;
+    if (value === null) {
+      actualType = "object"; // null is typeof 'object' in JavaScript
+    } else if (Array.isArray(value)) {
+      actualType = type === "array" ? "array" : "object";
     }
-    const obj = data;
-    for (const [key, type] of Object.entries(schema)) {
-        const value = obj[key];
-        // Determine actual type (arrays are objects, so treat both as "object")
-        let actualType = typeof value;
-        if (value === null) {
-            actualType = "object"; // null is typeof 'object' in JavaScript
-        }
-        else if (Array.isArray(value)) {
-            actualType = type === "array" ? "array" : "object";
-        }
-        if (actualType !== type) {
-            throw new Error(`Loader data mismatch: expected ${key} to be ${type}, got ${actualType}`);
-        }
+    if (actualType !== type) {
+      throw new Error(
+        `Loader data mismatch: expected ${key} to be ${type}, got ${actualType}`,
+      );
     }
-    return obj;
+  }
+  return obj;
 }
 /**
  * Middleware data schema for type-safe middleware → loader flow.
@@ -73,8 +74,8 @@ export function validateLoaderData(data, schema) {
  * ```
  */
 export function defineMiddleware(handler) {
-    return async (ctx) => {
-        const result = handler(ctx);
-        return Promise.resolve(result);
-    };
+  return async (ctx) => {
+    const result = handler(ctx);
+    return Promise.resolve(result);
+  };
 }

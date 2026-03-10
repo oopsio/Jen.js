@@ -1,5 +1,9 @@
 import { renderToString } from "preact-render-to-string";
-import type { BundleModule, BundleAnalysis, TreemapNode } from "./bundle-analyzer.js";
+import type {
+  BundleModule,
+  BundleAnalysis,
+  TreemapNode,
+} from "./bundle-analyzer.js";
 
 interface Props {
   analysis: BundleAnalysis;
@@ -106,7 +110,13 @@ function StatsBar({ analysis }: { analysis: BundleAnalysis }) {
   );
 }
 
-function ModuleRow({ module, totalSize }: { module: BundleModule; totalSize: number }) {
+function ModuleRow({
+  module,
+  totalSize,
+}: {
+  module: BundleModule;
+  totalSize: number;
+}) {
   const pct = totalSize > 0 ? (module.size / totalSize) * 100 : 0;
   return (
     <tr data-path={module.path}>
@@ -114,17 +124,34 @@ function ModuleRow({ module, totalSize }: { module: BundleModule; totalSize: num
         {escapeHtml(module.name)}
         {module.isLarge && <span class="large-badge">LARGE</span>}
       </td>
-      <td>{formatBytes(module.size)}<div class="size-bar"><div class="size-bar-fill" style={{ width: `${Math.min(pct * 10, 100)}%` }}></div></div></td>
+      <td>
+        {formatBytes(module.size)}
+        <div class="size-bar">
+          <div
+            class="size-bar-fill"
+            style={{ width: `${Math.min(pct * 10, 100)}%` }}
+          ></div>
+        </div>
+      </td>
       <td>{formatBytes(module.gzipSize)}</td>
       <td>{pct.toFixed(2)}%</td>
     </tr>
   );
 }
 
-function ModuleTable({ modules, totalSize }: { modules: BundleModule[]; totalSize: number }) {
+function ModuleTable({
+  modules,
+  totalSize,
+}: {
+  modules: BundleModule[];
+  totalSize: number;
+}) {
   const sorted = [...modules].sort((a, b) => b.size - a.size);
   return (
-    <div class="module-list" style={{ flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" }}>
+    <div
+      class="module-list"
+      style={{ flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" }}
+    >
       <div class="treemap-header">All Modules</div>
       <div class="module-table-wrapper">
         <table class="module-table">
@@ -137,7 +164,9 @@ function ModuleTable({ modules, totalSize }: { modules: BundleModule[]; totalSiz
             </tr>
           </thead>
           <tbody>
-            {sorted.map(m => <ModuleRow module={m} totalSize={totalSize} />)}
+            {sorted.map((m) => (
+              <ModuleRow module={m} totalSize={totalSize} />
+            ))}
           </tbody>
         </table>
       </div>
@@ -145,24 +174,45 @@ function ModuleTable({ modules, totalSize }: { modules: BundleModule[]; totalSiz
   );
 }
 
-function PackageItem({ name, size, totalSize }: { name: string; size: number; totalSize: number }) {
+function PackageItem({
+  name,
+  size,
+  totalSize,
+}: {
+  name: string;
+  size: number;
+  totalSize: number;
+}) {
   const pct = totalSize > 0 ? (size / totalSize) * 100 : 0;
   return (
     <div class="package-item">
       <span>{escapeHtml(name)}</span>
-      <span>{formatBytes(size)} ({pct.toFixed(1)}%)</span>
+      <span>
+        {formatBytes(size)} ({pct.toFixed(1)}%)
+      </span>
     </div>
   );
 }
 
-function PackagesView({ packages, totalSize }: { packages: Map<string, { size: number }>; totalSize: number }) {
+function PackagesView({
+  packages,
+  totalSize,
+}: {
+  packages: Map<string, { size: number }>;
+  totalSize: number;
+}) {
   const sorted = [...packages.entries()].sort((a, b) => b[1].size - a[1].size);
   return (
-    <div class="module-list" style={{ flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" }}>
+    <div
+      class="module-list"
+      style={{ flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" }}
+    >
       <div class="treemap-header">Bundle by Package</div>
       <div class="module-table-wrapper">
         <div class="packages-list">
-          {sorted.map(([name, data]) => <PackageItem name={name} size={data.size} totalSize={totalSize} />)}
+          {sorted.map(([name, data]) => (
+            <PackageItem name={name} size={data.size} totalSize={totalSize} />
+          ))}
         </div>
       </div>
     </div>
@@ -186,17 +236,28 @@ export function BundleReport({ analysis, treemap }: Props) {
             <div class="treemap-header">Bundle Treemap</div>
             <div id="treemap" data-treemap={JSON.stringify(treemap)}></div>
             <div class="zoom-controls">
-              <button class="zoom-btn" data-action="zoomIn">+</button>
-              <button class="zoom-btn" data-action="zoomOut">−</button>
-              <button class="zoom-btn" data-action="zoomReset">↺</button>
+              <button class="zoom-btn" data-action="zoomIn">
+                +
+              </button>
+              <button class="zoom-btn" data-action="zoomOut">
+                −
+              </button>
+              <button class="zoom-btn" data-action="zoomReset">
+                ↺
+              </button>
             </div>
           </div>
-          <ModuleTable modules={analysis.modules} totalSize={analysis.totalSize} />
+          <ModuleTable
+            modules={analysis.modules}
+            totalSize={analysis.totalSize}
+          />
         </div>
         <div class="detail-panel" id="detailPanel">
           <div class="detail-header">
             <h3>Module Details</h3>
-            <button class="detail-close" id="detailClose">×</button>
+            <button class="detail-close" id="detailClose">
+              ×
+            </button>
           </div>
           <div class="detail-content">
             <div class="detail-section">
@@ -221,7 +282,9 @@ export function BundleReport({ analysis, treemap }: Props) {
             </div>
           </div>
         </div>
-        <script dangerouslySetInnerHTML={{ __html: `
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
 const modules=${JSON.stringify(analysis.modules)};
 const treemapData=${JSON.stringify(treemap)};
 let currentSize='raw';
@@ -296,7 +359,9 @@ renderTreemap(currentNode);
 });
 document.querySelectorAll('.module-table tr[data-path]').forEach(r=>r.onclick=()=>showDetail(r.dataset.path));
 renderTreemap(treemapData);
-` }} />
+`,
+          }}
+        />
       </body>
     </html>
   );

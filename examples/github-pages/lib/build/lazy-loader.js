@@ -8,83 +8,88 @@
  * - Implements prefetching/preloading strategies
  */
 export class LazyLoader {
-    modules = new Map();
-    manifest;
-    constructor(strategy = "lazy") {
-        this.manifest = {
-            modules: [],
-            loadingStrategy: strategy,
-            prefetch: strategy !== "eager",
-            preload: strategy === "progressive",
-        };
+  modules = new Map();
+  manifest;
+  constructor(strategy = "lazy") {
+    this.manifest = {
+      modules: [],
+      loadingStrategy: strategy,
+      prefetch: strategy !== "eager",
+      preload: strategy === "progressive",
+    };
+  }
+  /**
+   * Register a lazy-loaded module
+   *
+   * @example
+   * ```typescript
+   * lazyLoader.register({
+   *   id: "dashboard",
+   *   name: "Dashboard",
+   *   path: "src/pages/dashboard.tsx",
+   *   chunkName: "dashboard",
+   *   condition: "route === 'dashboard'"
+   * });
+   * ```
+   */
+  register(module) {
+    this.modules.set(module.id, module);
+    this.manifest.modules.push(module);
+  }
+  /**
+   * Detect lazy-loaded modules from source code
+   *
+   * Patterns detected:
+   * - import() dynamic imports
+   * - React.lazy() components
+   * - Preact lazy() components
+   * - @lazy-load comments
+   */
+  detectFromSource(source) {
+    const detected = [];
+    const patterns = {
+      // import("./path") or import('./path')
+      dynamicImport: /import\s*\(\s*['"`]([^'"`]+)['"`]\s*\)/g,
+      // @lazy-load:"name"
+      lazyComment: /@lazy-load:\s*"([^"]+)"/g,
+      // React.lazy(() => import(...))
+      reactLazy:
+        /React\.lazy\s*\(\s*\(\)\s*=>\s*import\s*\(\s*['"`]([^'"`]+)['"`]\s*\)\s*\)/g,
+    };
+    // Detect dynamic imports
+    let match;
+    const importRegex = patterns.dynamicImport;
+    while ((match = importRegex.exec(source)) !== null) {
+      const path = match[1];
+      detected.push({
+        id: path.replace(/[./]/g, "-"),
+        name: path.split("/").pop() || "unknown",
+        path,
+        chunkName:
+          path
+            .split("/")
+            .pop()
+            ?.replace(/\.[jt]sx?$/, "") || "chunk",
+      });
     }
-    /**
-     * Register a lazy-loaded module
-     *
-     * @example
-     * ```typescript
-     * lazyLoader.register({
-     *   id: "dashboard",
-     *   name: "Dashboard",
-     *   path: "src/pages/dashboard.tsx",
-     *   chunkName: "dashboard",
-     *   condition: "route === 'dashboard'"
-     * });
-     * ```
-     */
-    register(module) {
-        this.modules.set(module.id, module);
-        this.manifest.modules.push(module);
+    // Detect lazy-load comments
+    const commentRegex = patterns.lazyComment;
+    while ((match = commentRegex.exec(source)) !== null) {
+      const name = match[1];
+      detected.push({
+        id: name,
+        name,
+        path: name,
+        chunkName: name,
+      });
     }
-    /**
-     * Detect lazy-loaded modules from source code
-     *
-     * Patterns detected:
-     * - import() dynamic imports
-     * - React.lazy() components
-     * - Preact lazy() components
-     * - @lazy-load comments
-     */
-    detectFromSource(source) {
-        const detected = [];
-        const patterns = {
-            // import("./path") or import('./path')
-            dynamicImport: /import\s*\(\s*['"`]([^'"`]+)['"`]\s*\)/g,
-            // @lazy-load:"name"
-            lazyComment: /@lazy-load:\s*"([^"]+)"/g,
-            // React.lazy(() => import(...))
-            reactLazy: /React\.lazy\s*\(\s*\(\)\s*=>\s*import\s*\(\s*['"`]([^'"`]+)['"`]\s*\)\s*\)/g,
-        };
-        // Detect dynamic imports
-        let match;
-        const importRegex = patterns.dynamicImport;
-        while ((match = importRegex.exec(source)) !== null) {
-            const path = match[1];
-            detected.push({
-                id: path.replace(/[./]/g, "-"),
-                name: path.split("/").pop() || "unknown",
-                path,
-                chunkName: path.split("/").pop()?.replace(/\.[jt]sx?$/, "") || "chunk",
-            });
-        }
-        // Detect lazy-load comments
-        const commentRegex = patterns.lazyComment;
-        while ((match = commentRegex.exec(source)) !== null) {
-            const name = match[1];
-            detected.push({
-                id: name,
-                name,
-                path: name,
-                chunkName: name,
-            });
-        }
-        return detected;
-    }
-    /**
-     * Generate runtime lazy-loading helper code
-     */
-    generateRuntimeHelper() {
-        return `
+    return detected;
+  }
+  /**
+   * Generate runtime lazy-loading helper code
+   */
+  generateRuntimeHelper() {
+    return `
 /**
  * Auto-generated lazy-loading runtime helper
  * Manages dynamic imports with caching and error handling
@@ -168,39 +173,39 @@ export function getLazyManifest() {
   return ${JSON.stringify(this.manifest, null, 2)};
 }
 `;
+  }
+  /**
+   * Generate lazy-loading manifest JSON
+   */
+  getManifest() {
+    return {
+      ...this.manifest,
+      modules: Array.from(this.modules.values()),
+    };
+  }
+  /**
+   * Generate HTML script tags for lazy-loaded modules
+   */
+  generateLazyScriptTags() {
+    let html = `<!-- Lazy-loaded module hints -->\n`;
+    for (const module of this.modules.values()) {
+      if (this.manifest.prefetch) {
+        html += `<link rel="prefetch" as="script" href="/${module.chunkName}.js">\n`;
+      }
+      if (this.manifest.preload) {
+        html += `<link rel="preload" as="script" href="/${module.chunkName}.js">\n`;
+      }
     }
-    /**
-     * Generate lazy-loading manifest JSON
-     */
-    getManifest() {
-        return {
-            ...this.manifest,
-            modules: Array.from(this.modules.values()),
-        };
-    }
-    /**
-     * Generate HTML script tags for lazy-loaded modules
-     */
-    generateLazyScriptTags() {
-        let html = `<!-- Lazy-loaded module hints -->\n`;
-        for (const module of this.modules.values()) {
-            if (this.manifest.prefetch) {
-                html += `<link rel="prefetch" as="script" href="/${module.chunkName}.js">\n`;
-            }
-            if (this.manifest.preload) {
-                html += `<link rel="preload" as="script" href="/${module.chunkName}.js">\n`;
-            }
-        }
-        return html;
-    }
-    /**
-     * Generate Intersection Observer helper for visible-load pattern
-     *
-     * Lazy-loads components when they become visible in viewport
-     * Useful for components below the fold
-     */
-    generateVisibleLoadHelper() {
-        return `
+    return html;
+  }
+  /**
+   * Generate Intersection Observer helper for visible-load pattern
+   *
+   * Lazy-loads components when they become visible in viewport
+   * Useful for components below the fold
+   */
+  generateVisibleLoadHelper() {
+    return `
 /**
  * Load component when element becomes visible
  * Useful for below-the-fold content
@@ -249,12 +254,12 @@ export function loadOnInteraction(elementId, moduleId, moduleSpec, events = ['mo
   }
 }
 `;
-    }
-    /**
-     * Generate loading state component for Preact
-     */
-    generateLoadingComponent() {
-        return `
+  }
+  /**
+   * Generate loading state component for Preact
+   */
+  generateLoadingComponent() {
+    return `
 /**
  * Loading component for lazy-loaded modules
  * Shows while module is loading
@@ -286,32 +291,32 @@ export function withLazyFallback(Component, LoadingComponent = LazyLoading) {
   };
 }
 `;
-    }
-    /**
-     * Generate configuration report
-     */
-    generateReport() {
-        let report = "# Lazy-Loading Report\n\n";
-        report += "## Configuration\n";
-        report += `- Strategy: ${this.manifest.loadingStrategy}\n`;
-        report += `- Prefetch: ${this.manifest.prefetch}\n`;
-        report += `- Preload: ${this.manifest.preload}\n`;
-        report += `- Total modules: ${this.modules.size}\n\n`;
-        if (this.modules.size > 0) {
-            report += "## Modules\n";
-            for (const module of this.modules.values()) {
-                report += `- ${module.name} (${module.chunkName})\n`;
-                if (module.condition) {
-                    report += `  Condition: ${module.condition}\n`;
-                }
-            }
+  }
+  /**
+   * Generate configuration report
+   */
+  generateReport() {
+    let report = "# Lazy-Loading Report\n\n";
+    report += "## Configuration\n";
+    report += `- Strategy: ${this.manifest.loadingStrategy}\n`;
+    report += `- Prefetch: ${this.manifest.prefetch}\n`;
+    report += `- Preload: ${this.manifest.preload}\n`;
+    report += `- Total modules: ${this.modules.size}\n\n`;
+    if (this.modules.size > 0) {
+      report += "## Modules\n";
+      for (const module of this.modules.values()) {
+        report += `- ${module.name} (${module.chunkName})\n`;
+        if (module.condition) {
+          report += `  Condition: ${module.condition}\n`;
         }
-        return report;
+      }
     }
+    return report;
+  }
 }
 /**
  * Helper: Create lazy loader from config
  */
 export function createLazyLoader(strategy = "lazy") {
-    return new LazyLoader(strategy);
+  return new LazyLoader(strategy);
 }

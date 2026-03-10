@@ -59,6 +59,7 @@ blog/
 ### Running the Blog
 
 **Development Mode:**
+
 ```bash
 npm run dev
 ```
@@ -66,6 +67,7 @@ npm run dev
 The blog will be available at `http://localhost:3000`
 
 **Production Mode:**
+
 ```bash
 npm run build
 npm run start
@@ -118,6 +120,7 @@ See `site/posts/markdown-guide.md` for complete examples.
 ### 1. Server-Side Rendering (SSR)
 
 All pages are rendered on the server for:
+
 - ✅ Perfect SEO
 - ✅ Fast initial page load
 - ✅ No blank screens
@@ -133,6 +136,7 @@ All pages are rendered on the server for:
 ### 3. Responsive Design
 
 The design uses a mobile-first approach:
+
 - Works on all screen sizes (480px+)
 - Touch-friendly navigation
 - Readable on phones, tablets, and desktops
@@ -151,6 +155,7 @@ Built-in dark mode support via `prefers-color-scheme` media query.
 ## Components
 
 ### Header
+
 Navigation header with logo and links to main sections.
 
 ```tsx
@@ -158,6 +163,7 @@ Navigation header with logo and links to main sections.
 ```
 
 ### Footer
+
 Footer with links, social media, and copyright information.
 
 ```tsx
@@ -165,10 +171,11 @@ Footer with links, social media, and copyright information.
 ```
 
 ### BlogCard
+
 Card component to display blog post previews.
 
 ```tsx
-<BlogCard 
+<BlogCard
   title="Post Title"
   excerpt="Brief description"
   author="Author Name"
@@ -195,6 +202,7 @@ Edit `site/styles/global.scss` to customize the color scheme. All colors are def
 ### Fonts
 
 Google Fonts are included by default. To change fonts:
+
 1. Edit the imports in `jen.config.ts`
 2. Update `--font-family-sans` in `global.scss`
 
@@ -214,9 +222,7 @@ export default function About() {
   return (
     <div className="page">
       <Header />
-      <main>
-        {/* Your content */}
-      </main>
+      <main>{/* Your content */}</main>
       <Footer />
     </div>
   );
@@ -252,6 +258,7 @@ npm run build
 ```
 
 Upload the `dist/` folder to any static hosting:
+
 - Vercel
 - Netlify
 - GitHub Pages
@@ -267,6 +274,7 @@ npm run start
 ```
 
 Supports:
+
 - Heroku
 - Railway
 - Vercel
@@ -338,6 +346,7 @@ This example is part of [Jen.js](https://github.com/oopsio/jen.js) and is licens
 ## Support
 
 For issues and questions:
+
 - 📖 Check the [examples](https://github.com/oopsio/jen.js/tree/main/examples)
 - 🐛 Report bugs on [GitHub](https://github.com/oopsio/jen.js/issues)
 - 💬 Join the [community](https://discord.gg/example)

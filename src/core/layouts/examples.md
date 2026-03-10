@@ -3,6 +3,7 @@
 ## Example 1: Simple Multi-Level Hierarchy
 
 ### File Structure
+
 ```
 src/
 ├── (layout).tsx           # Root - HTML wrapper
@@ -17,6 +18,7 @@ src/
 ```
 
 ### Root Layout
+
 ```typescript
 // src/(layout).tsx
 import type { LayoutModule } from "jenjs";
@@ -53,6 +55,7 @@ export default function RootLayout({ children, data, params, query }) {
 ```
 
 ### Pages Layout
+
 ```typescript
 // src/pages/(layout).tsx
 import type { LayoutModule } from "jenjs";
@@ -87,6 +90,7 @@ export default function PagesLayout({ children, data }) {
 ```
 
 ### Blog Layout
+
 ```typescript
 // src/pages/blog/(layout).tsx
 import type { LayoutModule } from "jenjs";
@@ -130,6 +134,7 @@ export default function BlogLayout({ children, data }) {
 ```
 
 ### Blog Post Page
+
 ```typescript
 // src/pages/blog/($slug).tsx
 import type { RouteModule } from "jenjs";
@@ -137,7 +142,7 @@ import type { RouteModule } from "jenjs";
 export const loader = async (ctx) => {
   const { slug } = ctx.params;
   const post = await fetchPost(slug);
-  
+
   if (!post) {
     throw new Error("Post not found");
   }
@@ -184,60 +189,64 @@ RootLayout
 ```
 
 Final HTML structure:
+
 ```html
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0066cc" />
-  <link rel="icon" href="/favicon.ico" />
-  
-  <meta name="robots" content="index, follow" />
-  
-  <meta name="description" content="Latest blog posts" />
-  <link rel="alternate" type="application/rss+xml" href="/blog/feed.xml" />
-  
-  <title>Hello World</title>
-  <meta name="description" content="My first post" />
-  <meta property="og:title" content="Hello World" />
-  <meta property="og:description" content="My first post" />
-</head>
-<body>
-  <nav class="primary-nav">
-    <a href="/">Home</a>
-    <!-- ... -->
-  </nav>
-  <main>
-    <div class="blog-layout">
-      <aside class="blog-sidebar">
-        <h3>Recent Posts</h3>
-        <ul><!-- recent posts --></ul>
-      </aside>
-      <article class="blog-content">
-        <article>
-          <h1>Hello World</h1>
-          <div class="meta">
-            <!-- post metadata -->
-          </div>
-          <div class="content">
-            <!-- post HTML content -->
-          </div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0066cc" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <meta name="robots" content="index, follow" />
+
+    <meta name="description" content="Latest blog posts" />
+    <link rel="alternate" type="application/rss+xml" href="/blog/feed.xml" />
+
+    <title>Hello World</title>
+    <meta name="description" content="My first post" />
+    <meta property="og:title" content="Hello World" />
+    <meta property="og:description" content="My first post" />
+  </head>
+  <body>
+    <nav class="primary-nav">
+      <a href="/">Home</a>
+      <!-- ... -->
+    </nav>
+    <main>
+      <div class="blog-layout">
+        <aside class="blog-sidebar">
+          <h3>Recent Posts</h3>
+          <ul>
+            <!-- recent posts -->
+          </ul>
+        </aside>
+        <article class="blog-content">
+          <article>
+            <h1>Hello World</h1>
+            <div class="meta">
+              <!-- post metadata -->
+            </div>
+            <div class="content">
+              <!-- post HTML content -->
+            </div>
+          </article>
         </article>
-      </article>
-    </div>
-  </main>
-  <footer>
-    <p>&copy; 2024 My Awesome Site</p>
-  </footer>
-  <script type="module" src="/main.js"></script>
-</body>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2024 My Awesome Site</p>
+    </footer>
+    <script type="module" src="/main.js"></script>
+  </body>
 </html>
 ```
 
 ## Example 2: Admin Panel with Authentication
 
 ### File Structure
+
 ```
 src/
 ├── (layout).tsx
@@ -251,6 +260,7 @@ src/
 ```
 
 ### Admin Root Layout
+
 ```typescript
 // src/admin/(layout).tsx
 import type { LayoutModule } from "jenjs";
@@ -307,6 +317,7 @@ export default function AdminLayout({ children, data }) {
 ```
 
 ### Users Section Layout
+
 ```typescript
 // src/admin/users/(layout).tsx
 import type { LayoutModule } from "jenjs";
@@ -334,6 +345,7 @@ export default function UsersLayout({ children, data }) {
 ```
 
 ### Users List Page
+
 ```typescript
 // src/admin/users/(list).tsx
 import type { RouteModule } from "jenjs";
@@ -375,7 +387,7 @@ export default function UsersList({ data }) {
           ))}
         </tbody>
       </table>
-      
+
       <div class="pagination">
         {page > 1 && <a href={`?page=${page - 1}`}>← Previous</a>}
         <span>Page {page}</span>
@@ -420,6 +432,7 @@ export const layout = {
 ```
 
 Access via route loader:
+
 ```typescript
 export const loader = async (ctx) => {
   // ctx doesn't include layout config by default
@@ -429,6 +442,7 @@ export const loader = async (ctx) => {
 ```
 
 Or pass to page via layout:
+
 ```typescript
 // src/docs/api/(layout).tsx
 export default function ApiLayout({ children, data }) {

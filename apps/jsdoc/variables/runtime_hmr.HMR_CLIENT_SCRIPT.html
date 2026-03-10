@@ -1,20 +1,321 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>HMR_CLIENT_SCRIPT | framework-monorepo</title><meta name="description" content="Documentation for framework-monorepo"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">framework-monorepo</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="../modules/runtime_hmr.html">runtime/hmr</a></li><li><a href="" aria-current="page">HMR_CLIENT_SCRIPT</a></li></ul><h1>Variable HMR_CLIENT_SCRIPT<code class="tsd-tag">Const</code></h1></div><div class="tsd-signature"><span class="tsd-kind-variable">HMR_CLIENT_SCRIPT</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;\n(function() {\n  console.log(\&quot;[Jen.js] Connecting to HMR...\&quot;);\n  const evt = new EventSource(\&quot;/__hmr\&quot;);\n\n  evt.onopen = () =&gt; console.log(\&quot;[Jen.js] HMR Connected\&quot;);\n\n  // Full page reload on route or component changes\n  evt.addEventListener(\&quot;reload\&quot;, () =&gt; {\n    console.log(\&quot;[Jen.js] Reloading...\&quot;);\n    window.location.reload();\n  });\n\n  // CSS-only reload without full page reload (faster UX for style-only changes)\n  evt.addEventListener(\&quot;style-update\&quot;, (e) =&gt; {\n    const file = JSON.parse(e.data).file; // e.g., \&quot;styles.css\&quot;\n    console.log(\&quot;[Jen.js] Style update:\&quot;, file);\n    \n    // Find matching link tags by pathname\n    const links = document.querySelectorAll(&#39;link[rel=\&quot;stylesheet\&quot;]&#39;);\n    for (const link of links) {\n      const url = new URL(link.href);\n      if (url.pathname.endsWith(file)) {\n        // Force reload by updating cache-busting query param (timestamp)\n        url.searchParams.set(\&quot;t\&quot;, Date.now());\n        link.href = url.toString();\n        console.log(\&quot;[Jen.js] Updated stylesheet:\&quot;, file);\n      }\n    }\n  });\n\n  evt.onerror = () =&gt; {\n    // Connection closed; EventSource automatically retries\n    // (commented out: chatty in development; uncomment if needed for debugging)\n    // console.log(\&quot;[Jen.js] HMR disconnected, retrying...\&quot;);\n  };\n})();\n&quot;</span><span class="tsd-signature-symbol"> = ...</span></div><div class="tsd-comment tsd-typography"><p>Client-side Hot Module Replacement (HMR) / Live Reload code.
-This script is injected into the browser during development mode.</p>
-<p>Features:</p>
-<ul>
-<li>Establishes Server-Sent Events (SSE) connection to /__hmr endpoint</li>
-<li>Listens for &quot;reload&quot; events (full page reload on route/component changes)</li>
-<li>Listens for &quot;style-update&quot; events (CSS updates without full reload)</li>
-<li>Automatically retries connection if lost</li>
-</ul>
-<p>The script uses IIFE (Immediately Invoked Function Expression) to avoid
-polluting the global scope.</p>
-<p>How it works:</p>
-<ol>
-<li>Server watches file system for changes</li>
-<li>On change, server sends SSE event to clients</li>
-<li>Client receives event and either reloads or updates CSS</li>
-<li>CSS updates use cache-busting query params to force fresh load</li>
-</ol>
-<p>Only injected in development mode; production builds do not include this.</p>
-</div><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/oopsio/jen.js/blob/e982bb7b1adf05f25dd35a5b656dc43f73ba6445/src/runtime/hmr.ts#L22">src/runtime/hmr.ts:22</a></li></ul></aside></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div><div class="site-menu"><nav class="tsd-navigation"><a href="../modules.html">framework-monorepo</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
+<!doctype html>
+<html class="default" lang="en" data-base="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <title>HMR_CLIENT_SCRIPT | framework-monorepo</title>
+    <meta name="description" content="Documentation for framework-monorepo" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/highlight.css" />
+    <script defer src="../assets/main.js"></script>
+    <script async src="../assets/icons.js" id="tsd-icons-script"></script>
+    <script async src="../assets/search.js" id="tsd-search-script"></script>
+    <script async src="../assets/navigation.js" id="tsd-nav-script"></script>
+    <script
+      async
+      src="../assets/hierarchy.js"
+      id="tsd-hierarchy-script"
+    ></script>
+  </head>
+  <body>
+    <script>
+      document.documentElement.dataset.theme =
+        localStorage.getItem("tsd-theme") || "os";
+      document.body.style.display = "none";
+      setTimeout(
+        () =>
+          window.app
+            ? app.showPage()
+            : document.body.style.removeProperty("display"),
+        500,
+      );
+    </script>
+    <header class="tsd-page-toolbar">
+      <div class="tsd-toolbar-contents container">
+        <a href="../index.html" class="title">framework-monorepo</a>
+        <div id="tsd-toolbar-links"></div>
+        <button id="tsd-search-trigger" class="tsd-widget" aria-label="Search">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <use href="../assets/icons.svg#icon-search"></use>
+          </svg>
+        </button>
+        <dialog id="tsd-search" aria-label="Search">
+          <input
+            role="combobox"
+            id="tsd-search-input"
+            aria-controls="tsd-search-results"
+            aria-autocomplete="list"
+            aria-expanded="true"
+            autocapitalize="off"
+            autocomplete="off"
+            placeholder="Search the docs"
+            maxlength="100"
+          />
+          <ul role="listbox" id="tsd-search-results"></ul>
+          <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+            <div>Preparing search index...</div>
+          </div>
+        </dialog>
+        <a
+          href="#"
+          class="tsd-widget menu"
+          id="tsd-toolbar-menu-trigger"
+          data-toggle="menu"
+          aria-label="Menu"
+          ><svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <use href="../assets/icons.svg#icon-menu"></use></svg
+        ></a>
+      </div>
+    </header>
+    <div class="container container-main">
+      <div class="col-content">
+        <div class="tsd-page-title">
+          <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+            <li><a href="../modules/runtime_hmr.html">runtime/hmr</a></li>
+            <li><a href="" aria-current="page">HMR_CLIENT_SCRIPT</a></li>
+          </ul>
+          <h1>Variable HMR_CLIENT_SCRIPT<code class="tsd-tag">Const</code></h1>
+        </div>
+        <div class="tsd-signature">
+          <span class="tsd-kind-variable">HMR_CLIENT_SCRIPT</span
+          ><span class="tsd-signature-symbol">:</span>
+          <span class="tsd-signature-type"
+            >&quot;\n(function() {\n console.log(\&quot;[Jen.js] Connecting to
+            HMR...\&quot;);\n const evt = new
+            EventSource(\&quot;/__hmr\&quot;);\n\n evt.onopen = () =&gt;
+            console.log(\&quot;[Jen.js] HMR Connected\&quot;);\n\n // Full page
+            reload on route or component changes\n
+            evt.addEventListener(\&quot;reload\&quot;, () =&gt; {\n
+            console.log(\&quot;[Jen.js] Reloading...\&quot;);\n
+            window.location.reload();\n });\n\n // CSS-only reload without full
+            page reload (faster UX for style-only changes)\n
+            evt.addEventListener(\&quot;style-update\&quot;, (e) =&gt; {\n const
+            file = JSON.parse(e.data).file; // e.g., \&quot;styles.css\&quot;\n
+            console.log(\&quot;[Jen.js] Style update:\&quot;, file);\n \n //
+            Find matching link tags by pathname\n const links =
+            document.querySelectorAll(&#39;link[rel=\&quot;stylesheet\&quot;]&#39;);\n
+            for (const link of links) {\n const url = new URL(link.href);\n if
+            (url.pathname.endsWith(file)) {\n // Force reload by updating
+            cache-busting query param (timestamp)\n
+            url.searchParams.set(\&quot;t\&quot;, Date.now());\n link.href =
+            url.toString();\n console.log(\&quot;[Jen.js] Updated
+            stylesheet:\&quot;, file);\n }\n }\n });\n\n evt.onerror = () =&gt;
+            {\n // Connection closed; EventSource automatically retries\n //
+            (commented out: chatty in development; uncomment if needed for
+            debugging)\n // console.log(\&quot;[Jen.js] HMR disconnected,
+            retrying...\&quot;);\n };\n})();\n&quot;</span
+          ><span class="tsd-signature-symbol"> = ...</span>
+        </div>
+        <div class="tsd-comment tsd-typography">
+          <p>
+            Client-side Hot Module Replacement (HMR) / Live Reload code. This
+            script is injected into the browser during development mode.
+          </p>
+          <p>Features:</p>
+          <ul>
+            <li>
+              Establishes Server-Sent Events (SSE) connection to /__hmr endpoint
+            </li>
+            <li>
+              Listens for &quot;reload&quot; events (full page reload on
+              route/component changes)
+            </li>
+            <li>
+              Listens for &quot;style-update&quot; events (CSS updates without
+              full reload)
+            </li>
+            <li>Automatically retries connection if lost</li>
+          </ul>
+          <p>
+            The script uses IIFE (Immediately Invoked Function Expression) to
+            avoid polluting the global scope.
+          </p>
+          <p>How it works:</p>
+          <ol>
+            <li>Server watches file system for changes</li>
+            <li>On change, server sends SSE event to clients</li>
+            <li>Client receives event and either reloads or updates CSS</li>
+            <li>
+              CSS updates use cache-busting query params to force fresh load
+            </li>
+          </ol>
+          <p>
+            Only injected in development mode; production builds do not include
+            this.
+          </p>
+        </div>
+        <aside class="tsd-sources">
+          <ul>
+            <li>
+              Defined in
+              <a
+                href="https://github.com/oopsio/jen.js/blob/e982bb7b1adf05f25dd35a5b656dc43f73ba6445/src/runtime/hmr.ts#L22"
+                >src/runtime/hmr.ts:22</a
+              >
+            </li>
+          </ul>
+        </aside>
+      </div>
+      <div class="col-sidebar">
+        <div class="page-menu">
+          <div class="tsd-navigation settings">
+            <details class="tsd-accordion">
+              <summary class="tsd-accordion-summary">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <use href="../assets/icons.svg#icon-chevronDown"></use>
+                </svg>
+                <h3>Settings</h3>
+              </summary>
+              <div class="tsd-accordion-details">
+                <div class="tsd-filter-visibility">
+                  <span class="settings-label">Member Visibility</span>
+                  <ul id="tsd-filter-options">
+                    <li class="tsd-filter-item">
+                      <label class="tsd-filter-input"
+                        ><input
+                          type="checkbox"
+                          id="tsd-filter-protected"
+                          name="protected"
+                        /><svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 32 32"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            class="tsd-checkbox-background"
+                            width="30"
+                            height="30"
+                            x="1"
+                            y="1"
+                            rx="6"
+                            fill="none"
+                          ></rect>
+                          <path
+                            class="tsd-checkbox-checkmark"
+                            d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25"
+                            stroke="none"
+                            stroke-width="3.5"
+                            stroke-linejoin="round"
+                            fill="none"
+                          ></path></svg
+                        ><span>Protected</span></label
+                      >
+                    </li>
+                    <li class="tsd-filter-item">
+                      <label class="tsd-filter-input"
+                        ><input
+                          type="checkbox"
+                          id="tsd-filter-inherited"
+                          name="inherited"
+                          checked
+                        /><svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 32 32"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            class="tsd-checkbox-background"
+                            width="30"
+                            height="30"
+                            x="1"
+                            y="1"
+                            rx="6"
+                            fill="none"
+                          ></rect>
+                          <path
+                            class="tsd-checkbox-checkmark"
+                            d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25"
+                            stroke="none"
+                            stroke-width="3.5"
+                            stroke-linejoin="round"
+                            fill="none"
+                          ></path></svg
+                        ><span>Inherited</span></label
+                      >
+                    </li>
+                    <li class="tsd-filter-item">
+                      <label class="tsd-filter-input"
+                        ><input
+                          type="checkbox"
+                          id="tsd-filter-external"
+                          name="external"
+                        /><svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 32 32"
+                          aria-hidden="true"
+                        >
+                          <rect
+                            class="tsd-checkbox-background"
+                            width="30"
+                            height="30"
+                            x="1"
+                            y="1"
+                            rx="6"
+                            fill="none"
+                          ></rect>
+                          <path
+                            class="tsd-checkbox-checkmark"
+                            d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25"
+                            stroke="none"
+                            stroke-width="3.5"
+                            stroke-linejoin="round"
+                            fill="none"
+                          ></path></svg
+                        ><span>External</span></label
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div class="tsd-theme-toggle">
+                  <label class="settings-label" for="tsd-theme">Theme</label
+                  ><select id="tsd-theme">
+                    <option value="os">OS</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="site-menu">
+          <nav class="tsd-navigation">
+            <a href="../modules.html">framework-monorepo</a>
+            <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+              <li>Loading...</li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <p class="tsd-generator">
+        Generated using
+        <a href="https://typedoc.org/" target="_blank">TypeDoc</a>
+      </p>
+    </footer>
+    <div class="overlay"></div>
+  </body>
+</html>

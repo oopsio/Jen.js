@@ -69,8 +69,8 @@ export default defineConfig([
       "no-multi-spaces": "error",
       "no-trailing-spaces": "error",
       "comma-dangle": ["error", "always-multiline"],
-      "semi": ["error", "always"],
-      "quotes": [
+      semi: ["error", "always"],
+      quotes: [
         "error",
         "double",
         {
@@ -78,7 +78,7 @@ export default defineConfig([
           allowTemplateLiterals: true,
         },
       ],
-      "indent": ["error", 2],
+      indent: ["error", 2],
       "space-before-function-paren": [
         "error",
         {
@@ -89,14 +89,14 @@ export default defineConfig([
       ],
       "object-curly-spacing": ["error", "always"],
       "array-bracket-spacing": ["error", "never"],
-      "eqeqeq": ["error", "always"],
+      eqeqeq: ["error", "always"],
       "no-duplicate-imports": "error",
       "no-self-compare": "error",
       "default-case-last": "error",
       "no-fallthrough": "error",
 
       // Code quality
-      "complexity": ["warn", 15],
+      complexity: ["warn", 15],
       "max-depth": ["warn", 4],
       "max-nested-callbacks": ["warn", 3],
       "max-params": ["warn", 5],

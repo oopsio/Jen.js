@@ -89,9 +89,7 @@ fn run_node(cmd: &dyn CommandStrategy) -> Result<ExitStatus, String> {
         .spawn()
         .map_err(|e| format!("Failed to start Node.js process: {}", e))?;
 
-    let status = child
-        .wait()
-        .map_err(|e| format!("Node.js process failed: {}", e))?;
+    let status = child.wait().map_err(|e| format!("Node.js process failed: {}", e))?;
 
     if !status.success() {
         if let Some(code) = status.code() {
@@ -172,26 +170,19 @@ fn ui(f: &mut Frame, app: &App) {
     // Header + Content + Footer layout
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(5),
-            Constraint::Min(10),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Length(5), Constraint::Min(10), Constraint::Length(3)])
         .split(size);
 
     // ===== HEADER =====
-    let header_block = Block::default()
-        .borders(Borders::ALL)
-        .style(Style::default().fg(Color::Cyan));
+    let header_block =
+        Block::default().borders(Borders::ALL).style(Style::default().fg(Color::Cyan));
 
     let header_text = vec![
         Line::from(vec![
             Span::styled("   ⚡ ", Style::default().fg(Color::Yellow)),
             Span::styled(
                 "jen launcher",
-                Style::default()
-                    .fg(Color::Cyan)
-                    .add_modifier(Modifier::BOLD),
+                Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
             ),
             Span::styled(" ⚡", Style::default().fg(Color::Yellow)),
         ]),
@@ -202,9 +193,7 @@ fn ui(f: &mut Frame, app: &App) {
         ]),
     ];
 
-    let header = Paragraph::new(header_text)
-        .block(header_block)
-        .alignment(Alignment::Center);
+    let header = Paragraph::new(header_text).block(header_block).alignment(Alignment::Center);
     f.render_widget(header, chunks[0]);
 
     // ===== MENU =====
@@ -228,10 +217,7 @@ fn ui(f: &mut Frame, app: &App) {
                 Span::styled("  ▶ ", Style::default().fg(Color::Yellow)),
                 Span::styled(
                     cmd,
-                    Style::default()
-                        .fg(Color::Black)
-                        .bg(Color::Cyan)
-                        .add_modifier(Modifier::BOLD),
+                    Style::default().fg(Color::Black).bg(Color::Cyan).add_modifier(Modifier::BOLD),
                 ),
                 Span::raw(" - "),
                 Span::styled(desc, Style::default().fg(Color::White)),
@@ -248,9 +234,7 @@ fn ui(f: &mut Frame, app: &App) {
 
     lines.push(Line::from(""));
 
-    let menu = Paragraph::new(lines)
-        .block(menu_block)
-        .style(Style::default().fg(Color::White));
+    let menu = Paragraph::new(lines).block(menu_block).style(Style::default().fg(Color::White));
     f.render_widget(menu, chunks[1]);
 
     // ===== FOOTER =====
@@ -279,11 +263,11 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, mut app: App) 
                     KeyCode::Up if elapsed > KEY_DEBOUNCE_MS => {
                         app.previous();
                         app.last_key_time = std::time::Instant::now();
-                    }
+                    },
                     KeyCode::Down if elapsed > KEY_DEBOUNCE_MS => {
                         app.next();
                         app.last_key_time = std::time::Instant::now();
-                    }
+                    },
                     KeyCode::Enter => {
                         let cmd_name = app.command_name();
                         match CommandFactory::create_command(cmd_name) {
@@ -293,8 +277,8 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, mut app: App) 
                             },
                             Err(e) => app.status_message = format!("✗ Error: {}", e),
                         }
-                    }
-                    _ => {}
+                    },
+                    _ => {},
                 }
             }
         }
@@ -318,11 +302,7 @@ fn restore_terminal(
     terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
 ) -> Result<(), Box<dyn Error>> {
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
     terminal.show_cursor()?;
     Ok(())
 }

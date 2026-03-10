@@ -30,20 +30,20 @@ const users = [];
  * In a real application, resolvers should query your database (JDB, etc.).
  */
 export const resolvers = {
-    /**
-     * Query all users.
-     * @returns Array of all users.
-     */
-    users: () => users,
-    /**
-     * Create a new user.
-     * @param name User's full name.
-     * @param email User's email address.
-     * @returns The created user object with an ID.
-     */
-    createUser: ({ name, email }) => {
-        const user = { id: (users.length + 1).toString(), name, email };
-        users.push(user);
-        return user;
-    },
+  /**
+   * Query all users.
+   * @returns Array of all users.
+   */
+  users: () => users,
+  /**
+   * Create a new user.
+   * @param name User's full name.
+   * @param email User's email address.
+   * @returns The created user object with an ID.
+   */
+  createUser: ({ name, email }) => {
+    const user = { id: (users.length + 1).toString(), name, email };
+    users.push(user);
+    return user;
+  },
 };

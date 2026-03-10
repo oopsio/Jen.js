@@ -48,7 +48,6 @@ use_field_init_shorthand = true
 
 # Control how structs are formatted
 struct_lit_single_line = false
-struct_field_align_threshold = 0
 
 # Allow short expressions to remain inline
 use_small_heuristics = "Max"

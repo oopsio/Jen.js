@@ -5,6 +5,7 @@ Comprehensive example demonstrating **tree-shaking, code splitting, lazy-loading
 ## Features Demonstrated
 
 ### 1. **Tree-Shaking**
+
 Disabled features are completely removed from the bundle at build time.
 
 ```typescript
@@ -20,6 +21,7 @@ features: {
 **Result**: Only enabled features are in the final bundle. Saves ~20-50% bundle size depending on features used.
 
 ### 2. **Code Splitting**
+
 The framework automatically splits your bundle into logical chunks:
 
 - **vendor.js**: External dependencies (Preact, utilities) - cached long-term
@@ -29,6 +31,7 @@ The framework automatically splits your bundle into logical chunks:
 - **entry.js**: Main bundle - minimal, loads immediately
 
 **Example Output**:
+
 ```
 dist/
 ├── index.html
@@ -41,6 +44,7 @@ dist/
 ```
 
 ### 3. **Lazy-Loading**
+
 Components are loaded on-demand, reducing initial bundle size.
 
 ```typescript
@@ -55,6 +59,7 @@ const handleClick = async () => {
 ```
 
 **Options**:
+
 - **Visible load**: Load when scrolled into view
 - **Interaction load**: Load on hover/click/focus
 - **Prefetch**: Load in background before needed
@@ -74,6 +79,7 @@ No manual cache purging needed!
 ```
 
 **Cache Control Headers**:
+
 ```
 # Hashed assets (cache forever)
 Cache-Control: public, max-age=31536000, immutable
@@ -98,6 +104,7 @@ The build process generates `manifest.json` for SSR/SSG template rendering:
 ```
 
 Use in templates to insert correct hashed filenames:
+
 ```html
 <script src="/{{ manifest['app.js'] }}"></script>
 ```
@@ -105,21 +112,24 @@ Use in templates to insert correct hashed filenames:
 ## Performance Impact
 
 ### Bundle Sizes (Gzipped)
-| Chunk | Size | Loaded | Impact |
-|-------|------|--------|--------|
-| vendor | 12 KB | Immediately | Shared dependencies |
-| runtime | 5 KB | Immediately | Framework internals |
-| common | 8 KB | Immediately | Shared components |
-| home | 6 KB | Route load | Page-specific |
-| dashboard | 8 KB | On click | User interaction |
-| **Total Initial** | **31 KB** | Immediately | |
-| **With dashboard** | **39 KB** | After click | +8 KB when needed |
+
+| Chunk              | Size      | Loaded      | Impact              |
+| ------------------ | --------- | ----------- | ------------------- |
+| vendor             | 12 KB     | Immediately | Shared dependencies |
+| runtime            | 5 KB      | Immediately | Framework internals |
+| common             | 8 KB      | Immediately | Shared components   |
+| home               | 6 KB      | Route load  | Page-specific       |
+| dashboard          | 8 KB      | On click    | User interaction    |
+| **Total Initial**  | **31 KB** | Immediately |                     |
+| **With dashboard** | **39 KB** | After click | +8 KB when needed   |
 
 ### Load Times (3G Network)
+
 - **Without optimization**: 800ms (all code upfront)
 - **With optimization**: 200ms initial + 350ms dashboard (on demand)
 
 ### Cache Efficiency
+
 - **Vendor**: Cached indefinitely (1 year expiry)
 - **Runtime**: Cached per framework version
 - **App code**: Cached until content changes
@@ -150,7 +160,7 @@ cat dist/manifest.json
 Generate optimization reports:
 
 ```typescript
-import { ScriptOptimizer, CodeSplitter, LazyLoader } from 'jenjs';
+import { ScriptOptimizer, CodeSplitter, LazyLoader } from "jenjs";
 
 // Analyze tree-shaking
 const optimizer = new ScriptOptimizer();
@@ -161,7 +171,7 @@ const splitter = new CodeSplitter();
 console.log(splitter.generateDependencyGraph());
 
 // Analyze lazy-loading
-const lazyLoader = new LazyLoader('lazy');
+const lazyLoader = new LazyLoader("lazy");
 console.log(lazyLoader.generateReport());
 ```
 
@@ -175,23 +185,23 @@ export default {
   build: {
     // Enable asset hashing for cache-busting
     hashAssets: true,
-    
+
     // Hash length (default: 12)
     // Shorter = more collisions, longer = bigger filenames
     // 8-12 recommended
-    
+
     // Generate manifest for SSR reference
     generateManifest: true,
-    
+
     // Minify output
     minifyJs: true,
     minifyCss: true,
     minifyHtml: true,
   },
-  
+
   assets: {
     // Cache control for hashed assets
-    cacheControl: 'public,max-age=31536000,immutable',
+    cacheControl: "public,max-age=31536000,immutable",
     hashLength: 12,
   },
 } as FrameworkConfig;
@@ -202,14 +212,14 @@ export default {
 ### Custom Code Splitting Strategy
 
 ```typescript
-import { CodeSplitter } from 'jenjs';
+import { CodeSplitter } from "jenjs";
 
 const splitter = new CodeSplitter();
 
 // Add custom chunk for analytics
 splitter.registerStrategy({
-  name: 'analytics',
-  test: (path) => path.includes('tracking') || path.includes('analytics'),
+  name: "analytics",
+  test: (path) => path.includes("tracking") || path.includes("analytics"),
   priority: 85,
 });
 ```
@@ -217,37 +227,40 @@ splitter.registerStrategy({
 ### Dynamic Prefetching
 
 ```typescript
-import { prefetchLazy, preloadLazy } from '@src/build/lazy-loader.js';
+import { prefetchLazy, preloadLazy } from "@src/build/lazy-loader.js";
 
 // Prefetch dashboard when user hovers over link
 const link = document.querySelector('a[href="/dashboard"]');
-link.addEventListener('mouseover', () => {
-  prefetchLazy('dashboard', '/dashboard.js');
+link.addEventListener("mouseover", () => {
+  prefetchLazy("dashboard", "/dashboard.js");
 });
 
 // Preload critical lazy module
 if (user.isPremium) {
-  preloadLazy('premium-features', '/premium.js');
+  preloadLazy("premium-features", "/premium.js");
 }
 ```
 
 ### Visible-Load Pattern
 
 ```typescript
-import { loadWhenVisible } from '@src/build/lazy-loader.js';
+import { loadWhenVisible } from "@src/build/lazy-loader.js";
 
 // Load component when it scrolls into view
-loadWhenVisible('below-fold', 'recommendations', '/recommendations.js');
+loadWhenVisible("below-fold", "recommendations", "/recommendations.js");
 ```
 
 ### Interaction-Load Pattern
 
 ```typescript
-import { loadOnInteraction } from '@src/build/lazy-loader.js';
+import { loadOnInteraction } from "@src/build/lazy-loader.js";
 
 // Load on hover, focus, or click
-loadOnInteraction('settings-btn', 'settings', '/settings.js', 
-  ['mouseover', 'focus', 'click']);
+loadOnInteraction("settings-btn", "settings", "/settings.js", [
+  "mouseover",
+  "focus",
+  "click",
+]);
 ```
 
 ## Performance Best Practices
@@ -262,25 +275,29 @@ loadOnInteraction('settings-btn', 'settings', '/settings.js',
 ## Debugging
 
 ### View generated chunks:
+
 ```bash
 npm run build
 ls -la dist/
 ```
 
 ### Inspect manifest:
+
 ```bash
 cat dist/manifest.json
 ```
 
 ### Check Network tab in DevTools:
+
 - Filter for `.js` files
 - Sort by size
 - Check gzip size
 - Verify lazy chunks load on demand
 
 ### Generate reports:
+
 ```typescript
-import { ScriptOptimizer, CodeSplitter, LazyLoader } from 'jenjs';
+import { ScriptOptimizer, CodeSplitter, LazyLoader } from "jenjs";
 
 const optimizer = new ScriptOptimizer();
 console.log(optimizer.generateManifest());

@@ -88,6 +88,7 @@ export default function BlogListPage({ data }) {
 ```
 
 **That's it!** The page is automatically wrapped with:
+
 - `BlogLayout` (from `src/blog/(layout).tsx`)
 - `RootLayout` (from `src/(layout).tsx`)
 
@@ -96,6 +97,7 @@ export default function BlogListPage({ data }) {
 Each layout can export:
 
 ### `layout` object (optional)
+
 Configuration that can be inherited by child layouts. Shallow merge with children overriding parents.
 
 ```typescript
@@ -107,6 +109,7 @@ export const layout = {
 ```
 
 ### `Head` component (optional)
+
 Contributes to `<head>` section. Receives props: `{ data, params, query }`
 
 ```typescript
@@ -116,7 +119,9 @@ export function Head({ params }) {
 ```
 
 ### `default` component (required)
+
 The layout wrapper. Receives props:
+
 - `children`: The rendered child layout or page (as Preact VNode)
 - `data`: Data from page loader
 - `params`: Route parameters
@@ -160,25 +165,31 @@ src/
 ## Layout Hierarchy for Different Routes
 
 ### `/pages/blog/hello-world`
+
 Applies layouts in order:
+
 1. `src/(layout).tsx` ← RootLayout
 2. `src/pages/(layout).tsx` ← PagesLayout
 3. `src/pages/blog/(layout).tsx` ← BlogLayout
 4. Page component
 
 ### `/admin/users/123`
+
 Applies layouts in order:
+
 1. `src/(layout).tsx` ← RootLayout
 2. `src/admin/(layout).tsx` ← AdminLayout
 3. `src/admin/users/(layout).tsx` ← UsersLayout
 4. Page component
 
 ### `/pages/about`
+
 Applies layouts in order:
+
 1. `src/(layout).tsx` ← RootLayout
 2. `src/pages/(layout).tsx` ← PagesLayout
 3. Page component
-(No blog layout because route doesn't go through blog/)
+   (No blog layout because route doesn't go through blog/)
 
 ## Common Patterns
 
@@ -210,7 +221,7 @@ const loaderCtx: LoaderContext = {
 // src/blog/(layout).tsx
 export default function BlogLayout({ children, params, data }) {
   const showSidebar = params.slug ? false : true; // Hide on post pages
-  
+
   return (
     <div class="blog">
       {showSidebar && <aside>Sidebar</aside>}
@@ -284,21 +295,25 @@ ctx.data = { ...ctx.data, category: "blog" };
 ## Troubleshooting
 
 ### Layouts not being applied
+
 - Check file naming: must be exactly `(layout).tsx` (with parentheses)
 - Check file location: must be in the same directory or parent directories
 - Check file extensions: must match config.routes.fileExtensions
 
 ### Configuration not merging
+
 - Only the `layout` export is merged
 - Merging is shallow, not deep (array values are replaced, not merged)
 - Child values completely override parent values
 
 ### Head elements duplicated
+
 - Each layout's Head is rendered
 - Put shared elements only in root layout's Head
 - Child layouts should only add specific elements
 
 ### Props not available in layout
+
 - `children`: always present (the child layout or page)
 - `data`: from page loader (or middleware)
 - `params`: from route parameters
@@ -307,6 +322,7 @@ ctx.data = { ...ctx.data, category: "blog" };
 ## Examples
 
 See `examples.md` for detailed real-world examples:
+
 - Multi-level blog with hierarchy
 - Admin panel with authentication
 - Configuration inheritance and overrides

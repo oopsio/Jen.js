@@ -3,196 +3,196 @@ import { join, basename } from "node:path";
 import { resolveDistPath } from "../core/paths.js";
 import { log } from "../shared/log.js";
 async function gzipSize(buffer) {
-    const zlib = await import("node:zlib");
-    return new Promise((resolve, reject) => {
-        zlib.gzip(buffer, (err, result) => {
-            if (err)
-                reject(err);
-            else
-                resolve(result.length);
-        });
+  const zlib = await import("node:zlib");
+  return new Promise((resolve, reject) => {
+    zlib.gzip(buffer, (err, result) => {
+      if (err) reject(err);
+      else resolve(result.length);
     });
+  });
 }
 function extractPackageName(modulePath) {
-    if (modulePath.includes("node_modules")) {
-        const parts = modulePath.split("node_modules");
-        const afterModules = parts[1];
-        if (afterModules) {
-            const match = afterModules.match(/[/\\]([^/\\]+)/);
-            return match ? match[1] : "unknown";
-        }
+  if (modulePath.includes("node_modules")) {
+    const parts = modulePath.split("node_modules");
+    const afterModules = parts[1];
+    if (afterModules) {
+      const match = afterModules.match(/[/\\]([^/\\]+)/);
+      return match ? match[1] : "unknown";
     }
-    return "local";
+  }
+  return "local";
 }
 function categorizeModule(modulePath) {
-    if (modulePath.includes("node_modules")) {
-        return "dependencies";
-    }
-    if (modulePath.startsWith("/") || modulePath.includes(":")) {
-        return "src";
-    }
-    return "other";
+  if (modulePath.includes("node_modules")) {
+    return "dependencies";
+  }
+  if (modulePath.startsWith("/") || modulePath.includes(":")) {
+    return "src";
+  }
+  return "other";
 }
 export async function analyzeBundle(config) {
-    const dist = resolveDistPath(config);
-    const metaFiles = [
-        join(dist, "preact-runtime-meta.json"),
-        join(dist, "polyfills-meta.json"),
-    ];
-    const allModules = [];
-    const packageMap = new Map();
-    const duplicateMap = new Map();
-    const pathCountMap = new Map();
-    let totalSize = 0;
-    let totalGzipSize = 0;
-    const entryPoints = [];
-    for (const metaFile of metaFiles) {
-        if (!existsSync(metaFile)) {
-            continue;
-        }
-        try {
-            const metaContent = readFileSync(metaFile, "utf-8");
-            const meta = JSON.parse(metaContent);
-            const inputs = meta.inputs || {};
-            const outputs = meta.outputs || {};
-            for (const [outputPath, outputData] of Object.entries(outputs)) {
-                const entryPoint = outputData.entryPoint;
-                if (entryPoint) {
-                    entryPoints.push(entryPoint);
-                }
-            }
-            for (const [inputPath, inputData] of Object.entries(inputs)) {
-                const bytes = inputData.bytes || 0;
-                if (bytes === 0)
-                    continue;
-                const normalizedPath = inputPath.replace(/^<(.+)>$/, "$1");
-                pathCountMap.set(normalizedPath, (pathCountMap.get(normalizedPath) || 0) + 1);
-                let gzipBytes = 0;
-                const fullInputPath = join(dist, "..", normalizedPath);
-                if (existsSync(fullInputPath)) {
-                    const content = readFileSync(fullInputPath);
-                    gzipBytes = await gzipSize(content);
-                }
-                if (gzipBytes === 0) {
-                    gzipBytes = Math.floor(bytes * 0.3);
-                }
-                const packageName = extractPackageName(normalizedPath);
-                const module = {
-                    path: normalizedPath,
-                    name: basename(normalizedPath),
-                    size: bytes,
-                    gzipSize: gzipBytes,
-                    percentage: 0,
-                    imports: inputData.imports?.map((i) => i.original || "") || [],
-                    importedBy: [],
-                    package: packageName,
-                    isLarge: bytes > 50000,
-                };
-                allModules.push(module);
-                totalSize += bytes;
-                totalGzipSize += gzipBytes;
-                if (!packageMap.has(packageName)) {
-                    packageMap.set(packageName, { size: 0, modules: [] });
-                }
-                const pkg = packageMap.get(packageName);
-                pkg.size += bytes;
-                pkg.modules.push(normalizedPath);
-            }
-        }
-        catch (err) {
-            log.warn(`Failed to parse metafile ${metaFile}: ${err}`);
-        }
+  const dist = resolveDistPath(config);
+  const metaFiles = [
+    join(dist, "preact-runtime-meta.json"),
+    join(dist, "polyfills-meta.json"),
+  ];
+  const allModules = [];
+  const packageMap = new Map();
+  const duplicateMap = new Map();
+  const pathCountMap = new Map();
+  let totalSize = 0;
+  let totalGzipSize = 0;
+  const entryPoints = [];
+  for (const metaFile of metaFiles) {
+    if (!existsSync(metaFile)) {
+      continue;
     }
-    for (const [path, count] of pathCountMap) {
-        if (count > 1) {
-            duplicateMap.set(path, count);
+    try {
+      const metaContent = readFileSync(metaFile, "utf-8");
+      const meta = JSON.parse(metaContent);
+      const inputs = meta.inputs || {};
+      const outputs = meta.outputs || {};
+      for (const [outputPath, outputData] of Object.entries(outputs)) {
+        const entryPoint = outputData.entryPoint;
+        if (entryPoint) {
+          entryPoints.push(entryPoint);
         }
+      }
+      for (const [inputPath, inputData] of Object.entries(inputs)) {
+        const bytes = inputData.bytes || 0;
+        if (bytes === 0) continue;
+        const normalizedPath = inputPath.replace(/^<(.+)>$/, "$1");
+        pathCountMap.set(
+          normalizedPath,
+          (pathCountMap.get(normalizedPath) || 0) + 1,
+        );
+        let gzipBytes = 0;
+        const fullInputPath = join(dist, "..", normalizedPath);
+        if (existsSync(fullInputPath)) {
+          const content = readFileSync(fullInputPath);
+          gzipBytes = await gzipSize(content);
+        }
+        if (gzipBytes === 0) {
+          gzipBytes = Math.floor(bytes * 0.3);
+        }
+        const packageName = extractPackageName(normalizedPath);
+        const module = {
+          path: normalizedPath,
+          name: basename(normalizedPath),
+          size: bytes,
+          gzipSize: gzipBytes,
+          percentage: 0,
+          imports: inputData.imports?.map((i) => i.original || "") || [],
+          importedBy: [],
+          package: packageName,
+          isLarge: bytes > 50000,
+        };
+        allModules.push(module);
+        totalSize += bytes;
+        totalGzipSize += gzipBytes;
+        if (!packageMap.has(packageName)) {
+          packageMap.set(packageName, { size: 0, modules: [] });
+        }
+        const pkg = packageMap.get(packageName);
+        pkg.size += bytes;
+        pkg.modules.push(normalizedPath);
+      }
+    } catch (err) {
+      log.warn(`Failed to parse metafile ${metaFile}: ${err}`);
     }
-    for (const mod of allModules) {
-        mod.percentage = totalSize > 0 ? (mod.size / totalSize) * 100 : 0;
+  }
+  for (const [path, count] of pathCountMap) {
+    if (count > 1) {
+      duplicateMap.set(path, count);
     }
-    allModules.sort((a, b) => b.size - a.size);
-    return {
-        modules: allModules,
-        totalSize,
-        totalGzipSize,
-        duplicateModules: duplicateMap,
-        packages: packageMap,
-        timestamp: new Date().toISOString(),
-        entryPoints,
-    };
+  }
+  for (const mod of allModules) {
+    mod.percentage = totalSize > 0 ? (mod.size / totalSize) * 100 : 0;
+  }
+  allModules.sort((a, b) => b.size - a.size);
+  return {
+    modules: allModules,
+    totalSize,
+    totalGzipSize,
+    duplicateModules: duplicateMap,
+    packages: packageMap,
+    timestamp: new Date().toISOString(),
+    entryPoints,
+  };
 }
 function buildTreemap(modules) {
-    const packageGroups = new Map();
-    for (const mod of modules) {
-        const pkg = mod.package || "other";
-        if (!packageGroups.has(pkg)) {
-            packageGroups.set(pkg, []);
-        }
-        packageGroups.get(pkg).push(mod);
+  const packageGroups = new Map();
+  for (const mod of modules) {
+    const pkg = mod.package || "other";
+    if (!packageGroups.has(pkg)) {
+      packageGroups.set(pkg, []);
     }
-    const children = [];
-    for (const [pkg, mods] of packageGroups) {
-        const pkgSize = mods.reduce((sum, m) => sum + m.size, 0);
-        const totalSize = modules.reduce((sum, m) => sum + m.size, 0);
-        const pkgChildren = mods.map(m => ({
-            name: m.name,
-            path: m.path,
-            value: m.size,
-            percentage: m.percentage,
-            isLarge: m.isLarge,
-            package: m.package,
-        }));
-        children.push({
-            name: pkg,
-            path: pkg,
-            value: pkgSize,
-            percentage: totalSize > 0 ? (pkgSize / totalSize) * 100 : 0,
-            children: pkgChildren,
-        });
-    }
-    return {
-        name: "bundle",
-        path: "bundle",
-        value: modules.reduce((sum, m) => sum + m.size, 0),
-        percentage: 100,
-        children,
-    };
+    packageGroups.get(pkg).push(mod);
+  }
+  const children = [];
+  for (const [pkg, mods] of packageGroups) {
+    const pkgSize = mods.reduce((sum, m) => sum + m.size, 0);
+    const totalSize = modules.reduce((sum, m) => sum + m.size, 0);
+    const pkgChildren = mods.map((m) => ({
+      name: m.name,
+      path: m.path,
+      value: m.size,
+      percentage: m.percentage,
+      isLarge: m.isLarge,
+      package: m.package,
+    }));
+    children.push({
+      name: pkg,
+      path: pkg,
+      value: pkgSize,
+      percentage: totalSize > 0 ? (pkgSize / totalSize) * 100 : 0,
+      children: pkgChildren,
+    });
+  }
+  return {
+    name: "bundle",
+    path: "bundle",
+    value: modules.reduce((sum, m) => sum + m.size, 0),
+    percentage: 100,
+    children,
+  };
 }
 function formatBytes(bytes) {
-    if (bytes === 0)
-        return "0 B";
-    const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 function minifyHtml(html) {
-    return html
-        .replace(/<!--[\s\S]*?-->/g, "")
-        .replace(/\s+/g, " ")
-        .replace(/>\s+</g, "><")
-        .replace(/\s*([{}:;,=])\s*/g, "$1")
-        .trim();
+  return html
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\s+/g, " ")
+    .replace(/>\s+</g, "><")
+    .replace(/\s*([{}:;,=])\s*/g, "$1")
+    .trim();
 }
 function escapeHtml(str) {
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 export async function generateBundleReport(config) {
-    log.info("Analyzing bundle...");
-    const analysis = await analyzeBundle(config);
-    const treemapData = buildTreemap(analysis.modules);
-    // Prepare data for template
-    const modulesJson = JSON.stringify(analysis.modules);
-    const treemapJson = JSON.stringify(treemapData);
-    const packagesJson = JSON.stringify(Object.fromEntries(analysis.packages));
-    const duplicatesJson = JSON.stringify(Object.fromEntries(analysis.duplicateModules));
-    const html = `
+  log.info("Analyzing bundle...");
+  const analysis = await analyzeBundle(config);
+  const treemapData = buildTreemap(analysis.modules);
+  // Prepare data for template
+  const modulesJson = JSON.stringify(analysis.modules);
+  const treemapJson = JSON.stringify(treemapData);
+  const packagesJson = JSON.stringify(Object.fromEntries(analysis.packages));
+  const duplicatesJson = JSON.stringify(
+    Object.fromEntries(analysis.duplicateModules),
+  );
+  const html = `
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg-primary);
@@ -578,12 +578,16 @@ export async function generateBundleReport(config) {
       <span class="stat-label">Packages</span>
       <span class="stat-value" id="packageCount">${analysis.packages.size}</span>
     </div>
-    ${analysis.duplicateModules.size > 0 ? `
+    ${
+      analysis.duplicateModules.size > 0
+        ? `
     <div class="stat">
       <span class="stat-label">Duplicates</span>
       <span class="stat-value" style="color: var(--warning)">${analysis.duplicateModules.size}</span>
     </div>
-    ` : ''}
+    `
+        : ""
+    }
   </div>
 
   <div class="controls">
@@ -929,13 +933,13 @@ export async function generateBundleReport(config) {
   </script>
 </body>
 </html>`;
-    return minifyHtml(html);
+  return minifyHtml(html);
 }
 export async function runBundleAnalyzer(config) {
-    const dist = resolveDistPath(config);
-    const reportPath = join(dist, "bundle-report.html");
-    const htmlContent = await generateBundleReport(config);
-    writeFileSync(reportPath, htmlContent, "utf-8");
-    log.info(`Bundle report generated: ${reportPath}`);
-    return reportPath;
+  const dist = resolveDistPath(config);
+  const reportPath = join(dist, "bundle-report.html");
+  const htmlContent = await generateBundleReport(config);
+  writeFileSync(reportPath, htmlContent, "utf-8");
+  log.info(`Bundle report generated: ${reportPath}`);
+  return reportPath;
 }

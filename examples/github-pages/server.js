@@ -48,9 +48,7 @@ async function main() {
   const { createApp } = await import(appPath);
 
   // Load banner
-  const bannerPath = pathToFileURL(
-    join(rootDir, "lib/cli/banner.js"),
-  ).href;
+  const bannerPath = pathToFileURL(join(rootDir, "lib/cli/banner.js")).href;
   const { printBanner } = await import(bannerPath);
 
   const app = await createApp({

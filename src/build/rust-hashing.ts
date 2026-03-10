@@ -26,11 +26,13 @@ export interface HashOptions {
 /**
  * High-performance hashing using Rust utility
  */
-export async function hashWithRust(options: HashOptions): Promise<HashResponse> {
+export async function hashWithRust(
+  options: HashOptions,
+): Promise<HashResponse> {
   return new Promise((resolve, reject) => {
     // Binary is expected in lib/ relative to the project root
     const libDir = join(process.cwd(), "lib");
-    
+
     if (!existsSync(libDir)) {
       reject(new Error(`Binary directory not found: ${libDir}`));
       return;
@@ -40,17 +42,21 @@ export async function hashWithRust(options: HashOptions): Promise<HashResponse> 
     let binaryName: string | undefined;
     try {
       const files = readdirSync(libDir);
-      binaryName = files.find(f => f === "utils" || f.startsWith("utils."));
+      binaryName = files.find((f) => f === "utils" || f.startsWith("utils."));
     } catch (err: any) {
       reject(new Error(`Failed to list binary directory: ${err.message}`));
       return;
     }
-    
+
     if (!binaryName) {
-      reject(new Error(`Could not find 'utils' binary in ${libDir}. Ensure the Rust utility is compiled and placed in lib/.`));
+      reject(
+        new Error(
+          `Could not find 'utils' binary in ${libDir}. Ensure the Rust utility is compiled and placed in lib/.`,
+        ),
+      );
       return;
     }
-    
+
     const binaryPath = join(libDir, binaryName);
 
     const child = spawn(binaryPath, [], {
@@ -77,7 +83,9 @@ export async function hashWithRust(options: HashOptions): Promise<HashResponse> 
         if (response.ok) {
           resolve(response);
         } else {
-          reject(new Error(response.error || "Unknown error from Rust utility"));
+          reject(
+            new Error(response.error || "Unknown error from Rust utility"),
+          );
         }
       } catch (e) {
         reject(new Error(`Failed to parse Rust utility output: ${stdout}`));

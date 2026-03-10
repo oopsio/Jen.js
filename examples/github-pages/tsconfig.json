@@ -6,16 +6,16 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "strict": true,
-    "outDir": "dist",          // output folder
-    "rootDir": ".",             // root of your source files
+    "outDir": "dist", // output folder
+    "rootDir": ".", // root of your source files
     "skipLibCheck": true,
     "types": ["node"],
     "baseUrl": ".",
     "allowJs": true,
     "declaration": true,
-    "declarationDir": "dist/types",  // emit types into a separate folder
+    "declarationDir": "dist/types", // emit types into a separate folder
     "paths": {
       "@src/*": ["src/*"]
     }
   }
-}  
+}

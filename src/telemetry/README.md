@@ -5,16 +5,16 @@ Client-side telemetry for Jen.js framework. Sends usage metrics to the telemetry
 ## Usage
 
 ```typescript
-import { createTelemetry } from '@src/telemetry/client.js';
+import { createTelemetry } from "@src/telemetry/client.js";
 
-const telemetry = createTelemetry('0.1.0', {
-  endpoint: 'https://jenjs-telemetry.vercel.app/telemetry'
+const telemetry = createTelemetry("0.1.0", {
+  endpoint: "https://jenjs-telemetry.vercel.app/telemetry",
 });
 
 // Track events
 telemetry.track({
-  command: 'dev',
-  os: process.platform
+  command: "dev",
+  os: process.platform,
 });
 
 // Auto-flushes every 15s or at 50 events
@@ -42,6 +42,7 @@ const telemetry = createTelemetry(version, {
 ## Integration
 
 Already integrated into:
+
 - `server.ts` - Tracks dev/build commands
 - `build.ts` - Tracks build duration and success
 

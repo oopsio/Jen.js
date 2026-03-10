@@ -15,6 +15,7 @@ Good design is invisible. It solves problems without drawing attention to itself
 Your website should communicate its purpose immediately. Users shouldn't have to guess what your site does or how to navigate it.
 
 **Tips:**
+
 - Use clear, descriptive headings
 - Keep navigation simple and intuitive
 - Minimize distractions
@@ -24,6 +25,7 @@ Your website should communicate its purpose immediately. Users shouldn't have to
 Consistency builds trust and predictability. Keep your design patterns, colors, and typography consistent throughout your site.
 
 **Tips:**
+
 - Use a consistent color palette
 - Maintain uniform spacing and alignment
 - Use the same fonts throughout
@@ -34,6 +36,7 @@ Consistency builds trust and predictability. Keep your design patterns, colors, 
 Guide users' eyes to the most important content first. Use size, color, and positioning to establish hierarchy.
 
 **Tips:**
+
 - Make important elements larger or bolder
 - Use contrast to highlight key information
 - Group related content together
@@ -44,6 +47,7 @@ Guide users' eyes to the most important content first. Use size, color, and posi
 Empty space isn't wasted space. Whitespace improves readability and gives the design room to breathe.
 
 **Tips:**
+
 - Don't fear empty space
 - Use margins and padding generously
 - Reduce visual clutter
@@ -54,6 +58,7 @@ Empty space isn't wasted space. Whitespace improves readability and gives the de
 Your site must work on all devices. Mobile-first design ensures accessibility for everyone.
 
 **Tips:**
+
 - Test on multiple devices
 - Use flexible layouts
 - Optimize images for different sizes
@@ -64,6 +69,7 @@ Your site must work on all devices. Mobile-first design ensures accessibility fo
 Design for everyone, including people with disabilities. Accessible design benefits all users.
 
 **Tips:**
+
 - Use sufficient color contrast
 - Provide alt text for images
 - Ensure keyboard navigation
@@ -75,6 +81,7 @@ Design for everyone, including people with disabilities. Accessible design benef
 Fast websites are better websites. Users expect pages to load quickly.
 
 **Tips:**
+
 - Optimize images
 - Minimize CSS and JavaScript
 - Use caching strategies
@@ -85,6 +92,7 @@ Fast websites are better websites. Users expect pages to load quickly.
 The best way to know if your design works is to test it with real users. Gather feedback and iterate.
 
 **Tips:**
+
 - Conduct usability testing
 - Analyze user behavior
 - Iterate based on feedback

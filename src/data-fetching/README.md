@@ -19,7 +19,11 @@ Comprehensive data fetching infrastructure for Jen.js with support for REST APIs
 ### REST API Fetching
 
 ```typescript
-import { getServerDataFetcher, MemoryDataCache, initializeServerFetch } from 'jenjs';
+import {
+  getServerDataFetcher,
+  MemoryDataCache,
+  initializeServerFetch,
+} from "jenjs";
 
 // Initialize during app startup
 initializeServerFetch({
@@ -31,12 +35,12 @@ initializeServerFetch({
 // Use in loaders
 export async function loader(ctx) {
   const fetcher = getServerDataFetcher(ctx);
-  
-  const result = await fetcher.rest.get('/api/posts');
+
+  const result = await fetcher.rest.get("/api/posts");
   if (!result.ok) {
     throw new Error(result.error.message);
   }
-  
+
   return { posts: result.data };
 }
 ```
@@ -46,7 +50,7 @@ export async function loader(ctx) {
 ```typescript
 export async function loader(ctx) {
   const fetcher = getServerDataFetcher(ctx);
-  
+
   const result = await fetcher.graphql.query(`
     query GetPosts {
       posts {
@@ -56,11 +60,11 @@ export async function loader(ctx) {
       }
     }
   `);
-  
+
   if (!result.ok) {
     throw new Error(result.error.message);
   }
-  
+
   return { posts: result.data };
 }
 ```
@@ -71,10 +75,10 @@ export async function loader(ctx) {
 import { useData, useMutation } from 'jenjs';
 
 export function PostsList({ posts }) {
-  const { refetch } = useData('/api/posts', { 
-    cache: { strategy: 'cache-first' } 
+  const { refetch } = useData('/api/posts', {
+    cache: { strategy: 'cache-first' }
   });
-  
+
   const { execute: publishPost } = useMutation(`
     mutation PublishPost($id: ID!) {
       publishPost(id: $id) {
@@ -83,7 +87,7 @@ export function PostsList({ posts }) {
       }
     }
   `);
-  
+
   return (
     <div>
       {posts.map(post => (
@@ -120,6 +124,7 @@ src/data-fetching/
 ### Data Flow
 
 #### Server-Side Rendering
+
 ```
 Route Loader
   └─> ServerDataFetcher
@@ -131,6 +136,7 @@ Route Loader
 ```
 
 #### Client-Side
+
 ```
 Component (useData/useMutation)
   └─> ClientDataFetcher
@@ -144,59 +150,67 @@ Component (useData/useMutation)
 ## Cache Strategies
 
 ### `cache-first`
+
 Returns cached data if available, otherwise fetches fresh data. Suitable for:
+
 - Static or rarely-changing data
 - Offline support
 - Reducing API calls
 
 ```typescript
-const result = await fetcher.rest.get('/api/posts', {
-  cache: { 
-    strategy: 'cache-first',
-    ttl: 300000 // 5 minutes
-  }
+const result = await fetcher.rest.get("/api/posts", {
+  cache: {
+    strategy: "cache-first",
+    ttl: 300000, // 5 minutes
+  },
 });
 ```
 
 ### `network-first`
+
 Always tries to fetch fresh data, falls back to cache on error. Suitable for:
+
 - Real-time data
 - User-generated content
 - Data that changes frequently
 
 ```typescript
-const result = await fetcher.rest.get('/api/user', {
-  cache: { 
-    strategy: 'network-first',
-    ttl: 60000 // 1 minute
-  }
+const result = await fetcher.rest.get("/api/user", {
+  cache: {
+    strategy: "network-first",
+    ttl: 60000, // 1 minute
+  },
 });
 ```
 
 ### `stale-while-revalidate`
+
 Returns cached data immediately, updates cache in background. Suitable for:
+
 - Optimal perceived performance
 - Data that's acceptable when slightly stale
 - Reducing server load
 
 ```typescript
-const result = await fetcher.rest.get('/api/posts', {
-  cache: { 
-    strategy: 'stale-while-revalidate',
-    ttl: 300000
-  }
+const result = await fetcher.rest.get("/api/posts", {
+  cache: {
+    strategy: "stale-while-revalidate",
+    ttl: 300000,
+  },
 });
 ```
 
 ### `no-cache`
+
 Always fetches fresh data, no caching. Suitable for:
+
 - Authentication endpoints
 - Sensitive data
 - Operations with side effects
 
 ```typescript
-const result = await fetcher.rest.post('/api/login', body, {
-  cache: false
+const result = await fetcher.rest.post("/api/login", body, {
+  cache: false,
 });
 ```
 
@@ -240,18 +254,20 @@ Invalidate cache entries by tags:
 
 ```typescript
 // Fetch with tags
-await fetcher.rest.get('/api/posts', {
+await fetcher.rest.get("/api/posts", {
   cache: {
-    tags: ['posts', 'homepage']
-  }
+    tags: ["posts", "homepage"],
+  },
 });
 
 // Invalidate all posts-related data after mutation
-await fetcher.rest.post('/api/posts', newPost, {
-  cache: { strategy: 'no-cache' }
-}).then(() => {
-  return fetcher.rest.cache.invalidate(['posts']);
-});
+await fetcher.rest
+  .post("/api/posts", newPost, {
+    cache: { strategy: "no-cache" },
+  })
+  .then(() => {
+    return fetcher.rest.cache.invalidate(["posts"]);
+  });
 ```
 
 ## GraphQL Features
@@ -259,7 +275,8 @@ await fetcher.rest.post('/api/posts', newPost, {
 ### Queries (Cached by default)
 
 ```typescript
-const result = await fetcher.graphql.query(`
+const result = await fetcher.graphql.query(
+  `
   query GetPost($id: ID!) {
     post(id: $id) {
       id
@@ -270,34 +287,39 @@ const result = await fetcher.graphql.query(`
       }
     }
   }
-`, {
-  variables: { id: '123' },
-  cache: { ttl: 600000 } // 10 minutes
-});
+`,
+  {
+    variables: { id: "123" },
+    cache: { ttl: 600000 }, // 10 minutes
+  },
+);
 ```
 
 ### Mutations (No cache by default)
 
 ```typescript
-const result = await fetcher.graphql.mutation(`
+const result = await fetcher.graphql.mutation(
+  `
   mutation CreatePost($title: String!, $content: String!) {
     createPost(title: $title, content: $content) {
       id
       title
     }
   }
-`, {
-  variables: { title: 'New Post', content: '...' }
-});
+`,
+  {
+    variables: { title: "New Post", content: "..." },
+  },
+);
 ```
 
 ### Batch Queries
 
 ```typescript
 const result = await fetcher.graphql.batch({
-  posts: 'query { posts { id title } }',
-  users: 'query { users { id name } }',
-  comments: 'query { comments { id text } }',
+  posts: "query { posts { id title } }",
+  users: "query { users { id name } }",
+  comments: "query { comments { id text } }",
 });
 
 if (result.ok) {
@@ -311,7 +333,7 @@ if (result.ok) {
 
 ```typescript
 // Invalidate all cached results for specific operations
-await fetcher.graphql.invalidate(['GetPost', 'GetPosts']);
+await fetcher.graphql.invalidate(["GetPost", "GetPosts"]);
 ```
 
 ## Data Loaders
@@ -321,10 +343,10 @@ Convenience helpers for common loader patterns:
 ### Simple Loader
 
 ```typescript
-import { createDataLoader } from 'jenjs';
+import { createDataLoader } from "jenjs";
 
 const loader = createDataLoader(async (fetcher) => {
-  const result = await fetcher.rest.get('/api/posts');
+  const result = await fetcher.rest.get("/api/posts");
   if (!result.ok) throw new Error(result.error.message);
   return result.data;
 });
@@ -357,49 +379,49 @@ export default function Page({ posts, users }) {
 ### Conditional Loaders
 
 ```typescript
-import { createConditionalDataLoader } from 'jenjs';
+import { createConditionalDataLoader } from "jenjs";
 
 const loader = createConditionalDataLoader(
-  (ctx) => ctx.params.id === 'me',
+  (ctx) => ctx.params.id === "me",
   createDataLoader(async (f) => {
-    const res = await f.rest.get('/api/user/me');
+    const res = await f.rest.get("/api/user/me");
     return res.ok ? res.data : null;
   }),
-  { id: 'guest', name: 'Guest User' } // fallback
+  { id: "guest", name: "Guest User" }, // fallback
 );
 ```
 
 ### Resilient Loaders
 
 ```typescript
-import { createResilientDataLoader } from 'jenjs';
+import { createResilientDataLoader } from "jenjs";
 
 const loader = createResilientDataLoader(
   createDataLoader(async (f) => {
-    const res = await f.rest.get('/api/analytics');
+    const res = await f.rest.get("/api/analytics");
     return res.ok ? res.data : null;
   }),
-  { views: 0, clicks: 0 } // fallback on error
+  { views: 0, clicks: 0 }, // fallback on error
 );
 ```
 
 ## Error Handling
 
 ```typescript
-const result = await fetcher.rest.get('/api/posts');
+const result = await fetcher.rest.get("/api/posts");
 
 if (!result.ok) {
-  console.error('Status:', result.error.status);
-  console.error('Message:', result.error.message);
-  console.error('Code:', result.error.code);
-  console.error('Details:', result.error.details);
-  
+  console.error("Status:", result.error.status);
+  console.error("Message:", result.error.message);
+  console.error("Code:", result.error.code);
+  console.error("Details:", result.error.details);
+
   // Handle different error types
   if (result.error.status === 404) {
     // Not found
   } else if (result.error.status === 401) {
     // Unauthorized
-  } else if (result.error.code === 'TIMEOUT') {
+  } else if (result.error.code === "TIMEOUT") {
     // Timeout error
   }
 }
@@ -410,7 +432,7 @@ if (!result.ok) {
 Full type-safe API:
 
 ```typescript
-import type { FetchResult } from 'jenjs';
+import type { FetchResult } from "jenjs";
 
 interface Post {
   id: string;
@@ -418,11 +440,11 @@ interface Post {
   content: string;
 }
 
-const result: FetchResult<Post[]> = await fetcher.rest.get('/api/posts');
+const result: FetchResult<Post[]> = await fetcher.rest.get("/api/posts");
 
 if (result.ok) {
   // result.data is typed as Post[]
-  result.data.forEach(post => {
+  result.data.forEach((post) => {
     console.log(post.title);
   });
 }
@@ -448,18 +470,18 @@ export default {
 ### Cache Configuration
 
 ```typescript
-import { MemoryDataCache } from 'jenjs';
+import { MemoryDataCache } from "jenjs";
 
 initializeServerFetch({
   cache: new MemoryDataCache(),
   config: {
     timeout: 30000,
-    baseUrl: 'https://api.example.com',
+    baseUrl: "https://api.example.com",
     cache: {
-      strategy: 'cache-first',
+      strategy: "cache-first",
       ttl: 300000,
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -472,30 +494,37 @@ initializeServerFetch({
    - `no-cache` for mutations and sensitive operations
 
 2. **Tag your cache entries**
+
    ```typescript
-   cache: { tags: ['posts', 'user-content'] }
+   cache: {
+     tags: ["posts", "user-content"];
+   }
    ```
 
 3. **Invalidate cache after mutations**
+
    ```typescript
-   await fetcher.rest.post('/api/posts', newPost);
-   await fetcher.rest.cache.invalidate(['posts']);
+   await fetcher.rest.post("/api/posts", newPost);
+   await fetcher.rest.cache.invalidate(["posts"]);
    ```
 
 4. **Use parallel data loaders for independent data**
+
    ```typescript
    export const loader = createParallelDataLoader({...});
    ```
 
 5. **Handle errors gracefully with resilient loaders**
+
    ```typescript
    const loader = createResilientDataLoader(fetch, fallbackValue);
    ```
 
 6. **Use interceptors for common patterns**
+
    ```typescript
    fetcher.withAuthToken(token);
-   fetcher.withHeaders({ 'X-Custom': 'value' });
+   fetcher.withHeaders({ "X-Custom": "value" });
    fetcher.withLogging();
    ```
 
@@ -518,26 +547,26 @@ initializeServerFetch({
 ### Custom Cache Backend
 
 ```typescript
-import type { CacheBackend } from 'jenjs';
+import type { CacheBackend } from "jenjs";
 
 class RedisCache implements CacheBackend {
   async get<T>(key: string): Promise<T | null> {
     const data = await redis.get(key);
     return data ? JSON.parse(data) : null;
   }
-  
+
   async set<T>(key: string, value: T, ttl: number): Promise<void> {
-    await redis.set(key, JSON.stringify(value), 'EX', ttl / 1000);
+    await redis.set(key, JSON.stringify(value), "EX", ttl / 1000);
   }
-  
+
   async delete(key: string): Promise<void> {
     await redis.del(key);
   }
-  
+
   async clear(): Promise<void> {
     await redis.flushdb();
   }
-  
+
   async invalidate(tags: string[]): Promise<void> {
     // Tag-based invalidation implementation
   }
@@ -555,16 +584,18 @@ initializeServerFetch({
 fetcher.rest.addInterceptor({
   beforeRequest: async (req) => {
     // Add tracing ID
-    req.headers['x-trace-id'] = generateTraceId();
+    req.headers["x-trace-id"] = generateTraceId();
     return req;
   },
-  
+
   afterResponse: async (res) => {
     // Log response times
-    console.log(`Response received in ${res.meta?.headers['x-response-time']}ms`);
+    console.log(
+      `Response received in ${res.meta?.headers["x-response-time"]}ms`,
+    );
     return res;
   },
-  
+
   onError: async (err) => {
     // Report to error tracking service
     await errorTracker.report(err.error);
@@ -585,21 +616,24 @@ fetcher.rest.addInterceptor({
 For existing projects using manual fetch calls:
 
 ### Before
+
 ```typescript
-const response = await fetch('/api/posts');
+const response = await fetch("/api/posts");
 const data = await response.json();
 ```
 
 ### After
+
 ```typescript
 const fetcher = getServerDataFetcher(ctx);
-const result = await fetcher.rest.get('/api/posts');
+const result = await fetcher.rest.get("/api/posts");
 if (result.ok) {
   const data = result.data;
 }
 ```
 
 Benefits:
+
 - Automatic caching and cache invalidation
 - Error handling
 - Request retries

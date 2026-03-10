@@ -13,7 +13,7 @@ DO NOT create any `.md` or `.txt` files for documentation.
 The agent must respond ONLY in chat.
 
 If documentation is needed, I will ask direct questions.
-Answers should be conversational and inline — never as files. 
+Answers should be conversational and inline — never as files.
 
 ## Critical Runtime & Package Management Rule
 
@@ -24,6 +24,7 @@ Answers should be conversational and inline — never as files.
 3. **Package Manager:** Bun (`bun install`) — must be used for all dependency management; no other package managers (npm, yarn, pnpm) are allowed.
 
 **Enforcement Notes:**
+
 - Agents should automatically detect hard tasks and switch execution to Bun runtime.
 - Any deviation from this rule is considered critical and must be logged.
 
@@ -147,14 +148,14 @@ jen.js/
 
 ## Key Packages Breakdown
 
-| Package | Purpose | Status |
-|---------|---------|--------|
-| `jenjs` | Main framework core | Active |
-| `create-jen-app` | Project scaffolder | Active |
-| `@types/jenjs__master` | TypeScript definitions | Active |
-| `eslint-config-jen` | ESLint configuration | NEW |
-| `@jenjs/third-parties-embeds` | YouTube/Maps components | NEW |
-| `@jenjs/mcp` | MCP Server + CLI | NEW |
+| Package                       | Purpose                 | Status |
+| ----------------------------- | ----------------------- | ------ |
+| `jenjs`                       | Main framework core     | Active |
+| `create-jen-app`              | Project scaffolder      | Active |
+| `@types/jenjs__master`        | TypeScript definitions  | Active |
+| `eslint-config-jen`           | ESLint configuration    | NEW    |
+| `@jenjs/third-parties-embeds` | YouTube/Maps components | NEW    |
+| `@jenjs/mcp`                  | MCP Server + CLI        | NEW    |
 
 ## Build System
 
@@ -178,17 +179,20 @@ jen.js/
 ### Class & Method Patterns
 
 **Class Structure** (see `src/server/app.ts` for reference):
+
 - Private fields with null initializers for optional state: `private watcher: FSWatcher | null = null`
 - Simple getter/setter methods for state management
 - Private cleanup methods for resource management
 - Clear separation between state (properties) and behavior (methods)
 
 **Documentation:**
+
 - Block comments with `/** ... */` for class and public method documentation
 - Inline comments with `//` for implementation details
 - Keep documentation concise and focused on intent
 
 **Method Patterns:**
+
 - Single responsibility per method
 - Return types explicitly declared
 - Async methods for I/O operations
@@ -196,6 +200,7 @@ jen.js/
 - Guard clauses for null checks: `if (condition) { ... }`
 
 **Example Pattern:**
+
 ```typescript
 class Lifecycle {
   private resource: Resource | null = null;
@@ -299,11 +304,13 @@ describe("ModuleName", () => {
   describe("Feature", () => {
     it("should do something", () => {
       // Arrange
-      const input = { /* ... */ };
-      
+      const input = {
+        /* ... */
+      };
+
       // Act
       const result = someFunction(input);
-      
+
       // Assert
       expect(result).toEqual(expected);
     });
@@ -339,7 +346,7 @@ export { Component, useHook };
 export type { ComponentProps };
 
 // Default export for classes
-export default class App { }
+export default class App {}
 
 // Type imports separate
 export type { Config, Options };
@@ -353,11 +360,11 @@ import type { Request } from "node:http";
 import { helper } from "../helpers";
 
 // Don't mix default and named confusingly
-export default function foo() { }
-export function bar() { }  // confusing together
+export default function foo() {}
+export function bar() {} // confusing together
 
 // Don't use * imports
-import * as helpers from "../helpers";  // use named imports
+import * as helpers from "../helpers"; // use named imports
 ```
 
 ## Error Handling Patterns
@@ -373,7 +380,7 @@ async function fetchData(url: string): Promise<Data> {
     return response.json();
   } catch (error) {
     log.error(`Failed to fetch ${url}:`, error);
-    throw error;  // Re-throw after logging
+    throw error; // Re-throw after logging
   }
 }
 
@@ -487,10 +494,14 @@ export { useFeature } from "./hooks.js";
 export type { FeatureConfig, FeatureOptions } from "./types.js";
 
 // src/feature/types.ts
-export type FeatureConfig = { /* ... */ };
+export type FeatureConfig = {
+  /* ... */
+};
 
 // src/feature/class.ts - one feature per file
-export class Feature { /* ... */ }
+export class Feature {
+  /* ... */
+}
 ```
 
 ## Debugging Tips
@@ -508,6 +519,7 @@ NODE_DEBUG=server npm run dev
 ### Use TypeScript Strict Mode
 
 All files must pass strict TypeScript. Use:
+
 - Explicit return types
 - No implicit `any`
 - Check for nullability

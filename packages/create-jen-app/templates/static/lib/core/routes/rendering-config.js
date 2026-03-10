@@ -19,23 +19,29 @@
  * @param defaultRevalidate Default revalidation seconds for ISR
  * @returns Route rendering configuration
  */
-export function extractRenderingConfig(module, defaultMode = "ssg", defaultRevalidate = 3600) {
-    const mode = (module?.rendering || defaultMode);
-    // Validate mode
-    const validModes = ["ssg", "ssr", "isr", "ppr"];
-    if (!validModes.includes(mode)) {
-        console.warn(`Invalid rendering mode: ${mode}, defaulting to ${defaultMode}`);
-        return { mode: defaultMode, revalidateSeconds: defaultRevalidate };
-    }
-    // Extract revalidation time if mode is ISR
-    let revalidateSeconds;
-    if (mode === "isr") {
-        revalidateSeconds =
-            typeof module?.revalidate === "number"
-                ? module.revalidate
-                : defaultRevalidate;
-    }
-    return { mode, revalidateSeconds };
+export function extractRenderingConfig(
+  module,
+  defaultMode = "ssg",
+  defaultRevalidate = 3600,
+) {
+  const mode = module?.rendering || defaultMode;
+  // Validate mode
+  const validModes = ["ssg", "ssr", "isr", "ppr"];
+  if (!validModes.includes(mode)) {
+    console.warn(
+      `Invalid rendering mode: ${mode}, defaulting to ${defaultMode}`,
+    );
+    return { mode: defaultMode, revalidateSeconds: defaultRevalidate };
+  }
+  // Extract revalidation time if mode is ISR
+  let revalidateSeconds;
+  if (mode === "isr") {
+    revalidateSeconds =
+      typeof module?.revalidate === "number"
+        ? module.revalidate
+        : defaultRevalidate;
+  }
+  return { mode, revalidateSeconds };
 }
 /**
  * Cached rendering configs to avoid repeated module evaluations.
@@ -47,7 +53,7 @@ const configCache = new Map();
  * Useful during development when routes change.
  */
 export function clearRenderingConfigCache() {
-    configCache.clear();
+  configCache.clear();
 }
 /**
  * Get rendering config for a route, with caching.
@@ -61,30 +67,37 @@ export function clearRenderingConfigCache() {
  * @param defaultRevalidate Default revalidation seconds
  * @returns Rendering configuration promise
  */
-export async function getRenderingConfig(filePath, defaultMode = "ssg", defaultRevalidate = 3600) {
-    // Check cache first
-    if (configCache.has(filePath)) {
-        return configCache.get(filePath);
-    }
-    try {
-        // Attempt to import the module
-        // This works in ESM environments with proper module resolution
-        const module = await import(`file://${filePath}`);
-        const config = extractRenderingConfig(module, defaultMode, defaultRevalidate);
-        // Cache for future lookups
-        configCache.set(filePath, config);
-        return config;
-    }
-    catch (err) {
-        // If import fails, return default config
-        // This can happen if module has syntax errors or imports unavailable at build time
-        const config = {
-            mode: defaultMode,
-            revalidateSeconds: defaultMode === "isr" ? defaultRevalidate : undefined,
-        };
-        configCache.set(filePath, config);
-        return config;
-    }
+export async function getRenderingConfig(
+  filePath,
+  defaultMode = "ssg",
+  defaultRevalidate = 3600,
+) {
+  // Check cache first
+  if (configCache.has(filePath)) {
+    return configCache.get(filePath);
+  }
+  try {
+    // Attempt to import the module
+    // This works in ESM environments with proper module resolution
+    const module = await import(`file://${filePath}`);
+    const config = extractRenderingConfig(
+      module,
+      defaultMode,
+      defaultRevalidate,
+    );
+    // Cache for future lookups
+    configCache.set(filePath, config);
+    return config;
+  } catch (err) {
+    // If import fails, return default config
+    // This can happen if module has syntax errors or imports unavailable at build time
+    const config = {
+      mode: defaultMode,
+      revalidateSeconds: defaultMode === "isr" ? defaultRevalidate : undefined,
+    };
+    configCache.set(filePath, config);
+    return config;
+  }
 }
 /**
  * Synchronously get rendering config (for build-time use).
@@ -98,17 +111,21 @@ export async function getRenderingConfig(filePath, defaultMode = "ssg", defaultR
  * @param defaultRevalidate Default revalidation seconds
  * @returns Rendering configuration
  */
-export function getRenderingConfigSync(filePath, defaultMode = "ssg", defaultRevalidate = 3600) {
-    // Check cache first
-    if (configCache.has(filePath)) {
-        return configCache.get(filePath);
-    }
-    // In sync context, we can't dynamically import
-    // Return default config
-    const config = {
-        mode: defaultMode,
-        revalidateSeconds: defaultMode === "isr" ? defaultRevalidate : undefined,
-    };
-    configCache.set(filePath, config);
-    return config;
+export function getRenderingConfigSync(
+  filePath,
+  defaultMode = "ssg",
+  defaultRevalidate = 3600,
+) {
+  // Check cache first
+  if (configCache.has(filePath)) {
+    return configCache.get(filePath);
+  }
+  // In sync context, we can't dynamically import
+  // Return default config
+  const config = {
+    mode: defaultMode,
+    revalidateSeconds: defaultMode === "isr" ? defaultRevalidate : undefined,
+  };
+  configCache.set(filePath, config);
+  return config;
 }

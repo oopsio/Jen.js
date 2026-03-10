@@ -48,7 +48,7 @@ export default async (ctx: ServerActionContext) => {
 const response = await fetch("/actions/greet", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name: "Alice" })
+  body: JSON.stringify({ name: "Alice" }),
 });
 
 const result = await response.json();
@@ -67,16 +67,16 @@ import { required, minLength, email } from "jenjs";
 export const validation = {
   name: [required(), minLength(2)],
   email: [required(), email()],
-  message: [required(), minLength(10)]
+  message: [required(), minLength(10)],
 };
 
 export default async (ctx: ServerActionContext) => {
   // Validation runs automatically before this handler
   const { name, email, message } = ctx.body;
-  
+
   // Process form submission
   await saveComment({ name, email, message });
-  
+
   return { success: true };
 };
 ```
@@ -113,15 +113,12 @@ import { custom } from "jenjs";
 
 export const validation = {
   username: [
-    custom(
-      (value) => {
-        if (value.length < 3) return "Min 3 characters";
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Alphanumeric only";
-        return true; // Valid
-      },
-      "Invalid username"
-    )
-  ]
+    custom((value) => {
+      if (value.length < 3) return "Min 3 characters";
+      if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Alphanumeric only";
+      return true; // Valid
+    }, "Invalid username"),
+  ],
 };
 ```
 
@@ -134,9 +131,9 @@ Actions support dynamic route segments:
 export default async (ctx: ServerActionContext) => {
   const { id } = ctx.params;
   const { name, email } = ctx.body;
-  
+
   await updateUser(id, { name, email });
-  
+
   return { success: true };
 };
 ```
@@ -151,15 +148,15 @@ For long-running operations, stream data back to the client:
 // site/actions/process-file.ts
 export default async (ctx: ServerActionContext) => {
   const stream = ctx.stream();
-  
+
   const items = await fetchLargeDataset();
-  
+
   for (const item of items) {
     // Stream each item as it's processed
     stream.write({ status: "processing", item });
     await processItem(item);
   }
-  
+
   stream.close();
   return { success: true };
 };
@@ -182,30 +179,30 @@ export const metadata = {
   name: "publishPost",
   description: "Publish a blog post to the site",
   requiresAuth: true,
-  rateLimit: 2 // 2 requests per second
+  rateLimit: 2, // 2 requests per second
 };
 
 export const validation = {
   title: [required(), minLength(5)],
-  content: [required(), minLength(20)]
+  content: [required(), minLength(20)],
 };
 
 export default async (ctx: ServerActionContext) => {
   // Check authentication if required
   if (metadata.requiresAuth && !ctx.data.userId) {
-    return { 
-      success: false, 
-      message: "Authentication required" 
+    return {
+      success: false,
+      message: "Authentication required",
     };
   }
-  
+
   const { title, content } = ctx.body;
   const post = await createPost({
     title,
     content,
-    authorId: ctx.data.userId
+    authorId: ctx.data.userId,
   });
-  
+
   return { success: true, post };
 };
 ```
@@ -217,22 +214,22 @@ Server actions receive a rich context object with request data:
 ```typescript
 export default async (ctx: ServerActionContext) => {
   // Request data
-  ctx.req          // Node.js IncomingMessage
-  ctx.res          // Node.js ServerResponse
-  ctx.url          // URL object (pathname, searchParams, etc.)
-  ctx.method       // HTTP method (POST, PUT, etc.)
-  
+  ctx.req; // Node.js IncomingMessage
+  ctx.res; // Node.js ServerResponse
+  ctx.url; // URL object (pathname, searchParams, etc.)
+  ctx.method; // HTTP method (POST, PUT, etc.)
+
   // Parsed data
-  ctx.body         // Parsed request body (JSON or form data)
-  ctx.query        // Query string parameters
-  ctx.params       // Route parameters (from [id] segments)
-  ctx.headers      // Request headers
-  ctx.cookies      // Parsed cookies
-  ctx.data         // Custom data from middleware
-  
+  ctx.body; // Parsed request body (JSON or form data)
+  ctx.query; // Query string parameters
+  ctx.params; // Route parameters (from [id] segments)
+  ctx.headers; // Request headers
+  ctx.cookies; // Parsed cookies
+  ctx.data; // Custom data from middleware
+
   // Utilities
-  ctx.validate(input, schema)  // Validate input against schema
-  ctx.stream()     // Create streaming response
+  ctx.validate(input, schema); // Validate input against schema
+  ctx.stream(); // Create streaming response
 };
 ```
 
@@ -242,7 +239,7 @@ Seamless integration with HTML forms:
 
 ```html
 <form action="/actions/subscribe" method="POST">
-  <input type="email" name="email" required>
+  <input type="email" name="email" required />
   <button type="submit">Subscribe</button>
 </form>
 ```
@@ -250,7 +247,7 @@ Seamless integration with HTML forms:
 ```typescript
 // site/actions/subscribe.ts
 export const validation = {
-  email: [required(), email()]
+  email: [required(), email()],
 };
 
 export default async (ctx: ServerActionContext) => {
@@ -272,9 +269,9 @@ export default async (ctx: ServerActionContext) => {
   } catch (error) {
     // In production, error details are hidden
     // In development, full error message is included
-    return { 
-      success: false, 
-      message: error.message 
+    return {
+      success: false,
+      message: error.message,
     };
   }
 };
@@ -290,7 +287,7 @@ Actions support middleware for cross-cutting concerns:
 // site/actions/admin/delete-user.ts
 export const middleware = [
   authRequired(), // Custom middleware
-  checkPermission("admin")
+  checkPermission("admin"),
 ];
 
 export default async (ctx: ServerActionContext) => {
@@ -315,11 +312,13 @@ All server action responses follow a standard format:
 ```
 
 Success response:
+
 ```json
 { "success": true, "data": { "post": {...} } }
 ```
 
 Validation error:
+
 ```json
 {
   "success": false,
@@ -329,6 +328,7 @@ Validation error:
 ```
 
 Runtime error:
+
 ```json
 { "success": false, "message": "Internal server error" }
 ```
@@ -354,12 +354,12 @@ export interface CommentResult {
 }
 
 export async function submitComment(
-  input: CommentInput
+  input: CommentInput,
 ): Promise<CommentResult> {
   const response = await fetch("/actions/submit-comment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input)
+    body: JSON.stringify(input),
   });
   return response.json();
 }

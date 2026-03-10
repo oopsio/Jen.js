@@ -40,11 +40,11 @@ Inside your Jen.js project, you'll see the following folders and files:
 
 All commands are run from the root of the project, from a terminal:
 
-| Command           | Action                                    |
-| :---------------- | :---------------------------------------- |
-| `npm install`     | Installs dependencies                     |
-| `npm run dev`     | Starts the dev server at `localhost:3001` |
-| `npm run build`   | Builds your SSR+ISR app into `./dist/`    |
+| Command         | Action                                    |
+| :-------------- | :---------------------------------------- |
+| `npm install`   | Installs dependencies                     |
+| `npm run dev`   | Starts the dev server at `localhost:3001` |
+| `npm run build` | Builds your SSR+ISR app into `./dist/`    |
 
 ## 🎯 SSR + ISR Mode
 
@@ -54,6 +54,7 @@ This template uses **Server-Side Rendering (SSR)** with **Incremental Static Reg
 - **ISR**: Rendered pages are cached and revalidated every `defaultRevalidateSeconds` (default: 3600 seconds / 1 hour)
 
 Configure revalidation in `jen.config.ts`:
+
 ```typescript
 rendering: {
   defaultMode: "ssr",

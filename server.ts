@@ -24,7 +24,7 @@ const telemetry = createTelemetry("0.1.0", {
 if (!telemetryDisabled) {
   console.log(
     "\nJen.js collects anonymous telemetry data to improve the framework.\n" +
-      "to opt-out: TELEMETRY_ENABLED=1 npm run dev\n"
+      "to opt-out: TELEMETRY_ENABLED=1 npm run dev\n",
   );
 }
 
@@ -88,17 +88,17 @@ const isDev = mode === "dev";
  * - Cache flush
  */
 async function main() {
-   await loadConfig();
+  await loadConfig();
 
-   // Track dev server startup
-   telemetry.track({
-     command: "dev",
-     os: process.platform,
-   });
+  // Track dev server startup
+  telemetry.track({
+    command: "dev",
+    os: process.platform,
+  });
 
-   // Inject fonts configuration into config.inject.head
-   // This automatically adds Google Fonts links and local @font-face CSS
-   injectFonts(config);
+  // Inject fonts configuration into config.inject.head
+  // This automatically adds Google Fonts links and local @font-face CSS
+  injectFonts(config);
 
   let viteServer: any = null;
 
@@ -155,7 +155,9 @@ async function main() {
             if (!res.headersSent) {
               res.statusCode = 500;
               res.setHeader("content-type", "text/plain; charset=utf-8");
-              res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
+              res.end(
+                "Internal Server Error\n\n" + (err?.stack ?? String(err)),
+              );
             }
           });
         });
@@ -220,76 +222,76 @@ async function main() {
  * @throws {Error} If the build fails; exits process with code 1
  */
 async function buildOnly() {
-   await loadConfig();
+  await loadConfig();
 
-   // Track build command
-   const buildStartTime = Date.now();
-   telemetry.track({
-     command: "build",
-     os: process.platform,
-   });
+  // Track build command
+  const buildStartTime = Date.now();
+  telemetry.track({
+    command: "build",
+    os: process.platform,
+  });
 
-   // Inject fonts configuration into config.inject.head
-   injectFonts(config);
+  // Inject fonts configuration into config.inject.head
+  injectFonts(config);
 
-   try {
-     log.info("Building with Vite...");
-     await buildWithVite({
-       build: {
-         outDir: config.distDir || "dist",
-         minify: "terser",
-         sourcemap: false,
-         rollupOptions: {
-           output: {
-             manualChunks: {
-               vendor: ["preact"],
-             },
-           },
-         },
-       },
-     });
-     log.info("Build complete!");
+  try {
+    log.info("Building with Vite...");
+    await buildWithVite({
+      build: {
+        outDir: config.distDir || "dist",
+        minify: "terser",
+        sourcemap: false,
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              vendor: ["preact"],
+            },
+          },
+        },
+      },
+    });
+    log.info("Build complete!");
 
-     // Track successful build
-     const duration = Date.now() - buildStartTime;
-     telemetry.track({
-       command: "build",
-       success: true,
-       duration: Math.round(duration / 1000),
-       os: process.platform,
-     });
+    // Track successful build
+    const duration = Date.now() - buildStartTime;
+    telemetry.track({
+      command: "build",
+      success: true,
+      duration: Math.round(duration / 1000),
+      os: process.platform,
+    });
 
-     // Flush telemetry
-     await telemetry.flush();
-   } catch (err: any) {
-     // Track build failure
-     const duration = Date.now() - buildStartTime;
-     telemetry.track({
-       command: "build",
-       success: false,
-       duration: Math.round(duration / 1000),
-       error: err.message,
-       os: process.platform,
-     });
+    // Flush telemetry
+    await telemetry.flush();
+  } catch (err: any) {
+    // Track build failure
+    const duration = Date.now() - buildStartTime;
+    telemetry.track({
+      command: "build",
+      success: false,
+      duration: Math.round(duration / 1000),
+      error: err.message,
+      os: process.platform,
+    });
 
-     await telemetry.flush();
+    await telemetry.flush();
 
-     log.error(`Build failed: ${err.message}`);
-     process.exit(1);
-   }
+    log.error(`Build failed: ${err.message}`);
+    process.exit(1);
+  }
 }
 
 if (mode === "build") {
-   buildOnly();
- } else {
-   main().catch((err) => {
-     telemetry.track({
-       command: mode,
-       error: err.message,
-       os: process.platform,
-     });
-     telemetry.flush().finally(() => {
-       process.exit(1);
-     });
-   });
- }
+  buildOnly();
+} else {
+  main().catch((err) => {
+    telemetry.track({
+      command: mode,
+      error: err.message,
+      os: process.platform,
+    });
+    telemetry.flush().finally(() => {
+      process.exit(1);
+    });
+  });
+}

@@ -116,7 +116,14 @@ describe("@jenjs/mcp", () => {
     });
 
     it("should have standard MCP tool names", () => {
-      const tools = ["build", "dev", "typecheck", "test", "analyze", "list-files"];
+      const tools = [
+        "build",
+        "dev",
+        "typecheck",
+        "test",
+        "analyze",
+        "list-files",
+      ];
 
       expect(tools).toHaveLength(6);
       tools.forEach((tool) => {

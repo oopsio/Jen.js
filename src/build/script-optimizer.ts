@@ -77,8 +77,12 @@ export class ScriptOptimizer {
   /**
    * Generate esbuild configuration for optimized bundling
    */
-  generateEsbuildConfig(): Partial<BuildOptions> & { manualChunks?: Record<string, string[]> } {
-    const config: Partial<BuildOptions> & { manualChunks?: Record<string, string[]> } = {
+  generateEsbuildConfig(): Partial<BuildOptions> & {
+    manualChunks?: Record<string, string[]>;
+  } {
+    const config: Partial<BuildOptions> & {
+      manualChunks?: Record<string, string[]>;
+    } = {
       minify: true,
       format: "esm",
       target: "es2015",
@@ -144,10 +148,7 @@ export class ScriptOptimizer {
    *
    * Wraps dynamic imports with automatic chunk naming and loading feedback
    */
-  generateLazyLoadWrapper(
-    moduleId: string,
-    chunkName: string,
-  ): string {
+  generateLazyLoadWrapper(moduleId: string, chunkName: string): string {
     return `
 /**
  * Auto-generated lazy-loading wrapper for chunk: ${chunkName}
@@ -374,4 +375,3 @@ export function scriptOptimizerPlugin(
     },
   };
 }
-

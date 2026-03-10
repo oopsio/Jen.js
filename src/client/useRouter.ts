@@ -45,7 +45,10 @@ export function useRouter() {
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
-      window.removeEventListener("jen:navigate", handleNavigate as EventListener);
+      window.removeEventListener(
+        "jen:navigate",
+        handleNavigate as EventListener,
+      );
     };
   }, []);
 

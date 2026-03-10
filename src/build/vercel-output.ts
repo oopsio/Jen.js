@@ -76,9 +76,7 @@ export interface PrerenderConfig {
  * Detects rendering mode from route module.
  * Defaults to SSG if not specified.
  */
-export function detectRenderingMode(
-  filePath: string,
-): "ssg" | "ssr" | "isr" {
+export function detectRenderingMode(filePath: string): "ssg" | "ssr" | "isr" {
   // In a real implementation, this would dynamically import the module
   // and read the exported `rendering` property.
   // For now, return "ssg" as default.
@@ -144,7 +142,9 @@ export class VercelOutputBuilder {
    */
   addRoute(route: RouteEntry, mode: "ssg" | "ssr" | "isr") {
     const revalidateSeconds =
-      mode === "isr" ? this.config.rendering.defaultRevalidateSeconds : undefined;
+      mode === "isr"
+        ? this.config.rendering.defaultRevalidateSeconds
+        : undefined;
 
     const metadata: RouteMetadata = { route, mode, revalidateSeconds };
     this.routes.push(metadata);
@@ -194,7 +194,10 @@ export class VercelOutputBuilder {
     for (const { route } of this.ssgRoutes) {
       // Route HTML should be pre-rendered into .vercel/output/static
       // In actual build, would copy from dist/
-      const path = route.urlPath === "/" ? "index.html" : `${route.urlPath.slice(1)}/index.html`;
+      const path =
+        route.urlPath === "/"
+          ? "index.html"
+          : `${route.urlPath.slice(1)}/index.html`;
       const filePath = join(staticDir, path);
       mkdirSync(join(filePath, ".."), { recursive: true });
 
@@ -321,7 +324,8 @@ function extractParams(req, pattern) {
 
     // 1. Add static routes (SSG)
     for (const { route } of this.ssgRoutes) {
-      const path = route.urlPath === "/" ? "/index.html" : `${route.urlPath}/index.html`;
+      const path =
+        route.urlPath === "/" ? "/index.html" : `${route.urlPath}/index.html`;
       config.routes!.push({
         src: route.pattern,
         dest: path,

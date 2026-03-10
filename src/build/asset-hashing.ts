@@ -30,7 +30,9 @@ export class AssetHasher {
       }
       return result;
     } catch (err) {
-      console.warn(`[AssetHasher] Rust hashing failed, falling back to Node.js: ${err}`);
+      console.warn(
+        `[AssetHasher] Rust hashing failed, falling back to Node.js: ${err}`,
+      );
       return {}; // Fallback would be implemented by caller or here
     }
   }

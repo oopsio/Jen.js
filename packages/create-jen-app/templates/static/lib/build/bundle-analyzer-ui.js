@@ -58,43 +58,281 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .main-content{display:flex;gap:16px;padding:0 16px 16px 0}
 `;
 function formatBytes(bytes) {
-    if (bytes === 0)
-        return "0 B";
-    const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 function escapeHtml(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 function StatCard({ label, value }) {
-    return (_jsxs("div", { class: "stat", children: [_jsx("span", { class: "stat-label", children: label }), _jsx("span", { class: "stat-value", children: value })] }));
+  return _jsxs("div", {
+    class: "stat",
+    children: [
+      _jsx("span", { class: "stat-label", children: label }),
+      _jsx("span", { class: "stat-value", children: value }),
+    ],
+  });
 }
 function Header() {
-    return (_jsxs("div", { class: "header", children: [_jsx("h1", { children: "Bundle Analyzer" }), _jsx("span", { class: "badge", children: "Jen.js" })] }));
+  return _jsxs("div", {
+    class: "header",
+    children: [
+      _jsx("h1", { children: "Bundle Analyzer" }),
+      _jsx("span", { class: "badge", children: "Jen.js" }),
+    ],
+  });
 }
 function StatsBar({ analysis }) {
-    return (_jsxs("div", { class: "stats-bar", children: [_jsx(StatCard, { label: "Total Size", value: formatBytes(analysis.totalSize) }), _jsx(StatCard, { label: "Gzipped", value: formatBytes(analysis.totalGzipSize) }), _jsx(StatCard, { label: "Modules", value: String(analysis.modules.length) }), _jsx(StatCard, { label: "Packages", value: String(analysis.packages.size) })] }));
+  return _jsxs("div", {
+    class: "stats-bar",
+    children: [
+      _jsx(StatCard, {
+        label: "Total Size",
+        value: formatBytes(analysis.totalSize),
+      }),
+      _jsx(StatCard, {
+        label: "Gzipped",
+        value: formatBytes(analysis.totalGzipSize),
+      }),
+      _jsx(StatCard, {
+        label: "Modules",
+        value: String(analysis.modules.length),
+      }),
+      _jsx(StatCard, {
+        label: "Packages",
+        value: String(analysis.packages.size),
+      }),
+    ],
+  });
 }
 function ModuleRow({ module, totalSize }) {
-    const pct = totalSize > 0 ? (module.size / totalSize) * 100 : 0;
-    return (_jsxs("tr", { "data-path": module.path, children: [_jsxs("td", { class: "module-name", children: [escapeHtml(module.name), module.isLarge && _jsx("span", { class: "large-badge", children: "LARGE" })] }), _jsxs("td", { children: [formatBytes(module.size), _jsx("div", { class: "size-bar", children: _jsx("div", { class: "size-bar-fill", style: { width: `${Math.min(pct * 10, 100)}%` } }) })] }), _jsx("td", { children: formatBytes(module.gzipSize) }), _jsxs("td", { children: [pct.toFixed(2), "%"] })] }));
+  const pct = totalSize > 0 ? (module.size / totalSize) * 100 : 0;
+  return _jsxs("tr", {
+    "data-path": module.path,
+    children: [
+      _jsxs("td", {
+        class: "module-name",
+        children: [
+          escapeHtml(module.name),
+          module.isLarge &&
+            _jsx("span", { class: "large-badge", children: "LARGE" }),
+        ],
+      }),
+      _jsxs("td", {
+        children: [
+          formatBytes(module.size),
+          _jsx("div", {
+            class: "size-bar",
+            children: _jsx("div", {
+              class: "size-bar-fill",
+              style: { width: `${Math.min(pct * 10, 100)}%` },
+            }),
+          }),
+        ],
+      }),
+      _jsx("td", { children: formatBytes(module.gzipSize) }),
+      _jsxs("td", { children: [pct.toFixed(2), "%"] }),
+    ],
+  });
 }
 function ModuleTable({ modules, totalSize }) {
-    const sorted = [...modules].sort((a, b) => b.size - a.size);
-    return (_jsxs("div", { class: "module-list", style: { flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" }, children: [_jsx("div", { class: "treemap-header", children: "All Modules" }), _jsx("div", { class: "module-table-wrapper", children: _jsxs("table", { class: "module-table", children: [_jsx("thead", { children: _jsxs("tr", { children: [_jsx("th", { children: "Module" }), _jsx("th", { children: "Size" }), _jsx("th", { children: "Gzip" }), _jsx("th", { children: "%" })] }) }), _jsx("tbody", { children: sorted.map(m => _jsx(ModuleRow, { module: m, totalSize: totalSize })) })] }) })] }));
+  const sorted = [...modules].sort((a, b) => b.size - a.size);
+  return _jsxs("div", {
+    class: "module-list",
+    style: { flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" },
+    children: [
+      _jsx("div", { class: "treemap-header", children: "All Modules" }),
+      _jsx("div", {
+        class: "module-table-wrapper",
+        children: _jsxs("table", {
+          class: "module-table",
+          children: [
+            _jsx("thead", {
+              children: _jsxs("tr", {
+                children: [
+                  _jsx("th", { children: "Module" }),
+                  _jsx("th", { children: "Size" }),
+                  _jsx("th", { children: "Gzip" }),
+                  _jsx("th", { children: "%" }),
+                ],
+              }),
+            }),
+            _jsx("tbody", {
+              children: sorted.map((m) =>
+                _jsx(ModuleRow, { module: m, totalSize: totalSize }),
+              ),
+            }),
+          ],
+        }),
+      }),
+    ],
+  });
 }
 function PackageItem({ name, size, totalSize }) {
-    const pct = totalSize > 0 ? (size / totalSize) * 100 : 0;
-    return (_jsxs("div", { class: "package-item", children: [_jsx("span", { children: escapeHtml(name) }), _jsxs("span", { children: [formatBytes(size), " (", pct.toFixed(1), "%)"] })] }));
+  const pct = totalSize > 0 ? (size / totalSize) * 100 : 0;
+  return _jsxs("div", {
+    class: "package-item",
+    children: [
+      _jsx("span", { children: escapeHtml(name) }),
+      _jsxs("span", {
+        children: [formatBytes(size), " (", pct.toFixed(1), "%)"],
+      }),
+    ],
+  });
 }
 function PackagesView({ packages, totalSize }) {
-    const sorted = [...packages.entries()].sort((a, b) => b[1].size - a[1].size);
-    return (_jsxs("div", { class: "module-list", style: { flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" }, children: [_jsx("div", { class: "treemap-header", children: "Bundle by Package" }), _jsx("div", { class: "module-table-wrapper", children: _jsx("div", { class: "packages-list", children: sorted.map(([name, data]) => _jsx(PackageItem, { name: name, size: data.size, totalSize: totalSize })) }) })] }));
+  const sorted = [...packages.entries()].sort((a, b) => b[1].size - a[1].size);
+  return _jsxs("div", {
+    class: "module-list",
+    style: { flex: 1, maxHeight: "none", margin: "16px 16px 16px 0" },
+    children: [
+      _jsx("div", { class: "treemap-header", children: "Bundle by Package" }),
+      _jsx("div", {
+        class: "module-table-wrapper",
+        children: _jsx("div", {
+          class: "packages-list",
+          children: sorted.map(([name, data]) =>
+            _jsx(PackageItem, {
+              name: name,
+              size: data.size,
+              totalSize: totalSize,
+            }),
+          ),
+        }),
+      }),
+    ],
+  });
 }
 export function BundleReport({ analysis, treemap }) {
-    return (_jsxs("html", { lang: "en", children: [_jsxs("head", { children: [_jsx("meta", { charset: "UTF-8" }), _jsx("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" }), _jsx("title", { children: "Bundle Analyzer - Jen.js" }), _jsx("style", { dangerouslySetInnerHTML: { __html: styles } })] }), _jsxs("body", { children: [_jsx(Header, {}), _jsx(StatsBar, { analysis: analysis }), _jsxs("div", { class: "main-content", children: [_jsxs("div", { class: "treemap-container", children: [_jsx("div", { class: "treemap-header", children: "Bundle Treemap" }), _jsx("div", { id: "treemap", "data-treemap": JSON.stringify(treemap) }), _jsxs("div", { class: "zoom-controls", children: [_jsx("button", { class: "zoom-btn", "data-action": "zoomIn", children: "+" }), _jsx("button", { class: "zoom-btn", "data-action": "zoomOut", children: "\u2212" }), _jsx("button", { class: "zoom-btn", "data-action": "zoomReset", children: "\u21BA" })] })] }), _jsx(ModuleTable, { modules: analysis.modules, totalSize: analysis.totalSize })] }), _jsxs("div", { class: "detail-panel", id: "detailPanel", children: [_jsxs("div", { class: "detail-header", children: [_jsx("h3", { children: "Module Details" }), _jsx("button", { class: "detail-close", id: "detailClose", children: "\u00D7" })] }), _jsxs("div", { class: "detail-content", children: [_jsxs("div", { class: "detail-section", children: [_jsx("h4", { children: "Path" }), _jsx("div", { class: "detail-value", id: "detailPath" })] }), _jsxs("div", { class: "detail-section", children: [_jsx("h4", { children: "Size" }), _jsx("div", { class: "detail-value", id: "detailSize" })] }), _jsxs("div", { class: "detail-section", children: [_jsx("h4", { children: "Gzipped" }), _jsx("div", { class: "detail-value", id: "detailGzip" })] }), _jsxs("div", { class: "detail-section", children: [_jsx("h4", { children: "Percentage" }), _jsx("div", { class: "detail-value", id: "detailPercentage" })] }), _jsxs("div", { class: "detail-section", children: [_jsx("h4", { children: "Package" }), _jsx("div", { class: "detail-value", id: "detailPackage" })] })] })] }), _jsx("script", { dangerouslySetInnerHTML: { __html: `
+  return _jsxs("html", {
+    lang: "en",
+    children: [
+      _jsxs("head", {
+        children: [
+          _jsx("meta", { charset: "UTF-8" }),
+          _jsx("meta", {
+            name: "viewport",
+            content: "width=device-width, initial-scale=1.0",
+          }),
+          _jsx("title", { children: "Bundle Analyzer - Jen.js" }),
+          _jsx("style", { dangerouslySetInnerHTML: { __html: styles } }),
+        ],
+      }),
+      _jsxs("body", {
+        children: [
+          _jsx(Header, {}),
+          _jsx(StatsBar, { analysis: analysis }),
+          _jsxs("div", {
+            class: "main-content",
+            children: [
+              _jsxs("div", {
+                class: "treemap-container",
+                children: [
+                  _jsx("div", {
+                    class: "treemap-header",
+                    children: "Bundle Treemap",
+                  }),
+                  _jsx("div", {
+                    id: "treemap",
+                    "data-treemap": JSON.stringify(treemap),
+                  }),
+                  _jsxs("div", {
+                    class: "zoom-controls",
+                    children: [
+                      _jsx("button", {
+                        class: "zoom-btn",
+                        "data-action": "zoomIn",
+                        children: "+",
+                      }),
+                      _jsx("button", {
+                        class: "zoom-btn",
+                        "data-action": "zoomOut",
+                        children: "\u2212",
+                      }),
+                      _jsx("button", {
+                        class: "zoom-btn",
+                        "data-action": "zoomReset",
+                        children: "\u21BA",
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              _jsx(ModuleTable, {
+                modules: analysis.modules,
+                totalSize: analysis.totalSize,
+              }),
+            ],
+          }),
+          _jsxs("div", {
+            class: "detail-panel",
+            id: "detailPanel",
+            children: [
+              _jsxs("div", {
+                class: "detail-header",
+                children: [
+                  _jsx("h3", { children: "Module Details" }),
+                  _jsx("button", {
+                    class: "detail-close",
+                    id: "detailClose",
+                    children: "\u00D7",
+                  }),
+                ],
+              }),
+              _jsxs("div", {
+                class: "detail-content",
+                children: [
+                  _jsxs("div", {
+                    class: "detail-section",
+                    children: [
+                      _jsx("h4", { children: "Path" }),
+                      _jsx("div", { class: "detail-value", id: "detailPath" }),
+                    ],
+                  }),
+                  _jsxs("div", {
+                    class: "detail-section",
+                    children: [
+                      _jsx("h4", { children: "Size" }),
+                      _jsx("div", { class: "detail-value", id: "detailSize" }),
+                    ],
+                  }),
+                  _jsxs("div", {
+                    class: "detail-section",
+                    children: [
+                      _jsx("h4", { children: "Gzipped" }),
+                      _jsx("div", { class: "detail-value", id: "detailGzip" }),
+                    ],
+                  }),
+                  _jsxs("div", {
+                    class: "detail-section",
+                    children: [
+                      _jsx("h4", { children: "Percentage" }),
+                      _jsx("div", {
+                        class: "detail-value",
+                        id: "detailPercentage",
+                      }),
+                    ],
+                  }),
+                  _jsxs("div", {
+                    class: "detail-section",
+                    children: [
+                      _jsx("h4", { children: "Package" }),
+                      _jsx("div", {
+                        class: "detail-value",
+                        id: "detailPackage",
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+          _jsx("script", {
+            dangerouslySetInnerHTML: {
+              __html: `
 const modules=${JSON.stringify(analysis.modules)};
 const treemapData=${JSON.stringify(treemap)};
 let currentSize='raw';
@@ -169,5 +407,11 @@ renderTreemap(currentNode);
 });
 document.querySelectorAll('.module-table tr[data-path]').forEach(r=>r.onclick=()=>showDetail(r.dataset.path));
 renderTreemap(treemapData);
-` } })] })] }));
+`,
+            },
+          }),
+        ],
+      }),
+    ],
+  });
 }

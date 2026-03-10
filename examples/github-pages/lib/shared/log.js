@@ -1,12 +1,12 @@
 // ANSI color codes
 const colors = {
-    reset: "\x1b[0m",
-    dim: "\x1b[2m",
-    green: "\x1b[32m",
-    yellow: "\x1b[33m",
-    red: "\x1b[31m",
-    cyan: "\x1b[36m",
-    bold: "\x1b[1m",
+  reset: "\x1b[0m",
+  dim: "\x1b[2m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  red: "\x1b[31m",
+  cyan: "\x1b[36m",
+  bold: "\x1b[1m",
 };
 /**
  * Get current timestamp in ISO 8601 format.
@@ -15,7 +15,7 @@ const colors = {
  * @returns ISO 8601 timestamp string (e.g., "2026-02-19T15:30:45.123Z")
  */
 function ts() {
-    return new Date().toISOString();
+  return new Date().toISOString();
 }
 /**
  * Structured logging utility for the Jen.js framework.
@@ -38,37 +38,43 @@ function ts() {
  * This is used throughout the framework for build output, server status, and diagnostics.
  */
 export const log = {
-    /**
-     * Logs an informational message with timestamp and [INFO] prefix.
-     * Used for progress updates, build completion, server startup, etc.
-     *
-     * @param msg Message to log
-     *
-     * @example log.info("Server running on port 3000");
-     */
-    info(msg) {
-        console.log(`${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} ${msg}`);
-    },
-    /**
-     * Logs a warning message with timestamp and [WARN] prefix.
-     * Used for non-fatal issues, deprecated usage, or recoverable problems.
-     *
-     * @param msg Warning message to log
-     *
-     * @example log.warn("Configuration file not found, using defaults");
-     */
-    warn(msg) {
-        console.warn(`${colors.dim}[${ts()}]${colors.reset} ${colors.yellow}[WARN]${colors.reset} ${msg}`);
-    },
-    /**
-     * Logs an error message with timestamp and [ERROR] prefix.
-     * Used for critical failures that require immediate attention.
-     *
-     * @param msg Error message to log
-     *
-     * @example log.error("Failed to compile SCSS: syntax error on line 42");
-     */
-    error(msg) {
-        console.error(`${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset} ${msg}`);
-    },
+  /**
+   * Logs an informational message with timestamp and [INFO] prefix.
+   * Used for progress updates, build completion, server startup, etc.
+   *
+   * @param msg Message to log
+   *
+   * @example log.info("Server running on port 3000");
+   */
+  info(msg) {
+    console.log(
+      `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} ${msg}`,
+    );
+  },
+  /**
+   * Logs a warning message with timestamp and [WARN] prefix.
+   * Used for non-fatal issues, deprecated usage, or recoverable problems.
+   *
+   * @param msg Warning message to log
+   *
+   * @example log.warn("Configuration file not found, using defaults");
+   */
+  warn(msg) {
+    console.warn(
+      `${colors.dim}[${ts()}]${colors.reset} ${colors.yellow}[WARN]${colors.reset} ${msg}`,
+    );
+  },
+  /**
+   * Logs an error message with timestamp and [ERROR] prefix.
+   * Used for critical failures that require immediate attention.
+   *
+   * @param msg Error message to log
+   *
+   * @example log.error("Failed to compile SCSS: syntax error on line 42");
+   */
+  error(msg) {
+    console.error(
+      `${colors.dim}[${ts()}]${colors.reset} ${colors.red}[ERROR]${colors.reset} ${msg}`,
+    );
+  },
 };

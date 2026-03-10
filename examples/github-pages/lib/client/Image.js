@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { jsx as _jsx } from "preact/jsx-runtime";
 /**
  * Image component that renders a responsive picture element with lazy loading support
@@ -20,6 +20,23 @@ import { jsx as _jsx } from "preact/jsx-runtime";
  * </picture>
  * ```
  */
-export function Image({ src, alt, width, height, loading = "lazy", className, }) {
-    return (_jsx("picture", { children: _jsx("img", { src: src, alt: alt, width: width, height: height, loading: loading, className: className, decoding: "async" }) }));
+export function Image({
+  src,
+  alt,
+  width,
+  height,
+  loading = "lazy",
+  className,
+}) {
+  return _jsx("picture", {
+    children: _jsx("img", {
+      src: src,
+      alt: alt,
+      width: width,
+      height: height,
+      loading: loading,
+      className: className,
+      decoding: "async",
+    }),
+  });
 }

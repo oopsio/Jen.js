@@ -8,12 +8,11 @@ import crypto from "crypto";
  * @throws Error if directory creation fails.
  */
 export async function ensureDir(dir) {
-    try {
-        await fs.access(dir);
-    }
-    catch {
-        await fs.mkdir(dir, { recursive: true });
-    }
+  try {
+    await fs.access(dir);
+  } catch {
+    await fs.mkdir(dir, { recursive: true });
+  }
 }
 /**
  * Read and parse a JSON file from disk.
@@ -26,15 +25,13 @@ export async function ensureDir(dir) {
  * @throws Error if the file exists but cannot be read or parsed.
  */
 export async function readJSON(file) {
-    try {
-        const data = await fs.readFile(file, "utf-8");
-        return JSON.parse(data);
-    }
-    catch (e) {
-        if (e.code === "ENOENT")
-            return null;
-        throw e;
-    }
+  try {
+    const data = await fs.readFile(file, "utf-8");
+    return JSON.parse(data);
+  } catch (e) {
+    if (e.code === "ENOENT") return null;
+    throw e;
+  }
 }
 /**
  * Write data as JSON to a file atomically using a temporary file.
@@ -46,9 +43,9 @@ export async function readJSON(file) {
  * @throws Error if writing or renaming fails.
  */
 export async function writeJSON(file, data) {
-    const tempFile = `${file}.tmp`;
-    await fs.writeFile(tempFile, JSON.stringify(data, null, 2));
-    await fs.rename(tempFile, file);
+  const tempFile = `${file}.tmp`;
+  await fs.writeFile(tempFile, JSON.stringify(data, null, 2));
+  await fs.rename(tempFile, file);
 }
 /**
  * Generate a unique identifier for a new document.
@@ -57,7 +54,7 @@ export async function writeJSON(file, data) {
  * @returns A UUID string suitable for use as a document _id.
  */
 export function generateId() {
-    return crypto.randomUUID();
+  return crypto.randomUUID();
 }
 /**
  * Test whether a document matches a filter query.
@@ -75,72 +72,59 @@ export function generateId() {
  * matchFilter({ name: 'Jane' }, { $or: [{ name: 'John' }, { name: 'Jane' }] }) // true
  */
 export function matchFilter(doc, filter) {
-    for (const key in filter) {
-        if (key === "$or") {
-            // OR: at least one filter must match
-            if (!filter.$or.some((f) => matchFilter(doc, f)))
-                return false;
-            continue;
-        }
-        if (key === "$and") {
-            // AND: all filters must match
-            if (!filter.$and.every((f) => matchFilter(doc, f)))
-                return false;
-            continue;
-        }
-        const val = doc[key];
-        const cond = filter[key];
-        // If condition is an object (not array), it contains operators
-        if (typeof cond === "object" && cond !== null && !Array.isArray(cond)) {
-            for (const op in cond) {
-                const target = cond[op];
-                switch (op) {
-                    case "$eq":
-                        if (val !== target)
-                            return false;
-                        break;
-                    case "$ne":
-                        if (val === target)
-                            return false;
-                        break;
-                    case "$gt":
-                        if (!(val > target))
-                            return false;
-                        break;
-                    case "$gte":
-                        if (!(val >= target))
-                            return false;
-                        break;
-                    case "$lt":
-                        if (!(val < target))
-                            return false;
-                        break;
-                    case "$lte":
-                        if (!(val <= target))
-                            return false;
-                        break;
-                    case "$in":
-                        if (!target.includes(val))
-                            return false;
-                        break;
-                    case "$nin":
-                        if (target.includes(val))
-                            return false;
-                        break;
-                    case "$regex":
-                        if (!new RegExp(target).test(val))
-                            return false;
-                        break;
-                }
-            }
-        }
-        else {
-            // Simple equality check
-            if (val !== cond)
-                return false;
-        }
+  for (const key in filter) {
+    if (key === "$or") {
+      // OR: at least one filter must match
+      if (!filter.$or.some((f) => matchFilter(doc, f))) return false;
+      continue;
     }
-    return true;
+    if (key === "$and") {
+      // AND: all filters must match
+      if (!filter.$and.every((f) => matchFilter(doc, f))) return false;
+      continue;
+    }
+    const val = doc[key];
+    const cond = filter[key];
+    // If condition is an object (not array), it contains operators
+    if (typeof cond === "object" && cond !== null && !Array.isArray(cond)) {
+      for (const op in cond) {
+        const target = cond[op];
+        switch (op) {
+          case "$eq":
+            if (val !== target) return false;
+            break;
+          case "$ne":
+            if (val === target) return false;
+            break;
+          case "$gt":
+            if (!(val > target)) return false;
+            break;
+          case "$gte":
+            if (!(val >= target)) return false;
+            break;
+          case "$lt":
+            if (!(val < target)) return false;
+            break;
+          case "$lte":
+            if (!(val <= target)) return false;
+            break;
+          case "$in":
+            if (!target.includes(val)) return false;
+            break;
+          case "$nin":
+            if (target.includes(val)) return false;
+            break;
+          case "$regex":
+            if (!new RegExp(target).test(val)) return false;
+            break;
+        }
+      }
+    } else {
+      // Simple equality check
+      if (val !== cond) return false;
+    }
+  }
+  return true;
 }
 /**
  * Apply update operators to a document, modifying it in place.
@@ -156,38 +140,37 @@ export function matchFilter(doc, filter) {
  * // doc is now { name: 'Jane', age: 31, tags: ['js', 'ts'], _updated: <current-timestamp> }
  */
 export function applyUpdate(doc, update) {
-    const now = Date.now();
-    doc._updated = now;
-    for (const op in update) {
-        const fields = update[op];
-        for (const key in fields) {
-            const val = fields[key];
-            switch (op) {
-                case "$set":
-                    // Set field to the specified value
-                    doc[key] = val;
-                    break;
-                case "$unset":
-                    // Remove the field from the document
-                    delete doc[key];
-                    break;
-                case "$inc":
-                    // Increment numeric field by the specified amount
-                    doc[key] = (doc[key] || 0) + val;
-                    break;
-                case "$push":
-                    // Append to array (create array if doesn't exist)
-                    if (!Array.isArray(doc[key]))
-                        doc[key] = [];
-                    doc[key].push(val);
-                    break;
-                case "$pull":
-                    // Remove all occurrences of value from array
-                    if (Array.isArray(doc[key])) {
-                        doc[key] = doc[key].filter((item) => item !== val);
-                    }
-                    break;
-            }
-        }
+  const now = Date.now();
+  doc._updated = now;
+  for (const op in update) {
+    const fields = update[op];
+    for (const key in fields) {
+      const val = fields[key];
+      switch (op) {
+        case "$set":
+          // Set field to the specified value
+          doc[key] = val;
+          break;
+        case "$unset":
+          // Remove the field from the document
+          delete doc[key];
+          break;
+        case "$inc":
+          // Increment numeric field by the specified amount
+          doc[key] = (doc[key] || 0) + val;
+          break;
+        case "$push":
+          // Append to array (create array if doesn't exist)
+          if (!Array.isArray(doc[key])) doc[key] = [];
+          doc[key].push(val);
+          break;
+        case "$pull":
+          // Remove all occurrences of value from array
+          if (Array.isArray(doc[key])) {
+            doc[key] = doc[key].filter((item) => item !== val);
+          }
+          break;
+      }
     }
+  }
 }

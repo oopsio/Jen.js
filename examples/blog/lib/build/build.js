@@ -1,8 +1,19 @@
-import { mkdirSync, rmSync, writeFileSync, existsSync, copyFileSync, readdirSync, statSync, } from "node:fs";
+import {
+  mkdirSync,
+  rmSync,
+  writeFileSync,
+  existsSync,
+  copyFileSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
 import { join } from "node:path";
 import esbuild from "esbuild";
 import { createScssCompiler } from "../css/compiler.js";
-import { vueEsbuildPlugin, svelteEsbuildPlugin, } from "../compilers/esbuild-plugins.js";
+import {
+  vueEsbuildPlugin,
+  svelteEsbuildPlugin,
+} from "../compilers/esbuild-plugins.js";
 import { scanRoutes } from "../core/routes/scan.js";
 import { resolveDistPath } from "../core/paths.js";
 import { log } from "../shared/log.js";
@@ -16,18 +27,15 @@ import { renderRouteToHtml } from "../runtime/render.js";
  * @param dst The destination directory path.
  */
 function copyDir(src, dst) {
-    if (!existsSync(src))
-        return;
-    mkdirSync(dst, { recursive: true });
-    for (const name of readdirSync(src)) {
-        const sp = join(src, name);
-        const dp = join(dst, name);
-        const st = statSync(sp);
-        if (st.isDirectory())
-            copyDir(sp, dp);
-        else
-            copyFileSync(sp, dp);
-    }
+  if (!existsSync(src)) return;
+  mkdirSync(dst, { recursive: true });
+  for (const name of readdirSync(src)) {
+    const sp = join(src, name);
+    const dp = join(dst, name);
+    const st = statSync(sp);
+    if (st.isDirectory()) copyDir(sp, dp);
+    else copyFileSync(sp, dp);
+  }
 }
 /**
  * Builds a static site by pre-rendering all routes to HTML files.
@@ -50,84 +58,84 @@ function copyDir(src, dst) {
  * @throws Logs warnings for missing assets or component bundling failures but does not stop the build.
  */
 export async function buildSite(opts) {
-    const { config } = opts;
-    // Clear and recreate the dist directory for a clean build.
-    const dist = resolveDistPath(config);
-    rmSync(dist, { recursive: true, force: true });
-    mkdirSync(dist, { recursive: true });
-    // Discover all routes and pre-render each to a static HTML file.
-    const routes = scanRoutes(config);
-    log.info(`Building SSG: ${routes.length} routes`);
-    for (const r of routes) {
-        // Create a synthetic URL for each route. Used as the request URL during rendering.
-        const url = new URL("http://localhost" + r.urlPath);
-        // Render the route to HTML. Empty req/res indicates SSG mode (no middleware execution).
-        const html = await renderRouteToHtml({
-            config,
-            route: r,
-            req: {},
-            res: {},
-            url,
-            params: {},
-            query: {},
-            headers: {},
-            cookies: {},
-        });
-        // Calculate output path. Root route goes to index.html, nested routes get their own directories.
-        const outPath = r.urlPath === "/"
-            ? join(dist, "index.html")
-            : join(dist, r.urlPath.slice(1), "index.html");
-        mkdirSync(join(outPath, ".."), { recursive: true });
-        writeFileSync(outPath, html, "utf8");
-        log.info(`SSG: ${r.urlPath} -> ${outPath}`);
+  const { config } = opts;
+  // Clear and recreate the dist directory for a clean build.
+  const dist = resolveDistPath(config);
+  rmSync(dist, { recursive: true, force: true });
+  mkdirSync(dist, { recursive: true });
+  // Discover all routes and pre-render each to a static HTML file.
+  const routes = scanRoutes(config);
+  log.info(`Building SSG: ${routes.length} routes`);
+  for (const r of routes) {
+    // Create a synthetic URL for each route. Used as the request URL during rendering.
+    const url = new URL("http://localhost" + r.urlPath);
+    // Render the route to HTML. Empty req/res indicates SSG mode (no middleware execution).
+    const html = await renderRouteToHtml({
+      config,
+      route: r,
+      req: {},
+      res: {},
+      url,
+      params: {},
+      query: {},
+      headers: {},
+      cookies: {},
+    });
+    // Calculate output path. Root route goes to index.html, nested routes get their own directories.
+    const outPath =
+      r.urlPath === "/"
+        ? join(dist, "index.html")
+        : join(dist, r.urlPath.slice(1), "index.html");
+    mkdirSync(join(outPath, ".."), { recursive: true });
+    writeFileSync(outPath, html, "utf8");
+    log.info(`SSG: ${r.urlPath} -> ${outPath}`);
+  }
+  // Copy static assets from the source assets directory to the built site.
+  copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
+  // Bundle Vue and Svelte components found in the site directory.
+  // These are transpiled to JavaScript modules for client-side use in interactive pages.
+  const siteSourceDir = join(process.cwd(), config.siteDir);
+  const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
+    (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
+  );
+  if (vueFiles.length > 0) {
+    log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
+    try {
+      await esbuild.build({
+        entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
+        outdir: join(dist, "components"),
+        format: "esm",
+        target: "es2022",
+        bundle: false,
+        plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+        external: ["preact", "vue", "svelte"],
+        logLevel: "info",
+      });
+      log.info("Vue/Svelte components bundled successfully.");
+    } catch (err) {
+      log.warn(`Failed to bundle Vue/Svelte components: ${err.message}`);
     }
-    // Copy static assets from the source assets directory to the built site.
-    copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
-    // Bundle Vue and Svelte components found in the site directory.
-    // These are transpiled to JavaScript modules for client-side use in interactive pages.
-    const siteSourceDir = join(process.cwd(), config.siteDir);
-    const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter((f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"));
-    if (vueFiles.length > 0) {
-        log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
-        try {
-            await esbuild.build({
-                entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
-                outdir: join(dist, "components"),
-                format: "esm",
-                target: "es2022",
-                bundle: false,
-                plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-                external: ["preact", "vue", "svelte"],
-                logLevel: "info",
-            });
-            log.info("Vue/Svelte components bundled successfully.");
-        }
-        catch (err) {
-            log.warn(`Failed to bundle Vue/Svelte components: ${err.message}`);
-        }
+  }
+  // Compile the global SCSS file to CSS.
+  // This stylesheet is injected into every page and contains framework-wide styles.
+  // Minification is enabled for production builds.
+  const scssPath = join(process.cwd(), config.css.globalScss);
+  if (existsSync(scssPath)) {
+    const compiler = createScssCompiler();
+    const result = compiler.compile({
+      inputPath: scssPath,
+      minified: true,
+    });
+    if (result.error) {
+      log.error(`SCSS Compilation Failed: ${result.error}`);
+      writeFileSync(join(dist, "styles.css"), "/* SCSS Compilation Failed */");
+    } else {
+      writeFileSync(join(dist, "styles.css"), result.css);
+      log.info(`Compiled global SCSS: ${config.css.globalScss}`);
     }
-    // Compile the global SCSS file to CSS.
-    // This stylesheet is injected into every page and contains framework-wide styles.
-    // Minification is enabled for production builds.
-    const scssPath = join(process.cwd(), config.css.globalScss);
-    if (existsSync(scssPath)) {
-        const compiler = createScssCompiler();
-        const result = compiler.compile({
-            inputPath: scssPath,
-            minified: true,
-        });
-        if (result.error) {
-            log.error(`SCSS Compilation Failed: ${result.error}`);
-            writeFileSync(join(dist, "styles.css"), "/* SCSS Compilation Failed */");
-        }
-        else {
-            writeFileSync(join(dist, "styles.css"), result.css);
-            log.info(`Compiled global SCSS: ${config.css.globalScss}`);
-        }
-    }
-    else {
-        log.warn(`Global SCSS file not found: ${scssPath}`);
-        writeFileSync(join(dist, "styles.css"), "/* No global SCSS found */");
-    }
-    log.info("Build complete.");
+  } else {
+    log.warn(`Global SCSS file not found: ${scssPath}`);
+    writeFileSync(join(dist, "styles.css"), "/* No global SCSS found */");
+  }
+  log.info("Build complete.");
 }

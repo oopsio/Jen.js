@@ -1,10 +1,10 @@
 export interface Island {
-    id: string;
-    component: string;
-    props: any;
+  id: string;
+  component: string;
+  props: any;
 }
 export interface IslandRegistry {
-    islands: Island[];
+  islands: Island[];
 }
 /**
  * Creates an empty island registry for a request
@@ -22,4 +22,7 @@ export declare function extractIslandsFromHtml(html: string): Island[];
 /**
  * Inject hydration script into HTML
  */
-export declare function injectIslandScript(html: string, islands: Island[]): string;
+export declare function injectIslandScript(
+  html: string,
+  islands: Island[],
+): string;

@@ -4,9 +4,7 @@
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import {
-  StdioServerTransport,
-} from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListResourcesRequestSchema,
@@ -78,98 +76,101 @@ export class JenMCPServer {
     });
 
     // Read resources
-    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
-      const uri = request.params.uri;
+    this.server.setRequestHandler(
+      ReadResourceRequestSchema,
+      async (request) => {
+        const uri = request.params.uri;
 
-      if (uri === "project://config") {
-        try {
-          const configPath = join(this.projectRoot, "jen.config.ts");
-          const content = readFileSync(configPath, "utf-8");
+        if (uri === "project://config") {
+          try {
+            const configPath = join(this.projectRoot, "jen.config.ts");
+            const content = readFileSync(configPath, "utf-8");
+            return {
+              contents: [
+                {
+                  uri,
+                  mimeType: "text/plain",
+                  text: content,
+                },
+              ],
+            };
+          } catch (error) {
+            return {
+              contents: [
+                {
+                  uri,
+                  mimeType: "application/json",
+                  text: JSON.stringify({
+                    error: "Configuration file not found",
+                  }),
+                },
+              ],
+            };
+          }
+        }
+
+        if (uri === "project://stats") {
+          const stats = calculateProjectStats(this.projectRoot);
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: "application/json",
+                text: JSON.stringify(stats, null, 2),
+              },
+            ],
+          };
+        }
+
+        if (uri === "project://package") {
+          try {
+            const packagePath = join(this.projectRoot, "package.json");
+            const content = readFileSync(packagePath, "utf-8");
+            return {
+              contents: [
+                {
+                  uri,
+                  mimeType: "application/json",
+                  text: content,
+                },
+              ],
+            };
+          } catch {
+            return {
+              contents: [
+                {
+                  uri,
+                  mimeType: "application/json",
+                  text: JSON.stringify({ error: "package.json not found" }),
+                },
+              ],
+            };
+          }
+        }
+
+        if (uri === "project://structure") {
           return {
             contents: [
               {
                 uri,
                 mimeType: "text/plain",
-                text: content,
-              },
-            ],
-          };
-        } catch (error) {
-          return {
-            contents: [
-              {
-                uri,
-                mimeType: "application/json",
-                text: JSON.stringify({
-                  error: "Configuration file not found",
-                }),
+                text: this.getProjectStructure(),
               },
             ],
           };
         }
-      }
 
-      if (uri === "project://stats") {
-        const stats = calculateProjectStats(this.projectRoot);
-        return {
-          contents: [
-            {
-              uri,
-              mimeType: "application/json",
-              text: JSON.stringify(stats, null, 2),
-            },
-          ],
-        };
-      }
-
-      if (uri === "project://package") {
-        try {
-          const packagePath = join(this.projectRoot, "package.json");
-          const content = readFileSync(packagePath, "utf-8");
-          return {
-            contents: [
-              {
-                uri,
-                mimeType: "application/json",
-                text: content,
-              },
-            ],
-          };
-        } catch {
-          return {
-            contents: [
-              {
-                uri,
-                mimeType: "application/json",
-                text: JSON.stringify({ error: "package.json not found" }),
-              },
-            ],
-          };
-        }
-      }
-
-      if (uri === "project://structure") {
         return {
           contents: [
             {
               uri,
               mimeType: "text/plain",
-              text: this.getProjectStructure(),
+              text: "Resource not found",
             },
           ],
         };
-      }
-
-      return {
-        contents: [
-          {
-            uri,
-            mimeType: "text/plain",
-            text: "Resource not found",
-          },
-        ],
-      };
-    });
+      },
+    );
 
     // List available tools
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -338,14 +339,7 @@ export class JenMCPServer {
     lines.push("======================");
     lines.push("");
 
-    const dirs = [
-      "src/",
-      "tests/",
-      "packages/",
-      "site/",
-      "dist/",
-      "examples/",
-    ];
+    const dirs = ["src/", "tests/", "packages/", "site/", "dist/", "examples/"];
 
     dirs.forEach((dir) => {
       const dirPath = join(this.projectRoot, dir);

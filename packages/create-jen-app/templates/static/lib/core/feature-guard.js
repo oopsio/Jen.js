@@ -4,25 +4,26 @@ import { isFeatureEnabled } from "./features.js";
  * Includes the feature name and guidance on how to enable it.
  */
 export class FeatureDisabledError extends Error {
-    feature;
-    constructor(feature, context) {
-        const msg = `Feature "${feature}" is not enabled. ` +
-            `Enable it in jen.config.ts with: features: { ${feature}: true }${context ? ` (${context})` : ""}`;
-        super(msg);
-        this.feature = feature;
-        this.name = "FeatureDisabledError";
-    }
+  feature;
+  constructor(feature, context) {
+    const msg =
+      `Feature "${feature}" is not enabled. ` +
+      `Enable it in jen.config.ts with: features: { ${feature}: true }${context ? ` (${context})` : ""}`;
+    super(msg);
+    this.feature = feature;
+    this.name = "FeatureDisabledError";
+  }
 }
 /**
  * Feature configuration errors indicate invalid feature configuration.
  */
 export class FeatureConfigError extends Error {
-    feature;
-    constructor(feature, details) {
-        super(`Invalid configuration for feature "${feature}": ${details}`);
-        this.feature = feature;
-        this.name = "FeatureConfigError";
-    }
+  feature;
+  constructor(feature, details) {
+    super(`Invalid configuration for feature "${feature}": ${details}`);
+    this.feature = feature;
+    this.name = "FeatureConfigError";
+  }
 }
 /**
  * Validates that a feature is enabled before execution.
@@ -42,9 +43,9 @@ export class FeatureConfigError extends Error {
  * }
  */
 export function guardFeature(features, feature, context) {
-    if (!isFeatureEnabled(features, feature)) {
-        throw new FeatureDisabledError(feature, context);
-    }
+  if (!isFeatureEnabled(features, feature)) {
+    throw new FeatureDisabledError(feature, context);
+  }
 }
 /**
  * Guards multiple features, throwing if any are disabled.
@@ -57,12 +58,14 @@ export function guardFeature(features, feature, context) {
  * }
  */
 export function guardFeatures(features, required, context) {
-    const missing = required.filter((f) => !isFeatureEnabled(features, f));
-    if (missing.length > 0) {
-        const list = missing.join(", ");
-        throw new Error(`Features required: ${list}. ` +
-            `Enable them in jen.config.ts${context ? ` (${context})` : ""}`);
-    }
+  const missing = required.filter((f) => !isFeatureEnabled(features, f));
+  if (missing.length > 0) {
+    const list = missing.join(", ");
+    throw new Error(
+      `Features required: ${list}. ` +
+        `Enable them in jen.config.ts${context ? ` (${context})` : ""}`,
+    );
+  }
 }
 /**
  * Type guard that narrows feature type based on enabled status.
@@ -75,7 +78,7 @@ export function guardFeatures(features, required, context) {
  * }
  */
 export function isFeatureAvailable(features, feature) {
-    return isFeatureEnabled(features, feature);
+  return isFeatureEnabled(features, feature);
 }
 /**
  * Wraps a function to guard against disabled features.
@@ -87,21 +90,21 @@ export function isFeatureAvailable(features, feature) {
  * });
  */
 export function guardedFunction(feature, fn, context) {
-    return ((...args) => {
-        const features = args[0];
-        guardFeature(features, feature, context);
-        return fn(...args);
-    });
+  return (...args) => {
+    const features = args[0];
+    guardFeature(features, feature, context);
+    return fn(...args);
+  };
 }
 /**
  * Async version of guardedFunction for async handlers.
  */
 export function guardedAsyncFunction(feature, fn, context) {
-    return (async (...args) => {
-        const features = args[0];
-        guardFeature(features, feature, context);
-        return fn(...args);
-    });
+  return async (...args) => {
+    const features = args[0];
+    guardFeature(features, feature, context);
+    return fn(...args);
+  };
 }
 /**
  * Creates a feature validation middleware.
@@ -114,18 +117,20 @@ export function guardedAsyncFunction(feature, fn, context) {
  * }));
  */
 export function createFeatureMiddleware(feature, context) {
-    return (features) => {
-        guardFeature(features, feature, context);
-    };
+  return (features) => {
+    guardFeature(features, feature, context);
+  };
 }
 /**
  * Validates feature configuration against a schema.
  */
 export function validateFeatureConfig(feature, config, validator) {
-    if (!validator)
-        return;
-    const result = validator.validate(config);
-    if (!result.valid) {
-        throw new FeatureConfigError(feature, result.errors?.join("; ") || "Invalid configuration");
-    }
+  if (!validator) return;
+  const result = validator.validate(config);
+  if (!result.valid) {
+    throw new FeatureConfigError(
+      feature,
+      result.errors?.join("; ") || "Invalid configuration",
+    );
+  }
 }

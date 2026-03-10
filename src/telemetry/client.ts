@@ -39,8 +39,7 @@ class TelemetryClient {
       options.endpoint || "https://telemetry-six.vercel.app/telemetry";
     this.batchSize = options.batchSize || 50;
     this.batchInterval = options.batchInterval || 15 * 1000; // 15 seconds
-    this.disabled =
-      options.disabled || process.env.TELEMETRY_DISABLED === "1";
+    this.disabled = options.disabled || process.env.TELEMETRY_DISABLED === "1";
   }
 
   track(event: Partial<TelemetryEvent>): void {
@@ -157,7 +156,7 @@ class TelemetryClient {
 // Export factory function
 export function createTelemetry(
   version: string,
-  options?: TelemetryOptions
+  options?: TelemetryOptions,
 ): TelemetryClient {
   return new TelemetryClient(version, options);
 }

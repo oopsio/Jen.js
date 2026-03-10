@@ -76,23 +76,33 @@ export const FEATURES = {
     const imports: string[] = [];
 
     if (enabled.includes("api")) {
-      imports.push('import { handleApiRoutes } from "../features/api/handler.js";');
+      imports.push(
+        'import { handleApiRoutes } from "../features/api/handler.js";',
+      );
     }
 
     if (enabled.includes("middleware")) {
-      imports.push('import { compiledMiddlewareChain } from "../features/middleware/compiled.js";');
+      imports.push(
+        'import { compiledMiddlewareChain } from "../features/middleware/compiled.js";',
+      );
     }
 
     if (enabled.includes("cache")) {
-      imports.push('import { getCachedResponse, setCachedResponse } from "../features/cache/handler.js";');
+      imports.push(
+        'import { getCachedResponse, setCachedResponse } from "../features/cache/handler.js";',
+      );
     }
 
     if (enabled.includes("streaming")) {
-      imports.push('import { StreamingRenderer } from "../features/streaming/renderer.js";');
+      imports.push(
+        'import { StreamingRenderer } from "../features/streaming/renderer.js";',
+      );
     }
 
     if (enabled.includes("auth")) {
-      imports.push('import { authMiddleware } from "../features/auth/middleware.js";');
+      imports.push(
+        'import { authMiddleware } from "../features/auth/middleware.js";',
+      );
     }
 
     // Always import core
@@ -274,4 +284,3 @@ export function featureGatePlugin(config: FrameworkConfig): any {
     },
   };
 }
-

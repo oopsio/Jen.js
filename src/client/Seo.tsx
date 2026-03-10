@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { h, type VNode } from "preact";
 import { useEffect } from "preact/hooks";

@@ -40,14 +40,14 @@ function etagOf(s: string) {
  * @returns ES module code string for browser hydration runtime
  */
 export function runtimeHydrateModule() {
-   // Browser-safe runtime (ESM) using local vendored preact code
-   // Inline preact directly from vendor directory for zero external dependencies
-   const preactCode = readFileSync(
-     resolve(__dirname, "../vendor/preact/preact.module.js"),
-     "utf-8"
-   );
-   
-   return `
+  // Browser-safe runtime (ESM) using local vendored preact code
+  // Inline preact directly from vendor directory for zero external dependencies
+  const preactCode = readFileSync(
+    resolve(__dirname, "../vendor/preact/preact.module.js"),
+    "utf-8",
+  );
+
+  return `
 ${preactCode}
 
 const { hydrate, h } = preact;
@@ -178,17 +178,17 @@ export function buildHydrationModule(routeIdOrPath: string) {
     // Read vendored preact and inject it with proper globals
     const preactCode = readFileSync(
       resolve(__dirname, "../vendor/preact/preact.module.js"),
-      "utf-8"
+      "utf-8",
     );
-    
+
     // Wrap the hydration module with inlined preact
     const mappedOutput = `
     ${preactCode}
 
     ${jsOutput
-    .replace(/from ["']preact\/jsx-runtime["']/g, 'from "preact/jsx-runtime"')
-    .replace(/from ["']preact\/hooks["']/g, 'from "preact/hooks"')
-    .replace(/from ["']preact(?!\/|["'])/g, 'from "preact"')}
+      .replace(/from ["']preact\/jsx-runtime["']/g, 'from "preact/jsx-runtime"')
+      .replace(/from ["']preact\/hooks["']/g, 'from "preact/hooks"')
+      .replace(/from ["']preact(?!\/|["'])/g, 'from "preact"')}
     `;
 
     // Cache result with ETag

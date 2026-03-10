@@ -22,9 +22,10 @@ Images often account for most of a page's bytes. Optimize them aggressively.
 ```
 
 **Responsive Images:**
+
 ```html
-<img 
-  src="image.jpg" 
+<img
+  src="image.jpg"
   srcset="small.jpg 480w, medium.jpg 800w, large.jpg 1200w"
   sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
   alt="Description"

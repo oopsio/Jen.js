@@ -104,6 +104,7 @@ export const routeConfig: AdvancedRouteConfig = {
 Guards are evaluated in order and must all return `true` to proceed. The first guard returning a response object (with `status` and optional `location`) will stop further execution.
 
 Guard context includes:
+
 - `route`: The matched RouteEntry
 - `params`: Extracted URL parameters
 - `query`: Parsed query parameters

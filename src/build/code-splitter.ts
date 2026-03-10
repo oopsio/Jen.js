@@ -45,8 +45,7 @@ export class CodeSplitter {
       name: "runtime",
       test: (path: string) => {
         return (
-          this.isFrameworkInternal(path) &&
-          /runtime|hydrate|ssr/.test(path)
+          this.isFrameworkInternal(path) && /runtime|hydrate|ssr/.test(path)
         );
       },
       priority: 90,
@@ -156,8 +155,7 @@ export class CodeSplitter {
 
     graph += "## Splitting Strategy\n";
     graph += "- **vendor**: External dependencies (preact, utilities)\n";
-    graph +=
-      "- **runtime**: Framework runtime (hydration, SSR, hooks)\n";
+    graph += "- **runtime**: Framework runtime (hydration, SSR, hooks)\n";
     graph += "- **common**: Shared components and utilities\n";
     graph += "- **route**: Per-route lazy-loaded chunks\n";
     graph += "- **entry**: Main application bundle\n\n";
@@ -172,8 +170,7 @@ export class CodeSplitter {
     graph += "## Cache Strategy\n";
     graph +=
       "- Vendor: `max-age=31536000, immutable` (1 year, never changes)\n";
-    graph +=
-      "- Runtime: `max-age=2592000` (30 days, updated with framework)\n";
+    graph += "- Runtime: `max-age=2592000` (30 days, updated with framework)\n";
     graph += "- Entry: `max-age=3600` (1 hour, updated frequently)\n";
     graph += "- Routes: `max-age=86400` (1 day, per-route updates)\n\n";
 
@@ -236,4 +233,3 @@ export function createSplitConfig(
     target: "es2022",
   };
 }
-

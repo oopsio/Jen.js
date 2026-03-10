@@ -112,7 +112,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     const polyfillsScript = `<script src="/polyfills.js"></script>`;
     const preactScript = `<script type="module" src="/preact-runtime.js"></script>`;
     const injectedScripts = `${polyfillsScript}${preactScript}`;
-    
+
     // FIXED: Case-insensitive injection for </body>
     const bodyRegex = /<\/body>/i;
     if (bodyRegex.test(html)) {
@@ -121,7 +121,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       html = html + injectedScripts;
     }
 
-    // Calculate output path. 
+    // Calculate output path.
     const outPath =
       r.urlPath === "/"
         ? join(dist, "index.html")
@@ -154,12 +154,13 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       const name = basename(fullPath, ext);
       const newFileName = `${name}.${hash}${ext}`;
       const newPath = join(dir, newFileName);
-      
+
       // Store the mapping for HTML link replacement (normalized for web)
-      const oldPublicPath = `/assets/${relPath}`.replace(/\\/g, '/');
-      const newPublicPath = `/assets/${join(dirname(relPath), newFileName)}`.replace(/\\/g, '/');
+      const oldPublicPath = `/assets/${relPath}`.replace(/\\/g, "/");
+      const newPublicPath =
+        `/assets/${join(dirname(relPath), newFileName)}`.replace(/\\/g, "/");
       manifest[oldPublicPath] = newPublicPath;
-      
+
       if (existsSync(fullPath)) {
         try {
           renameSync(fullPath, newPath);
@@ -171,8 +172,8 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
 
     // FIXED: Update HTML files with new hashed paths so assets don't 404
     const htmlFiles = readdirSync(dist, { recursive: true })
-      .filter(f => String(f).endsWith(".html"))
-      .map(f => join(dist, String(f)));
+      .filter((f) => String(f).endsWith(".html"))
+      .map((f) => join(dist, String(f)));
 
     for (const file of htmlFiles) {
       let content = readFileSync(file, "utf8");
@@ -187,7 +188,10 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     }
 
     if (config.build?.generateManifest) {
-      writeFileSync(join(dist, "asset-manifest.json"), JSON.stringify(hashes, null, 2));
+      writeFileSync(
+        join(dist, "asset-manifest.json"),
+        JSON.stringify(hashes, null, 2),
+      );
       log.info("Generated asset-manifest.json");
     }
   }
@@ -195,15 +199,19 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   // Bundle Vue and Svelte components
   if (config.features?.compilers !== false) {
     const siteSourceDir = join(process.cwd(), config.siteDir);
-    const componentFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
-      (f) => /\.(vue|svelte)$/.test(String(f)),
-    );
+    const componentFiles = readdirSync(siteSourceDir, {
+      recursive: true,
+    }).filter((f) => /\.(vue|svelte)$/.test(String(f)));
 
     if (componentFiles.length > 0) {
-      log.info(`Found ${componentFiles.length} Vue/Svelte components, bundling...`);
+      log.info(
+        `Found ${componentFiles.length} Vue/Svelte components, bundling...`,
+      );
       try {
         await esbuild.build({
-          entryPoints: componentFiles.map((f) => join(siteSourceDir, String(f))),
+          entryPoints: componentFiles.map((f) =>
+            join(siteSourceDir, String(f)),
+          ),
           outdir: join(dist, "components"),
           format: "esm",
           target: "es2022",
@@ -225,7 +233,7 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
     join(process.cwd(), "../src/runtime/polyfills.js"),
     join(process.cwd(), "../../src/runtime/polyfills.js"),
   ];
-  
+
   let polyfillsPath: string | null = null;
   for (const path of polyfillsPaths) {
     if (existsSync(path)) {
@@ -250,7 +258,10 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
         metafile: true,
       });
       if (polyfillsMeta.metafile) {
-        writeFileSync(polyfillsMetaPath, JSON.stringify(polyfillsMeta.metafile, null, 2));
+        writeFileSync(
+          polyfillsMetaPath,
+          JSON.stringify(polyfillsMeta.metafile, null, 2),
+        );
       }
       log.info("✅ Polyfills bundled: polyfills.js");
     } catch (err: any) {
@@ -259,13 +270,17 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
   }
 
   // Bundle Preact runtime
-  const preactBundleEntry = join(process.cwd(), ".jen", "preact-runtime-entry.js");
+  const preactBundleEntry = join(
+    process.cwd(),
+    ".jen",
+    "preact-runtime-entry.js",
+  );
   mkdirSync(dirname(preactBundleEntry), { recursive: true });
 
   writeFileSync(
     preactBundleEntry,
     `export * from 'preact'; export * from 'preact/hooks'; export * from 'preact/compat';
-    if (typeof window !== 'undefined') { window.__PREACT_BUNDLE__ = true; }`
+    if (typeof window !== 'undefined') { window.__PREACT_BUNDLE__ = true; }`,
   );
 
   log.info("Bundling Preact runtime...");
@@ -283,7 +298,10 @@ export async function buildSite(opts: { config: FrameworkConfig }) {
       metafile: true,
     });
     if (preactMeta.metafile) {
-      writeFileSync(preactMetaPath, JSON.stringify(preactMeta.metafile, null, 2));
+      writeFileSync(
+        preactMetaPath,
+        JSON.stringify(preactMeta.metafile, null, 2),
+      );
     }
     log.info("Preact runtime bundled: preact-runtime.js");
   } catch (err: any) {
