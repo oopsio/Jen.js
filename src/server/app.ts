@@ -853,6 +853,15 @@ initializeIslands();
 
   return {
     async handle(req: IncomingMessage, res: ServerResponse) {
+      const start = Date.now();
+      const originalEnd = res.end.bind(res);
+      
+      res.end = function(...args: any[]) {
+        const duration = Date.now() - start;
+        console.log(`${req.method} ${req.url} ${res.statusCode} ${duration}ms`);
+        return originalEnd(...args);
+      };
+      
       await kernel.handle(req, res);
     },
 
