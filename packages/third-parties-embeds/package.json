@@ -1,0 +1,57 @@
+{
+  "name": "@jenjs/third-parties-embeds",
+  "version": "1.0.0",
+  "description": "Third-party embed components for Jen.js (YouTube, Google Maps)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./youtube": {
+      "types": "./dist/youtube.d.ts",
+      "import": "./dist/youtube.js"
+    },
+    "./maps": {
+      "types": "./dist/maps.d.ts",
+      "import": "./dist/maps.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "preact": "^10.28.3",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "preact",
+    "jen.js",
+    "youtube",
+    "google-maps",
+    "embed",
+    "components",
+    "typescript"
+  ],
+  "author": "Jen.js Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oopsio/jen.js",
+    "directory": "packages/third-parties-embeds"
+  },
+  "homepage": "https://github.com/oopsio/jen.js"
+}
