@@ -1,0 +1,152 @@
+# typos configuration
+# https://github.com/crate-ci/typos
+
+[default]
+# Extend default dictionary instead of replacing it
+extend-ignore-re = []
+
+# Ignore identifiers that are obviously hashes or generated
+ignore-hex = true
+check-filenames = true
+check-files = true
+
+# Words that are valid for this repository but not in the default dictionary
+[default.extend-words]
+# tech / dev terms
+pn = "pn"
+pnpm = "pnpm"
+devserver = "devserver"
+webserver = "webserver"
+middleware = "middleware"
+datasource = "datasource"
+filepath = "filepath"
+filenames = "filenames"
+configurator = "configurator"
+
+# programming words
+asyncify = "asyncify"
+preact = "preact"
+vite = "vite"
+vitest = "vitest"
+esbuild = "esbuild"
+
+# common abbreviations
+env = "env"
+vars = "vars"
+args = "args"
+utils = "utils"
+repo = "repo"
+
+# project-specific placeholders
+todo = "todo"
+todos = "todos"
+
+# identifiers that often get flagged
+[default.extend-identifiers]
+HTTPRequest = "HTTPRequest"
+HTTPRequestHandler = "HTTPRequestHandler"
+JSONRPC = "JSONRPC"
+dirname = "dirname"
+filename = "filename"
+stdin = "stdin"
+stdout = "stdout"
+stderr = "stderr"
+
+# Ignore specific files entirely
+[files]
+extend-exclude = [
+  ".git",
+  ".svn",
+  ".hg",
+
+  # dependency folders
+  "node_modules",
+  "vendor",
+  "target",
+  "dist",
+  "build",
+  ".next",
+  ".turbo",
+  ".cache",
+
+  # generated artifacts
+  "*.min.js",
+  "*.min.css",
+  "*.lock",
+  "*.log",
+
+  # binary assets
+  "*.png",
+  "*.jpg",
+  "*.jpeg",
+  "*.gif",
+  "*.svg",
+  "*.ico",
+  "*.webp",
+
+  # compiled files
+  "*.wasm",
+  "*.class",
+  "*.jar",
+
+  # archives
+  "*.zip",
+  "*.tar",
+  "*.gz",
+  "*.tgz",
+
+  # coverage reports
+  "coverage",
+  "lcov-report",
+
+  # IDE
+  ".idea",
+  ".vscode",
+
+  # misc
+  "CHANGELOG.md",
+]
+
+# Ignore specific patterns
+[default.extend-ignore-re]
+# URLs
+"(?i)https?://[^\\s]+"
+
+# emails
+"(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}"
+
+# UUIDs
+"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+
+# hashes
+"[0-9a-f]{32,}"
+
+# version numbers
+"v?[0-9]+\\.[0-9]+\\.[0-9]+"
+
+# camelCase identifiers
+"[a-z]+[A-Z][a-zA-Z]*"
+
+# snake_case identifiers
+"[a-z]+_[a-z0-9_]+"
+
+# SCREAMING_SNAKE
+"[A-Z0-9_]{3,}"
+
+# Ignore code blocks in markdown
+[type.markdown]
+extend-ignore-re = [
+  "```[\\s\\S]*?```"
+]
+
+# Ignore TOML tables that are configuration keys
+[type.toml]
+extend-ignore-re = [
+  "\\[[^\\]]+\\]"
+]
+
+# Ignore JSON keys
+[type.json]
+extend-ignore-re = [
+  "\"[a-zA-Z0-9_\\-]+\"\\s*:"
+]

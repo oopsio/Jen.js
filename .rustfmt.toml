@@ -1,0 +1,86 @@
+# Maximum width of each line
+max_width = 100
+
+# Number of spaces per tab
+tab_spaces = 4
+
+# Use spaces instead of tabs
+hard_tabs = false
+
+# Wrap comments to fit within max_width
+wrap_comments = true
+
+# Format code inside documentation comments
+format_code_in_doc_comments = true
+
+# Normalize comments (spacing, punctuation)
+normalize_comments = true
+
+# Format strings where possible
+format_strings = true
+
+# Put trailing commas in multiline lists
+trailing_comma = "Vertical"
+
+# How function arguments are laid out
+fn_params_layout = "Tall"
+
+# Where the opening brace goes
+brace_style = "SameLineWhere"
+
+# Control how match arms are formatted
+match_block_trailing_comma = true
+
+# Merge derive attributes when possible
+merge_derives = true
+
+# Group imports
+imports_granularity = "Crate"
+
+# Reorder imports automatically
+reorder_imports = true
+
+# Reorder modules
+reorder_modules = true
+
+# Use field init shorthand where possible
+use_field_init_shorthand = true
+
+# Control how structs are formatted
+struct_lit_single_line = false
+struct_field_align_threshold = 0
+
+# Allow short expressions to remain inline
+use_small_heuristics = "Max"
+
+# Force multiline blocks when needed
+force_multiline_blocks = false
+
+# Format macro bodies
+format_macro_matchers = true
+format_macro_bodies = true
+
+# Ensure newline at end of file
+newline_style = "Unix"
+
+# Control blank lines
+blank_lines_upper_bound = 2
+blank_lines_lower_bound = 0
+
+# Formatting of impl blocks
+combine_control_expr = true
+
+# Remove unnecessary nested parentheses
+remove_nested_parens = true
+
+# Control spacing around ranges
+spaces_around_ranges = false
+
+# Control how enum variants are formatted
+enum_discrim_align_threshold = 0
+
+# Align struct fields if they exceed threshold
+struct_field_align_threshold = 20
+
+# Version compatibility
+edition = "2021"
