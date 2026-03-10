@@ -7,6 +7,8 @@ Jen.js is a TypeScript-first web framework for building static and server-render
 
 It uses file-based routing and a simple configuration model.
 
+This codebase contains ![Lines of code](https://img.shields.io/endpoint?url=https://ghloc.vercel.app/api/oopsio/jen.js/badge?logoColor=white&color=black&label=) lines of code and has ![Contributors](https://img.shields.io/github/contributors/oopsio/jen.js?color=black&label=) contributors.
+
 ## Usage
 
 ```bash
