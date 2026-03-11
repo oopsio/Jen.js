@@ -4,3 +4,4 @@ apps/test-coverage/** linguist-generated
 apps/website linguist-generated
 apps/cli-rustdoc linguist-generated
 apps/jsdoc linguist-generated
+*.html linguist-documentation
