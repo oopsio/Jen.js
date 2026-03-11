@@ -26,11 +26,11 @@ export { createApp } from "./server/app.js";
 // Primary build function for static site generation
 export { buildSite } from "./build/build.js";
 // ============================================================================
-// CLIENT COMPONENTS (6 exports + types)
+// CLIENT COMPONENTS (5 exports + types)
 // ============================================================================
 // Reusable Preact components for common patterns
 export { Image, Seo, PWA } from "./client/index.js";
-export { Link, useRouter, useNavigation } from "./client/index.js";
+export { useRouter, useNavigation } from "./client/index.js";
 // ============================================================================
 // MIDDLEWARE & REQUEST HANDLING (7 exports)
 // ============================================================================

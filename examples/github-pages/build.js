@@ -101,16 +101,16 @@ async function main() {
   const buildPath = pathToFileURL(join(rootDir, "lib/build/build.js")).href;
   const { buildSite } = await import(buildPath);
 
-  // Build the site (framework now handles polyfills + preact bundling)
+  // Build the site
   await buildSite({ config });
 
   const distDir = join(process.cwd(), config.distDir || "dist");
   const manifest = {};
   const fileMap = {}; // Maps old paths to new hashed paths
 
-  // Step 1: Hash CSS and JS files first
-  const cssFiles = getAllFiles(distDir, [".css"]);
-  for (const filePath of cssFiles) {
+  // Step 1: Hash CSS and JS files
+  const assetFiles = getAllFiles(distDir, [".css", ".js"]);
+  for (const filePath of assetFiles) {
     const content = await fs.readFile(filePath, "utf-8");
     const renamed = await renameWithHash(filePath, content);
     manifest[renamed.oldPath] = {
@@ -120,42 +120,40 @@ async function main() {
     const relPath = renamed.oldPath.replace(distDir, "").replace(/\\/g, "/");
     const newRelPath = renamed.newPath.replace(distDir, "").replace(/\\/g, "/");
     fileMap[relPath] = newRelPath;
-    console.log(`✅ Hashed CSS: ${renamed.newPath}`);
+    console.log(`✅ Hashed Asset: ${renamed.newPath}`);
   }
 
-  const jsFiles = getAllFiles(distDir, [".js"]);
-  for (const filePath of jsFiles) {
-    const content = await fs.readFile(filePath, "utf-8");
-    const renamed = await renameWithHash(filePath, content);
-    manifest[renamed.oldPath] = {
-      hash: renamed.hash,
-      newPath: renamed.newPath,
-    };
-    const relPath = renamed.oldPath.replace(distDir, "").replace(/\\/g, "/");
-    const newRelPath = renamed.newPath.replace(distDir, "").replace(/\\/g, "/");
-    fileMap[relPath] = newRelPath;
-    console.log(`✅ Hashed JS: ${renamed.newPath}`);
-  }
-
-  // Step 2: Minify & update HTML with hashed file references
+  // Step 2: Minify & Rename HTML to index.html (No Hashing)
   const htmlFiles = getAllFiles(distDir, [".html"]);
   for (const filePath of htmlFiles) {
     await minifyHTMLFile(filePath);
     let content = await fs.readFile(filePath, "utf-8");
 
-    // Replace old file paths with hashed paths
+    // Replace old asset paths with hashed versions
     for (const [oldPath, newPath] of Object.entries(fileMap)) {
       content = content.replaceAll(`href="${oldPath}"`, `href="${newPath}"`);
       content = content.replaceAll(`src="${oldPath}"`, `src="${newPath}"`);
     }
-
+    
+    // Save updated content before potential move
     await fs.writeFile(filePath, content, "utf-8");
-    const renamed = await renameWithHash(filePath, content);
-    manifest[renamed.oldPath] = {
-      hash: renamed.hash,
-      newPath: renamed.newPath,
+
+    const dir = dirname(filePath);
+    const oldName = basename(filePath);
+    const newPath = join(dir, "index.html");
+
+    // Only rename if it isn't already index.html
+    if (oldName !== "index.html") {
+      await fs.rename(filePath, newPath);
+      console.log(`✅ Renamed: ${oldName} -> index.html`);
+    } else {
+      console.log(`✅ Minified: ${oldName}`);
+    }
+
+    manifest[filePath] = {
+      hash: "none",
+      newPath: newPath,
     };
-    console.log(`✅ Minified & hashed: ${renamed.newPath}`);
   }
 
   // Write manifest
@@ -164,7 +162,7 @@ async function main() {
   console.log(`✅ Asset manifest written: ${manifestPath}`);
 
   console.log(
-    "✅ Site built, scripts removed, HTML minified, and assets hashed successfully!",
+    "✅ Site built: HTML is index.html and assets are hashed!",
   );
 }
 

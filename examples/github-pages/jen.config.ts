@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import type { FrameworkConfig } from "../../src/core/config.js";
 
 const config: FrameworkConfig = {

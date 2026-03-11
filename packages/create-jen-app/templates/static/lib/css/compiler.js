@@ -1,4 +1,4 @@
-import { compile, compileString } from "../vendor/sass/sass.node.mjs";
+import { compile, compileString } from "sass";
 import { globSync } from "../vendor/glob/glob.js";
 import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
