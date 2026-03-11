@@ -17,6 +17,7 @@ jobs:
           - os: macos
             runner: macos-latest
             rust_target: aarch64-apple-darwin
+
           # Linux
           - os: linux
             runner: ubuntu-latest
@@ -27,6 +28,7 @@ jobs:
           - os: linux
             runner: ubuntu-latest
             rust_target: aarch64-unknown-linux-gnu
+
           # Windows
           - os: windows
             runner: windows-latest
@@ -36,8 +38,8 @@ jobs:
             rust_target: i686-pc-windows-msvc
 
     runs-on: ${{ matrix.runner }}
-    
-    # This ensures all 'run' steps happen inside your CLI crate
+
+    # All 'run' steps default to the CLI directory
     defaults:
       run:
         working-directory: crates/cli
@@ -45,33 +47,41 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          # Checkout at root so we have the full context
-          path: . 
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.rust_target }}
 
+      # Speeds up your 11.3s build to ~2s on repeat runs
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "crates/cli -> ../../target"
+
       - name: Create build folder
         run: mkdir -p build
 
-      - name: Build Jen CLI
+      - name: Build and Rename
         shell: bash
         run: |
+          # Define names
           BIN_NAME=jen-${{ matrix.os }}-${{ matrix.rust_target }}
           RAW_BIN=jen
           if [[ "${{ matrix.os }}" == "windows" ]]; then
             BIN_NAME=${BIN_NAME}.exe
             RAW_BIN=jen.exe
           fi
-          
-          # Build specifically for the target
+
+          # Build release for specific target
           cargo build --release --target ${{ matrix.rust_target }}
-          
-          # Cargo places artifacts in the root target dir, not inside the crate dir
+
+          # The Path Fix:
+          # Current dir: [root]/crates/cli
+          # Binary loc: [root]/target/[target]/release/[bin]
           cp ../../target/${{ matrix.rust_target }}/release/$RAW_BIN build/$BIN_NAME
+          
+          echo "✅ Built: $BIN_NAME"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
