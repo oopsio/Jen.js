@@ -17,7 +17,6 @@ jobs:
           - os: macos
             runner: macos-latest
             rust_target: aarch64-apple-darwin
-
           # Linux
           - os: linux
             runner: ubuntu-latest
@@ -28,7 +27,6 @@ jobs:
           - os: linux
             runner: ubuntu-latest
             rust_target: aarch64-unknown-linux-gnu
-
           # Windows
           - os: windows
             runner: windows-latest
@@ -38,19 +36,23 @@ jobs:
             rust_target: i686-pc-windows-msvc
 
     runs-on: ${{ matrix.runner }}
+    
+    # This ensures all 'run' steps happen inside your CLI crate
+    defaults:
+      run:
+        working-directory: crates/cli
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # Checkout at root so we have the full context
+          path: . 
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          override: true
-
-      - name: Add target
-        run: rustup target add ${{ matrix.rust_target }}
+          targets: ${{ matrix.rust_target }}
 
       - name: Create build folder
         run: mkdir -p build
@@ -59,14 +61,20 @@ jobs:
         shell: bash
         run: |
           BIN_NAME=jen-${{ matrix.os }}-${{ matrix.rust_target }}
+          RAW_BIN=jen
           if [[ "${{ matrix.os }}" == "windows" ]]; then
             BIN_NAME=${BIN_NAME}.exe
+            RAW_BIN=jen.exe
           fi
+          
+          # Build specifically for the target
           cargo build --release --target ${{ matrix.rust_target }}
-          cp target/${{ matrix.rust_target }}/release/jen build/$BIN_NAME
+          
+          # Cargo places artifacts in the root target dir, not inside the crate dir
+          cp ../../target/${{ matrix.rust_target }}/release/$RAW_BIN build/$BIN_NAME
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: jen-${{ matrix.os }}-${{ matrix.rust_target }}
-          path: build/*
+          path: crates/cli/build/*
