@@ -458,13 +458,21 @@ ${headParts.join("\n")}
 
     const hydrateFile = `/__hydrate?file=${encodeURIComponent(route.filePath)}`;
 
+    // In production builds, use bundled hydration files from /hydrate.js and /island-hydration-client.js
+    // In dev, use dynamic runtime modules /__runtime/hydrate.js and /__runtime/island-hydration-client.js
+    const isProduction = process.env.NODE_ENV === "production";
+    const hydrateModule = isProduction ? "/hydrate.js" : "/__runtime/hydrate.js";
+    const islandModule = isProduction
+      ? "/island-hydration-client.js"
+      : "/__runtime/island-hydration-client.js";
+
     html += `
   <script id="__FRAMEWORK_DATA__" type="application/json">
   ${frameworkDataStr}
   </script>
   <script type="module">
-  import { hydrateClient } from "/__runtime/hydrate.js";
-  import { initializeIslands } from "/__runtime/island-hydration-client.js";
+  import { hydrateClient } from "${hydrateModule}";
+  import { initializeIslands } from "${islandModule}";
   hydrateClient(${JSON.stringify(hydrateFile)});
   initializeIslands();
   </script>`;

@@ -1,17 +1,10 @@
-import { Link } from "../lib/client/index";
+import { useState } from 'preact/hooks';
 
-export default function Index() {
+export default function Counter() {
+  const [count, setCount] = useState(0);
   return (
-    <>
-      <h1>Welcome to the GitHub pages example!</h1>
-      <Link
-        href="/about"
-        onClick={() => {}}
-        onMouseEnter={() => {}}
-        onTouchStart={() => {}}
-      >
-        About
-      </Link>
-    </>
+    <button onClick={() => setCount(count + 1)}>
+      {count}
+    </button>
   );
 }

@@ -53,6 +53,11 @@ export async function renderRouteToHtml(opts) {
   headParts.push(`<link rel="stylesheet" href="/styles.css">`);
   const payload = escapeHtml(JSON.stringify({ data, params, query }));
   const hydrationEntry = `/__hydrate?file=${encodeURIComponent(route.filePath)}`;
+  const isProduction = process.env.NODE_ENV === "production";
+  const hydrateModule = isProduction ? "/hydrate.js" : "/__runtime/hydrate.js";
+  const islandModule = isProduction
+    ? "/island-hydration-client.js"
+    : "/__runtime/island-hydration-client.js";
   const html = `<!doctype html>
 <html>
 <head>
@@ -62,8 +67,10 @@ ${headParts.join("\n")}
 <div id="app">${bodyHtml}</div>
 <script id="__FRAMEWORK_DATA__" type="application/json">${payload}</script>
 <script type="module">
-  import { hydrateClient } from "/__runtime/hydrate.js";
+  import { hydrateClient } from "${hydrateModule}";
+  import { initializeIslands } from "${islandModule}";
   hydrateClient(${JSON.stringify(hydrationEntry)});
+  initializeIslands();
 </script>
 ${config.inject.bodyEnd.join("\n")}
 </body>
