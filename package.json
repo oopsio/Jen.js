@@ -35,6 +35,7 @@
     "core-js": "3",
     "esbuild": "^0.27.3",
     "glob": "^13.0.3",
+    "graphql": "^16.13.1",
     "html-minifier-terser": "^7.2.0",
     "mongodb": "^7.1.0",
     "mysql2": "^3.17.1",

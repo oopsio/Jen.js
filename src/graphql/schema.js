@@ -1,3 +1,9 @@
-// GraphQL schema - external GraphQL library not included
-// Users should implement with their own graphql library (e.g., npm install graphql)
-export const schema = null;
+/**
+ * GraphQL schema module.
+ * 
+ * This is the JavaScript build output of schema.ts.
+ * Defines the complete GraphQL API schema with types, queries, and mutations.
+ * For full documentation and type definitions, see schema.ts
+ */
+
+export { schema };

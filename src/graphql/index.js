@@ -1,7 +1,9 @@
-// GraphQL utilities - external GraphQL library not included
-// Users should implement with their own graphql library (e.g., npm install graphql)
-export async function runQuery(query, variables) {
-  throw new Error(
-    "GraphQL implementation requires external library. Install: npm install graphql",
-  );
-}
+/**
+ * GraphQL integration utilities for Jen.js applications.
+ * 
+ * This is the JavaScript build output of index.ts.
+ * For full documentation and TypeScript types, see index.ts
+ */
+
+export { runQuery, buildQuery, runQueries, validateQuery, schema, resolvers };
+export { GraphQLResult, ExecutionContext };
