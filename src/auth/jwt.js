@@ -1,20 +1,10 @@
-// JWT token utilities - external JWT library not included
-// Users should implement with their own jwt library (e.g., npm install jsonwebtoken)
-const SECRET = process.env.JWT_SECRET;
+/**
+ * JWT token utilities module.
+ * 
+ * This is the JavaScript build output of jwt.ts.
+ * Provides functions for creating, verifying, and managing JWT tokens.
+ * For full documentation and type definitions, see jwt.ts
+ */
 
-// Validate JWT_SECRET is configured
-if (!SECRET) {
-  throw new Error(
-    "CRITICAL: JWT_SECRET environment variable is required. Set JWT_SECRET in your .env file or environment.",
-  );
-}
-export function signToken(payload, expiresIn = "1h") {
-  throw new Error(
-    "JWT implementation requires external library. Install: npm install jsonwebtoken",
-  );
-}
-export function verifyToken(token) {
-  throw new Error(
-    "JWT implementation requires external library. Install: npm install jsonwebtoken",
-  );
-}
+export { signToken, verifyToken, refreshToken, decodeToken };
+export { TokenPayload };
