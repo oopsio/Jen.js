@@ -4,8 +4,9 @@ import {
   UnifiedQuery,
   SQLQuery,
   FindQuery,
-} from "../types";
-import { Filter, Update } from "../../jdb/types";
+} from "../types.js";
+import { Filter, Update } from "../../jdb/types.js";
+import { log } from "../../shared/log.js";
 
 type QueryExecutor = (sql: string, params: any[]) => Promise<any[]>;
 
@@ -83,17 +84,25 @@ export class SQLDriver implements IDBDriver {
   }
 
   async query<T = any>(q: UnifiedQuery<T>): Promise<T[]> {
-    if (typeof q === "string") {
-      return this.executor(q, []);
-    }
-    if ("sql" in q) {
-      return this.executor(q.sql, q.params || []);
-    }
+    try {
+      if (typeof q === "string") {
+        log.info(`Executing raw SQL: ${q.substring(0, 50)}...`);
+        return this.executor(q, []);
+      }
+      if ("sql" in q) {
+        log.info(`Executing SQL query: ${q.sql.substring(0, 50)}...`);
+        return this.executor(q.sql, q.params || []);
+      }
 
-    // Convert NoSQL style to SQL (Basic translation)
-    const query = q as FindQuery<T>;
-    const { sql, params } = this.translateQuery(query);
-    return this.executor(sql, params);
+      // Convert NoSQL style to SQL (Basic translation)
+      const query = q as FindQuery<T>;
+      const { sql, params } = this.translateQuery(query);
+      log.info(`Executing translated query: ${sql.substring(0, 50)}...`);
+      return this.executor(sql, params);
+    } catch (error) {
+      log.error(`Query execution failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
   }
 
   private translateQuery(q: FindQuery): { sql: string; params: any[] } {
@@ -140,31 +149,39 @@ export class SQLDriver implements IDBDriver {
   }
 
   async create<T = any>(collection: string, data: any): Promise<T> {
-    // Security: Validate table name
-    if (!isTableAllowed(collection)) {
-      throw new Error(
-        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
-      );
-    }
-
-    const keys = Object.keys(data);
-
-    // Security: Validate all column names
-    for (const key of keys) {
-      if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+    try {
+      // Security: Validate table name
+      if (!isTableAllowed(collection)) {
         throw new Error(
-          `Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
+          `Table '${collection}' not registered. Call registerAllowedTable() first.`,
         );
       }
-    }
 
-    const placeholders = keys.map(() => "?").join(",");
-    const quotedKeys = keys.map((k) => quoteIdentifier(k)).join(",");
-    const sql = `INSERT INTO ${quoteIdentifier(collection)} (${quotedKeys}) VALUES (${placeholders})`;
-    const params = keys.map((k) => data[k]);
-    await this.executor(sql, params);
-    // Retrieve generic - this might need adjustment per driver for "returning" support
-    return data as T;
+      const keys = Object.keys(data);
+
+      // Security: Validate all column names
+      for (const key of keys) {
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+          throw new Error(
+            `Invalid column name: ${key}. Must start with letter, underscore, or dollar. Only alphanumeric, underscore, and dollar allowed.`,
+          );
+        }
+      }
+
+      const placeholders = keys.map(() => "?").join(",");
+      const quotedKeys = keys.map((k) => quoteIdentifier(k)).join(",");
+      const sql = `INSERT INTO ${quoteIdentifier(collection)} (${quotedKeys}) VALUES (${placeholders})`;
+      const params = keys.map((k) => data[k]);
+      
+      log.info(`Creating record in ${collection} with ${keys.length} fields`);
+      await this.executor(sql, params);
+      
+      // Retrieve generic - this might need adjustment per driver for "returning" support
+      return data as T;
+    } catch (error) {
+      log.error(`Create failed in ${collection}: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
   }
 
   async update<T = any>(
@@ -172,54 +189,115 @@ export class SQLDriver implements IDBDriver {
     filter: Filter<T>,
     update: Update<T>,
   ): Promise<number> {
-    // Basic implementation requiring WHERE clause
-    // This is complex to map generic Mongo-style updates to SQL without a robust builder
-    throw new Error(
-      "Complex update translation not implemented for Generic SQL Driver yet. Use raw SQL.",
-    );
+    try {
+      // Security: Validate table name
+      if (!isTableAllowed(collection)) {
+        throw new Error(
+          `Table '${collection}' not registered. Call registerAllowedTable() first.`,
+        );
+      }
+
+      // Validate that filter is not empty to prevent accidental full table update
+      if (!filter || Object.keys(filter).length === 0) {
+        throw new Error(
+          "Update requires at least one filter condition. Prevent full table updates.",
+        );
+      }
+
+      const updateKeys = Object.keys(update);
+      const filterKeys = Object.keys(filter);
+      
+      // Security: Validate all column names
+      for (const key of [...updateKeys, ...filterKeys]) {
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)) {
+          throw new Error(
+            `Invalid column name: ${key}. Must start with letter, underscore, or dollar.`,
+          );
+        }
+      }
+
+      // Build SET clause
+      const setClause = updateKeys
+        .map((k) => `${quoteIdentifier(k)} = ?`)
+        .join(", ");
+      
+      // Build WHERE clause
+      const whereClause = filterKeys
+        .map((k) => `${quoteIdentifier(k)} = ?`)
+        .join(" AND ");
+
+      const sql = `UPDATE ${quoteIdentifier(collection)} SET ${setClause} WHERE ${whereClause}`;
+      
+      // Combine update params and filter params
+      const params = [
+        ...updateKeys.map((k) => (update as any)[k]),
+        ...filterKeys.map((k) => (filter as any)[k]),
+      ];
+
+      log.info(`Updating records in ${collection} with ${updateKeys.length} fields`);
+      await this.executor(sql, params);
+      return 1; // Unknown affected row count without driver specific result
+    } catch (error) {
+      log.error(`Update failed in ${collection}: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
   }
 
   async delete<T = any>(
     collection: string,
     filter: Filter<T>,
   ): Promise<number> {
-    // Security: Validate table name
-    if (!isTableAllowed(collection)) {
-      throw new Error(
-        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
-      );
-    }
+    try {
+      // Security: Validate table name
+      if (!isTableAllowed(collection)) {
+        throw new Error(
+          `Table '${collection}' not registered. Call registerAllowedTable() first.`,
+        );
+      }
 
-    // Validate that filter is not empty to prevent accidental full table delete
-    if (!filter || Object.keys(filter).length === 0) {
-      throw new Error(
-        "Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.",
-      );
-    }
+      // Validate that filter is not empty to prevent accidental full table delete
+      if (!filter || Object.keys(filter).length === 0) {
+        throw new Error(
+          "Delete requires at least one filter condition. Use truncate or raw SQL for full table deletion.",
+        );
+      }
 
-    const { sql, params } = this.translateQuery({
-      find: collection,
-      where: filter,
-    });
-    const deleteSql = sql.replace("SELECT \\*", "DELETE");
-    await this.executor(deleteSql, params);
-    return 1; // Unknown count without driver specific result
+      const { sql, params } = this.translateQuery({
+        find: collection,
+        where: filter,
+      });
+      const deleteSql = sql.replace("SELECT \\*", "DELETE");
+      
+      log.info(`Deleting from ${collection} with filter`);
+      await this.executor(deleteSql, params);
+      return 1; // Unknown count without driver specific result
+    } catch (error) {
+      log.error(`Delete failed in ${collection}: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
   }
 
   async count<T = any>(collection: string, filter: Filter<T>): Promise<number> {
-    // Security: Validate table name
-    if (!isTableAllowed(collection)) {
-      throw new Error(
-        `Table '${collection}' not registered. Call registerAllowedTable() first.`,
-      );
-    }
+    try {
+      // Security: Validate table name
+      if (!isTableAllowed(collection)) {
+        throw new Error(
+          `Table '${collection}' not registered. Call registerAllowedTable() first.`,
+        );
+      }
 
-    const { sql, params } = this.translateQuery({
-      find: collection,
-      where: filter,
-    });
-    const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as count");
-    const res = await this.executor(countSql, params);
-    return res[0]?.count || 0;
+      const { sql, params } = this.translateQuery({
+        find: collection,
+        where: filter,
+      });
+      const countSql = sql.replace("SELECT *", "SELECT COUNT(*) as count");
+      
+      log.info(`Counting records in ${collection}`);
+      const res = await this.executor(countSql, params);
+      return res[0]?.count || 0;
+    } catch (error) {
+      log.error(`Count failed in ${collection}: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
   }
 }

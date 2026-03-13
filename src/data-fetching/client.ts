@@ -5,6 +5,7 @@ import type {
 } from "./types.js";
 import { RestFetcher } from "./rest.js";
 import { GraphQLClient } from "./graphql.js";
+import { log } from "../shared/log.js";
 
 /**
  * Client-side data fetching utilities for browser and Preact components.
@@ -15,6 +16,16 @@ import { GraphQLClient } from "./graphql.js";
  * - Suspense integration for data boundaries
  * - In-flight request deduplication
  * - Optimistic updates
+ * - Request/response interceptors
+ * - Cache with multiple strategies
+ *
+ * @example
+ * ```typescript
+ * const context = { cache, interceptors, config };
+ * initializeClientFetch(context);
+ * const fetcher = getClientDataFetcher();
+ * const result = await fetcher.fetch('/api/users');
+ * ```
  */
 export class ClientDataFetcher {
   readonly rest: RestFetcher;
@@ -37,6 +48,11 @@ export class ClientDataFetcher {
   /**
    * Fetches data with deduplication.
    * Multiple requests for the same URL while one is inflight return the same promise.
+   * Useful for preventing duplicate requests during race conditions.
+   *
+   * @param url Resource URL.
+   * @param config Fetch configuration (cache, retry, headers, etc.).
+   * @returns Fetch result with data or error.
    */
   async fetch<T = any>(
     url: string,
@@ -46,12 +62,24 @@ export class ClientDataFetcher {
 
     // Return existing promise if request is in-flight
     if (this.inflight.has(key)) {
+      log.info(`[ClientFetch] Deduplicating request: ${key}`);
       return this.inflight.get(key)!;
     }
 
-    const promise = this.rest.fetch<T>(url, config).finally(() => {
-      this.inflight.delete(key);
-    });
+    log.info(`[ClientFetch] Fetching: ${key}`);
+    const promise = this.rest
+      .fetch<T>(url, config)
+      .then((result) => {
+        if (result.ok) {
+          log.info(`[ClientFetch] Success: ${key}`);
+        } else {
+          log.info(`[ClientFetch] Error: ${key}`);
+        }
+        return result;
+      })
+      .finally(() => {
+        this.inflight.delete(key);
+      });
 
     this.inflight.set(key, promise);
     return promise;
@@ -137,15 +165,31 @@ export class ClientDataFetcher {
 let globalClientFetcher: ClientDataFetcher | null = null;
 
 /**
- * Initializes the client data fetcher.
- * Should be called during client hydration.
+ * Initializes the client data fetcher singleton.
+ * Should be called during client hydration before any fetch operations.
+ *
+ * @param context Fetch context with cache, interceptors, and config.
+ *
+ * @example
+ * ```typescript
+ * initializeClientFetch({
+ *   cache: new MemoryDataCache(),
+ *   interceptors: [authInterceptor],
+ *   config: { baseUrl: '/api' }
+ * });
+ * ```
  */
 export function initializeClientFetch(context: ClientFetchContext): void {
   globalClientFetcher = new ClientDataFetcher(context);
+  log.info("[ClientFetch] Initialized");
 }
 
 /**
- * Gets the global client data fetcher.
+ * Gets the global client data fetcher singleton.
+ * Must be called after initializeClientFetch().
+ *
+ * @returns Global ClientDataFetcher instance.
+ * @throws Error if not initialized.
  */
 export function getClientDataFetcher(): ClientDataFetcher {
   if (!globalClientFetcher) {

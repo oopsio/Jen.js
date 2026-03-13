@@ -1,13 +1,9 @@
-export class MemoryCache {
-  store = new Map();
-  set(key, value, ttlMs) {
-    this.store.set(key, value);
-    if (ttlMs) setTimeout(() => this.store.delete(key), ttlMs);
-  }
-  get(key) {
-    return this.store.get(key);
-  }
-  delete(key) {
-    this.store.delete(key);
-  }
-}
+/**
+ * In-memory cache module.
+ * 
+ * This is the JavaScript build output of memory.ts.
+ * Provides single-process in-memory caching with TTL support.
+ * For full documentation and type definitions, see memory.ts
+ */
+
+export { MemoryCache };

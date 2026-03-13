@@ -45,6 +45,7 @@
     "picocolors": "^1.1.1",
     "preact": "^10.28.3",
     "preact-render-to-string": "^6.5.13",
+    "redis": "^5.11.0",
     "sass": "^1.97.3",
     "sirv": "^3.0.1",
     "sqlite": "^5.1.1",

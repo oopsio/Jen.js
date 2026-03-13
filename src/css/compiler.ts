@@ -18,7 +18,17 @@ export interface CompileResult {
   error?: string;
 }
 
+/**
+ * SCSS/SASS compiler with file writing support.
+ * Compiles SCSS to CSS with optional minification and source maps.
+ */
 export class ScssCompiler {
+  /**
+   * Compile a single SCSS file.
+   *
+   * @param options Compilation options.
+   * @returns Compiled CSS and optional source map.
+   */
   compile(options: CompileOptions): CompileResult {
     const {
       inputPath,
@@ -29,8 +39,14 @@ export class ScssCompiler {
 
     try {
       if (!existsSync(inputPath)) {
-        return { css: "", error: `File not found: ${inputPath}` };
+        const error = `File not found: ${inputPath}`;
+        log.error(`[SCSS] ✗ ${error}`);
+        return { css: "", error };
       }
+
+      log.info(
+        `[SCSS] Compiling: ${relative(process.cwd(), inputPath)}${minified ? " (minified)" : ""}${sourceMap ? " (source map)" : ""}`,
+      );
 
       const result = compile(inputPath, {
         style: minified ? "compressed" : "expanded",
@@ -43,6 +59,7 @@ export class ScssCompiler {
 
         if (result.sourceMap && sourceMap) {
           writeFileSync(outputPath + ".map", JSON.stringify(result.sourceMap));
+          log.info(`[SCSS] Source map: ${outputPath}.map`);
         }
 
         log.info(
@@ -63,8 +80,17 @@ export class ScssCompiler {
     }
   }
 
+  /**
+   * Compile SCSS string without file output.
+   *
+   * @param scss SCSS content as string.
+   * @param options Compilation options.
+   * @returns Compiled CSS.
+   */
   compileString(scss: string, options?: { minified?: boolean }): CompileResult {
     try {
+      log.info(`[SCSS] Compiling inline SCSS${options?.minified ? " (minified)" : ""}`);
+
       const result = compileString(scss, {
         style: options?.minified ? "compressed" : "expanded",
       });
@@ -77,27 +103,46 @@ export class ScssCompiler {
     }
   }
 
+  /**
+   * Compile all SCSS files matching a glob pattern.
+   *
+   * @param pattern Glob pattern to match files.
+   * @param outputDir Output directory for compiled CSS.
+   * @param minified Whether to minify output CSS.
+   * @returns Number of files successfully compiled.
+   */
   compileGlob(
     pattern: string,
     outputDir: string,
     minified: boolean = false,
   ): number {
-    const files = globSync(pattern);
+    try {
+      log.info(`[SCSS] Compiling glob: ${pattern}`);
 
-    let count = 0;
-    files.forEach((file: string) => {
-      const rel = relative(outputDir, file);
-      const output = join(outputDir, rel.replace(/\.scss$/, ".css"));
-      const result = this.compile({
-        inputPath: file,
-        outputPath: output,
-        minified,
+      const files = globSync(pattern);
+      log.info(`[SCSS] Found ${files.length} file(s) matching pattern`);
+
+      let count = 0;
+      files.forEach((file: string) => {
+        const rel = relative(outputDir, file);
+        const output = join(outputDir, rel.replace(/\.scss$/, ".css"));
+        const result = this.compile({
+          inputPath: file,
+          outputPath: output,
+          minified,
+        });
+
+        if (!result.error) count++;
       });
 
-      if (!result.error) count++;
-    });
-
-    return count;
+      log.info(`[SCSS] Successfully compiled ${count}/${files.length} files`);
+      return count;
+    } catch (err) {
+      log.error(
+        `[SCSS] ✗ Glob compilation failed: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      return 0;
+    }
   }
 }
 

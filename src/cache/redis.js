@@ -1,24 +1,9 @@
-// Redis cache utilities - external Redis library not included
-// Users should implement with their own redis library (e.g., npm install redis)
-export class RedisCache {
-  async connect() {
-    throw new Error(
-      "Redis implementation requires external library. Install: npm install redis",
-    );
-  }
-  async set(key, value, ttlSec) {
-    throw new Error(
-      "Redis implementation requires external library. Install: npm install redis",
-    );
-  }
-  async get(key) {
-    throw new Error(
-      "Redis implementation requires external library. Install: npm install redis",
-    );
-  }
-  async delete(key) {
-    throw new Error(
-      "Redis implementation requires external library. Install: npm install redis",
-    );
-  }
-}
+/**
+ * Redis cache module.
+ * 
+ * This is the JavaScript build output of redis.ts.
+ * Provides distributed caching with Redis for multi-process deployments.
+ * For full documentation and type definitions, see redis.ts
+ */
+
+export { RedisCache };

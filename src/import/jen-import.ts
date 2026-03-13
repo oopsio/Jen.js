@@ -149,6 +149,7 @@ export async function jenImport(
         module: mod,
         etag: generateEtag(outfile),
       });
+      log.info(`[jen.import] Cached: ${specifier}`);
     }
 
     log.info(`[jen.import] Successfully loaded: ${specifier}`);
@@ -159,6 +160,26 @@ export async function jenImport(
     log.error(`[jen.import] Failed to import "${specifier}": ${message}`);
     throw new Error(`jen.import() failed for "${specifier}": ${message}`);
   }
+}
+
+/**
+ * Get import cache statistics.
+ * @returns Object with cache info.
+ */
+export function getImportCacheStats(): {
+  total: number;
+  keys: string[];
+  size: number;
+} {
+  let size = 0;
+  for (const entry of importCache.values()) {
+    size += JSON.stringify(entry).length;
+  }
+  return {
+    total: importCache.size,
+    keys: Array.from(importCache.keys()),
+    size,
+  };
 }
 
 /**

@@ -68,32 +68,51 @@ function categorizeModule(modulePath: string): string {
   return "other";
 }
 
+/**
+ * Analyze bundle size and generate detailed report.
+ *
+ * Features:
+ * - Parse esbuild metadata files
+ * - Calculate gzip sizes
+ * - Identify large modules & duplicates
+ * - Group by packages
+ * - Generate treemap for visualization
+ *
+ * @param config Framework configuration.
+ * @returns Bundle analysis with modules and statistics.
+ */
 export async function analyzeBundle(
   config: FrameworkConfig,
 ): Promise<BundleAnalysis> {
-  const dist = resolveDistPath(config);
-  const metaFiles = [
-    join(dist, "preact-runtime-meta.json"),
-    join(dist, "polyfills-meta.json"),
-  ];
+  try {
+    log.info("[bundle-analyzer] Starting bundle analysis...");
 
-  const allModules: BundleModule[] = [];
-  const packageMap = new Map<string, { size: number; modules: string[] }>();
-  const duplicateMap = new Map<string, number>();
-  const pathCountMap = new Map<string, number>();
+    const dist = resolveDistPath(config);
+    const metaFiles = [
+      join(dist, "preact-runtime-meta.json"),
+      join(dist, "polyfills-meta.json"),
+    ];
 
-  let totalSize = 0;
-  let totalGzipSize = 0;
-  const entryPoints: string[] = [];
+    const allModules: BundleModule[] = [];
+    const packageMap = new Map<string, { size: number; modules: string[] }>();
+    const duplicateMap = new Map<string, number>();
+    const pathCountMap = new Map<string, number>();
 
-  for (const metaFile of metaFiles) {
-    if (!existsSync(metaFile)) {
-      continue;
-    }
+    let totalSize = 0;
+    let totalGzipSize = 0;
+    const entryPoints: string[] = [];
 
-    try {
-      const metaContent = readFileSync(metaFile, "utf-8");
-      const meta = JSON.parse(metaContent);
+    for (const metaFile of metaFiles) {
+      if (!existsSync(metaFile)) {
+        log.info(`[bundle-analyzer] Metadata not found: ${metaFile}`);
+        continue;
+      }
+
+      try {
+        log.info(`[bundle-analyzer] Analyzing: ${metaFile}`);
+
+        const metaContent = readFileSync(metaFile, "utf-8");
+        const meta = JSON.parse(metaContent);
 
       const inputs = meta.inputs || {};
       const outputs = meta.outputs || {};
@@ -156,23 +175,36 @@ export async function analyzeBundle(
         pkg.modules.push(normalizedPath);
       }
     } catch (err) {
-      log.warn(`Failed to parse metafile ${metaFile}: ${err}`);
+      log.warn(`[bundle-analyzer] Failed to parse ${metaFile}: ${err}`);
     }
-  }
+    }
 
-  for (const [path, count] of pathCountMap) {
+    // Find duplicates
+    for (const [path, count] of pathCountMap) {
     if (count > 1) {
       duplicateMap.set(path, count);
     }
-  }
+    }
 
-  for (const mod of allModules) {
+    // Calculate percentages
+    for (const mod of allModules) {
     mod.percentage = totalSize > 0 ? (mod.size / totalSize) * 100 : 0;
-  }
+    }
 
-  allModules.sort((a, b) => b.size - a.size);
+    // Sort by size descending
+    allModules.sort((a, b) => b.size - a.size);
 
-  return {
+    // Identify large modules
+    const largeModules = allModules.filter((m) => m.isLarge);
+
+    log.info(
+    `[bundle-analyzer] Analysis complete: ${allModules.length} modules, ${totalSize} bytes`,
+    );
+    log.info(
+    `[bundle-analyzer] Large modules: ${largeModules.length}, Duplicates: ${duplicateMap.size}`,
+    );
+
+    return {
     modules: allModules,
     totalSize,
     totalGzipSize,
@@ -180,8 +212,14 @@ export async function analyzeBundle(
     packages: packageMap,
     timestamp: new Date().toISOString(),
     entryPoints,
-  };
-}
+    };
+    } catch (error) {
+    log.error(
+    `[bundle-analyzer] Analysis failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    throw error;
+    }
+    }
 
 function buildTreemap(modules: BundleModule[]): TreemapNode {
   const packageGroups = new Map<string, BundleModule[]>();
