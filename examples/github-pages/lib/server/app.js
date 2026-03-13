@@ -80,41 +80,99 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>500 - Internal Server Error</title>
   <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --muted: #666666;
+      --border: #eaeaea;
+      --box-bg: #fafafa;
+      --err-text: #e00;
+    }
+    [data-theme="dark"] {
+      --bg: #000000;
+      --text: #ffffff;
+      --muted: #888888;
+      --border: #333333;
+      --box-bg: #0a0a0a;
+      --err-text: #ff5555;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #000000;
+        --text: #ffffff;
+        --muted: #888888;
+        --border: #333333;
+        --box-bg: #0a0a0a;
+        --err-text: #ff5555;
+      }
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: #f5f5f5;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
     }
     .container {
-      max-width: 600px;
-      margin: 60px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 800px;
+      width: 100%;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      text-align: left;
     }
     h1 {
-      color: #d32f2f;
-      margin: 0 0 20px 0;
-      font-size: 32px;
+      color: var(--text);
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
     }
     p {
-      color: #666;
-      line-height: 1.6;
-      margin: 10px 0;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 4px 0;
+      font-size: 14px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0 10px 0;
+    }
+    button {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: var(--border);
     }
     .error-details {
-      background: #fafafa;
-      border-left: 4px solid #d32f2f;
-      padding: 15px;
-      margin: 20px 0;
-      font-family: monospace;
-      font-size: 12px;
-      color: #333;
+      background: var(--box-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      margin: 10px 0 24px 0;
+      font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+      font-size: 13px;
+      color: var(--err-text);
       overflow-x: auto;
       white-space: pre-wrap;
       word-break: break-word;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -123,8 +181,48 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
     <h1>500 - Internal Server Error</h1>
     <p>The server encountered an unexpected error while processing your request.</p>
     <p>Our team has been notified. Please try again later.</p>
+    
+    <div class="controls" id="controls" style="display:none;">
+      <button id="theme-btn">Switch Theme</button>
+      <button id="copy-btn">Copy Error</button>
+    </div>
+
     <div class="error-details" id="details" style="display:none;"></div>
   </div>
+
+  <script>
+    const details = document.getElementById('details');
+    const controls = document.getElementById('controls');
+    
+    // Un-hide the buttons if the server injected the error block
+    if (details.style.display === 'block') {
+      controls.style.display = 'flex';
+    }
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('theme-btn');
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      let newTheme = 'dark';
+      if (currentTheme === 'dark' || (!currentTheme && isSystemDark)) {
+        newTheme = 'light';
+      }
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+    });
+
+    // Copy to Clipboard
+    const copyBtn = document.getElementById('copy-btn');
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(details.innerText).then(() => {
+        const originalText = copyBtn.innerText;
+        copyBtn.innerText = 'Copied!';
+        setTimeout(() => { copyBtn.innerText = originalText; }, 2000);
+      });
+    });
+  </script>
 </body>
 </html>`;
 /**
@@ -136,50 +234,63 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
  * @param error Error object or string to log
  * @param showDetails Whether to include error details in response (dev mode)
  */
-function sendSafeError(res, error, showDetails = false) {
-    const errorMsg = error instanceof Error ? error.message : String(error);
-    const errorStack = error instanceof Error ? error.stack : "";
-    // Log error with full stack trace
-    log.error(`[Error] ${errorMsg}`);
-    if (errorStack) {
-        log.error(`Stack:\n${errorStack}`);
+function sendSafeError(
+  res,
+  error,
+  showDetails
+) {
+  const errorMsg = error instanceof Error ? error.message : String(error);
+  const errorStack = error instanceof Error ? error.stack : "";
+
+  // Log error with full stack trace
+  log.error(`[Error] ${errorMsg}`);
+  if (errorStack) {
+    log.error(`Stack:\n${errorStack}`);
+  }
+
+  // If headers already sent, destroy socket to prevent data corruption
+  if (res.headersSent) {
+    log.error("[Error Response] Headers already sent, destroying socket");
+    if (res.socket && !res.socket.destroyed) {
+      res.socket.destroy();
     }
-    // If headers already sent, destroy socket to prevent data corruption
-    if (res.headersSent) {
-        log.error("[Error Response] Headers already sent, destroying socket");
-        if (res.socket && !res.socket.destroyed) {
-            res.socket.destroy();
-        }
-        return;
+    return;
+  }
+
+  // Send 500 response with safe error template
+  try {
+    let html = ERROR_500_TEMPLATE;
+
+    if (showDetails && errorStack) {
+      // Escape HTML characters so the stack trace doesn't break the formatting
+      const safeStack = errorStack
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Replace the ENTIRE hidden div with a visible one that contains the stack trace
+      html = html.replace(
+        '<div class="error-details" id="details" style="display:none;"></div>',
+        `<div class="error-details" id="details" style="display:block;">\n${safeStack}\n</div>`
+      );
     }
-    // Send 500 response with safe error template
+
+    res.statusCode = 500;
+    res.setHeader("content-type", "text/html; charset=utf-8");
+    res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+    res.end(html);
+  } catch (e) {
+    // If error sending response, just try to end the response
+    log.error(`[Error Response] Failed to send error page: ${e}`);
     try {
-        let html = ERROR_500_TEMPLATE;
-        if (showDetails && errorStack) {
-            // In dev mode, include error details
-            html = html.replace('id="details" style="display:none;"', 'id="details"');
-            html = html.replace("<script>", `<script>
-document.getElementById('details').textContent = ${JSON.stringify(errorStack)};
-`);
-        }
-        res.statusCode = 500;
-        res.setHeader("content-type", "text/html; charset=utf-8");
-        res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
-        res.end(html);
+      res.end();
+    } catch {
+      // Last resort: destroy socket
+      if (res.socket && !res.socket.destroyed) {
+        res.socket.destroy();
+      }
     }
-    catch (e) {
-        // If error sending response, just try to end the response
-        log.error(`[Error Response] Failed to send error page: ${e}`);
-        try {
-            res.end();
-        }
-        catch {
-            // Last resort: destroy socket
-            if (res.socket && !res.socket.destroyed) {
-                res.socket.destroy();
-            }
-        }
-    }
+  }
 }
 /**
  * Creates and configures the main HTTP application handler.

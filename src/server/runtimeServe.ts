@@ -9,7 +9,14 @@ import {
   svelteEsbuildPlugin,
 } from "../compilers/esbuild-plugins.js";
 
+
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export const preactCode = readFileSync(
+    resolve(__dirname, "../vendor/preact/preact.module.js"),
+    "utf-8",
+);
 
 /**
  * Cache for compiled hydration modules.
@@ -42,10 +49,7 @@ function etagOf(s: string) {
 export function runtimeHydrateModule() {
   // Browser-safe runtime (ESM) using local vendored preact code
   // Inline preact directly from vendor directory for zero external dependencies
-  const preactCode = readFileSync(
-    resolve(__dirname, "../vendor/preact/preact.module.js"),
-    "utf-8",
-  );
+  
 
   return `
 ${preactCode}

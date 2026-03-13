@@ -27,6 +27,7 @@ import { isFeatureEnabled } from "../core/features.js";
 import { runQuery } from "../graphql/index.js";
 import { I18n } from "../i18n/index.js";
 import sirv from "sirv";
+import { preactCode } from './runtimeServe.js'
 
 /**
  * Manages the lifecycle of file watchers and HMR connections.
@@ -107,41 +108,99 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>500 - Internal Server Error</title>
   <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --muted: #666666;
+      --border: #eaeaea;
+      --box-bg: #fafafa;
+      --err-text: #e00;
+    }
+    [data-theme="dark"] {
+      --bg: #000000;
+      --text: #ffffff;
+      --muted: #888888;
+      --border: #333333;
+      --box-bg: #0a0a0a;
+      --err-text: #ff5555;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #000000;
+        --text: #ffffff;
+        --muted: #888888;
+        --border: #333333;
+        --box-bg: #0a0a0a;
+        --err-text: #ff5555;
+      }
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: #f5f5f5;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
     }
     .container {
-      max-width: 600px;
-      margin: 60px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 800px;
+      width: 100%;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      text-align: left;
     }
     h1 {
-      color: #d32f2f;
-      margin: 0 0 20px 0;
-      font-size: 32px;
+      color: var(--text);
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
     }
     p {
-      color: #666;
-      line-height: 1.6;
-      margin: 10px 0;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 4px 0;
+      font-size: 14px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0 10px 0;
+    }
+    button {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: var(--border);
     }
     .error-details {
-      background: #fafafa;
-      border-left: 4px solid #d32f2f;
-      padding: 15px;
-      margin: 20px 0;
-      font-family: monospace;
-      font-size: 12px;
-      color: #333;
+      background: var(--box-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+      margin: 10px 0 24px 0;
+      font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+      font-size: 13px;
+      color: var(--err-text);
       overflow-x: auto;
       white-space: pre-wrap;
       word-break: break-word;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -150,8 +209,48 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
     <h1>500 - Internal Server Error</h1>
     <p>The server encountered an unexpected error while processing your request.</p>
     <p>Our team has been notified. Please try again later.</p>
+    
+    <div class="controls" id="controls" style="display:none;">
+      <button id="theme-btn">Switch Theme</button>
+      <button id="copy-btn">Copy Error</button>
+    </div>
+
     <div class="error-details" id="details" style="display:none;"></div>
   </div>
+
+  <script>
+    const details = document.getElementById('details');
+    const controls = document.getElementById('controls');
+    
+    // Un-hide the buttons if the server injected the error block
+    if (details.style.display === 'block') {
+      controls.style.display = 'flex';
+    }
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('theme-btn');
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const isSystemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      let newTheme = 'dark';
+      if (currentTheme === 'dark' || (!currentTheme && isSystemDark)) {
+        newTheme = 'light';
+      }
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+    });
+
+    // Copy to Clipboard
+    const copyBtn = document.getElementById('copy-btn');
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(details.innerText).then(() => {
+        const originalText = copyBtn.innerText;
+        copyBtn.innerText = 'Copied!';
+        setTimeout(() => { copyBtn.innerText = originalText; }, 2000);
+      });
+    });
+  </script>
 </body>
 </html>`;
 
@@ -192,13 +291,16 @@ function sendSafeError(
     let html = ERROR_500_TEMPLATE;
 
     if (showDetails && errorStack) {
-      // In dev mode, include error details
-      html = html.replace('id="details" style="display:none;"', 'id="details"');
+      // Escape HTML characters so the stack trace doesn't break the formatting
+      const safeStack = errorStack
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Replace the ENTIRE hidden div with a visible one that contains the stack trace
       html = html.replace(
-        "<script>",
-        `<script>
-document.getElementById('details').textContent = ${JSON.stringify(errorStack)};
-`,
+        '<div class="error-details" id="details" style="display:none;"></div>',
+        `<div class="error-details" id="details" style="display:block;">\n${safeStack}\n</div>`
       );
     }
 
@@ -450,6 +552,18 @@ export async function createApp(opts: {
           return;
         }
 
+        if (ctx.url.pathname === "/__runtime/preact.js") {
+          ctx.res.statusCode = 200;
+          ctx.res.setHeader(
+            "content-type",
+            "application/javascript; charset=utf-8",
+          );
+          // Cache it forever so the browser only downloads it once
+          ctx.res.setHeader("cache-control", "public, max-age=31536000, immutable");
+          ctx.res.end(preactCode); // Use the variable from your runtimeServe file here
+          return;
+        }
+
         if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
           ctx.res.statusCode = 200;
           ctx.res.setHeader(
@@ -457,8 +571,8 @@ export async function createApp(opts: {
             "application/javascript; charset=utf-8",
           );
           const islandCode = `
-import { hydrate } from "https://esm.sh/preact@10";
-import { h } from "https://esm.sh/preact@10";
+import { hydrate } from "/__runtime/preact.js";
+import { h } from "/__runtime/preact.js";
 
 function extractIslands() {
   const islands = [];
