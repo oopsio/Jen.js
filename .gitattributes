@@ -6,3 +6,4 @@ apps/cli-rustdoc linguist-generated
 apps/jsdoc linguist-generated
 *.html linguist-documentation
 **/lib/ linguist-vendored
+.agents/skills linguist-vendored

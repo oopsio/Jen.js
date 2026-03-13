@@ -7,22 +7,18 @@ const GRAY = "\x1b[90m";
 const BOLD = "\x1b[1m";
 const DIM = "\x1b[2m";
 export function printBanner(port, env, version = "1.0.0") {
-  // Clear screen mostly
-  // console.log("\x1b[2J\x1b[3J\x1b[H");
-  console.log();
-  console.log(`  ${PURPLE}       __               ${CYAN}   _     ${RES}`);
-  console.log(`  ${PURPLE}      / /__  ____       ${CYAN}  (_)____${RES}`);
-  console.log(`  ${PURPLE} __  / / _ \/ __ \      ${CYAN} / / ___/${RES}`);
-  console.log(
-    `  ${PURPLE}/ /_/ /  __/ / / /${GRAY}_____${CYAN}/ / (__  )${RES}`,
-  );
-  console.log(`  ${PURPLE}\____/\___/_/ /_/${GRAY}_____/${CYAN}_/____/ ${RES}`);
-  console.log();
-  console.log(`  ${GRAY}Jen.js Framework ${DIM}v${version}${RES}`);
-  console.log();
-  console.log(
-    `  ${GRAY}➜${RES}  ${BOLD}Local:${RES}   ${CYAN}http://localhost:${port}/${RES}`,
-  );
-  console.log(`  ${GRAY}➜${RES}  ${BOLD}Mode:${RES}    ${PURPLE}${env}${RES}`);
-  console.log();
+    // Clear screen mostly
+    // console.log("\x1b[2J\x1b[3J\x1b[H");
+    console.log();
+    console.log(`  ${PURPLE}       __               ${CYAN}   _     ${RES}`);
+    console.log(`  ${PURPLE}      / /__  ____       ${CYAN}  (_)____${RES}`);
+    console.log(`  ${PURPLE} __  / / _ \/ __ \      ${CYAN} / / ___/${RES}`);
+    console.log(`  ${PURPLE}/ /_/ /  __/ / / /${GRAY}_____${CYAN}/ / (__  )${RES}`);
+    console.log(`  ${PURPLE}\____/\___/_/ /_/${GRAY}_____/${CYAN}_/____/ ${RES}`);
+    console.log();
+    console.log(`  ${GRAY}Jen.js Framework ${DIM}v${version}${RES}`);
+    console.log();
+    console.log(`  ${GRAY}➜${RES}  ${BOLD}Local:${RES}   ${CYAN}http://localhost:${port}/${RES}`);
+    console.log(`  ${GRAY}➜${RES}  ${BOLD}Mode:${RES}    ${PURPLE}${env}${RES}`);
+    console.log();
 }

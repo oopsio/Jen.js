@@ -1,12 +1,70 @@
-import { existsSync } from "node:fs";
+import { existsSync, } from "node:fs";
 import { join, basename } from "node:path";
 import esbuild from "esbuild";
 import { pathToFileURL } from "node:url";
+/** Default max request body size: 10MB. */
+export const DEFAULT_MAX_BODY_SIZE = 10 * 1024 * 1024;
 /** Cache directory for transpiled API routes. */
 const apiCacheDir = join(process.cwd(), "node_modules", ".jen", "api-cache");
 /**
+ * Coerce query parameter value to appropriate type.
+ * - "true" / "false" → boolean
+ * - numeric strings → number
+ * - empty string → null
+ * - otherwise → string
+ *
+ * @param value - Raw query string value
+ * @returns Coerced value
+ */
+function coerceQueryValue(value) {
+    if (value === "true")
+        return true;
+    if (value === "false")
+        return false;
+    if (value === "")
+        return null;
+    const num = Number(value);
+    if (!isNaN(num) && value.trim() !== "")
+        return num;
+    return value;
+}
+/**
+ * Validate and parse query parameters with type coercion.
+ * Prevents type confusion bugs like `query.limit + 10` returning "10010" string.
+ *
+ * @param url - URL object with search parameters
+ * @returns Parsed query parameters with coerced types
+ */
+export function validateQuery(url) {
+    const query = {};
+    for (const [key, value] of url.searchParams.entries()) {
+        query[key] = coerceQueryValue(value);
+    }
+    return query;
+}
+/**
+ * Validate request body with size limit.
+ * Default max size is 10MB. Throws ValidationError if exceeded or invalid JSON.
+ *
+ * @param body - Parsed body object
+ * @param bodySize - Size of body in bytes
+ * @param maxSize - Maximum allowed body size in bytes (default 10MB)
+ * @returns true if body is valid
+ * @throws ValidationError if body exceeds maxSize
+ */
+export function validateBody(body, bodySize, maxSize = DEFAULT_MAX_BODY_SIZE) {
+    if (bodySize > maxSize) {
+        throw {
+            error: "Payload too large",
+            field: "body",
+            details: `Max size is ${maxSize} bytes, got ${bodySize} bytes`,
+        };
+    }
+    return true;
+}
+/**
  * Transpile a TypeScript API route file to JavaScript.
- * Uses esbuild to convert TS → JS, bundle dependencies, and output as ESM.
+ * Uses esbuild to convert TS + JS, bundle dependencies, and output as ESM.
  * The transpiled file is cached in node_modules/.jen/api-cache with a timestamp
  * in the filename to allow side-by-side versions if the file changes.
  *
@@ -18,21 +76,18 @@ const apiCacheDir = join(process.cwd(), "node_modules", ".jen", "api-cache");
  * @throws If esbuild fails to transpile
  */
 async function transpileApiRoute(filePath) {
-  const outfile = join(
-    apiCacheDir,
-    basename(filePath).replace(/\.ts$/, `.${Date.now()}.mjs`),
-  );
-  await esbuild.build({
-    entryPoints: [filePath],
-    outfile,
-    format: "esm",
-    platform: "node",
-    target: "es2022",
-    bundle: true,
-    external: ["preact", "preact-render-to-string", "jenjs"],
-    write: true,
-  });
-  return outfile;
+    const outfile = join(apiCacheDir, basename(filePath).replace(/\.ts$/, `.${Date.now()}.mjs`));
+    await esbuild.build({
+        entryPoints: [filePath],
+        outfile,
+        format: "esm",
+        platform: "node",
+        target: "es2022",
+        bundle: true,
+        external: ["preact", "preact-render-to-string", "jenjs"],
+        write: true,
+    });
+    return outfile;
 }
 /**
  * Attempt to route and handle an API request.
@@ -53,11 +108,13 @@ async function transpileApiRoute(filePath) {
  * 2. Resolve route file (exact or dynamic match)
  * 3. Transpile if TypeScript
  * 4. Load module and find handler for HTTP method
- * 5. Parse request body
- * 6. Call handler with context
- * 7. Serialize response (Response, string, or object)
+ * 5. Parse request body with size limit
+ * 6. Validate query and body
+ * 7. Call handler with context
+ * 8. Serialize response (Response, string, or object)
  *
  * All errors send JSON response with error message.
+ * HTTP 413 (Payload Too Large) if body exceeds 10MB.
  * HTTP 405 (Method Not Allowed) if method handler not exported.
  * HTTP 404 if no matching route file.
  * HTTP 500 if handler throws or transpilation fails.
@@ -66,172 +123,241 @@ async function transpileApiRoute(filePath) {
  * @returns true if handled, false if no API route found
  */
 export async function tryHandleApiRoute(opts) {
-  const { req, res, siteDir } = opts;
-  const url = new URL(
-    req.url ?? "/",
-    `http://${req.headers.host ?? "localhost"}`,
-  );
-  const method = (req.method ?? "GET").toUpperCase();
-  // Only handle /api/* requests
-  if (!url.pathname.startsWith("/api/")) return false;
-  // Extract path segments after /api/ prefix
-  const pathParts = url.pathname
-    .slice("/api/".length)
-    .split("/")
-    .filter(Boolean);
-  // /api/ with no segments is 404
-  if (pathParts.length === 0) {
-    res.statusCode = 404;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: "API route not found" }));
-    return true;
-  }
-  // Resolve route file (exact match or dynamic)
-  let apiFile = null;
-  let routeParams = {};
-  // Try exact file match: /api/hello/world → api/hello/world.ts
-  const exactPath = join(
-    process.cwd(),
-    siteDir,
-    "api",
-    `${pathParts.join("/")}.ts`,
-  );
-  if (existsSync(exactPath)) {
-    apiFile = exactPath;
-  } else {
-    // Try dynamic route match: /api/users/123 → api/users/[id].ts
-    const basePath = join(process.cwd(), siteDir, "api");
-    for (let i = pathParts.length; i >= 1; i--) {
-      const staticSegments = pathParts.slice(0, i);
-      const dynamicSegments = pathParts.slice(i);
-      // Simple approach: check api/[param].ts for /api/123
-      // TODO: Support nested dynamic routes like api/users/[id]/posts/[postId].ts
-      if (staticSegments.length === 0 && dynamicSegments.length === 1) {
-        const paramFile = join(basePath, `[${dynamicSegments[0]}].ts`);
-        if (existsSync(paramFile)) {
-          apiFile = paramFile;
-          routeParams[dynamicSegments[0]] = dynamicSegments[0];
-          break;
+    const { req, res, siteDir, maxBodySize = DEFAULT_MAX_BODY_SIZE } = opts;
+    const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
+    const methodStr = (req.method ?? "GET").toUpperCase();
+    // Validate method is one of the allowed HTTP methods
+    const allowedMethods = [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "HEAD",
+        "OPTIONS",
+    ];
+    const method = methodStr;
+    if (!allowedMethods.includes(method)) {
+        res.statusCode = 405;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.setHeader("allow", allowedMethods.join(", "));
+        res.end(JSON.stringify({ error: `${methodStr} not allowed` }));
+        return true;
+    }
+    // Only handle /api/* requests
+    if (!url.pathname.startsWith("/api/"))
+        return false;
+    // Extract path segments after /api/ prefix
+    const pathParts = url.pathname
+        .slice("/api/".length)
+        .split("/")
+        .filter(Boolean);
+    // /api/ with no segments is 404
+    if (pathParts.length === 0) {
+        res.statusCode = 404;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify({ error: "API route not found" }));
+        return true;
+    }
+    // Resolve route file (exact match or dynamic)
+    let apiFile = null;
+    let routeParams = {};
+    // Try exact file match: /api/hello/world → api/hello/world.ts
+    const exactPath = join(process.cwd(), siteDir, "api", `${pathParts.join("/")}.ts`);
+    if (existsSync(exactPath)) {
+        apiFile = exactPath;
+    }
+    else {
+        // Try dynamic route match: /api/users/123 → api/users/[id].ts
+        const basePath = join(process.cwd(), siteDir, "api");
+        for (let i = pathParts.length; i >= 1; i--) {
+            const staticSegments = pathParts.slice(0, i);
+            const dynamicSegments = pathParts.slice(i);
+            // Simple approach: check api/[param].ts for /api/123
+            // TODO: Support nested dynamic routes like api/users/[id]/posts/[postId].ts
+            if (staticSegments.length === 0 && dynamicSegments.length === 1) {
+                const paramFile = join(basePath, `[${dynamicSegments[0]}].ts`);
+                if (existsSync(paramFile)) {
+                    apiFile = paramFile;
+                    routeParams[dynamicSegments[0]] = dynamicSegments[0];
+                    break;
+                }
+            }
         }
-      }
     }
-  }
-  if (!apiFile) {
-    res.statusCode = 404;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: "API route not found" }));
-    return true;
-  }
-  // Transpile TypeScript to JavaScript
-  let moduleUrl = apiFile;
-  if (apiFile.endsWith(".ts")) {
-    moduleUrl = await transpileApiRoute(apiFile);
-  }
-  // Load module and get method handlers
-  let mod;
-  try {
-    // Cache-busting query param ensures fresh module (important in dev mode)
-    mod = await import(pathToFileURL(moduleUrl).href + `?t=${Date.now()}`);
-  } catch (err) {
-    res.statusCode = 500;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(
-      JSON.stringify({
-        error: "Failed to load API route",
-        details: err.message,
-      }),
-    );
-    return true;
-  }
-  // Get handler for the HTTP method
-  const handler = mod[method];
-  if (!handler) {
-    res.statusCode = 405;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.setHeader("allow", Object.keys(mod).join(", "));
-    res.end(JSON.stringify({ error: `${method} not allowed` }));
-    return true;
-  }
-  // Parse request body
-  const body = await readRequestBody(req);
-  // Build handler context
-  const ctx = {
-    req,
-    res,
-    url,
-    method,
-    query: Object.fromEntries(url.searchParams.entries()),
-    body,
-    params: routeParams,
-  };
-  // Execute handler and serialize response
-  try {
-    const result = await handler(ctx);
-    // If handler manually wrote response, don't double-send
-    if (res.writableEnded) return true;
-    // Serialize Response object
-    if (result instanceof Response) {
-      res.statusCode = result.status;
-      result.headers.forEach((v, k) => res.setHeader(k, v));
-      const buf = Buffer.from(await result.arrayBuffer());
-      res.end(buf);
-      return true;
+    if (!apiFile) {
+        res.statusCode = 404;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify({ error: "API route not found" }));
+        return true;
     }
-    // Serialize string as plain text
-    if (typeof result === "string") {
-      res.statusCode = 200;
-      res.setHeader("content-type", "text/plain; charset=utf-8");
-      res.end(result);
-      return true;
+    // Transpile TypeScript to JavaScript
+    let moduleUrl = apiFile;
+    if (apiFile.endsWith(".ts")) {
+        moduleUrl = await transpileApiRoute(apiFile);
     }
-    // Serialize object as JSON (null is valid)
-    res.statusCode = 200;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify(result ?? null));
-    return true;
-  } catch (err) {
-    res.statusCode = 500;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(
-      JSON.stringify({ error: "Internal server error", details: err.message }),
-    );
-    return true;
-  }
+    // Load module and get method handlers
+    let mod;
+    try {
+        // Cache-busting query param ensures fresh module (important in dev mode)
+        mod = await import(pathToFileURL(moduleUrl).href + `?t=${Date.now()}`);
+    }
+    catch (err) {
+        res.statusCode = 500;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify({
+            error: "Failed to load API route",
+            details: err.message,
+        }));
+        return true;
+    }
+    // Get handler for the HTTP method
+    const handler = mod[method];
+    if (!handler) {
+        res.statusCode = 405;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.setHeader("allow", Object.keys(mod).join(", "));
+        res.end(JSON.stringify({ error: `${method} not allowed` }));
+        return true;
+    }
+    // Parse request body with size limit
+    let body;
+    let bodySize = 0;
+    try {
+        const result = await readRequestBody(req, maxBodySize);
+        body = result.body;
+        bodySize = result.size;
+        // Validate body size
+        validateBody(body, bodySize, maxBodySize);
+    }
+    catch (err) {
+        if (err.error === "Payload too large") {
+            res.statusCode = 413;
+            res.setHeader("content-type", "application/json; charset=utf-8");
+            res.end(JSON.stringify({ error: err.error, details: err.details }));
+            return true;
+        }
+        res.statusCode = 400;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify({ error: "Bad request", details: err.message }));
+        return true;
+    }
+    // Validate and coerce query parameters
+    let query;
+    try {
+        query = validateQuery(url);
+    }
+    catch (err) {
+        res.statusCode = 400;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify({
+            error: "Invalid query parameters",
+            details: err.message,
+        }));
+        return true;
+    }
+    // Build handler context
+    const ctx = {
+        req,
+        res,
+        url,
+        method,
+        query,
+        body,
+        params: routeParams,
+    };
+    // Execute handler and serialize response
+    try {
+        const result = await handler(ctx);
+        // If handler manually wrote response, don't double-send
+        if (res.writableEnded)
+            return true;
+        // Serialize Response object
+        if (result instanceof Response) {
+            res.statusCode = result.status;
+            result.headers.forEach((v, k) => res.setHeader(k, v));
+            const buf = Buffer.from(await result.arrayBuffer());
+            res.end(buf);
+            return true;
+        }
+        // Serialize string as plain text
+        if (typeof result === "string") {
+            res.statusCode = 200;
+            res.setHeader("content-type", "text/plain; charset=utf-8");
+            res.end(result);
+            return true;
+        }
+        // Serialize object as JSON (null is valid)
+        res.statusCode = 200;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify(result ?? null));
+        return true;
+    }
+    catch (err) {
+        res.statusCode = 500;
+        res.setHeader("content-type", "application/json; charset=utf-8");
+        res.end(JSON.stringify({ error: "Internal server error", details: err.message }));
+        return true;
+    }
 }
 /**
- * Parse request body based on Content-Type header.
+ * Parse request body based on Content-Type header with size limit enforcement.
  * Reads all chunks from the request stream and deserializes based on content type.
  *
- * - GET/HEAD: Returns null (no body expected)
- * - JSON (application/json): Parses and returns object; falls back to { __raw } if invalid JSON
- * - Other: Returns { __raw } with raw body string
+ * - GET/HEAD: Returns { body: null, size: 0 } (no body expected)
+ * - JSON (application/json): Parses and returns object; throws on invalid JSON
+ * - Other: Returns { body: { __raw }, size: byteLength }
+ *
+ * Throws ValidationError if body size exceeds maxSize.
  *
  * This function is shared between different request handlers in the framework.
  *
  * @param req - Node.js IncomingMessage to read body from
- * @returns Parsed body object or null
+ * @param maxSize - Maximum allowed body size in bytes (default 10MB)
+ * @returns Object with parsed body and size in bytes
+ * @throws ValidationError if body exceeds maxSize or invalid JSON
  */
-async function readRequestBody(req) {
-  const method = (req.method ?? "GET").toUpperCase();
-  // Methods without bodies per HTTP spec
-  if (method === "GET" || method === "HEAD") return null;
-  // Read all body chunks
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(Buffer.from(chunk));
-  }
-  if (chunks.length === 0) return null;
-  const raw = Buffer.concat(chunks).toString("utf8");
-  const ct = (req.headers["content-type"] ?? "").toString();
-  // Try to parse JSON
-  if (ct.includes("application/json")) {
+async function readRequestBody(req, maxSize = DEFAULT_MAX_BODY_SIZE) {
+    const method = (req.method ?? "GET").toUpperCase();
+    // Methods without bodies per HTTP spec
+    if (method === "GET" || method === "HEAD")
+        return { body: null, size: 0 };
+    // Read all body chunks with size limit check
+    const chunks = [];
+    let totalSize = 0;
     try {
-      return JSON.parse(raw);
-    } catch {
-      // Return raw body if JSON parsing fails
-      return { __raw: raw };
+        for await (const chunk of req) {
+            totalSize += chunk.length;
+            if (totalSize > maxSize) {
+                throw {
+                    error: "Payload too large",
+                    field: "body",
+                    details: `Max size is ${maxSize} bytes, got at least ${totalSize} bytes`,
+                };
+            }
+            chunks.push(Buffer.from(chunk));
+        }
     }
-  }
-  // Return raw body for non-JSON content
-  return { __raw: raw };
+    catch (err) {
+        // Re-throw validation errors
+        if (err.error === "Payload too large")
+            throw err;
+        throw new Error(`Failed to read request body: ${err.message}`);
+    }
+    if (chunks.length === 0)
+        return { body: null, size: 0 };
+    const bodyBuffer = Buffer.concat(chunks);
+    const raw = bodyBuffer.toString("utf8");
+    const ct = (req.headers["content-type"] ?? "").toString();
+    // Try to parse JSON
+    if (ct.includes("application/json")) {
+        try {
+            return { body: JSON.parse(raw), size: bodyBuffer.byteLength };
+        }
+        catch (err) {
+            throw new Error(`Invalid JSON: ${err.message}`);
+        }
+    }
+    // Return raw body for non-JSON content
+    return { body: { __raw: raw }, size: bodyBuffer.byteLength };
 }

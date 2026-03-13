@@ -1,141 +1,377 @@
-import {
-  mkdirSync,
-  rmSync,
-  writeFileSync,
-  existsSync,
-  copyFileSync,
-  readdirSync,
-  statSync,
-} from "node:fs";
-import { join } from "node:path";
+import { mkdirSync, rmSync, writeFileSync, existsSync, copyFileSync, readdirSync, statSync, readFileSync, renameSync, } from "node:fs";
+import { join, dirname, basename, extname } from "node:path";
+import { fileURLToPath } from "node:url";
 import esbuild from "esbuild";
 import { createScssCompiler } from "../css/compiler.js";
-import {
-  vueEsbuildPlugin,
-  svelteEsbuildPlugin,
-} from "../compilers/esbuild-plugins.js";
+import { vueEsbuildPlugin, svelteEsbuildPlugin, } from "../compilers/esbuild-plugins.js";
 import { scanRoutes } from "../core/routes/scan.js";
 import { resolveDistPath } from "../core/paths.js";
 import { log } from "../shared/log.js";
 import { renderRouteToHtml } from "../runtime/render.js";
+import { injectFonts } from "../fonts/inject.js";
+import { AssetHasher } from "./asset-hashing.js";
+// Get __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// Ensure Preact is never bundled multiple times
+const PREACT_EXTERNALS = ["preact", "preact/hooks", "preact/compat", "preact/jsx-runtime"];
 /**
  * Recursively copies a directory and all its contents.
  * Used to copy static assets from the source directory to the build output.
- * Creates the destination directory structure as needed.
- *
- * @param src The source directory path.
- * @param dst The destination directory path.
  */
 function copyDir(src, dst) {
-  if (!existsSync(src)) return;
-  mkdirSync(dst, { recursive: true });
-  for (const name of readdirSync(src)) {
-    const sp = join(src, name);
-    const dp = join(dst, name);
-    const st = statSync(sp);
-    if (st.isDirectory()) copyDir(sp, dp);
-    else copyFileSync(sp, dp);
-  }
+    if (!existsSync(src))
+        return;
+    mkdirSync(dst, { recursive: true });
+    for (const name of readdirSync(src)) {
+        const sp = join(src, name);
+        const dp = join(dst, name);
+        const st = statSync(sp);
+        if (st.isDirectory())
+            copyDir(sp, dp);
+        else
+            copyFileSync(sp, dp);
+    }
+}
+/**
+ * Mock Response/Request to prevent crashes during SSG
+ * when components or middleware call res.setHeader()
+ */
+function createSsgMocks() {
+    return {
+        req: {
+            headers: {},
+            method: "GET",
+            url: "/",
+            cookies: {},
+        },
+        res: {
+            setHeader: () => { },
+            getHeader: () => { },
+            getHeaders: () => ({}),
+            removeHeader: () => { },
+            writeHead: () => ({}),
+            end: () => { },
+            statusCode: 200,
+        },
+    };
 }
 /**
  * Builds a static site by pre-rendering all routes to HTML files.
- * This is the core static site generation (SSG) function that runs at build time.
- * It performs the following steps:
- * 1. Clears the previous build output directory
- * 2. Discovers all route files in the configured site directory
- * 3. Renders each route to a static HTML file
- * 4. Copies static assets from the source directory
- * 5. Bundles Vue and Svelte components for client-side rehydration
- * 6. Compiles SCSS to CSS for the global stylesheet
- *
- * Routes are rendered with empty req/res objects (SSG mode) to avoid middleware execution.
- * This produces pure static HTML that can be served by any web server.
- * Hydration scripts are still injected if the route has hydrate:true, allowing for
- * optional client-side interactivity in otherwise static pages.
- *
- * @param opts Configuration object.
- * @param opts.config The Jen.js framework configuration.
- * @throws Logs warnings for missing assets or component bundling failures but does not stop the build.
  */
 export async function buildSite(opts) {
-  const { config } = opts;
-  // Clear and recreate the dist directory for a clean build.
-  const dist = resolveDistPath(config);
-  rmSync(dist, { recursive: true, force: true });
-  mkdirSync(dist, { recursive: true });
-  // Discover all routes and pre-render each to a static HTML file.
-  const routes = scanRoutes(config);
-  log.info(`Building SSG: ${routes.length} routes`);
-  for (const r of routes) {
-    // Create a synthetic URL for each route. Used as the request URL during rendering.
-    const url = new URL("http://localhost" + r.urlPath);
-    // Render the route to HTML. Empty req/res indicates SSG mode (no middleware execution).
-    const html = await renderRouteToHtml({
-      config,
-      route: r,
-      req: {},
-      res: {},
-      url,
-      params: {},
-      query: {},
-      headers: {},
-      cookies: {},
-    });
-    // Calculate output path. Root route goes to index.html, nested routes get their own directories.
-    const outPath =
-      r.urlPath === "/"
-        ? join(dist, "index.html")
-        : join(dist, r.urlPath.slice(1), "index.html");
-    mkdirSync(join(outPath, ".."), { recursive: true });
-    writeFileSync(outPath, html, "utf8");
-    log.info(`SSG: ${r.urlPath} -> ${outPath}`);
-  }
-  // Copy static assets from the source assets directory to the built site.
-  copyDir(join(process.cwd(), config.siteDir, "assets"), join(dist, "assets"));
-  // Bundle Vue and Svelte components found in the site directory.
-  // These are transpiled to JavaScript modules for client-side use in interactive pages.
-  const siteSourceDir = join(process.cwd(), config.siteDir);
-  const vueFiles = readdirSync(siteSourceDir, { recursive: true }).filter(
-    (f) => String(f).endsWith(".vue") || String(f).endsWith(".svelte"),
-  );
-  if (vueFiles.length > 0) {
-    log.info(`Found ${vueFiles.length} Vue/Svelte components, bundling...`);
+    const { config } = opts;
+    // Inject fonts configuration into config.inject.head
+    injectFonts(config);
+    // Clear and recreate the dist directory for a clean build.
+    const dist = resolveDistPath(config);
+    rmSync(dist, { recursive: true, force: true });
+    mkdirSync(dist, { recursive: true });
+    // Discover all routes and pre-render each to a static HTML file.
+    const routes = scanRoutes(config);
+    log.info(`Building SSG: ${routes.length} routes`);
+    for (const r of routes) {
+        // Generate fresh mocks for every individual route to prevent state leakage
+        const { req, res } = createSsgMocks();
+        // Create a synthetic URL for each route.
+        const url = new URL("http://localhost" + r.urlPath);
+        // Render the route to HTML.
+        let html = await renderRouteToHtml({
+            config,
+            route: r,
+            req,
+            res,
+            url,
+            params: {},
+            query: {},
+            headers: {},
+            cookies: {},
+        });
+        // Calculate depth for relative paths on nested routes
+        const segments = r.urlPath.split('/').filter(Boolean);
+        const depth = segments.length;
+        const rootPrefix = depth === 0 ? './' : '../'.repeat(depth);
+        // Include ALL generated scripts using the dynamic root prefix
+        const polyfillsScript = `<script src="${rootPrefix}polyfills.js"></script>`;
+        const preactScript = `<script type="module" src="${rootPrefix}preact-runtime.js"></script>`;
+        const hydrateScript = `<script type="module" src="${rootPrefix}hydrate.js"></script>`;
+        const islandScript = `<script type="module" src="${rootPrefix}island-hydration-client.js"></script>`;
+        const injectedScripts = `
+      ${polyfillsScript}
+      ${preactScript}
+      ${hydrateScript}
+      ${islandScript}
+    `;
+        // Case-insensitive injection for </body>
+        const bodyRegex = /<\/body>/i;
+        if (bodyRegex.test(html)) {
+            html = html.replace(bodyRegex, (match) => `${injectedScripts}\n${match}`);
+        }
+        else {
+            html = html + injectedScripts;
+        }
+        // Calculate output path.
+        const outPath = r.urlPath === "/"
+            ? join(dist, "index.html")
+            : join(dist, r.urlPath.replace(/\/$/, ""), "index.html");
+        mkdirSync(dirname(outPath), { recursive: true });
+        writeFileSync(outPath, html, "utf8");
+        log.info(`SSG: ${r.urlPath} -> ${outPath}`);
+    }
+    // Copy static assets
+    const assetsSrc = join(process.cwd(), config.siteDir, "assets");
+    const assetsDst = join(dist, "assets");
+    copyDir(assetsSrc, assetsDst);
+    // Asset hashing with Rust utility if enabled
+    if (config.build?.hashAssets) {
+        log.info("Hashing assets with Rust...");
+        const hashes = await AssetHasher.hashDirectory(assetsDst);
+        log.info(`Hashed ${Object.keys(hashes).length} assets.`);
+        const manifest = {};
+        // Rename assets with their hashes and build manifest for HTML updating
+        for (const [relPath, hash] of Object.entries(hashes)) {
+            const fullPath = join(assetsDst, relPath);
+            const ext = extname(fullPath);
+            const dir = dirname(fullPath);
+            const name = basename(fullPath, ext);
+            const newFileName = `${name}.${hash}${ext}`;
+            const newPath = join(dir, newFileName);
+            // Store the mapping for HTML link replacement (normalized for web)
+            const oldPublicPath = `/assets/${relPath}`.replace(/\\/g, "/");
+            const newPublicPath = `/assets/${join(dirname(relPath), newFileName)}`.replace(/\\/g, "/");
+            if (existsSync(fullPath)) {
+                try {
+                    renameSync(fullPath, newPath);
+                    // Only add to manifest if the rename succeeds to prevent silent 404s
+                    manifest[oldPublicPath] = newPublicPath;
+                }
+                catch (err) {
+                    log.warn(`Failed to rename asset ${relPath}: ${err.message}`);
+                }
+            }
+        }
+        // Update HTML files with new hashed paths so assets don't 404
+        const htmlFiles = readdirSync(dist, { recursive: true })
+            .filter((f) => String(f).endsWith(".html"))
+            .map((f) => join(dist, String(f)));
+        // Sort manifest keys by length descending to prevent partial path replacements
+        const sortedManifest = Object.entries(manifest).sort((a, b) => b[0].length - a[0].length);
+        for (const file of htmlFiles) {
+            let content = readFileSync(file, "utf8");
+            let changed = false;
+            for (const [oldPath, newPath] of sortedManifest) {
+                if (content.includes(oldPath)) {
+                    content = content.split(oldPath).join(newPath);
+                    changed = true;
+                }
+            }
+            if (changed)
+                writeFileSync(file, content);
+        }
+        if (config.build?.generateManifest) {
+            writeFileSync(join(dist, "asset-manifest.json"), JSON.stringify(hashes, null, 2));
+            log.info("Generated asset-manifest.json");
+        }
+    }
+    // Bundle Vue, Svelte, and Preact components
+    if (config.features?.compilers !== false) {
+        const siteSourceDir = join(process.cwd(), config.siteDir);
+        const componentFiles = readdirSync(siteSourceDir, {
+            recursive: true,
+        }).filter((f) => /\.(vue|svelte|tsx|jsx)$/.test(String(f)));
+        if (componentFiles.length > 0) {
+            log.info(`Found ${componentFiles.length} components, bundling...`);
+            try {
+                await esbuild.build({
+                    entryPoints: componentFiles.map((f) => join(siteSourceDir, String(f))),
+                    outdir: join(dist, "components"),
+                    format: "esm",
+                    target: "es2022",
+                    bundle: true,
+                    jsx: "automatic",
+                    jsxImportSource: "preact",
+                    plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
+                    external: [...PREACT_EXTERNALS, "vue", "svelte"],
+                    logLevel: "info",
+                });
+                log.info("Components bundled successfully.");
+            }
+            catch (err) {
+                log.warn(`Failed to bundle components: ${err.message}`);
+            }
+        }
+    }
+    // Bundle polyfills
+    const polyfillsPaths = [
+        join(process.cwd(), "src/runtime/polyfills.js"),
+        join(process.cwd(), "../src/runtime/polyfills.js"),
+        join(process.cwd(), "../../src/runtime/polyfills.js"),
+    ];
+    let polyfillsPath = null;
+    for (const path of polyfillsPaths) {
+        if (existsSync(path)) {
+            polyfillsPath = path;
+            break;
+        }
+    }
+    if (polyfillsPath) {
+        log.info("Bundling polyfills for backwards compatibility...");
+        const polyfillsMetaPath = join(dist, "polyfills-meta.json");
+        try {
+            const polyfillsMeta = await esbuild.build({
+                entryPoints: [polyfillsPath],
+                outfile: join(dist, "polyfills.js"),
+                format: "iife",
+                target: "es2015",
+                bundle: true,
+                minify: true,
+                sourcemap: false,
+                logLevel: "info",
+                metafile: true,
+            });
+            if (polyfillsMeta.metafile) {
+                writeFileSync(polyfillsMetaPath, JSON.stringify(polyfillsMeta.metafile, null, 2));
+            }
+            log.info("Polyfills bundled: polyfills.js");
+        }
+        catch (err) {
+            log.warn(`Failed to bundle polyfills: ${err.message}`);
+        }
+    }
+    // Bundle Preact runtime
+    const preactBundleEntry = join(process.cwd(), ".jen", "preact-runtime-entry.js");
+    mkdirSync(dirname(preactBundleEntry), { recursive: true });
+    // Explicitly named exports to prevent es module collisions
+    writeFileSync(preactBundleEntry, `export { render, hydrate, h, Component, options, cloneElement, createContext, createRef, isValidElement, toChildArray, Fragment } from 'preact';
+    export { useState, useReducer, useEffect, useLayoutEffect, useRef, useImperativeHandle, useMemo, useCallback, useContext, useDebugValue, useErrorBoundary, useId } from 'preact/hooks';
+    export { jsx, jsxs, jsxDEV } from 'preact/jsx-runtime';
+    if (typeof window !== 'undefined') { window.__PREACT_BUNDLE__ = true; }`);
+    log.info("Bundling Preact runtime...");
+    const preactMetaPath = join(dist, "preact-runtime-meta.json");
     try {
-      await esbuild.build({
-        entryPoints: vueFiles.map((f) => join(siteSourceDir, String(f))),
-        outdir: join(dist, "components"),
-        format: "esm",
-        target: "es2022",
-        bundle: false,
-        plugins: [vueEsbuildPlugin(), svelteEsbuildPlugin()],
-        external: ["preact", "vue", "svelte"],
-        logLevel: "info",
-      });
-      log.info("Vue/Svelte components bundled successfully.");
-    } catch (err) {
-      log.warn(`Failed to bundle Vue/Svelte components: ${err.message}`);
+        const preactMeta = await esbuild.build({
+            entryPoints: [preactBundleEntry],
+            outfile: join(dist, "preact-runtime.js"),
+            format: "esm",
+            target: "es2015",
+            bundle: true,
+            minify: true,
+            sourcemap: false,
+            logLevel: "info",
+            metafile: true,
+        });
+        if (preactMeta.metafile) {
+            writeFileSync(preactMetaPath, JSON.stringify(preactMeta.metafile, null, 2));
+        }
+        log.info("Preact runtime bundled: preact-runtime.js");
     }
-  }
-  // Compile the global SCSS file to CSS.
-  // This stylesheet is injected into every page and contains framework-wide styles.
-  // Minification is enabled for production builds.
-  const scssPath = join(process.cwd(), config.css.globalScss);
-  if (existsSync(scssPath)) {
-    const compiler = createScssCompiler();
-    const result = compiler.compile({
-      inputPath: scssPath,
-      minified: true,
-    });
-    if (result.error) {
-      log.error(`SCSS Compilation Failed: ${result.error}`);
-      writeFileSync(join(dist, "styles.css"), "/* SCSS Compilation Failed */");
-    } else {
-      writeFileSync(join(dist, "styles.css"), result.css);
-      log.info(`Compiled global SCSS: ${config.css.globalScss}`);
+    catch (err) {
+        log.warn(`Failed to bundle Preact runtime: ${err.message}`);
     }
-  } else {
-    log.warn(`Global SCSS file not found: ${scssPath}`);
-    writeFileSync(join(dist, "styles.css"), "/* No global SCSS found */");
-  }
-  log.info("Build complete.");
+    // Bundle hydration runtime
+    const hydratePaths = [
+        join(process.cwd(), "src/runtime/hydrate.ts"),
+        join(process.cwd(), "src/runtime/hydrate.js"),
+        join(process.cwd(), "../src/runtime/hydrate.ts"),
+        join(process.cwd(), "../src/runtime/hydrate.js"),
+        join(process.cwd(), "../../src/runtime/hydrate.ts"),
+        join(process.cwd(), "../../src/runtime/hydrate.js"),
+    ];
+    let hydratePath = null;
+    for (const path of hydratePaths) {
+        if (existsSync(path)) {
+            hydratePath = path;
+            break;
+        }
+    }
+    if (hydratePath) {
+        log.info("Bundling hydration runtime...");
+        const hydrateMetaPath = join(dist, "hydrate-runtime-meta.json");
+        try {
+            const hydrateMeta = await esbuild.build({
+                entryPoints: [hydratePath],
+                outfile: join(dist, "hydrate.js"),
+                format: "esm",
+                target: "es2015",
+                bundle: true,
+                minify: true,
+                external: PREACT_EXTERNALS,
+                sourcemap: false,
+                logLevel: "info",
+                metafile: true,
+            });
+            if (hydrateMeta.metafile) {
+                writeFileSync(hydrateMetaPath, JSON.stringify(hydrateMeta.metafile, null, 2));
+            }
+            log.info("Hydration runtime bundled: hydrate.js");
+        }
+        catch (err) {
+            log.warn(`Failed to bundle hydration runtime: ${err.message}`);
+        }
+    }
+    // Bundle island hydration client
+    const islandHydrationPaths = [
+        join(process.cwd(), "src/runtime/island-hydration-client.ts"),
+        join(process.cwd(), "src/runtime/island-hydration-client.js"),
+        join(process.cwd(), "../src/runtime/island-hydration-client.ts"),
+        join(process.cwd(), "../src/runtime/island-hydration-client.js"),
+        join(process.cwd(), "../../src/runtime/island-hydration-client.ts"),
+        join(process.cwd(), "../../src/runtime/island-hydration-client.js"),
+    ];
+    let islandHydrationPath = null;
+    for (const path of islandHydrationPaths) {
+        if (existsSync(path)) {
+            islandHydrationPath = path;
+            break;
+        }
+    }
+    if (islandHydrationPath) {
+        log.info("Bundling island hydration client...");
+        const islandMetaPath = join(dist, "island-hydration-client-meta.json");
+        try {
+            const islandMeta = await esbuild.build({
+                entryPoints: [islandHydrationPath],
+                outfile: join(dist, "island-hydration-client.js"),
+                format: "esm",
+                target: "es2015",
+                bundle: true,
+                minify: true,
+                external: PREACT_EXTERNALS,
+                sourcemap: false,
+                logLevel: "info",
+                metafile: true,
+            });
+            if (islandMeta.metafile) {
+                writeFileSync(islandMetaPath, JSON.stringify(islandMeta.metafile, null, 2));
+            }
+            log.info("Island hydration client bundled: island-hydration-client.js");
+        }
+        catch (err) {
+            log.warn(`Failed to bundle island hydration client: ${err.message}`);
+        }
+    }
+    // Compile global SCSS
+    if (config.css && config.css.globalScss) {
+        const scssPath = join(process.cwd(), config.css.globalScss);
+        if (existsSync(scssPath)) {
+            const compiler = createScssCompiler();
+            const result = compiler.compile({
+                inputPath: scssPath,
+                minified: true,
+            });
+            if (result.error) {
+                log.error(`SCSS Compilation Failed: ${result.error}`);
+                writeFileSync(join(dist, "styles.css"), "/* SCSS Compilation Failed */");
+            }
+            else {
+                writeFileSync(join(dist, "styles.css"), result.css);
+                log.info(`Compiled global SCSS: ${config.css.globalScss}`);
+            }
+        }
+        else {
+            log.warn(`Global SCSS file not found: ${scssPath}`);
+            writeFileSync(join(dist, "styles.css"), "/* No global SCSS found */");
+        }
+    }
+    log.info("Build complete.");
 }

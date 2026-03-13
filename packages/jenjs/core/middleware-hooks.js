@@ -24,31 +24,31 @@
  * @returns Initialized RouteMiddlewareContext ready for middleware execution
  */
 export function createRouteMiddlewareContext(opts) {
-  const ctx = {
-    ...opts,
-    data: {},
-    status: function (code) {
-      this.res.statusCode = code;
-      return this;
-    },
-    setHeader: function (key, value) {
-      this.res.setHeader(key, value);
-      return this;
-    },
-    redirect: function (url, statusCode = 302) {
-      this.res.statusCode = statusCode;
-      this.res.setHeader("location", url);
-      this.res.end();
-      throw new Error("__REDIRECT__");
-    },
-    json: function (data, statusCode = 200) {
-      this.res.statusCode = statusCode;
-      this.res.setHeader("content-type", "application/json; charset=utf-8");
-      this.res.end(JSON.stringify(data));
-      throw new Error("__JSON__");
-    },
-  };
-  return ctx;
+    const ctx = {
+        ...opts,
+        data: {},
+        status: function (code) {
+            this.res.statusCode = code;
+            return this;
+        },
+        setHeader: function (key, value) {
+            this.res.setHeader(key, value);
+            return this;
+        },
+        redirect: function (url, statusCode = 302) {
+            this.res.statusCode = statusCode;
+            this.res.setHeader("location", url);
+            this.res.end();
+            throw new Error("__REDIRECT__");
+        },
+        json: function (data, statusCode = 200) {
+            this.res.statusCode = statusCode;
+            this.res.setHeader("content-type", "application/json; charset=utf-8");
+            this.res.end(JSON.stringify(data));
+            throw new Error("__JSON__");
+        },
+    };
+    return ctx;
 }
 /**
  * Executes an array of route middleware sequentially for a route.
@@ -79,19 +79,20 @@ export function createRouteMiddlewareContext(opts) {
  * @throws Error from middleware if it throws
  */
 export async function executeRouteMiddleware(middlewares, ctx) {
-  for (const mw of middlewares) {
-    try {
-      await mw(ctx);
-    } catch (err) {
-      /**
-       * Sentinel errors from ctx.redirect() and ctx.json() are re-thrown
-       * to signal that the response was already sent.
-       * Other errors propagate normally for error handling middleware.
-       */
-      if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
-        throw err;
-      }
-      throw err;
+    for (const mw of middlewares) {
+        try {
+            await mw(ctx);
+        }
+        catch (err) {
+            /**
+             * Sentinel errors from ctx.redirect() and ctx.json() are re-thrown
+             * to signal that the response was already sent.
+             * Other errors propagate normally for error handling middleware.
+             */
+            if (err.message === "__REDIRECT__" || err.message === "__JSON__") {
+                throw err;
+            }
+            throw err;
+        }
     }
-  }
 }

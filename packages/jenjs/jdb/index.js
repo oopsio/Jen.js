@@ -13,7 +13,7 @@
  * - Simple JSON file format for easy inspection and migration
  *
  * @example
- * import { JDBEngine, type ICollection, type Document } from '@src/jdb';
+ * import { JDBEngine, type ICollection, type Document } from '../jdb';
  *
  * interface User extends Document {
  *   name: string;
