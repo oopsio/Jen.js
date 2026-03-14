@@ -1,75 +1,70 @@
-import { createServer } from "node:http";
-import { dirname, join } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
-import esbuild from "esbuild";
+import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { createServer } from "vite";
 
-// Color codes for prettier logs
-const colors = {
+// Silence the noise
+process.removeAllListeners('warning');
+
+const C = {
   reset: "\x1b[0m",
-  dim: "\x1b[2m",
+  bold: "\x1b[1m",
+  green: "\x1b[32m",
   cyan: "\x1b[36m",
+  red: "\x1b[31m",
+  dim: "\x1b[2m",
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const currentDir = dirname(__filename);
-const rootDir = join(currentDir, ".");
-
-const mode = process.argv[2] ?? "dev";
-const isDev = mode === "dev";
-
-function ts() {
-  return new Date().toISOString();
+function log(status, message, color = C.green) {
+  const paddedStatus = status.padStart(12);
+  console.log(`${C.bold}${color}${paddedStatus}${C.reset} ${message}`);
 }
 
 async function main() {
-  console.log(
-    `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} Starting in ${isDev ? "DEV" : "PROD"} mode...`,
-  );
+  const startTime = performance.now();
 
-  const configPath = join(currentDir, "jen.config.ts");
-  const outdir = join(currentDir, ".esbuild");
+  const isBun = !!process.versions.bun;
+  const runner = isBun ? "bun" : "npm";
+  
+  log("Using", runner, C.cyan);
+  log("Building", "jen.js project...");
 
-  await esbuild.build({
-    entryPoints: [configPath],
-    outdir,
-    format: "esm",
-    platform: "node",
-    target: "es2022",
-    bundle: true,
-    minify: true,
-    loader: { ".ts": "ts" },
-    logLevel: "silent",
+  const build = spawnSync(runner, ["run", "build"], { 
+    stdio: "pipe", 
+    shell: true,
+    encoding: "utf-8",
+    env: { ...process.env, NODE_NO_WARNINGS: "1" } 
   });
 
-  const configFile = join(outdir, "jen.config.js");
-  const config = (await import(pathToFileURL(configFile).href)).default;
+  if (build.status !== 0) {
+    log("Error", "Build failed", C.red);
+    console.log("\n" + "-".repeat(40));
+    console.log(C.red + (build.stderr || build.stdout || "Check build script") + C.reset);
+    console.log("-".repeat(40) + "\n");
+    process.exit(1);
+  }
 
-  const appPath = pathToFileURL(join(rootDir, "lib/server/app.js")).href;
-  const { createApp } = await import(appPath);
-
-  // Load banner
-  const bannerPath = pathToFileURL(join(rootDir, "lib/cli/banner.js")).href;
-  const { printBanner } = await import(bannerPath);
-
-  const app = await createApp({
-    config,
-    mode: isDev ? "dev" : "prod",
+  const server = await createServer({
+    root: "./dist",
+    server: { port: 3000, strictPort: true, host: "localhost" },
+    logLevel: "silent"
   });
 
-  const server = createServer(async (req, res) => {
-    try {
-      await app.handle(req, res);
-    } catch (err) {
-      res.statusCode = 500;
-      res.setHeader("content-type", "text/plain; charset=utf-8");
-      res.end("Internal Server Error\n\n" + (err?.stack ?? String(err)));
-    }
-  });
+  await server.listen();
 
-  server.listen(config.server.port, config.server.hostname, () => {
-    const actualPort = server.address().port;
-    printBanner(actualPort, isDev ? "development" : "production");
-  });
+  const startupTime = (performance.now() - startTime).toFixed(0);
+  
+  
+  // Clear a line for breathing room
+  console.log(); 
+
+  console.log(`  ${C.bold}JEN.JS v20.1.2${C.reset}  ${C.dim}ready in ${startupTime} ms${C.reset}\n`);
+
+  // Fixed indentation: 2 spaces, then the arrow, then 2 spaces
+  console.log(`  ${C.green}➜${C.reset}  ${C.bold}Local:${C.reset}   ${C.cyan}http://localhost:3000/${C.reset}`);
+  
+  // These use 5 spaces to align perfectly under the word "Local"
+  console.log(`  ${C.dim}➜${C.reset}  ${C.dim}Network: use --host to expose${C.reset}`);
+  console.log(`  ${C.dim}➜${C.reset}  ${C.dim}press h + enter to show help${C.reset}\n`);
 }
 
 main().catch(console.error);

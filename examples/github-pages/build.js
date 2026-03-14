@@ -1,10 +1,69 @@
 import { dirname, join, extname, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, statSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import esbuild from "esbuild";
 import { minify } from "html-minifier-terser";
+
+const STANDALONE_SERVER_CODE = `
+import { createServer } from "node:http";
+import { join, extname } from "node:path";
+import { readFileSync, existsSync, statSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+const PORT = 3000;
+const __dirname = join(fileURLToPath(import.meta.url), "..");
+
+const C = {
+  reset: "\\x1b[0m",
+  bold: "\\x1b[1m",
+  green: "\\x1b[32m",
+  cyan: "\\x1b[36m",
+  dim: "\\x1b[2m",
+};
+
+const MIME_TYPES = {
+  ".html": "text/html",
+  ".js": "text/javascript",
+  ".css": "text/css",
+  ".json": "application/json",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".gif": "image/gif",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+};
+
+const server = createServer((req, res) => {
+  const url = new URL(req.url, \`http://\${req.headers.host}\`);
+  let filePath = join(__dirname, url.pathname);
+
+  if (existsSync(filePath) && statSync(filePath).isDirectory()) {
+    filePath = join(filePath, "index.html");
+  }
+
+  if (!existsSync(filePath)) {
+    if (existsSync(filePath + ".html")) filePath += ".html";
+    else if (existsSync(join(filePath, "index.html"))) filePath = join(filePath, "index.html");
+  }
+
+  if (existsSync(filePath) && !statSync(filePath).isDirectory()) {
+    const ext = extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] || "application/octet-stream";
+    res.writeHead(200, { "Content-Type": contentType });
+    res.end(readFileSync(filePath));
+  } else {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("404 Not Found");
+  }
+});
+
+server.listen(PORT, () => {
+  process.stdout.write("\\x1Bc");
+  console.log(\` \\x1b[32m > Ready at \\x1b[36mhttp://localhost:3000 \${C.reset}\`);
+});
+`;
 
 const __filename = fileURLToPath(import.meta.url);
 const currentDir = dirname(__filename);
@@ -207,6 +266,11 @@ async function main() {
   console.log(
     "[SUCCESS] Site built: HTML is index.html and assets are hashed!"
   );
+  const serverPath = join(distDir, "server.js");
+  await fs.writeFile(serverPath, STANDALONE_SERVER_CODE, "utf-8");
+  console.log(`[SUCCESS] Standalone server created: ${serverPath}`);
+  
+  console.log("[SUCCESS] Build complete! Run 'node dist/server.js' to start.");
 }
 
 main().catch(console.error);
