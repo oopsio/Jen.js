@@ -1,5 +1,5 @@
-<div class="jenlly">
-</div>
+![A picture of Jenlly](.github/assets/jenlly.svg)
+
 
 # Jen.js
 
