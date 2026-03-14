@@ -33,9 +33,22 @@ describe("Loader Schema", () => {
       expect(result.posts[0].title).toBe("Post 1");
     });
 
-    it.skip("should support sync loaders", () => {
-      // This test is skipped because it relies on the real framework's defineLoader
-      // which is tested elsewhere in integration tests
+    it("should support sync loaders", async () => {
+      type PageData = { message: string };
+
+      const loader = defineLoader<PageData>(() => {
+        return { message: "Hello from sync loader" };
+      });
+
+      const result = await loader({
+        url: new URL("http://localhost/"),
+        params: {},
+        query: {},
+        headers: {},
+        cookies: {},
+      });
+
+      expect(result.message).toBe("Hello from sync loader");
     });
   });
 
@@ -94,9 +107,16 @@ describe("Loader Schema", () => {
       expect(result.isAdmin).toBe(true);
     });
 
-    it.skip("should support sync middleware", () => {
-      // This test is skipped because it relies on the real framework's defineMiddleware
-      // which is tested elsewhere in integration tests
+    it("should support sync middleware", async () => {
+      type MiddlewareData = { requestId: string };
+
+      const middleware = defineMiddleware<MiddlewareData>(() => {
+        return { requestId: "req-123" };
+      });
+
+      const result = await middleware({});
+
+      expect(result.requestId).toBe("req-123");
     });
   });
 
