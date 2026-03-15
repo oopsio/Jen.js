@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vanilla Node.js HTTP server with Jen.js API loader
  * No external dependencies - uses built-in Node.js modules only
  */
@@ -56,7 +56,7 @@ async function setupApiRoutes() {
     // Load routes with empty base route since we'll prepend /api ourselves
     const routes = await loader.loadRoutes(apiDir, "");
 
-    console.log(`✅ Loaded ${routes.length} API routes:`);
+    console.log(` Loaded ${routes.length} API routes:`);
 
     // Register each route with /api prefix
     routes.forEach((route) => {
@@ -65,7 +65,7 @@ async function setupApiRoutes() {
       console.log(`   ${fullPath}`);
     });
   } catch (err) {
-    console.error("❌ Failed to load API routes:", err);
+    console.error(" Failed to load API routes:", err);
   }
 }
 
@@ -134,7 +134,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
       </style>
     </head>
     <body>
-      <h1>🚀 Jen.js API Routes Example</h1>
+      <h1> Jen.js API Routes Example</h1>
       <p>Vanilla Node.js HTTP server with file-based API routing.</p>
 
       <h2>Quick Test</h2>
@@ -173,13 +173,13 @@ curl http://localhost:3000/api/files/docs/guide.md
 
       <h2>Features</h2>
       <ul>
-        <li>✅ File-based routing (/src/api/*.ts → /api/*)</li>
-        <li>✅ Dynamic routes ([id], [...slug])</li>
-        <li>✅ HTTP methods (GET, POST, PUT, DELETE)</li>
-        <li>✅ Query parameters</li>
-        <li>✅ Request body parsing</li>
-        <li>✅ Type-safe TypeScript</li>
-        <li>✅ Zero external dependencies</li>
+        <li> File-based routing (/src/api/*.ts → /api/*)</li>
+        <li> Dynamic routes ([id], [...slug])</li>
+        <li> HTTP methods (GET, POST, PUT, DELETE)</li>
+        <li> Query parameters</li>
+        <li> Request body parsing</li>
+        <li> Type-safe TypeScript</li>
+        <li> Zero external dependencies</li>
       </ul>
 
       <h2>API Endpoints</h2>
@@ -231,8 +231,8 @@ async function start() {
   const server = createServer(handleRequest);
 
   server.listen(PORT, () => {
-    console.log(`\n✨ Jen.js API Server running at http://localhost:${PORT}\n`);
-    console.log(`📡 No dependencies - using vanilla Node.js HTTP\n`);
+    console.log(`\n Jen.js API Server running at http://localhost:${PORT}\n`);
+    console.log(` No dependencies - using vanilla Node.js HTTP\n`);
   });
 }
 

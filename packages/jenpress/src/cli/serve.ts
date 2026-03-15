@@ -1,4 +1,4 @@
-import { createServer } from "http";
+﻿import { createServer } from "http";
 import { createReadStream, statSync, readdirSync } from "fs";
 import { join, extname } from "path";
 import { loadConfig } from "../node/config.ts";
@@ -49,8 +49,8 @@ export async function serveSite(cwd: string, args: string[]) {
   });
 
   server.listen(port, () => {
-    console.log(`\n📚 JenPress Server`);
-    console.log(`📖 Serving: ${config.outDir || "dist"}`);
-    console.log(`🚀 Local: http://localhost:${port}\n`);
+    console.log(`\n JenPress Server`);
+    console.log(` Serving: ${config.outDir || "dist"}`);
+    console.log(` Local: http://localhost:${port}\n`);
   });
 }

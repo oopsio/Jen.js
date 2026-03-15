@@ -1,4 +1,4 @@
-// ANSI color codes for beautiful terminal output
+﻿// ANSI color codes for beautiful terminal output
 export const colors = {
   // Main colors
   primary: (str: string) => `\x1b[38;2;99;102;241m${str}\x1b[0m`, // Indigo
@@ -28,15 +28,15 @@ export const colors = {
 
 export const symbols = {
   arrow: "→",
-  check: "✓",
-  cross: "✕",
+  check: "",
+  cross: "",
   dot: "•",
-  star: "★",
-  sparkles: "✨",
-  rocket: "🚀",
-  folder: "📁",
-  package: "📦",
-  code: "💻",
+  star: "",
+  sparkles: "",
+  rocket: "",
+  folder: "",
+  package: "",
+  code: "",
 };
 
 export function printBanner() {

@@ -1,4 +1,4 @@
----
+﻿---
 title: Web Design Principles
 date: 2026-02-19
 author: Alex Rivera
@@ -102,4 +102,4 @@ The best way to know if your design works is to test it with real users. Gather 
 
 Great design requires attention to detail and a deep understanding of your users. Follow these principles, test constantly, and always prioritize the user experience.
 
-Remember: **Form follows function**. ✨
+Remember: **Form follows function**. 

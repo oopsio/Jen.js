@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { marked } from "marked";
 import Header from "./components/Header.js";
 import Footer from "./components/Footer.js";
@@ -65,21 +65,21 @@ and contains important information.</p>
 </thead>
 <tbody><tr>
 <td>Speed</td>
-<td>⚡</td>
-<td>⚡</td>
-<td>⚡</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>SSR</td>
-<td>✓</td>
-<td>✓</td>
-<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Islands</td>
-<td>✓</td>
-<td>✗</td>
-<td>✓</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody></table>
 <h2>Horizontal Rules</h2>
@@ -95,7 +95,7 @@ and contains important information.</p>
 <li>Prefer unordered lists for non-sequential items</li>
 <li>Use code blocks for technical content</li>
 </ol>
-<p>Now you&#39;re ready to write amazing content! ✍️</p>
+<p>Now you&#39;re ready to write amazing content! ️</p>
 `;
 
 export function Head() {

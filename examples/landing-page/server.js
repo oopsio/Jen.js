@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 // Development server for blog example
 // Uses the framework's app with this example's config
 import { createServer } from "node:http";
@@ -77,7 +77,7 @@ async function main() {
 
   server.listen(config.server.port, config.server.hostname, () => {
     console.log(
-      `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset} ✅ Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`,
+      `${colors.dim}[${ts()}]${colors.reset} ${colors.cyan}[INFO]${colors.reset}  Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`,
     );
   });
 

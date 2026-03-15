@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+﻿import { useState } from "preact/hooks";
 import { Counter } from "./Counter.js";
 import "./App.css";
 
@@ -16,10 +16,10 @@ export function App() {
         <section>
           <h2>Features</h2>
           <ul>
-            <li>⚡️ Fast SWC-based bundling</li>
-            <li>🔥 Hot module reload</li>
-            <li>📦 Smart code splitting</li>
-            <li>🎯 TypeScript & JSX support</li>
+            <li>️ Fast SWC-based bundling</li>
+            <li> Hot module reload</li>
+            <li> Smart code splitting</li>
+            <li> TypeScript & JSX support</li>
           </ul>
         </section>
       </main>

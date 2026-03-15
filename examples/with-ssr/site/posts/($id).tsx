@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import type { LoaderContext, RouteModule } from "../../../../src/core/types.js";
 
 /**
@@ -145,7 +145,7 @@ export default function PostPage({ data, params }: any) {
   return (
     <div class="post-page">
       <div class="navbar">
-        <h1>📖 Blog Post</h1>
+        <h1> Blog Post</h1>
         <p class="subtitle">Server-rendered dynamic content</p>
       </div>
 
@@ -158,8 +158,8 @@ export default function PostPage({ data, params }: any) {
           <div class="post-header">
             <h1>{post.title}</h1>
             <div class="post-meta">
-              <span>👤 {post.author}</span>
-              <span>📅 {post.date}</span>
+              <span> {post.author}</span>
+              <span> {post.date}</span>
               <span>⏱️ {post.readTime}</span>
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function PostPage({ data, params }: any) {
         </article>
 
         <section class="section">
-          <h2>🔗 Related Articles</h2>
+          <h2> Related Articles</h2>
           {related.length > 0 ? (
             <div class="grid">
               {related.map((p: any) => (
@@ -207,7 +207,7 @@ export default function PostPage({ data, params }: any) {
         </section>
 
         <section class="section">
-          <h2>💡 How This Page Works</h2>
+          <h2> How This Page Works</h2>
           <div class="card">
             <h3>Dynamic Route Parameters:</h3>
             <p>
@@ -229,7 +229,7 @@ export default function PostPage({ data, params }: any) {
         </section>
 
         <section class="section">
-          <h2>🎯 Navigation</h2>
+          <h2> Navigation</h2>
           <div class="grid">
             <a href="/blog" class="button">
               All Posts →

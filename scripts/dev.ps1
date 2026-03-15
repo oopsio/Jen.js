@@ -1,4 +1,4 @@
-# Jen.js Framework - Development Server (Windows PowerShell)
+﻿# Jen.js Framework - Development Server (Windows PowerShell)
 
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $PROJECT_ROOT = Split-Path -Parent $SCRIPT_DIR
@@ -20,7 +20,7 @@ if (-not (Test-Path "node_modules")) {
   Write-Host ""
 }
 
-Write-Host "✓ Dependencies ready" -ForegroundColor $COLOR_GREEN
+Write-Host " Dependencies ready" -ForegroundColor $COLOR_GREEN
 Write-Host ""
 Write-Host "Development server options:" -ForegroundColor $COLOR_BLUE
 Write-Host ""

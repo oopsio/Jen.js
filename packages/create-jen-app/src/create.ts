@@ -1,4 +1,4 @@
-import fs from "fs";
+﻿import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import pc from "picocolors";
@@ -192,7 +192,7 @@ dist/
     }
   }
 
-  outro(pc.green(pc.bold("✨ Your Jen.js app is ready!")));
+  outro(pc.green(pc.bold(" Your Jen.js app is ready!")));
 
   const nextSteps = [
     pc.cyan(`cd ${projectName}`),
@@ -204,5 +204,5 @@ dist/
   console.log("\n" + pc.bold("Next steps:"));
   for (const step of nextSteps) console.log("  " + pc.dim("• ") + step);
 
-  console.log("\n" + pc.dim("Happy coding! 🎉") + "\n");
+  console.log("\n" + pc.dim("Happy coding! ") + "\n");
 }

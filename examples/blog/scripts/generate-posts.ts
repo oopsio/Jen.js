@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Build-time script to generate posts data and route pages from markdown files
  */
 
@@ -49,7 +49,7 @@ function generatePosts() {
   const outFile = join(outDir, "posts.json");
   writeFileSync(outFile, JSON.stringify(posts, null, 2), "utf-8");
 
-  console.log(`✅ Generated ${posts.length} posts to ${outFile}`);
+  console.log(` Generated ${posts.length} posts to ${outFile}`);
 
   // Generate individual post pages
   posts.forEach((post) => {
@@ -120,7 +120,7 @@ export default function BlogPost() {
     writeFileSync(pageFile, pageContent, "utf-8");
   });
 
-  console.log(`✅ Generated ${posts.length} post pages`);
+  console.log(` Generated ${posts.length} post pages`);
 
   return posts;
 }

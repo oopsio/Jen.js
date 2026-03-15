@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { useState } from "preact/hooks";
 
 /**
@@ -13,7 +13,7 @@ export default function MixedDemo() {
 
   return h("div", { class: "mixed-demo" }, [
     h("div", { class: "navbar" }, [
-      h("h1", null, "🎭 Mixed Framework Demo"),
+      h("h1", null, " Mixed Framework Demo"),
       h("p", { class: "nav-subtitle" }, "Preact, Vue, and Svelte together"),
     ]),
 

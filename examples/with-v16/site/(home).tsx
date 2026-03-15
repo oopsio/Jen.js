@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { useState } from "preact/hooks";
 import { Island } from "../../../src/runtime/islands.js";
 
@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem" }}>
       <header style={{ marginBottom: "2rem" }}>
-        <h1>🚀 Jen.js Release 16 Features</h1>
+        <h1> Jen.js Release 16 Features</h1>
         <p style={{ fontSize: "1.1rem", color: "#666" }}>
           Explore the new framework features: Islands, Middleware, API Routes,
           and Zero-JS
@@ -71,7 +71,7 @@ export default function Home() {
       </header>
 
       <section style={{ marginBottom: "2rem" }}>
-        <h2>1. Islands - Partial Hydration 🏝️</h2>
+        <h2>1. Islands - Partial Hydration ️</h2>
         <p>
           This page demonstrates the Islands feature. The counter below is an
           interactive island that only hydrates the necessary JavaScript on the

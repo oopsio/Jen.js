@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -28,7 +28,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function migrate() {
   const env = process.env.NODE_ENV || 'development';
-  console.log(`🗄️  Running migrations for ${env} environment...`);
+  console.log(`️  Running migrations for ${env} environment...`);
 
   try {
     // Import migration runner
@@ -40,10 +40,10 @@ async function migrate() {
       verbose: true,
     });
 
-    console.log('✅ Migrations completed successfully');
-    console.log(`📊 Migrations run: ${result.count}`);
+    console.log(' Migrations completed successfully');
+    console.log(` Migrations run: ${result.count}`);
   } catch (error) {
-    console.error('❌ Migration failed:', error.message);
+    console.error(' Migration failed:', error.message);
     process.exit(1);
   }
 }

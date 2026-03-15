@@ -1,4 +1,4 @@
----
+﻿---
 title: Getting Started with JenPress
 description: Learn how to set up and use JenPress
 ---
@@ -132,4 +132,4 @@ This generates a static site in `dist/` that you can deploy anywhere.
 - Customize with `jenpress.config.ts`
 - Deploy to GitHub Pages, Vercel, or Netlify
 
-Happy documenting! 📚
+Happy documenting! 

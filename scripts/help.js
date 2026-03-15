@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -33,13 +33,13 @@ const helpText = `
 ║                  JEN.JS FRAMEWORK - QUICK START GUIDE                     ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 
-🚀 GETTING STARTED
+ GETTING STARTED
   npm run setup              - Install dependencies and setup environment
   npm run dev               - Start development server with hot reload
   npm run build             - Build static site for production
   npm run start             - Start production server
 
-📊 TESTING & VALIDATION
+ TESTING & VALIDATION
   npm run test              - Run all tests in watch mode
   npm run test:run          - Run tests once (CI-friendly)
   npm run test:coverage     - Generate coverage report
@@ -48,42 +48,42 @@ const helpText = `
   npm run lint:fix          - Auto-fix linting issues
   npm run validate          - Run full validation (types, lint, test)
 
-🔨 BUILD & COMPILATION
+ BUILD & COMPILATION
   npm run build:ssg         - Build static site generator output
   npm run build:esm         - Build ES modules
   npm run build:types       - Generate TypeScript definitions
   npm run bundle            - Bundle framework artifacts
   npm run perf:analyze      - Analyze bundle size
 
-🗄️  DATABASE
+️  DATABASE
   npm run db:migrate        - Run database migrations
   npm run db:seed           - Seed database with sample data
   npm run db:reset          - Reset database (migrate + seed)
   npm run db:backup         - Backup database
 
-🚢 DEPLOYMENT
+ DEPLOYMENT
   npm run deploy            - Deploy to production
   npm run deploy:staging    - Deploy to staging
   npm run deploy:health     - Check deployment health
 
-🐳 DOCKER
+ DOCKER
   npm run docker:build      - Build Docker image
   npm run docker:compose:up - Start Docker Compose stack
   npm run docker:compose:down - Stop Docker Compose stack
 
-📦 MONOREPO MANAGEMENT
+ MONOREPO MANAGEMENT
   npm run packages:build    - Build all packages
   npm run packages:test     - Test all packages
   npm run packages:publish  - Publish packages to npm
 
-⚙️  UTILITIES
+️  UTILITIES
   npm run clean             - Clean build artifacts
   npm run clean:all         - Full clean (dist + node_modules + cache)
   npm run format            - Format code with Prettier
   npm run script:list       - List all available scripts
   npm run script:help       - Show this help message
 
-📚 DOCUMENTATION
+ DOCUMENTATION
   npm run docs              - Start documentation server
   npm run docs:build        - Build documentation static site
   npm run docs:generate     - Generate API documentation
@@ -103,19 +103,19 @@ Environment files:
   .env.build                - Build configuration
   .env.performance          - Performance testing
 
-🔗 USEFUL LINKS
+ USEFUL LINKS
   GitHub:    https://github.com/kessud2021/Jen.js
   Docs:      https://jen.js.org/docs
   Issues:    https://github.com/kessud2021/Jen.js/issues
 
-💡 TIPS
+ TIPS
   • Use \`npm run dev:watch\` for incremental development
   • Use \`npm run validate\` before committing
   • Use \`npm run ci\` to run full CI pipeline locally
   • Check .env files for configuration examples
   • Run \`npm run setup\` after pulling changes
 
-📋 For more details, see README.md
+ For more details, see README.md
 `;
 
 console.log(helpText);

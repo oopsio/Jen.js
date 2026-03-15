@@ -1,4 +1,4 @@
-import esbuild from "esbuild";
+﻿import esbuild from "esbuild";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 import { readdirSync, statSync } from "node:fs";
@@ -54,7 +54,7 @@ async function bundleFramework() {
       logLevel: "info",
     });
 
-    console.log("[BUNDLE] ✅ Framework bundled successfully");
+    console.log("[BUNDLE]  Framework bundled successfully");
     console.log(`[BUNDLE] Output: build/`);
     console.log("[BUNDLE] Structure:");
     console.log("  build/src/          - All framework modules (6+ depth)");
@@ -64,7 +64,7 @@ async function bundleFramework() {
 
     return result;
   } catch (err) {
-    console.error("[BUNDLE] ❌ Bundle failed:", err);
+    console.error("[BUNDLE]  Bundle failed:", err);
     process.exit(1);
   }
 }

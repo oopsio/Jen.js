@@ -1,4 +1,4 @@
-import { build as viteBuild } from "vite";
+﻿import { build as viteBuild } from "vite";
 import { createVitePressPlugin } from "./vite-plugin.js";
 import { loadConfig } from "./config.js";
 import { resolve, relative } from "path";
@@ -23,8 +23,8 @@ export async function buildSite(cwd: string, opts: BuildOptions = {}) {
 
   // Check if source directory exists
   if (!existsSync(srcDir)) {
-    console.log(`⚠️  Docs directory not found: ${srcDir}`);
-    console.log(`✅ Build complete (no content to build)`);
+    console.log(`️  Docs directory not found: ${srcDir}`);
+    console.log(` Build complete (no content to build)`);
     return;
   }
 
@@ -37,8 +37,8 @@ export async function buildSite(cwd: string, opts: BuildOptions = {}) {
   }
 
   if (mdFiles.length === 0) {
-    console.log(`⚠️  No markdown files found in ${srcDir}`);
-    console.log(`✅ Build complete (no content to build)`);
+    console.log(`️  No markdown files found in ${srcDir}`);
+    console.log(` Build complete (no content to build)`);
     return;
   }
 
@@ -56,7 +56,7 @@ export async function buildSite(cwd: string, opts: BuildOptions = {}) {
       },
     });
   } catch (error) {
-    console.log(`⚠️  Vite build skipped (proceeding with HTML generation)`);
+    console.log(`️  Vite build skipped (proceeding with HTML generation)`);
   }
 
   // Generate index.html for each markdown file
@@ -95,5 +95,5 @@ export async function buildSite(cwd: string, opts: BuildOptions = {}) {
     writeFileSync(outputPath, html);
   }
 
-  console.log(`✅ Built ${mdFiles.length} pages to ${outDir}`);
+  console.log(` Built ${mdFiles.length} pages to ${outDir}`);
 }

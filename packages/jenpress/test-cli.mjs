@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -30,13 +30,13 @@ console.log('Script dir:', __dirname);
 try {
   // Test imports
   const configModule = await import('./src/node/config.ts');
-  console.log('✅ Config module loaded');
+  console.log(' Config module loaded');
   
   const defConfig = configModule.defineConfig({ title: 'Test' });
-  console.log('✅ defineConfig works:', defConfig.title);
+  console.log(' defineConfig works:', defConfig.title);
   
-  console.log('\n🎉 JenPress is working!');
+  console.log('\n JenPress is working!');
 } catch (error) {
-  console.error('❌ Error:', error.message);
+  console.error(' Error:', error.message);
   process.exit(1);
 }

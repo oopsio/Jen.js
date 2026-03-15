@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { useState } from "preact/hooks";
 
 export interface NavProps {
@@ -21,7 +21,7 @@ export function Nav({ config }: NavProps) {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? "✕" : "☰"}
+          {mobileMenuOpen ? "" : ""}
         </button>
 
         <ul class={`nav-menu ${mobileMenuOpen ? "open" : ""}`}>

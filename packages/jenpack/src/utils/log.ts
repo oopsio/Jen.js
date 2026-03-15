@@ -1,4 +1,4 @@
-enum LogLevel {
+﻿enum LogLevel {
   DEBUG = 0,
   INFO = 1,
   WARN = 2,
@@ -44,19 +44,19 @@ export function info(...args: unknown[]): void {
 
 export function success(...args: unknown[]): void {
   if (currentLogLevel <= LogLevel.INFO) {
-    console.log(`${colors.green}✓${colors.reset}`, ...args);
+    console.log(`${colors.green}${colors.reset}`, ...args);
   }
 }
 
 export function warn(...args: unknown[]): void {
   if (currentLogLevel <= LogLevel.WARN) {
-    console.warn(`${colors.yellow}⚠${colors.reset}`, ...args);
+    console.warn(`${colors.yellow}${colors.reset}`, ...args);
   }
 }
 
 export function error(...args: unknown[]): void {
   if (currentLogLevel <= LogLevel.ERROR) {
-    console.error(`${colors.red}✗${colors.reset}`, ...args);
+    console.error(`${colors.red}${colors.reset}`, ...args);
   }
 }
 

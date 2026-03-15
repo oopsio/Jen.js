@@ -1,12 +1,12 @@
-# Jen.js Starter Kit: SSR + ISR
+﻿# Jen.js Starter Kit: SSR + ISR
 
 ```sh
 npm create jen-app@latest
 ```
 
-> ⚡ **Building something cool?** This is an SSR (Server-Side Rendering) + ISR (Incremental Static Regeneration) Jen.js starter template with dynamic rendering and intelligent caching.
+>  **Building something cool?** This is an SSR (Server-Side Rendering) + ISR (Incremental Static Regeneration) Jen.js starter template with dynamic rendering and intelligent caching.
 
-## 🚀 Project Structure
+##  Project Structure
 
 Inside your Jen.js project, you'll see the following folders and files:
 
@@ -36,7 +36,7 @@ Inside your Jen.js project, you'll see the following folders and files:
 - **`site/assets/`** → Public static files
 - **`site/styles/`** → Global styles
 
-## 🧞 Commands
+##  Commands
 
 All commands are run from the root of the project, from a terminal:
 
@@ -46,7 +46,7 @@ All commands are run from the root of the project, from a terminal:
 | `npm run dev`   | Starts the dev server at `localhost:3001` |
 | `npm run build` | Builds your SSR+ISR app into `./dist/`    |
 
-## 🎯 SSR + ISR Mode
+##  SSR + ISR Mode
 
 This template uses **Server-Side Rendering (SSR)** with **Incremental Static Regeneration (ISR)**:
 
@@ -62,7 +62,7 @@ rendering: {
 },
 ```
 
-## 📦 Deployment
+##  Deployment
 
 SSR+ISR apps require a Node.js runtime:
 
@@ -72,6 +72,6 @@ SSR+ISR apps require a Node.js runtime:
 - **Heroku** - Classic Node.js deployment
 - **AWS Lambda** - Via serverless frameworks
 
-## 👀 Want to learn more?
+##  Want to learn more?
 
 Check the Jen.js documentation (coming soon) or explore the source code to see how routing, SSR, and caching work.

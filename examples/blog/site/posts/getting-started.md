@@ -1,4 +1,4 @@
----
+﻿---
 title: Getting Started with Jen.js
 date: 2026-02-22
 author: Jen Team
@@ -12,11 +12,11 @@ Jen.js is a powerful, TypeScript-first framework for building static and server-
 
 ## Why Jen.js?
 
-- **⚡ Lightning Fast**: Optimized builds with automatic code splitting
-- **🎯 Type-Safe**: Full TypeScript support with strict mode enabled
-- **🚀 Modern SSR**: Server-side rendering with optional hydration
-- **📦 Zero Config**: Works out of the box with sensible defaults
-- **🎨 Flexible**: Build anything from static blogs to dynamic web apps
+- ** Lightning Fast**: Optimized builds with automatic code splitting
+- ** Type-Safe**: Full TypeScript support with strict mode enabled
+- ** Modern SSR**: Server-side rendering with optional hydration
+- ** Zero Config**: Works out of the box with sensible defaults
+- ** Flexible**: Build anything from static blogs to dynamic web apps
 
 ## Quick Start
 
@@ -72,4 +72,4 @@ This creates routes like `/blog/my-post`.
 - Explore [examples](https://github.com/oopsio/jen.js/tree/main/examples)
 - Join our [community](#)
 
-Happy building! 🚀
+Happy building! 

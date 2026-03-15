@@ -1,10 +1,10 @@
-# Jen.js DevTools
+﻿# Jen.js DevTools
 
 A fully functional, interactive development tools panel for Jen.js applications. Inspect components, edit state/props in real-time, track events and performance metrics—all without mocking.
 
 ## Features
 
-### 🎨 UI & Layout
+###  UI & Layout
 
 - **Floating Overlay Panel**: Draggable, resizable panel that stays on top
 - **Minimizable**: Collapse to header for quick access
@@ -12,35 +12,35 @@ A fully functional, interactive development tools panel for Jen.js applications.
 - **Responsive**: Adapts to different screen sizes
 - **Keyboard Navigation**: Full support for arrow keys and Enter
 
-### 🌳 Component Inspection
+###  Component Inspection
 
 - **Live Component Tree**: Visual hierarchy of all components on the page
 - **Collapsible Nodes**: Expand/collapse to explore the tree
 - **Real-time Highlighting**: Hover over components to highlight their DOM elements
 - **Keyboard Shortcuts**: Arrow keys to navigate, Enter to select
 
-### 📊 Inspector Tab
+###  Inspector Tab
 
 - **Props Inspector**: View and edit component props
 - **State Inspector**: Monitor and modify component state in real-time
 - **Hooks Display**: See registered hooks and their values
 - **Events Tracker**: Track component events and lifecycle
 
-### 📝 Console Tab
+###  Console Tab
 
 - **Log Aggregation**: Capture console.log, console.error, console.warn
 - **Timestamp**: Each log entry shows exact time
 - **Filtering**: Filter logs by level or source
 - **Command History**: Store console inputs for replay
 
-### 🌐 Network Tab
+###  Network Tab
 
 - **Request Tracking**: Monitor async operations and API calls
 - **Status Codes**: Color-coded request statuses
 - **Timing**: View request duration and timing data
 - **Request/Response**: Inspect request and response payloads
 
-### ⚡ Performance Tab
+###  Performance Tab
 
 - **FPS Monitor**: Real-time frame rate tracking
 - **Render Time**: Measure component render performance
@@ -48,21 +48,21 @@ A fully functional, interactive development tools panel for Jen.js applications.
 - **Memory Usage**: Monitor heap size (when available)
 - **Performance Chart**: Visual performance history over time
 
-### 🔍 Search & Filter
+###  Search & Filter
 
 - **Global Search**: Find components by name, type, or props
 - **Prop Search**: Search by specific prop names/values
 - **Type Filter**: Filter components by type
 - **Real-time Results**: Instant search results
 
-### 🔌 Plugin System
+###  Plugin System
 
 - **Extensible Architecture**: Add custom tabs and inspectors
 - **Plugin Lifecycle**: Setup/teardown hooks
 - **Event System**: Listen to DevTools events
 - **Easy Registration**: Simple API for plugin creation
 
-### 💾 Persistence
+###  Persistence
 
 - **Auto-save**: Panel layout, size, position saved automatically
 - **localStorage**: Settings persist across page reloads
@@ -347,10 +347,10 @@ Event Logger / Performance Monitor / Plugins
 
 ## Browser Support
 
-- Chrome/Edge: ✅ Full support
-- Firefox: ✅ Full support
-- Safari: ✅ Full support
-- IE11: ❌ Not supported
+- Chrome/Edge:  Full support
+- Firefox:  Full support
+- Safari:  Full support
+- IE11:  Not supported
 
 ## Development Mode Detection
 

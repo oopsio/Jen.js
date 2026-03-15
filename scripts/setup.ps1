@@ -1,4 +1,4 @@
-# Jen.js Framework - Setup Script (Windows PowerShell)
+﻿# Jen.js Framework - Setup Script (Windows PowerShell)
 
 $ErrorActionPreference = "Stop"
 
@@ -18,43 +18,43 @@ Write-Host ""
 Write-Host "[1/5] Checking Node.js installation..." -ForegroundColor $COLOR_YELLOW
 $nodeCheck = node --version 2>&1
 if ($LASTEXITCODE -ne 0) {
-  Write-Host "✗ Node.js not found. Please install Node.js 18+" -ForegroundColor $COLOR_RED
+  Write-Host " Node.js not found. Please install Node.js 18+" -ForegroundColor $COLOR_RED
   exit 1
 }
-Write-Host "✓ Node.js $nodeCheck found" -ForegroundColor $COLOR_GREEN
+Write-Host " Node.js $nodeCheck found" -ForegroundColor $COLOR_GREEN
 Write-Host ""
 
 # Check npm
 Write-Host "[2/5] Checking npm installation..." -ForegroundColor $COLOR_YELLOW
 $npmCheck = npm --version 2>&1
 if ($LASTEXITCODE -ne 0) {
-  Write-Host "✗ npm not found. Please install npm" -ForegroundColor $COLOR_RED
+  Write-Host " npm not found. Please install npm" -ForegroundColor $COLOR_RED
   exit 1
 }
-Write-Host "✓ npm $npmCheck found" -ForegroundColor $COLOR_GREEN
+Write-Host " npm $npmCheck found" -ForegroundColor $COLOR_GREEN
 Write-Host ""
 
 # Install dependencies
 Write-Host "[3/5] Installing dependencies..." -ForegroundColor $COLOR_YELLOW
 Set-Location $PROJECT_ROOT
 npm install
-Write-Host "✓ Dependencies installed" -ForegroundColor $COLOR_GREEN
+Write-Host " Dependencies installed" -ForegroundColor $COLOR_GREEN
 Write-Host ""
 
 # TypeScript check
 Write-Host "[4/5] Running TypeScript check..." -ForegroundColor $COLOR_YELLOW
 npm run typecheck 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
-  Write-Host "⚠ TypeScript warnings (non-blocking)" -ForegroundColor $COLOR_YELLOW
+  Write-Host " TypeScript warnings (non-blocking)" -ForegroundColor $COLOR_YELLOW
 }
-Write-Host "✓ TypeScript check complete" -ForegroundColor $COLOR_GREEN
+Write-Host " TypeScript check complete" -ForegroundColor $COLOR_GREEN
 Write-Host ""
 
 # Summary
 Write-Host "[5/5] Setup complete!" -ForegroundColor $COLOR_YELLOW
 Write-Host ""
 Write-Host "================================" -ForegroundColor $COLOR_GREEN
-Write-Host "  ✓ Setup successful!" -ForegroundColor $COLOR_GREEN
+Write-Host "   Setup successful!" -ForegroundColor $COLOR_GREEN
 Write-Host "================================" -ForegroundColor $COLOR_GREEN
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor $COLOR_BLUE

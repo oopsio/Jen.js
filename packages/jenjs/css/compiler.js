@@ -1,4 +1,4 @@
-import { compile, compileString } from "sass";
+﻿import { compile, compileString } from "sass";
 import { globSync } from "../vendor/glob/glob.js";
 import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -19,7 +19,7 @@ export class ScssCompiler {
         try {
             if (!existsSync(inputPath)) {
                 const error = `File not found: ${inputPath}`;
-                log.error(`[SCSS] ✗ ${error}`);
+                log.error(`[SCSS]  ${error}`);
                 return { css: "", error };
             }
             log.info(`[SCSS] Compiling: ${relative(process.cwd(), inputPath)}${minified ? " (minified)" : ""}${sourceMap ? " (source map)" : ""}`);
@@ -34,7 +34,7 @@ export class ScssCompiler {
                     writeFileSync(outputPath + ".map", JSON.stringify(result.sourceMap));
                     log.info(`[SCSS] Source map: ${outputPath}.map`);
                 }
-                log.info(`[SCSS] ✓ ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`);
+                log.info(`[SCSS]  ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`);
             }
             return {
                 css: result.css,
@@ -45,7 +45,7 @@ export class ScssCompiler {
         }
         catch (err) {
             const message = err.message || String(err);
-            log.error(`[SCSS] ✗ ${inputPath}: ${message}`);
+            log.error(`[SCSS]  ${inputPath}: ${message}`);
             return { css: "", error: message };
         }
     }
@@ -66,7 +66,7 @@ export class ScssCompiler {
         }
         catch (err) {
             const message = err.message || String(err);
-            log.error(`[SCSS] ✗ Inline compilation error: ${message}`);
+            log.error(`[SCSS]  Inline compilation error: ${message}`);
             return { css: "", error: message };
         }
     }
@@ -99,7 +99,7 @@ export class ScssCompiler {
             return count;
         }
         catch (err) {
-            log.error(`[SCSS] ✗ Glob compilation failed: ${err instanceof Error ? err.message : String(err)}`);
+            log.error(`[SCSS]  Glob compilation failed: ${err instanceof Error ? err.message : String(err)}`);
             return 0;
         }
     }

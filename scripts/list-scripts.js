@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -48,7 +48,7 @@ Object.entries(scripts).forEach(([name, value]) => {
   }
 });
 
-console.log('\n📦 JEN.JS Framework - Available Scripts\n');
+console.log('\n JEN.JS Framework - Available Scripts\n');
 console.log('=' .repeat(80) + '\n');
 
 Object.entries(grouped).forEach(([category, items]) => {

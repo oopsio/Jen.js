@@ -1,4 +1,4 @@
-// schema-docs.mjs
+﻿// schema-docs.mjs
 import fs from "fs";
 import path from "path";
 
@@ -212,5 +212,5 @@ fs.writeFileSync(`${base}.json`, JSON.stringify(schema, null, 2));
 fs.writeFileSync(`${base}.html`, html);
 
 console.log(
-  `✅ Generated ${base}.json and ${base}.html (fully valid JSON Schema, minified HTML)`,
+  ` Generated ${base}.json and ${base}.html (fully valid JSON Schema, minified HTML)`,
 );

@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 // Newsletter component would be imported here during build
 // import Newsletter from "./components/Newsletter.js";
 
@@ -40,21 +40,21 @@ export default function Home() {
 
         <section className="features">
           <div className="feature">
-            <h3>⚡ Lightning Fast</h3>
+            <h3> Lightning Fast</h3>
             <p>
               Fully minified HTML with critical CSS inline. Pre-rendered pages
               load instantly.
             </p>
           </div>
           <div className="feature">
-            <h3>🎨 Beautiful Design</h3>
+            <h3> Beautiful Design</h3>
             <p>
               Responsive, semantic HTML. Tailored CSS with deferred loading
               pattern.
             </p>
           </div>
           <div className="feature">
-            <h3>🔌 Interactive Islands</h3>
+            <h3> Interactive Islands</h3>
             <p>
               Add interactivity only where needed. Newsletter forms, toggles,
               pagination.

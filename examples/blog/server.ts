@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 /**
  * Development server for Jen.js blog example
  * Fully TypeScript + TSX compatible
@@ -58,7 +58,7 @@ async function main() {
 
   server.listen(config.server.port, config.server.hostname, () => {
     console.log(
-      `[SERVER] ✅ Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`,
+      `[SERVER]  Running on http://${config.server.hostname}:${config.server.port} (${isDev ? "DEV" : "PROD"})`,
     );
   });
 
@@ -73,6 +73,6 @@ async function main() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 main().catch((err) => {
-  console.error("[SERVER] ❌ Error:", err);
+  console.error("[SERVER]  Error:", err);
   process.exit(1);
 });

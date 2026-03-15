@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 ################################################################################
 # Jen.js Framework - Development Server (Linux/macOS)
@@ -25,7 +25,7 @@ if [ ! -d "node_modules" ]; then
   echo ""
 fi
 
-echo -e "${GREEN}✓ Dependencies ready${NC}"
+echo -e "${GREEN} Dependencies ready${NC}"
 echo ""
 echo -e "${BLUE}Development server options:${NC}"
 echo ""

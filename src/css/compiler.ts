@@ -1,4 +1,4 @@
-import { compile, compileString } from "sass";
+﻿import { compile, compileString } from "sass";
 import { globSync } from "../vendor/glob/glob.js";
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, extname, relative } from "node:path";
@@ -40,7 +40,7 @@ export class ScssCompiler {
     try {
       if (!existsSync(inputPath)) {
         const error = `File not found: ${inputPath}`;
-        log.error(`[SCSS] ✗ ${error}`);
+        log.error(`[SCSS]  ${error}`);
         return { css: "", error };
       }
 
@@ -63,7 +63,7 @@ export class ScssCompiler {
         }
 
         log.info(
-          `[SCSS] ✓ ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`,
+          `[SCSS]  ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`,
         );
       }
 
@@ -75,7 +75,7 @@ export class ScssCompiler {
       };
     } catch (err: any) {
       const message = err.message || String(err);
-      log.error(`[SCSS] ✗ ${inputPath}: ${message}`);
+      log.error(`[SCSS]  ${inputPath}: ${message}`);
       return { css: "", error: message };
     }
   }
@@ -98,7 +98,7 @@ export class ScssCompiler {
       return { css: result.css };
     } catch (err: any) {
       const message = err.message || String(err);
-      log.error(`[SCSS] ✗ Inline compilation error: ${message}`);
+      log.error(`[SCSS]  Inline compilation error: ${message}`);
       return { css: "", error: message };
     }
   }
@@ -139,7 +139,7 @@ export class ScssCompiler {
       return count;
     } catch (err) {
       log.error(
-        `[SCSS] ✗ Glob compilation failed: ${err instanceof Error ? err.message : String(err)}`,
+        `[SCSS]  Glob compilation failed: ${err instanceof Error ? err.message : String(err)}`,
       );
       return 0;
     }

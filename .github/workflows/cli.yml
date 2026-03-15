@@ -1,4 +1,4 @@
-name: Build Jen CLI
+﻿name: Build Jen CLI
 
 on:
   push:
@@ -81,7 +81,7 @@ jobs:
           # Binary loc: [root]/target/[target]/release/[bin]
           cp ../../target/${{ matrix.rust_target }}/release/$RAW_BIN build/$BIN_NAME
           
-          echo "✅ Built: $BIN_NAME"
+          echo " Built: $BIN_NAME"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

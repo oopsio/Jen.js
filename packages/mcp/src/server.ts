@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Jen.js MCP Server
  * Model Context Protocol implementation for Jen.js projects
  */
@@ -344,7 +344,7 @@ export class JenMCPServer {
     dirs.forEach((dir) => {
       const dirPath = join(this.projectRoot, dir);
       if (existsSync(dirPath)) {
-        lines.push(`📁 ${dir}`);
+        lines.push(` ${dir}`);
       }
     });
 
@@ -361,7 +361,7 @@ export class JenMCPServer {
     files.forEach((file) => {
       const filePath = join(this.projectRoot, file);
       if (existsSync(filePath)) {
-        lines.push(`  📄 ${file}`);
+        lines.push(`   ${file}`);
       }
     });
 

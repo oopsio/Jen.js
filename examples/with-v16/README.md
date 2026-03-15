@@ -1,4 +1,4 @@
-# Release 16 Feature Showcase
+﻿# Release 16 Feature Showcase
 
 Complete example demonstrating all new Jen.js features:
 
@@ -388,5 +388,5 @@ curl -X DELETE http://localhost:3000/api/users/1
 
 ---
 
-**Status**: ✅ Ready to explore  
+**Status**:  Ready to explore  
 **Last Updated**: February 3, 2026

@@ -1,4 +1,4 @@
-import { dirname, join } from "node:path";
+﻿import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { readdir, stat, readFile, writeFile } from "node:fs/promises";
 import esbuild from "esbuild";
@@ -110,7 +110,7 @@ async function main() {
 
   await minifyDir(join(currentDir, config.distDir || "dist"));
 
-  console.log("✅ Site built successfully!");
+  console.log(" Site built successfully!");
 }
 
 main().catch(console.error);

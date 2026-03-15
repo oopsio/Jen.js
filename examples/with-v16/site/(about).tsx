@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 
 /**
  * About Page - Demonstrates Zero-JS
@@ -50,11 +50,11 @@ export default function About() {
       <section style={{ marginBottom: "2rem" }}>
         <h2>Benefits of Zero-JS</h2>
         <ul style={{ lineHeight: "1.8" }}>
-          <li>🚀 Blazingly fast page loads (no JS parsing)</li>
-          <li>♿ Better accessibility (works without JavaScript)</li>
-          <li>🔍 Better SEO (pure HTML parsing)</li>
-          <li>📱 Better mobile performance (smaller payload)</li>
-          <li>🔒 Better security (no client-side code)</li>
+          <li> Blazingly fast page loads (no JS parsing)</li>
+          <li> Better accessibility (works without JavaScript)</li>
+          <li> Better SEO (pure HTML parsing)</li>
+          <li> Better mobile performance (smaller payload)</li>
+          <li> Better security (no client-side code)</li>
         </ul>
       </section>
 
@@ -94,12 +94,12 @@ export default function StaticPage() {
       <section style={{ marginBottom: "2rem" }}>
         <h2>Works With...</h2>
         <ul style={{ lineHeight: "1.8" }}>
-          <li>✅ Loaders (fetch data at build/request time)</li>
-          <li>✅ Middleware (auth, authorization, etc.)</li>
-          <li>✅ SSG (static site generation)</li>
-          <li>✅ SSR (server-side rendering)</li>
-          <li>❌ Islands (no JavaScript, so no islands)</li>
-          <li>❌ Client-side interactivity</li>
+          <li> Loaders (fetch data at build/request time)</li>
+          <li> Middleware (auth, authorization, etc.)</li>
+          <li> SSG (static site generation)</li>
+          <li> SSR (server-side rendering)</li>
+          <li> Islands (no JavaScript, so no islands)</li>
+          <li> Client-side interactivity</li>
         </ul>
       </section>
 

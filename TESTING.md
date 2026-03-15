@@ -1,4 +1,4 @@
-# Jen.js Testing Guide
+﻿# Jen.js Testing Guide
 
 ## Overview
 
@@ -120,13 +120,13 @@ npm run test:run -- --coverage  # With coverage report
 
 ## Key Features
 
-✅ **TypeScript Support** - Full strict mode compatibility  
-✅ **Path Aliases** - `@src/*` imports work seamlessly  
-✅ **Watch Mode** - Auto-rerun on file changes  
-✅ **Coverage Reports** - HTML, JSON, terminal output  
-✅ **Global APIs** - No import needed for describe/it/expect  
-✅ **Mocking** - vi.mock(), vi.spyOn() utilities  
-✅ **UI Dashboard** - Visual test runner with npm run test:ui
+ **TypeScript Support** - Full strict mode compatibility  
+ **Path Aliases** - `@src/*` imports work seamlessly  
+ **Watch Mode** - Auto-rerun on file changes  
+ **Coverage Reports** - HTML, JSON, terminal output  
+ **Global APIs** - No import needed for describe/it/expect  
+ **Mocking** - vi.mock(), vi.spyOn() utilities  
+ **UI Dashboard** - Visual test runner with npm run test:ui
 
 ---
 

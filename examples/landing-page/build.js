@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 // Build script for blog example
 // Builds from example/blog directory, outputs to example/blog/dist/
 
@@ -82,15 +82,15 @@ async function main() {
   } catch (err) {
     // Ignore dynamic route errors (expected for SSG)
     if (err.code === "ENOENT" && err.path?.includes(":")) {
-      console.log("[BUILD] ⚠️  Skipped dynamic routes (expected for SSG)");
+      console.log("[BUILD] ️  Skipped dynamic routes (expected for SSG)");
     } else {
       throw err;
     }
   }
-  console.log("✅ Blog built successfully!");
+  console.log(" Blog built successfully!");
 }
 
 main().catch((err) => {
-  console.error("[BUILD] ❌ Error:", err.message);
+  console.error("[BUILD]  Error:", err.message);
   process.exit(1);
 });

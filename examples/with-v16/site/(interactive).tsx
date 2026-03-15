@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { Island } from "../../../src/runtime/islands.js";
 
@@ -117,7 +117,7 @@ const FormVisibleImpl = () => {
       </form>
       {submitted && (
         <p style={{ color: "#991b1b", fontWeight: "bold" }}>
-          ✅ Thanks for subscribing!
+           Thanks for subscribing!
         </p>
       )}
       <p style={{ fontSize: "0.9rem", color: "#666" }}>
@@ -138,7 +138,7 @@ export default function Interactive() {
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem" }}>
       <header style={{ marginBottom: "2rem" }}>
-        <h1>🎯 Multiple Islands Demo</h1>
+        <h1> Multiple Islands Demo</h1>
         <p style={{ color: "#666" }}>
           This page demonstrates different hydration strategies for islands
         </p>
@@ -209,11 +209,11 @@ export default function Interactive() {
       <section style={{ marginBottom: "2rem" }}>
         <h2>Performance Benefits</h2>
         <ul style={{ lineHeight: "1.8" }}>
-          <li>✅ Only hydrate what's needed</li>
-          <li>✅ Defer non-critical JS</li>
-          <li>✅ Lazy-load below-the-fold components</li>
-          <li>✅ Reduce initial JS bundle size</li>
-          <li>✅ Faster Time to Interactive (TTI)</li>
+          <li> Only hydrate what's needed</li>
+          <li> Defer non-critical JS</li>
+          <li> Lazy-load below-the-fold components</li>
+          <li> Reduce initial JS bundle size</li>
+          <li> Faster Time to Interactive (TTI)</li>
         </ul>
       </section>
 
@@ -248,10 +248,10 @@ export default function Page() {
       <section style={{ marginBottom: "2rem" }}>
         <h2>Browser Support</h2>
         <ul style={{ lineHeight: "1.8" }}>
-          <li>✅ load - All browsers</li>
-          <li>✅ idle - Modern browsers (requestIdleCallback)</li>
-          <li>✅ visible - Modern browsers (IntersectionObserver)</li>
-          <li>⚠️ Older browsers fall back to load strategy</li>
+          <li> load - All browsers</li>
+          <li> idle - Modern browsers (requestIdleCallback)</li>
+          <li> visible - Modern browsers (IntersectionObserver)</li>
+          <li>️ Older browsers fall back to load strategy</li>
         </ul>
       </section>
 

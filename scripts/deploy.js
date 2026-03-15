@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -23,22 +23,22 @@
 
 async function deploy() {
   const env = process.env.DEPLOY_ENV || 'production';
-  console.log(`🚀 Deploying to ${env} environment...`);
+  console.log(` Deploying to ${env} environment...`);
 
   try {
-    console.log('📦 Building application...');
+    console.log(' Building application...');
     // Build process here
 
-    console.log('✅ Build successful');
-    console.log('📤 Uploading artifacts...');
+    console.log(' Build successful');
+    console.log(' Uploading artifacts...');
     // Upload process here
 
-    console.log('🔄 Running health checks...');
+    console.log(' Running health checks...');
     // Health check here
 
-    console.log(`✅ Deployment to ${env} completed successfully!`);
+    console.log(` Deployment to ${env} completed successfully!`);
   } catch (error) {
-    console.error('❌ Deployment failed:', error.message);
+    console.error(' Deployment failed:', error.message);
     process.exit(1);
   }
 }

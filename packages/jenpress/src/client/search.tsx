@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 
 export interface SearchResult {
@@ -112,7 +112,7 @@ export function Search({ onSelect }: SearchProps) {
         onClick={() => setIsOpen(true)}
         title="Press / to search"
       >
-        🔍
+        
       </button>
 
       {isOpen && (

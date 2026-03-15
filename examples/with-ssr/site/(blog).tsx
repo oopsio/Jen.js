@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import type { LoaderContext, RouteModule } from "../../../src/core/types.js";
 
 /**
@@ -93,7 +93,7 @@ export default function BlogPage({ data, query }: any) {
   return (
     <div class="blog-page">
       <div class="navbar">
-        <h1>📝 Blog</h1>
+        <h1> Blog</h1>
         <p class="subtitle">Articles about Jen.js and Server-Side Rendering</p>
       </div>
 
@@ -130,8 +130,8 @@ export default function BlogPage({ data, query }: any) {
                       marginTop: "0.5rem",
                     }}
                   >
-                    <span>👤 {post.author}</span>
-                    <span>📅 {post.date}</span>
+                    <span> {post.author}</span>
+                    <span> {post.date}</span>
                     <span>⏱️ {post.readTime}</span>
                   </div>
                 </li>
@@ -143,7 +143,7 @@ export default function BlogPage({ data, query }: any) {
         </section>
 
         <section class="section">
-          <h2>💡 About This Example</h2>
+          <h2> About This Example</h2>
           <div class="card">
             <h3>Server-Side Rendering Benefits:</h3>
             <ul style={{ paddingLeft: "1.5rem", marginTop: "1rem" }}>
@@ -172,7 +172,7 @@ export default function BlogPage({ data, query }: any) {
         </section>
 
         <section class="section">
-          <h2>📚 Loader Pattern</h2>
+          <h2> Loader Pattern</h2>
           <p>
             The <code>loader</code> function in this route file fetches blog
             posts from the database during server-side rendering. The result is
@@ -211,7 +211,7 @@ export default function BlogPage({ data }) {
         </section>
 
         <section class="section">
-          <h2>🎯 What's Next?</h2>
+          <h2> What's Next?</h2>
           <div class="grid">
             <a href="/posts/1" class="button">
               Read First Post →

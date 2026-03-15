@@ -1,4 +1,4 @@
-// Stylized CLI Banner for Jen.js
+﻿// Stylized CLI Banner for Jen.js
 // Matches the visual style requested (Purple/Cyan gradient feel)
 const RES = "\x1b[0m";
 const PURPLE = "\x1b[38;2;200;128;255m"; // #C880FF
@@ -18,7 +18,7 @@ export function printBanner(port, env, version = "1.0.0") {
     console.log();
     console.log(`  ${GRAY}Jen.js Framework ${DIM}v${version}${RES}`);
     console.log();
-    console.log(`  ${GRAY}➜${RES}  ${BOLD}Local:${RES}   ${CYAN}http://localhost:${port}/${RES}`);
-    console.log(`  ${GRAY}➜${RES}  ${BOLD}Mode:${RES}    ${PURPLE}${env}${RES}`);
+    console.log(`  ${GRAY}${RES}  ${BOLD}Local:${RES}   ${CYAN}http://localhost:${port}/${RES}`);
+    console.log(`  ${GRAY}${RES}  ${BOLD}Mode:${RES}    ${PURPLE}${env}${RES}`);
     console.log();
 }

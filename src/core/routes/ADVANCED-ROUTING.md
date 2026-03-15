@@ -1,4 +1,4 @@
-# Advanced Routing System
+﻿# Advanced Routing System
 
 The Jen.js advanced routing system provides a comprehensive set of features for building complex, production-grade web applications with dynamic routes, query parameter validation, middleware guards, redirects, and custom 404 handling.
 
@@ -336,12 +336,12 @@ export default function AdminUsers({ data }) {
 Guard functions should not throw errors; instead, return a response object:
 
 ```typescript
-// ❌ Wrong - throws error
+//  Wrong - throws error
 async (ctx) => {
   if (error) throw new Error("Access denied");
 };
 
-// ✅ Correct - returns response
+//  Correct - returns response
 async (ctx) => {
   if (error) {
     return { status: 403, location: "/forbidden" };

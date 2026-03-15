@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 
 /**
  * Documentation Page - Zero-JS Example
@@ -10,7 +10,7 @@ export default function Docs() {
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem" }}>
       <header style={{ marginBottom: "2rem" }}>
-        <h1>📚 Jen.js Documentation</h1>
+        <h1> Jen.js Documentation</h1>
         <p style={{ color: "#666" }}>
           Quick reference for Jen.js framework features
         </p>
@@ -265,20 +265,20 @@ export default function StaticPage() {
 
         <h3>Benefits</h3>
         <ul style={{ lineHeight: "1.8" }}>
-          <li>✅ Zero JavaScript overhead</li>
-          <li>✅ Fastest possible load time</li>
-          <li>✅ Better SEO</li>
-          <li>✅ Works without JavaScript</li>
-          <li>✅ Accessible to all users</li>
+          <li> Zero JavaScript overhead</li>
+          <li> Fastest possible load time</li>
+          <li> Better SEO</li>
+          <li> Works without JavaScript</li>
+          <li> Accessible to all users</li>
         </ul>
 
         <h3>Compatible With</h3>
         <ul style={{ lineHeight: "1.8" }}>
-          <li>✅ Loaders (fetch data)</li>
-          <li>✅ Middleware (auth, etc.)</li>
-          <li>✅ SSG and SSR</li>
-          <li>❌ Islands (no JavaScript)</li>
-          <li>❌ Client-side interactions</li>
+          <li> Loaders (fetch data)</li>
+          <li> Middleware (auth, etc.)</li>
+          <li> SSG and SSR</li>
+          <li> Islands (no JavaScript)</li>
+          <li> Client-side interactions</li>
         </ul>
       </section>
 

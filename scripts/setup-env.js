@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -35,26 +35,26 @@ const envTemplate = path.join(rootDir, `.env.${ENV}`);
 
 async function setupEnv() {
   try {
-    console.log(`🔧 Setting up environment for: ${ENV}`);
+    console.log(` Setting up environment for: ${ENV}`);
 
     // Check if .env exists
     if (fs.existsSync(envFile)) {
-      console.log('✅ .env file already exists, skipping...');
+      console.log(' .env file already exists, skipping...');
       return;
     }
 
     // Check if environment-specific file exists
     if (fs.existsSync(envTemplate)) {
       fs.copyFileSync(envTemplate, envFile);
-      console.log(`✅ Created .env from .env.${ENV}`);
+      console.log(` Created .env from .env.${ENV}`);
     } else {
       // Fallback to .env.example
       const exampleFile = path.join(rootDir, '.env.example');
       if (fs.existsSync(exampleFile)) {
         fs.copyFileSync(exampleFile, envFile);
-        console.log('✅ Created .env from .env.example');
+        console.log(' Created .env from .env.example');
       } else {
-        console.error('❌ No .env template found');
+        console.error(' No .env template found');
         process.exit(1);
       }
     }
@@ -64,9 +64,9 @@ async function setupEnv() {
       updateEnvSecrets(envFile);
     }
 
-    console.log('✅ Environment setup complete!');
+    console.log(' Environment setup complete!');
   } catch (error) {
-    console.error('❌ Error setting up environment:', error.message);
+    console.error(' Error setting up environment:', error.message);
     process.exit(1);
   }
 }
@@ -82,7 +82,7 @@ function updateEnvSecrets(envFile) {
       'your-super-secret-key-change-this-in-production',
       secret
     );
-    console.log('✅ Generated JWT_SECRET');
+    console.log(' Generated JWT_SECRET');
   }
 
   if (content.includes('your-session-secret-change-in-production')) {
@@ -92,7 +92,7 @@ function updateEnvSecrets(envFile) {
       'your-session-secret-change-in-production',
       secret
     );
-    console.log('✅ Generated SESSION_SECRET');
+    console.log(' Generated SESSION_SECRET');
   }
 
   fs.writeFileSync(envFile, content);

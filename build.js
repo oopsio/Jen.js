@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
@@ -71,15 +71,15 @@ async function main() {
     await buildSite({ config });
   } catch (err) {
     if (err.code === "ENOENT" && err.path?.includes(":")) {
-      console.log("[BUILD] ⚠️  Skipped dynamic routes (expected for SSG)");
+      console.log("[BUILD] ️  Skipped dynamic routes (expected for SSG)");
     } else {
       throw err;
     }
   }
-  console.log("✅ Build complete!");
+  console.log(" Build complete!");
 }
 
 main().catch((err) => {
-  console.error("[BUILD] ❌ Error:", err.message);
+  console.error("[BUILD]  Error:", err.message);
   process.exit(1);
 });

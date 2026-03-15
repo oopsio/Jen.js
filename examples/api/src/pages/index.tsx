@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Example frontend page demonstrating API calls
  */
 
@@ -110,7 +110,7 @@ const HomePage: FunctionComponent = () => {
         fontFamily: "sans-serif",
       }}
     >
-      <h1>🚀 Jen.js API Routes Example</h1>
+      <h1> Jen.js API Routes Example</h1>
 
       {/* Hello API Demo */}
       <section
@@ -139,7 +139,7 @@ const HomePage: FunctionComponent = () => {
 
       {/* Todo List Demo */}
       <section style={{ marginBottom: "40px" }}>
-        <h2>📝 Todo List (CRUD Operations)</h2>
+        <h2> Todo List (CRUD Operations)</h2>
 
         {/* Add Todo Form */}
         <form
@@ -238,7 +238,7 @@ const HomePage: FunctionComponent = () => {
 
       {/* Search Demo */}
       <section style={{ marginBottom: "40px" }}>
-        <h2>🔍 Search API (Query Parameters)</h2>
+        <h2> Search API (Query Parameters)</h2>
         <form
           onSubmit={search}
           style={{ marginBottom: "20px", display: "flex", gap: "10px" }}
@@ -324,7 +324,7 @@ const HomePage: FunctionComponent = () => {
           borderRadius: "8px",
         }}
       >
-        <h2>📚 More API Examples</h2>
+        <h2> More API Examples</h2>
         <ul>
           <li>
             <strong>Dynamic Routes:</strong>

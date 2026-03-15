@@ -1,4 +1,4 @@
-import { dirname, join, extname, basename } from "node:path";
+﻿import { dirname, join, extname, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
 import { readdirSync, statSync } from "node:fs";
@@ -122,7 +122,7 @@ async function main() {
     const relPath = renamed.oldPath.replace(distDir, "").replace(/\\/g, "/");
     const newRelPath = renamed.newPath.replace(distDir, "").replace(/\\/g, "/");
     fileMap[relPath] = newRelPath;
-    console.log(`✅ Hashed CSS: ${renamed.newPath}`);
+    console.log(` Hashed CSS: ${renamed.newPath}`);
   }
 
   const jsFiles = getAllFiles(distDir, [".js"]);
@@ -136,7 +136,7 @@ async function main() {
     const relPath = renamed.oldPath.replace(distDir, "").replace(/\\/g, "/");
     const newRelPath = renamed.newPath.replace(distDir, "").replace(/\\/g, "/");
     fileMap[relPath] = newRelPath;
-    console.log(`✅ Hashed JS: ${renamed.newPath}`);
+    console.log(` Hashed JS: ${renamed.newPath}`);
   }
 
   // Step 2: Minify & update HTML with hashed file references
@@ -157,16 +157,16 @@ async function main() {
       hash: renamed.hash,
       newPath: renamed.newPath,
     };
-    console.log(`✅ Minified & hashed: ${renamed.newPath}`);
+    console.log(` Minified & hashed: ${renamed.newPath}`);
   }
 
   // Write manifest
   const manifestPath = join(distDir, "asset-manifest.json");
   await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
-  console.log(`✅ Asset manifest written: ${manifestPath}`);
+  console.log(` Asset manifest written: ${manifestPath}`);
 
   console.log(
-    "✅ Site built, scripts removed, HTML minified, and assets hashed successfully!",
+    " Site built, scripts removed, HTML minified, and assets hashed successfully!",
   );
 }
 

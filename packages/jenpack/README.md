@@ -1,18 +1,18 @@
-# Jenpack
+﻿# Jenpack
 
 A modern SWC-based bundler and dev server for the Jen.js ecosystem.
 
 ## Features
 
-- ⚡️ Fast bundling powered by SWC
-- 🔥 Hot module reloading (WebSocket-based)
-- 📦 Smart code splitting and chunking
-- 🗺️ Source maps for debugging
-- 🎯 TypeScript & JSX/TSX support out of the box
-- 🎨 CSS and static asset handling
-- 📊 Build analysis and visualization
-- 💾 Intelligent caching system
-- 🚀 Production-grade minification
+- ️ Fast bundling powered by SWC
+-  Hot module reloading (WebSocket-based)
+-  Smart code splitting and chunking
+- ️ Source maps for debugging
+-  TypeScript & JSX/TSX support out of the box
+-  CSS and static asset handling
+-  Build analysis and visualization
+-  Intelligent caching system
+-  Production-grade minification
 
 ## Installation
 

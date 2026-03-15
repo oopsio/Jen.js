@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { marked } from "marked";
 import Header from "./components/Header.js";
 import Footer from "./components/Footer.js";
@@ -79,7 +79,7 @@ const htmlContent = `<h1>Web Design Principles</h1>
 </ul>
 <h2>Conclusion</h2>
 <p>Great design requires attention to detail and a deep understanding of your users. Follow these principles, test constantly, and always prioritize the user experience.</p>
-<p>Remember: <strong>Form follows function</strong>. ✨</p>
+<p>Remember: <strong>Form follows function</strong>. </p>
 `;
 
 export function Head() {

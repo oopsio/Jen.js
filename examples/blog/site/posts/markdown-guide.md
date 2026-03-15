@@ -1,4 +1,4 @@
----
+﻿---
 title: Markdown Guide
 date: 2026-02-20
 author: Sarah Chen
@@ -78,9 +78,9 @@ function greet(name: string): string {
 
 | Feature | Jen.js | Next.js | Astro |
 | ------- | ------ | ------- | ----- |
-| Speed   | ⚡     | ⚡      | ⚡    |
-| SSR     | ✓      | ✓       | ✓     |
-| Islands | ✓      | ✗       | ✓     |
+| Speed   |      |       |     |
+| SSR     |       |        |      |
+| Islands |       |        |      |
 
 ## Horizontal Rules
 
@@ -100,4 +100,4 @@ Use backslash to escape special characters: \*not italic\*
 4. Prefer unordered lists for non-sequential items
 5. Use code blocks for technical content
 
-Now you're ready to write amazing content! ✍️
+Now you're ready to write amazing content! ️

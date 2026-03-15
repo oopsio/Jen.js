@@ -1,4 +1,4 @@
-import { h, render, Fragment } from "preact";
+﻿import { h, render, Fragment } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { highlightCode } from "./highlight.js";
 import { Sidebar, type SidebarItem } from "./sidebar.tsx";
@@ -17,7 +17,7 @@ function WelcomePage() {
       </p>
 
       <section style={styles.section}>
-        <h2>⚡ Features</h2>
+        <h2> Features</h2>
         <ul style={styles.list}>
           <li>Fast Vite dev server with HMR</li>
           <li>Markdown-first with file-based routing</li>
@@ -28,7 +28,7 @@ function WelcomePage() {
       </section>
 
       <section style={styles.section}>
-        <h2>🚀 Quick Start</h2>
+        <h2> Quick Start</h2>
         <pre style={styles.code}>
           {`# Create markdown file
 echo "# My Page" > docs/my-page.md
@@ -39,7 +39,7 @@ echo "# My Page" > docs/my-page.md
       </section>
 
       <section style={styles.section}>
-        <h2>📖 Example Pages</h2>
+        <h2> Example Pages</h2>
         <ul style={styles.list}>
           <li>
             <a href="/docs/index.md" style={styles.link}>
@@ -60,7 +60,7 @@ echo "# My Page" > docs/my-page.md
       </section>
 
       <section style={styles.section}>
-        <h2>⚙️ Configuration</h2>
+        <h2>️ Configuration</h2>
         <p>
           Create <code>jenpress.config.ts</code> to customize:
         </p>
@@ -75,7 +75,7 @@ export default defineConfig({
       </section>
 
       <footer style={styles.footer}>
-        <p>🎉 JenPress v0.1.0 - Ready to build documentation!</p>
+        <p> JenPress v0.1.0 - Ready to build documentation!</p>
       </footer>
     </Fragment>
   );
@@ -220,7 +220,7 @@ function MarkdownPage({ path, isDark }: { path: string; isDark?: boolean }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              ✏️ Edit on GitHub
+              ️ Edit on GitHub
             </a>
           </div>
           <div style={styles.footer}>
@@ -567,7 +567,7 @@ function App() {
               setCurrentPath("");
             }}
           >
-            📚 JenPress
+             JenPress
           </a>
         </div>
         <ul style={styles.navMenu}>
@@ -603,7 +603,7 @@ function App() {
             }}
             aria-label="Toggle dark mode"
           >
-            {isDarkMode ? "☀️" : "🌙"}
+            {isDarkMode ? "️" : ""}
           </button>
         </div>
       </nav>

@@ -1,8 +1,8 @@
-# Release 16 Example - Complete Feature Showcase
+﻿# Release 16 Example - Complete Feature Showcase
 
 Complete working example demonstrating all 4 major features of Jen.js Release 16.
 
-## 📁 Directory Structure
+##  Directory Structure
 
 ```
 release-16/
@@ -28,9 +28,9 @@ release-16/
 └── EXAMPLE_INDEX.md               # This file
 ```
 
-## 🎯 Features Demonstrated
+##  Features Demonstrated
 
-### 1. **Islands** 🏝️
+### 1. **Islands** ️
 
 **Pages Using Islands**:
 
@@ -51,7 +51,7 @@ release-16/
 2. `site/(interactive).tsx` - Multiple strategies
 3. `site/(login).tsx` - Form interaction
 
-### 2. **Route Middleware** 🔐
+### 2. **Route Middleware** 
 
 **Pages Using Middleware**:
 
@@ -84,7 +84,7 @@ Loader receives ctx.data
 Page renders with user data
 ```
 
-### 3. **API Routes** 🌐
+### 3. **API Routes** 
 
 **API Endpoints**:
 
@@ -115,7 +115,7 @@ curl -X PUT http://localhost:3000/api/users/1 -H "Content-Type: application/json
 curl -X DELETE http://localhost:3000/api/users/1
 ```
 
-### 4. **Zero-JS Pages** 📄
+### 4. **Zero-JS Pages** 
 
 **Zero-JS Pages**:
 
@@ -143,7 +143,7 @@ curl -X DELETE http://localhost:3000/api/users/1
 2. `site/(docs).tsx` - More complex zero-JS
 3. `site/(blog)/[slug].tsx` - Dynamic + zero-JS
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -183,7 +183,7 @@ npm run build  # Build static site to dist/
 npm run start  # Run production server
 ```
 
-## 📚 Learning Path
+##  Learning Path
 
 ### Beginner
 
@@ -231,7 +231,7 @@ npm run start  # Run production server
    - Add more API endpoints
    - Add more middleware logic
 
-## 🔬 Code Examples
+##  Code Examples
 
 ### Simple Island
 
@@ -296,7 +296,7 @@ export default function About() {
 }
 ```
 
-## 🧪 Testing
+##  Testing
 
 ### Manual Testing
 
@@ -330,20 +330,20 @@ curl http://localhost:3000/api/users/1
 
 ### Browser Compatibility
 
-✅ **Tested on**:
+ **Tested on**:
 
 - Chrome/Edge (latest)
 - Firefox (latest)
 - Safari (latest)
 - Mobile browsers (iOS Safari, Chrome Mobile)
 
-⚠️ **Note**: Some hydration strategies require modern browsers:
+️ **Note**: Some hydration strategies require modern browsers:
 
 - `idle` requires `requestIdleCallback`
 - `visible` requires `IntersectionObserver`
 - Fallback to `load` in older browsers
 
-## 📊 Performance Metrics
+##  Performance Metrics
 
 ### Typical Page Loads
 
@@ -357,7 +357,7 @@ curl http://localhost:3000/api/users/1
 
 _Metrics are approximate and depend on network/hardware_
 
-## 🛠️ Customization
+## ️ Customization
 
 ### Add New Island
 
@@ -393,7 +393,7 @@ export default function MyPage() {
 }
 ```
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Islands not working?
 
@@ -419,14 +419,14 @@ export default function MyPage() {
 - Check file is exported from route component
 - Rebuild and clear cache
 
-## 📖 Documentation Links
+##  Documentation Links
 
 - [FEATURES.md](../../FEATURES.md) - Complete API reference
 - [QUICK_START.md](../../QUICK_START.md) - Quick code examples
 - [IMPLEMENTATION_GUIDE.md](../../IMPLEMENTATION_GUIDE.md) - Architecture
 - [README.md](./README.md) - This example guide
 
-## 🎓 Learning Resources
+##  Learning Resources
 
 ### Concepts
 
@@ -440,7 +440,7 @@ export default function MyPage() {
 - [Fresh](https://fresh.deno.dev/) - Islands + Deno
 - [Next.js 13](https://nextjs.org/) - Server Components
 
-## 🤝 Contributing
+##  Contributing
 
 Found an issue? Have an improvement?
 
@@ -448,12 +448,12 @@ Found an issue? Have an improvement?
 2. Submit a pull request
 3. Discuss in Discussions
 
-## 📄 License
+##  License
 
 This example is part of Jen.js, licensed under MIT.
 
 ---
 
-**Happy coding! 🚀**
+**Happy coding! **
 
 For questions or feedback, check out the main Jen.js documentation or open an issue on GitHub.

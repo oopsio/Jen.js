@@ -1,4 +1,4 @@
-# @jenjs/core-engine
+﻿# @jenjs/core-engine
 
 High-performance Go/WebAssembly engine replacing heavy TypeScript logic in `src/core/`.
 
@@ -119,9 +119,9 @@ All Go types are mirrored in `index.ts`:
 
 ## Constraints Met
 
-✓ Standard library only (Go stdlib packages)
-✓ Direct placement in `packages/jen-core/` root
-✓ 100% JSON output compatibility with TypeScript types
-✓ Optimized for low-disk systems (7-year-old PC compatibility)
-✓ Global `jenGo` object via syscall/js
-✓ Blocking channel keeps Go runtime alive
+ Standard library only (Go stdlib packages)
+ Direct placement in `packages/jen-core/` root
+ 100% JSON output compatibility with TypeScript types
+ Optimized for low-disk systems (7-year-old PC compatibility)
+ Global `jenGo` object via syscall/js
+ Blocking channel keeps Go runtime alive

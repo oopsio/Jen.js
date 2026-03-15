@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { marked } from "marked";
 import Header from "./components/Header.js";
 import Footer from "./components/Footer.js";
@@ -67,7 +67,7 @@ Server Cache: 5-10 minutes for dynamic content
 <li><a href="https://gtmetrix.com">GTmetrix</a></li>
 </ul>
 <h2>Summary</h2>
-<p>Performance optimization is a continuous process. Measure, optimize, and monitor regularly. Your users will thank you! 🚀</p>
+<p>Performance optimization is a continuous process. Measure, optimize, and monitor regularly. Your users will thank you! </p>
 <p>Remember: <strong>Speed is a feature</strong>, not an afterthought.</p>
 `;
 

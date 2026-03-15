@@ -1,4 +1,4 @@
-import { resolve } from "path";
+﻿import { resolve } from "path";
 import { normalizePath } from "../../utils/path.js";
 import {
   info,
@@ -45,11 +45,11 @@ export async function analyze(
       const graph = await graphBuilder.build(normalizedEntry);
 
       // Print module tree
-      console.log("\n📦 Module Graph\n");
+      console.log("\n Module Graph\n");
       printModuleTree(graph.entryModule, graph, new Set(), 0);
 
       // Print statistics
-      console.log("\n📊 Statistics\n");
+      console.log("\n Statistics\n");
       const modules = Array.from(graph.modules.values());
       const totalSize = modules.reduce(
         (sum, m) => sum + Buffer.byteLength(m.source, "utf8"),
@@ -60,7 +60,7 @@ export async function analyze(
       console.log(`  Total size: ${formatSize(totalSize)}`);
 
       // Print module sizes
-      console.log("\n📈 Module Sizes\n");
+      console.log("\n Module Sizes\n");
       modules
         .sort(
           (a, b) =>

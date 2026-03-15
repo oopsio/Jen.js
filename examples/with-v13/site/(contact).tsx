@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 
 export default function Contact() {
   return (
@@ -129,9 +129,9 @@ export default function Contact() {
           >
             <h3>Other Ways to Reach Us</h3>
             <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-              <li>📧 Email: hello@example.com</li>
-              <li>🐦 Twitter: @jenjs</li>
-              <li>💬 Discord: Join our community</li>
+              <li> Email: hello@example.com</li>
+              <li> Twitter: @jenjs</li>
+              <li> Discord: Join our community</li>
             </ul>
           </div>
         </section>

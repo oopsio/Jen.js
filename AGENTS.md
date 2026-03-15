@@ -1,6 +1,6 @@
 # AGENTS.md - Jen.js Framework Codebase
 
-## 🚫 Documentation Rule (CRITICAL)
+## Documentation Rule - CRITICAL
 
 DO NOT create any `.md` or `.txt` files for documentation.
 

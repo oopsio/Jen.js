@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+﻿import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, basename } from "node:path";
 import type { FrameworkConfig } from "../core/config.js";
 import { resolveDistPath } from "../core/paths.js";
@@ -672,7 +672,7 @@ export async function generateBundleReport(
 </head>
 <body>
   <div class="header">
-    <h1>📦 Bundle Analyzer</h1>
+    <h1> Bundle Analyzer</h1>
     <span class="badge">Jen.js</span>
   </div>
 

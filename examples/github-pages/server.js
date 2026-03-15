@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+﻿import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { createServer } from "vite";
 
@@ -60,11 +60,11 @@ async function main() {
   console.log(`  ${C.bold}JEN.JS v20.1.2${C.reset}  ${C.dim}ready in ${startupTime} ms${C.reset}\n`);
 
   // Fixed indentation: 2 spaces, then the arrow, then 2 spaces
-  console.log(`  ${C.green}➜${C.reset}  ${C.bold}Local:${C.reset}   ${C.cyan}http://localhost:3000/${C.reset}`);
+  console.log(`  ${C.green}${C.reset}  ${C.bold}Local:${C.reset}   ${C.cyan}http://localhost:3000/${C.reset}`);
   
   // These use 5 spaces to align perfectly under the word "Local"
-  console.log(`  ${C.dim}➜${C.reset}  ${C.dim}Network: use --host to expose${C.reset}`);
-  console.log(`  ${C.dim}➜${C.reset}  ${C.dim}press h + enter to show help${C.reset}\n`);
+  console.log(`  ${C.dim}${C.reset}  ${C.dim}Network: use --host to expose${C.reset}`);
+  console.log(`  ${C.dim}${C.reset}  ${C.dim}press h + enter to show help${C.reset}\n`);
 }
 
 main().catch(console.error);

@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 
 import { h } from "preact";
 import Header from "./components/Header.tsx";
@@ -40,19 +40,19 @@ export default function About() {
                 </p>
                 <ul className="space-y-2 text-gray-600">
                   <li>
-                    ✓ <strong>Hybrid Rendering:</strong> Choose between SSR,
+                     <strong>Hybrid Rendering:</strong> Choose between SSR,
                     SSG, or hybrid for each route
                   </li>
                   <li>
-                    ✓ <strong>TypeScript First:</strong> Full type safety from
+                     <strong>TypeScript First:</strong> Full type safety from
                     server to client
                   </li>
                   <li>
-                    ✓ <strong>Lightweight:</strong> Preact reduces bundle size
+                     <strong>Lightweight:</strong> Preact reduces bundle size
                     significantly
                   </li>
                   <li>
-                    ✓ <strong>Developer Experience:</strong> Hot module
+                     <strong>Developer Experience:</strong> Hot module
                     reloading and fast builds
                   </li>
                 </ul>
@@ -69,7 +69,7 @@ export default function About() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <h3 className="font-bold text-gray-900 mb-3">🎨 Styling</h3>
+                    <h3 className="font-bold text-gray-900 mb-3"> Styling</h3>
                     <ul className="space-y-1 text-sm text-gray-600">
                       <li>• Tailwind CSS 3.4</li>
                       <li>• SCSS preprocessing</li>
@@ -79,7 +79,7 @@ export default function About() {
                   </div>
 
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <h3 className="font-bold text-gray-900 mb-3">🔌 Plugins</h3>
+                    <h3 className="font-bold text-gray-900 mb-3"> Plugins</h3>
                     <ul className="space-y-1 text-sm text-gray-600">
                       <li>• Analytics tracking</li>
                       <li>• Theme management</li>
@@ -90,7 +90,7 @@ export default function About() {
 
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                     <h3 className="font-bold text-gray-900 mb-3">
-                      💎 Components
+                       Components
                     </h3>
                     <ul className="space-y-1 text-sm text-gray-600">
                       <li>• Responsive Header</li>
@@ -101,7 +101,7 @@ export default function About() {
                   </div>
 
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <h3 className="font-bold text-gray-900 mb-3">🔧 Tooling</h3>
+                    <h3 className="font-bold text-gray-900 mb-3"> Tooling</h3>
                     <ul className="space-y-1 text-sm text-gray-600">
                       <li>• TypeScript 5.7</li>
                       <li>• Hot reload dev server</li>
@@ -175,7 +175,7 @@ export default function About() {
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h3 className="font-bold text-blue-900 mb-2">💡 Pro Tip</h3>
+                <h3 className="font-bold text-blue-900 mb-2"> Pro Tip</h3>
                 <p className="text-blue-800">
                   The plugins in{" "}
                   <code className="bg-blue-100 px-2 py-1 rounded">

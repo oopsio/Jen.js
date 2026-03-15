@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { useState } from "preact/hooks";
 import { Island } from "../../../src/runtime/islands.js";
 
@@ -144,7 +144,7 @@ export default function Login() {
   return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "2rem" }}>
       <header style={{ marginBottom: "2rem", textAlign: "center" }}>
-        <h1>🔐 Login</h1>
+        <h1> Login</h1>
         <p style={{ color: "#666" }}>
           Enter your credentials to access the dashboard
         </p>

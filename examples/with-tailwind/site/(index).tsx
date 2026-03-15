@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import Header from "./components/Header.tsx";
 import Hero from "./components/Hero.tsx";
 import FeatureGrid from "./components/FeatureGrid.tsx";
@@ -6,37 +6,37 @@ import Footer from "./components/Footer.tsx";
 
 const features = [
   {
-    icon: "⚡",
+    icon: "",
     title: "Lightning Fast",
     description:
       "Built on modern JavaScript with optimized SSR and static generation for instant load times.",
   },
   {
-    icon: "🎨",
+    icon: "",
     title: "Beautiful UI",
     description:
       "Tailwind CSS pre-configured with custom components and responsive design built-in.",
   },
   {
-    icon: "🔌",
+    icon: "",
     title: "Plugin System",
     description:
       "Extensible architecture with analytics, theme management, and notifications out of the box.",
   },
   {
-    icon: "📱",
+    icon: "",
     title: "Responsive",
     description:
       "Mobile-first design approach ensuring your app works perfectly on any device.",
   },
   {
-    icon: "🔒",
+    icon: "",
     title: "Type Safe",
     description:
       "Full TypeScript support with strict mode enabled for maximum development confidence.",
   },
   {
-    icon: "🚀",
+    icon: "",
     title: "Production Ready",
     description:
       "Complete with build optimization, asset hashing, and performance monitoring.",
@@ -83,53 +83,53 @@ export default function Index() {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="card">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  🎯 Pre-configured Stack
+                   Pre-configured Stack
                 </h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>✓ Tailwind CSS with custom utilities</li>
-                  <li>✓ TypeScript with strict mode</li>
-                  <li>✓ Preact for lightweight rendering</li>
-                  <li>✓ Server-side rendering (SSR)</li>
-                  <li>✓ Static site generation (SSG)</li>
+                  <li> Tailwind CSS with custom utilities</li>
+                  <li> TypeScript with strict mode</li>
+                  <li> Preact for lightweight rendering</li>
+                  <li> Server-side rendering (SSR)</li>
+                  <li> Static site generation (SSG)</li>
                 </ul>
               </div>
 
               <div className="card">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  🔧 Built-in Plugins
+                   Built-in Plugins
                 </h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>✓ Analytics tracking</li>
-                  <li>✓ Theme management (light/dark)</li>
-                  <li>✓ Toast notifications</li>
-                  <li>✓ Session management</li>
-                  <li>✓ Easy extensibility</li>
+                  <li> Analytics tracking</li>
+                  <li> Theme management (light/dark)</li>
+                  <li> Toast notifications</li>
+                  <li> Session management</li>
+                  <li> Easy extensibility</li>
                 </ul>
               </div>
 
               <div className="card">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  💎 Premium Components
+                   Premium Components
                 </h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>✓ Responsive header & navigation</li>
-                  <li>✓ Hero sections</li>
-                  <li>✓ Feature grids</li>
-                  <li>✓ Card layouts</li>
-                  <li>✓ Footer with links</li>
+                  <li> Responsive header & navigation</li>
+                  <li> Hero sections</li>
+                  <li> Feature grids</li>
+                  <li> Card layouts</li>
+                  <li> Footer with links</li>
                 </ul>
               </div>
 
               <div className="card">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  📚 Custom Styling
+                   Custom Styling
                 </h3>
                 <ul className="space-y-2 text-gray-600">
-                  <li>✓ SCSS preprocessor</li>
-                  <li>✓ CSS variables for theming</li>
-                  <li>✓ Smooth animations</li>
-                  <li>✓ Accessibility utilities</li>
-                  <li>✓ Mobile-first approach</li>
+                  <li> SCSS preprocessor</li>
+                  <li> CSS variables for theming</li>
+                  <li> Smooth animations</li>
+                  <li> Accessibility utilities</li>
+                  <li> Mobile-first approach</li>
                 </ul>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import { marked } from "marked";
 import Header from "./components/Header.js";
 import Footer from "./components/Footer.js";
@@ -7,11 +7,11 @@ const htmlContent = `<h1>Getting Started with Jen.js</h1>
 <p>Jen.js is a powerful, TypeScript-first framework for building static and server-rendered web applications with Preact.</p>
 <h2>Why Jen.js?</h2>
 <ul>
-<li><strong>⚡ Lightning Fast</strong>: Optimized builds with automatic code splitting</li>
-<li><strong>🎯 Type-Safe</strong>: Full TypeScript support with strict mode enabled</li>
-<li><strong>🚀 Modern SSR</strong>: Server-side rendering with optional hydration</li>
-<li><strong>📦 Zero Config</strong>: Works out of the box with sensible defaults</li>
-<li><strong>🎨 Flexible</strong>: Build anything from static blogs to dynamic web apps</li>
+<li><strong> Lightning Fast</strong>: Optimized builds with automatic code splitting</li>
+<li><strong> Type-Safe</strong>: Full TypeScript support with strict mode enabled</li>
+<li><strong> Modern SSR</strong>: Server-side rendering with optional hydration</li>
+<li><strong> Zero Config</strong>: Works out of the box with sensible defaults</li>
+<li><strong> Flexible</strong>: Build anything from static blogs to dynamic web apps</li>
 </ul>
 <h2>Quick Start</h2>
 <pre><code class="language-bash">npm create jen-app@latest my-project
@@ -52,7 +52,7 @@ npm run dev
 <li>Explore <a href="https://github.com/oopsio/jen.js/tree/main/examples">examples</a></li>
 <li>Join our <a href="#">community</a></li>
 </ul>
-<p>Happy building! 🚀</p>
+<p>Happy building! </p>
 `;
 
 export function Head() {

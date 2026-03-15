@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Feature System for Jen.js
  *
  * Allows optional features to be enabled/disabled at build time.
@@ -82,7 +82,7 @@ export function resolveFeatures(userConfig?: FeatureConfig): ResolvedFeatures {
   for (const [key, value] of Object.entries(userConfig)) {
     if (!(key in DEFAULT_FEATURES)) {
       console.warn(
-        `⚠️  Unknown feature: "${key}". Valid features are: ${Object.keys(DEFAULT_FEATURES).join(", ")}`,
+        `️  Unknown feature: "${key}". Valid features are: ${Object.keys(DEFAULT_FEATURES).join(", ")}`,
       );
       continue;
     }

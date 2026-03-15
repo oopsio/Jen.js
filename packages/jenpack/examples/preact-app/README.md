@@ -1,4 +1,4 @@
-# Jenpack + Preact Example
+﻿# Jenpack + Preact Example
 
 A simple Preact application built with Jenpack.
 
@@ -50,8 +50,8 @@ public/
 
 ## Features
 
-- ⚡️ Fast dev server with hot reload
-- 📦 TypeScript & JSX support
-- 🎨 CSS bundling
-- 🗺️ Source maps
-- 🚀 Production minification
+- ️ Fast dev server with hot reload
+-  TypeScript & JSX support
+-  CSS bundling
+- ️ Source maps
+-  Production minification

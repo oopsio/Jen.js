@@ -1,4 +1,4 @@
-# Jen.js Benchmarks
+﻿# Jen.js Benchmarks
 
 Comprehensive performance benchmarks for the Jen.js framework using Vitest's built-in benchmarking capabilities.
 
@@ -94,10 +94,10 @@ describe("Feature Name", () => {
 Vitest benchmarks output:
 
 ```
-✓ Build Performance
-  ✓ SSG Build - Simple Site (100 iterations, 1.23ms / iter)
-  ✓ SSG Build - Complex Routes (100 iterations, 5.67ms / iter)
-  ✓ Asset Hashing - 1000 Files (100 iterations, 12.34ms / iter)
+ Build Performance
+   SSG Build - Simple Site (100 iterations, 1.23ms / iter)
+   SSG Build - Complex Routes (100 iterations, 5.67ms / iter)
+   Asset Hashing - 1000 Files (100 iterations, 12.34ms / iter)
 ```
 
 Lower numbers = better performance.

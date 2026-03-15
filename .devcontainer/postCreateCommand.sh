@@ -1,11 +1,11 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # Jen.js Development Container - Post-Create Setup
 # This script runs after the dev container is created
 
 set -e
 
-echo "🚀 Starting Jen.js Development Container Setup..."
+echo " Starting Jen.js Development Container Setup..."
 echo ""
 
 # Colors for output
@@ -15,7 +15,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Check versions
-echo -e "${BLUE}📋 Verifying environment...${NC}"
+echo -e "${BLUE} Verifying environment...${NC}"
 echo "Node version: $(node --version)"
 echo "pnpm version: $(pnpm --version)"
 echo "Git version: $(git --version)"
@@ -23,19 +23,19 @@ echo "Python version: $(python3 --version)"
 echo ""
 
 # Install dependencies with pnpm
-echo -e "${BLUE}📦 Installing project dependencies...${NC}"
+echo -e "${BLUE} Installing project dependencies...${NC}"
 pnpm install --frozen-lockfile
 
 echo ""
-echo -e "${BLUE}🔨 Installing turbo globally...${NC}"
+echo -e "${BLUE} Installing turbo globally...${NC}"
 pnpm add -g turbo
 
 echo ""
-echo -e "${BLUE}⚡ Running TypeScript type checking...${NC}"
-pnpm typecheck || echo "⚠️  Some type checks failed, but continuing..."
+echo -e "${BLUE} Running TypeScript type checking...${NC}"
+pnpm typecheck || echo "️  Some type checks failed, but continuing..."
 
 echo ""
-echo -e "${GREEN}✅ Setup Complete!${NC}"
+echo -e "${GREEN} Setup Complete!${NC}"
 echo ""
 echo -e "${YELLOW}Available Commands:${NC}"
 echo "  pnpm dev          - Start development server"
@@ -63,7 +63,7 @@ echo "  1. Run: pnpm dev"
 echo "  2. Open http://localhost:5173 in your browser"
 echo "  3. Edit files in site/ or src/ to see changes"
 echo ""
-echo -e "${BLUE}💡 Tips:${NC}"
+echo -e "${BLUE} Tips:${NC}"
 echo "  - Use turbo for building: turbo run build"
 echo "  - Run specific package: pnpm --filter=<package-name> <command>"
 echo "  - Clean all builds: pnpm clean"

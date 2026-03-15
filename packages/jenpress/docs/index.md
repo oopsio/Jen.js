@@ -1,4 +1,4 @@
----
+﻿---
 title: Welcome to JenPress
 description: Markdown-first documentation static site generator
 ---
@@ -9,12 +9,12 @@ JenPress is a VitePress competitor built for the Jen.js ecosystem. It provides a
 
 ## Features
 
-- ⚡️ **Fast Dev Server** - Vite-powered with instant startup
-- 📝 **Markdown First** - Automatic file-based routing
-- ⚛️ **Preact Runtime** - Lightweight and performant
-- 🎨 **Themeable** - Default theme + custom overrides
-- 🔍 **SEO Ready** - Proper meta tags and sitemaps
-- 🚀 **Zero Config** - Works out of the box
+- ️ **Fast Dev Server** - Vite-powered with instant startup
+-  **Markdown First** - Automatic file-based routing
+- ️ **Preact Runtime** - Lightweight and performant
+-  **Themeable** - Default theme + custom overrides
+-  **SEO Ready** - Proper meta tags and sitemaps
+-  **Zero Config** - Works out of the box
 
 ## Getting Started
 
@@ -61,4 +61,4 @@ JenPress supports standard Markdown with:
 
 ---
 
-Happy documenting! 📚
+Happy documenting! 

@@ -1,4 +1,4 @@
-# Jen.js Developer Scripts
+﻿# Jen.js Developer Scripts
 
 Helper scripts to streamline development workflow for Jen.js framework contributors.
 
@@ -38,10 +38,10 @@ One-time setup script for new developers.
 
 **Does:**
 
-- ✓ Check Node.js and npm installation
-- ✓ Install dependencies
-- ✓ Run TypeScript type check
-- ✓ Display next steps
+-  Check Node.js and npm installation
+-  Install dependencies
+-  Run TypeScript type check
+-  Display next steps
 
 **Run after:**
 
@@ -54,10 +54,10 @@ Start development server and watch for changes.
 
 **Does:**
 
-- ✓ Install dependencies if missing
-- ✓ Start framework dev server on http://localhost:3000
-- ✓ Watch for file changes
-- ✓ Live reload on changes
+-  Install dependencies if missing
+-  Start framework dev server on http://localhost:3000
+-  Watch for file changes
+-  Live reload on changes
 
 **Run for:**
 
@@ -71,10 +71,10 @@ Build framework and example for production.
 
 **Does:**
 
-- ✓ Type check code
-- ✓ Build framework to `dist/`
-- ✓ Build example project to `example/release-16/dist/`
-- ✓ Show build output locations
+-  Type check code
+-  Build framework to `dist/`
+-  Build example project to `example/release-16/dist/`
+-  Show build output locations
 
 **Run before:**
 
@@ -220,4 +220,4 @@ For issues with scripts:
 
 ---
 
-**Happy coding! 🚀**
+**Happy coding! **

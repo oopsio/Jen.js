@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 ################################################################################
 # Jen.js Framework - Build Script (Linux/macOS)
@@ -33,26 +33,26 @@ fi
 # TypeScript check
 echo -e "${YELLOW}[1/3] Running TypeScript check...${NC}"
 npm run typecheck
-echo -e "${GREEN}✓ TypeScript check passed${NC}"
+echo -e "${GREEN} TypeScript check passed${NC}"
 echo ""
 
 # Build project
 echo -e "${YELLOW}[2/3] Building framework...${NC}"
 npm run build
-echo -e "${GREEN}✓ Framework built${NC}"
+echo -e "${GREEN} Framework built${NC}"
 echo ""
 
 # Build example
 echo -e "${YELLOW}[3/3] Building example project...${NC}"
 cd example/release-16
 node build.js
-echo -e "${GREEN}✓ Example project built${NC}"
+echo -e "${GREEN} Example project built${NC}"
 echo ""
 
 cd "$PROJECT_ROOT"
 
 echo -e "${GREEN}================================${NC}"
-echo -e "${GREEN}  ✓ Build successful!${NC}"
+echo -e "${GREEN}   Build successful!${NC}"
 echo -e "${GREEN}================================${NC}"
 echo ""
 echo -e "${BLUE}Output locations:${NC}"

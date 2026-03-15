@@ -1,4 +1,4 @@
----
+﻿---
 title: JenPress Features
 description: Learn about all the great features JenPress offers - markdown extensions, components, and more
 ---
@@ -13,11 +13,11 @@ JenPress supports GitHub-flavored markdown tables:
 
 | Feature              | Support | Status          |
 | -------------------- | ------- | --------------- |
-| Markdown Tables      | ✅      | Fully Supported |
-| Callouts/Admonitions | ✅      | Fully Supported |
-| Code Highlighting    | ✅      | With Shiki      |
-| Dark Mode            | ✅      | Built-in        |
-| Search               | ✅      | In Development  |
+| Markdown Tables      |       | Fully Supported |
+| Callouts/Admonitions |       | Fully Supported |
+| Code Highlighting    |       | With Shiki      |
+| Dark Mode            |       | Built-in        |
+| Search               |       | In Development  |
 
 ## Callouts & Admonitions
 

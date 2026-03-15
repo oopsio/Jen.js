@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  */
@@ -10,13 +10,13 @@ export function getHTML() {
 <div class="jen-devtools-panel">
   <div class="jen-devtools-header">
     <div class="jen-devtools-title">
-      <span class="jen-devtools-logo">⚙️</span>
+      <span class="jen-devtools-logo">️</span>
       Jen.js DevTools
     </div>
     <div class="jen-devtools-controls">
-      <button class="jen-devtools-theme-toggle" title="Toggle theme">🌙</button>
+      <button class="jen-devtools-theme-toggle" title="Toggle theme"></button>
       <button class="jen-devtools-minimize" title="Minimize">−</button>
-      <button class="jen-devtools-close" title="Close">✕</button>
+      <button class="jen-devtools-close" title="Close"></button>
     </div>
   </div>
 
@@ -108,7 +108,7 @@ export function getHTML() {
       </div>
 
       <div class="jen-devtools-footer">
-        <button class="jen-devtools-export">📥 Export State</button>
+        <button class="jen-devtools-export"> Export State</button>
       </div>
     </div>
   </div>

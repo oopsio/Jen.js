@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 /**
  * Jen.js MCP CLI - Beautiful TUI for project exploration
@@ -39,7 +39,7 @@ program
     const config = loadProjectConfig(projectRoot);
 
     if (!config) {
-      console.error(pc.red("✗ Could not find Jen.js project configuration"));
+      console.error(pc.red(" Could not find Jen.js project configuration"));
       process.exit(1);
     }
 
@@ -149,7 +149,7 @@ program
     const config = loadProjectConfig(projectRoot);
 
     if (!config || !config.scripts) {
-      console.error(pc.red("✗ No scripts found in package.json"));
+      console.error(pc.red(" No scripts found in package.json"));
       process.exit(1);
     }
 

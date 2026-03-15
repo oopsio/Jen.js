@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -35,7 +35,7 @@
 
 <div class="svelte-demo">
   <div class="navbar">
-    <h1>⚡ Svelte Components Demo</h1>
+    <h1> Svelte Components Demo</h1>
     <p class="nav-subtitle">Showcasing Svelte 4 capabilities</p>
   </div>
 

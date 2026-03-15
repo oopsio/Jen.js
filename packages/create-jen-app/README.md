@@ -1,4 +1,4 @@
-# create-jen-app
+﻿# create-jen-app
 
 The fastest way to create a beautiful Jen.js application.
 
@@ -33,10 +33,10 @@ When you run the command, you'll be guided through:
 
 Perfect for marketing sites, blogs, and documentation.
 
-- ⚡ Pure static site generation
-- 📝 Component-based with Preact
-- 🎨 Beautiful dark theme styles
-- 🚀 Zero JavaScript overhead
+-  Pure static site generation
+-  Component-based with Preact
+-  Beautiful dark theme styles
+-  Zero JavaScript overhead
 
 ## Available Commands
 
@@ -51,11 +51,11 @@ npm run typecheck  # TypeScript type checking (if enabled)
 
 ## Features
 
-- 🎨 **Beautiful Dark Theme** - Modern, colorful CLI with no white backgrounds
-- 🚀 **Fast Setup** - Get started in seconds with template selection
-- 📦 **Modern Stack** - Pre-configured and ready to use
-- 🔧 **TypeScript Ready** - Full TypeScript support included
-- 🌈 **Colorful Prompts** - Interactive, beautiful terminal experience
+-  **Beautiful Dark Theme** - Modern, colorful CLI with no white backgrounds
+-  **Fast Setup** - Get started in seconds with template selection
+-  **Modern Stack** - Pre-configured and ready to use
+-  **TypeScript Ready** - Full TypeScript support included
+-  **Colorful Prompts** - Interactive, beautiful terminal experience
 
 ## Project Structure
 

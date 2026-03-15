@@ -1,4 +1,4 @@
----
+﻿---
 title: Web Performance Tips
 date: 2026-02-18
 author: Jordan Martinez
@@ -85,6 +85,6 @@ Use these tools to measure performance:
 
 ## Summary
 
-Performance optimization is a continuous process. Measure, optimize, and monitor regularly. Your users will thank you! 🚀
+Performance optimization is a continuous process. Measure, optimize, and monitor regularly. Your users will thank you! 
 
 Remember: **Speed is a feature**, not an afterthought.

@@ -1,4 +1,4 @@
-# jen.js v17 - Vue + Svelte Integration Demo
+﻿# jen.js v17 - Vue + Svelte Integration Demo
 
 A complete example demonstrating Vue 3 SFC, Svelte 4, and Preact components working together in jen.js.
 
@@ -6,13 +6,13 @@ A complete example demonstrating Vue 3 SFC, Svelte 4, and Preact components work
 
 This example showcases:
 
-- ✅ Vue 3 Single File Components (`.vue`)
-- ✅ Svelte 4 Components (`.svelte`)
-- ✅ Preact Components (`.tsx`)
-- ✅ Hot Module Replacement (HMR)
-- ✅ TypeScript Support
-- ✅ Component Reusability
-- ✅ Production Builds
+-  Vue 3 Single File Components (`.vue`)
+-  Svelte 4 Components (`.svelte`)
+-  Preact Components (`.tsx`)
+-  Hot Module Replacement (HMR)
+-  TypeScript Support
+-  Component Reusability
+-  Production Builds
 
 ## Project Structure
 
@@ -88,7 +88,7 @@ Outputs to `dist/` directory:
 
 ## Pages
 
-### 🏠 Home Page (`/(home).vue`)
+###  Home Page (`/(home).vue`)
 
 Vue component showcasing:
 
@@ -102,7 +102,7 @@ Vue component showcasing:
 - `<template>`, `<script setup>`, `<style scoped>`
 - Vue 3 reactive features
 
-### 🖖 Vue Demo (`/(vue-demo).vue`)
+###  Vue Demo (`/(vue-demo).vue`)
 
 Demonstrates Vue 3 SFC features:
 
@@ -116,7 +116,7 @@ Demonstrates Vue 3 SFC features:
 - Computed properties
 - Component composition
 
-### ⚡ Svelte Demo (`/(svelte-demo).svelte`)
+###  Svelte Demo (`/(svelte-demo).svelte`)
 
 Demonstrates Svelte 4 features:
 
@@ -131,7 +131,7 @@ Demonstrates Svelte 4 features:
 - Scoped styles (automatic)
 - Block statements (#each, #if)
 
-### 🎭 Mixed Demo (`/(mixed-demo).tsx`)
+###  Mixed Demo (`/(mixed-demo).tsx`)
 
 Shows all three frameworks working together:
 
@@ -437,4 +437,4 @@ Contributions welcome! Please see [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ---
 
-Built with ❤️ using jen.js v17
+Built with ️ using jen.js v17

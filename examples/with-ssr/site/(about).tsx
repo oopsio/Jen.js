@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import type { LoaderContext } from "../../../src/core/types.js";
 
 /**
@@ -59,7 +59,7 @@ export default function AboutPage({ data }: any) {
         </section>
 
         <section class="section">
-          <h2>📚 What is Server-Side Rendering?</h2>
+          <h2> What is Server-Side Rendering?</h2>
           <div class="card">
             <p>
               Server-Side Rendering means your web application is rendered on
@@ -71,23 +71,23 @@ export default function AboutPage({ data }: any) {
             <h3 style={{ marginTop: "1.5rem" }}>Key Advantages:</h3>
             <ul style={{ paddingLeft: "1.5rem", marginTop: "1rem" }}>
               <li style={{ marginBottom: "0.75rem" }}>
-                ⚡ <strong>Fast Initial Load</strong> - No waiting for
+                 <strong>Fast Initial Load</strong> - No waiting for
                 JavaScript to execute
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
-                🔍 <strong>Better SEO</strong> - Search engines see all content
+                 <strong>Better SEO</strong> - Search engines see all content
                 in the HTML
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
-                📱 <strong>Mobile Friendly</strong> - Less JavaScript means
+                 <strong>Mobile Friendly</strong> - Less JavaScript means
                 better performance on slower devices
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
-                🔐 <strong>More Secure</strong> - Server-side logic is hidden
+                 <strong>More Secure</strong> - Server-side logic is hidden
                 from the client
               </li>
               <li style={{ marginBottom: "0.75rem" }}>
-                ♿ <strong>Better Accessibility</strong> - Content is available
+                 <strong>Better Accessibility</strong> - Content is available
                 before JavaScript loads
               </li>
             </ul>
@@ -95,7 +95,7 @@ export default function AboutPage({ data }: any) {
         </section>
 
         <section class="section">
-          <h2>🎯 How Jen.js SSR Works</h2>
+          <h2> How Jen.js SSR Works</h2>
           <div class="card">
             <h3>The Request Flow:</h3>
             <ol style={{ paddingLeft: "1.5rem", marginTop: "1rem" }}>
@@ -189,45 +189,45 @@ export default function AboutPage({ data }: any) {
         </section>
 
         <section class="section">
-          <h2>🚀 Features Demonstrated</h2>
+          <h2> Features Demonstrated</h2>
           <div class="grid">
             <div class="card">
-              <h3>✓ Static Routes</h3>
+              <h3> Static Routes</h3>
               <p>
                 Pages like this one use <code>(about).tsx</code> pattern to
                 create <code>/about</code> routes.
               </p>
             </div>
             <div class="card">
-              <h3>✓ Dynamic Routes</h3>
+              <h3> Dynamic Routes</h3>
               <p>
                 Routes like <code>posts/($id).tsx</code> create dynamic pages
                 with parameters: <code>/posts/:id</code>
               </p>
             </div>
             <div class="card">
-              <h3>✓ Loader Functions</h3>
+              <h3> Loader Functions</h3>
               <p>
                 <code>export const loader</code> fetches data on the server
                 before rendering.
               </p>
             </div>
             <div class="card">
-              <h3>✓ Head Component</h3>
+              <h3> Head Component</h3>
               <p>
                 <code>export function Head</code> customizes{" "}
                 <code>&lt;head&gt;</code> section with SEO meta tags.
               </p>
             </div>
             <div class="card">
-              <h3>✓ Request Context</h3>
+              <h3> Request Context</h3>
               <p>
                 Loaders receive <code>url</code>, <code>params</code>,{" "}
                 <code>query</code>, <code>headers</code>, <code>cookies</code>.
               </p>
             </div>
             <div class="card">
-              <h3>✓ Multiple Route Types</h3>
+              <h3> Multiple Route Types</h3>
               <p>
                 Mix static pages, dynamic routes, and blog posts in one
                 application.
@@ -237,7 +237,7 @@ export default function AboutPage({ data }: any) {
         </section>
 
         <section class="section">
-          <h2>📁 Project Structure</h2>
+          <h2> Project Structure</h2>
           <pre
             style={{
               background: "#f5f5f5",
@@ -260,7 +260,7 @@ export default function AboutPage({ data }: any) {
         </section>
 
         <section class="section">
-          <h2>🔧 Key Configuration</h2>
+          <h2> Key Configuration</h2>
           <pre
             style={{
               background: "#f5f5f5",
@@ -288,7 +288,7 @@ const config: FrameworkConfig = {
         </section>
 
         <section class="section">
-          <h2>🌟 Example: Loader + Component Pattern</h2>
+          <h2> Example: Loader + Component Pattern</h2>
           <pre
             style={{
               background: "#f5f5f5",
@@ -331,10 +331,10 @@ export default function PostPage({ data }) {
         </section>
 
         <section class="section">
-          <h2>💡 When to Use SSR</h2>
+          <h2> When to Use SSR</h2>
           <div class="grid">
             <div class="card">
-              <h3>✓ Good for SSR</h3>
+              <h3> Good for SSR</h3>
               <ul style={{ paddingLeft: "1rem", margin: "1rem 0" }}>
                 <li>Content-heavy sites</li>
                 <li>Blogs and news sites</li>
@@ -344,7 +344,7 @@ export default function PostPage({ data }) {
               </ul>
             </div>
             <div class="card">
-              <h3>⚠️ Trade-offs</h3>
+              <h3>️ Trade-offs</h3>
               <ul style={{ paddingLeft: "1rem", margin: "1rem 0" }}>
                 <li>Higher server load</li>
                 <li>Server resources needed</li>
@@ -357,7 +357,7 @@ export default function PostPage({ data }) {
         </section>
 
         <section class="section">
-          <h2>🎯 Next Steps</h2>
+          <h2> Next Steps</h2>
           <div class="grid">
             <a href="/" class="button">
               Home

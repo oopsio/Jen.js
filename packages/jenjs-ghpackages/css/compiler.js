@@ -1,4 +1,4 @@
-import { compile, compileString } from "sass";
+﻿import { compile, compileString } from "sass";
 import { globSync } from "glob";
 import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -26,7 +26,7 @@ export class ScssCompiler {
           writeFileSync(outputPath + ".map", JSON.stringify(result.sourceMap));
         }
         log.info(
-          `[SCSS] ✓ ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`,
+          `[SCSS]  ${relative(process.cwd(), inputPath)} → ${relative(process.cwd(), outputPath)}`,
         );
       }
       return {
@@ -37,7 +37,7 @@ export class ScssCompiler {
       };
     } catch (err) {
       const message = err.message || String(err);
-      log.error(`[SCSS] ✗ ${inputPath}: ${message}`);
+      log.error(`[SCSS]  ${inputPath}: ${message}`);
       return { css: "", error: message };
     }
   }
@@ -49,7 +49,7 @@ export class ScssCompiler {
       return { css: result.css };
     } catch (err) {
       const message = err.message || String(err);
-      log.error(`[SCSS] ✗ Inline compilation error: ${message}`);
+      log.error(`[SCSS]  Inline compilation error: ${message}`);
       return { css: "", error: message };
     }
   }

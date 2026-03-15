@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 import type { RouteMiddlewareContext } from "../../../src/core/middleware-hooks.js";
 
 /**
@@ -66,7 +66,7 @@ export default function Dashboard({ data }: { data: any }) {
           paddingBottom: "1rem",
         }}
       >
-        <h1>📊 Dashboard</h1>
+        <h1> Dashboard</h1>
         <p style={{ color: "#666" }}>Welcome back, {user.name}!</p>
       </header>
 
@@ -213,22 +213,22 @@ export default function Dashboard({ data }: { data: any }) {
         <h2>Route Middleware Features</h2>
         <ul style={{ lineHeight: "1.8" }}>
           <li>
-            🔐 <strong>Authentication</strong> - Check tokens, sessions, etc.
+             <strong>Authentication</strong> - Check tokens, sessions, etc.
           </li>
           <li>
-            🛡️ <strong>Authorization</strong> - Check permissions, roles
+            ️ <strong>Authorization</strong> - Check permissions, roles
           </li>
           <li>
-            📊 <strong>Data Loading</strong> - Fetch data before rendering
+             <strong>Data Loading</strong> - Fetch data before rendering
           </li>
           <li>
-            🔀 <strong>Redirects</strong> - Redirect unauthorized users
+             <strong>Redirects</strong> - Redirect unauthorized users
           </li>
           <li>
-            📝 <strong>Logging</strong> - Log requests, track analytics
+             <strong>Logging</strong> - Log requests, track analytics
           </li>
           <li>
-            ⚙️ <strong>Response Headers</strong> - Set cache, CORS, etc.
+            ️ <strong>Response Headers</strong> - Set cache, CORS, etc.
           </li>
         </ul>
       </section>

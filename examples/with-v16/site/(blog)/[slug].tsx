@@ -1,4 +1,4 @@
-import { h } from "preact";
+﻿import { h } from "preact";
 
 /**
  * Blog Post Page - Dynamic Zero-JS Route
@@ -114,11 +114,11 @@ const blogPosts: Record<string, any> = {
 
       <h2>Advantages</h2>
       <ul>
-        <li>✅ Minimal page weight</li>
-        <li>✅ Maximum performance</li>
-        <li>✅ Better accessibility</li>
-        <li>✅ Better SEO</li>
-        <li>✅ Works everywhere</li>
+        <li> Minimal page weight</li>
+        <li> Maximum performance</li>
+        <li> Better accessibility</li>
+        <li> Better SEO</li>
+        <li> Works everywhere</li>
       </ul>
 
       <h2>In Jen.js</h2>

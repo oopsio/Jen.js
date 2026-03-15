@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of Jen.js.
  * Copyright (C) 2026 oopsio
  * 
@@ -28,7 +28,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function seed() {
   const env = process.env.NODE_ENV || 'development';
-  console.log(`🌱 Seeding database for ${env} environment...`);
+  console.log(` Seeding database for ${env} environment...`);
 
   try {
     // Import seed runner
@@ -39,10 +39,10 @@ async function seed() {
       verbose: true,
     });
 
-    console.log('✅ Seeding completed successfully');
-    console.log(`📊 Records created: ${result.count}`);
+    console.log(' Seeding completed successfully');
+    console.log(` Records created: ${result.count}`);
   } catch (error) {
-    console.error('❌ Seeding failed:', error.message);
+    console.error(' Seeding failed:', error.message);
     process.exit(1);
   }
 }

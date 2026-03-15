@@ -1,4 +1,4 @@
-/* * This file is part of Jen.js. * Copyright (C) 2026 oopsio * * This program
+﻿/* * This file is part of Jen.js. * Copyright (C) 2026 oopsio * * This program
 is free software: you can redistribute it and/or modify * it under the terms of
 the GNU General Public License as published by * the Free Software Foundation,
 either version 3 of the License, or * (at your option) any later version. * *
@@ -11,7 +11,7 @@ with this program. If not, see <https://www.gnu.org/licenses/>. */
 <template>
   <div class="home-page">
     <div class="navbar">
-      <h1>🎨 jen.js v17</h1>
+      <h1> jen.js v17</h1>
       <p class="nav-subtitle">Vue + Svelte Integration Demo</p>
     </div>
 
@@ -41,21 +41,21 @@ with this program. If not, see <https://www.gnu.org/licenses/>. */
         <h3>Supported Frameworks</h3>
         <div class="grid">
           <div class="card">
-            <h4>🖖 Vue 3</h4>
+            <h4> Vue 3</h4>
             <p>
               Full Vue 3 SFC support with <code>&lt;script setup&gt;</code>,
               TypeScript, and reactive features.
             </p>
           </div>
           <div class="card">
-            <h4>⚡ Svelte 4</h4>
+            <h4> Svelte 4</h4>
             <p>
               Reactive Svelte components with TypeScript, stores, and scoped
               styles.
             </p>
           </div>
           <div class="card">
-            <h4>⚛️ Preact</h4>
+            <h4>️ Preact</h4>
             <p>
               Native Preact components. Mix with Vue and Svelte components
               seamlessly.
@@ -65,7 +65,7 @@ with this program. If not, see <https://www.gnu.org/licenses/>. */
       </section>
 
       <section class="section">
-        <h2>🎯 Navigation</h2>
+        <h2> Navigation</h2>
         <div class="grid">
           <router-link to="/vue-demo" class="button">Vue Demo →</router-link>
           <router-link to="/svelte-demo" class="button"
@@ -78,21 +78,21 @@ with this program. If not, see <https://www.gnu.org/licenses/>. */
       </section>
 
       <section class="section">
-        <h2>📖 Features</h2>
+        <h2> Features</h2>
         <ul style="list-style: none; padding: 0">
-          <li>✓ Vue 3 SFC compilation</li>
-          <li>✓ Svelte 4 component support</li>
-          <li>✓ TypeScript support in both</li>
-          <li>✓ Hot Module Replacement (HMR)</li>
-          <li>✓ Runtime import with jen.import()</li>
-          <li>✓ Production bundling</li>
-          <li>✓ Scoped styles</li>
-          <li>✓ Component slots and props</li>
+          <li> Vue 3 SFC compilation</li>
+          <li> Svelte 4 component support</li>
+          <li> TypeScript support in both</li>
+          <li> Hot Module Replacement (HMR)</li>
+          <li> Runtime import with jen.import()</li>
+          <li> Production bundling</li>
+          <li> Scoped styles</li>
+          <li> Component slots and props</li>
         </ul>
       </section>
 
       <section class="section">
-        <h2>🚀 Quick Start</h2>
+        <h2> Quick Start</h2>
         <div class="code-block">
           <code>
             # Create Vue component cat > site/components/Button.vue &lt;&lt; EOF

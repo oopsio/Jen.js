@@ -1,4 +1,4 @@
-import MarkdownIt from "markdown-it";
+﻿import MarkdownIt from "markdown-it";
 import { highlightSync } from "./highlight.js";
 
 export interface ParsedMarkdown {
@@ -106,13 +106,13 @@ md.renderer.rules["callout_open"] = (tokens, idx) => {
   const type = token.meta?.type || "note";
   const title = token.meta?.title || type.toUpperCase();
   const icons: Record<string, string> = {
-    note: "📝",
-    warning: "⚠️",
-    tip: "💡",
-    danger: "🚨",
+    note: "",
+    warning: "️",
+    tip: "",
+    danger: "",
     info: "ℹ️",
   };
-  const icon = icons[type] || "📝";
+  const icon = icons[type] || "";
   return `<div class="callout callout-${type}"><div class="callout-header"><span class="callout-icon">${icon}</span><span class="callout-title">${title}</span></div><div class="callout-content">`;
 };
 

@@ -1,4 +1,4 @@
-import { createServer } from "vite";
+﻿import { createServer } from "vite";
 import { createVitePressPlugin } from "./vite-plugin.js";
 import { loadConfig } from "./config.js";
 import { resolve } from "path";
@@ -71,7 +71,7 @@ export async function startDevServer(cwd: string) {
 
   await server.listen();
 
-  console.log(`\n  ➜  Local: http://localhost:5173`);
+  console.log(`\n    Local: http://localhost:5173`);
 
   return { server, config };
 }
