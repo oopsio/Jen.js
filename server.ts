@@ -242,12 +242,12 @@ async function buildOnly() {
         minify: "terser",
         sourcemap: false,
         rollupOptions: {
-          output: {
-            manualChunks: {
-              vendor: ["preact"],
-            },
-          },
-        },
+  output: {
+    manualChunks: {
+      vendor: ["preact"],
+    } as any, // This tells TS to trust you
+  },
+},
       },
     });
     log.info("Build complete!");

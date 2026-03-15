@@ -7,3 +7,7 @@ apps/jsdoc linguist-generated
 *.html linguist-documentation
 **/lib/ linguist-vendored
 .agents/skills linguist-vendored
+*.wasm binary
+*.wasm -diff
+src/core/wasm_exec.js
+src/vendor/**/*.js -diff

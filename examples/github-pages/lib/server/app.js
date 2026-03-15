@@ -16,6 +16,7 @@ import { createServerActionsMiddleware } from "../server-actions/middleware.js";
 import { runQuery } from "../graphql/index.js";
 import { I18n } from "../i18n/index.js";
 import sirv from "sirv";
+import { preactCode } from './runtimeServe.js';
 /**
  * Manages the lifecycle of file watchers and HMR connections.
  * Ensures proper cleanup on shutdown to prevent memory leaks.
@@ -234,63 +235,52 @@ const ERROR_500_TEMPLATE = `<!DOCTYPE html>
  * @param error Error object or string to log
  * @param showDetails Whether to include error details in response (dev mode)
  */
-function sendSafeError(
-  res,
-  error,
-  showDetails
-) {
-  const errorMsg = error instanceof Error ? error.message : String(error);
-  const errorStack = error instanceof Error ? error.stack : "";
-
-  // Log error with full stack trace
-  log.error(`[Error] ${errorMsg}`);
-  if (errorStack) {
-    log.error(`Stack:\n${errorStack}`);
-  }
-
-  // If headers already sent, destroy socket to prevent data corruption
-  if (res.headersSent) {
-    log.error("[Error Response] Headers already sent, destroying socket");
-    if (res.socket && !res.socket.destroyed) {
-      res.socket.destroy();
+function sendSafeError(res, error, showDetails = false) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : "";
+    // Log error with full stack trace
+    log.error(`[Error] ${errorMsg}`);
+    if (errorStack) {
+        log.error(`Stack:\n${errorStack}`);
     }
-    return;
-  }
-
-  // Send 500 response with safe error template
-  try {
-    let html = ERROR_500_TEMPLATE;
-
-    if (showDetails && errorStack) {
-      // Escape HTML characters so the stack trace doesn't break the formatting
-      const safeStack = errorStack
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-      // Replace the ENTIRE hidden div with a visible one that contains the stack trace
-      html = html.replace(
-        '<div class="error-details" id="details" style="display:none;"></div>',
-        `<div class="error-details" id="details" style="display:block;">\n${safeStack}\n</div>`
-      );
+    // If headers already sent, destroy socket to prevent data corruption
+    if (res.headersSent) {
+        log.error("[Error Response] Headers already sent, destroying socket");
+        if (res.socket && !res.socket.destroyed) {
+            res.socket.destroy();
+        }
+        return;
     }
-
-    res.statusCode = 500;
-    res.setHeader("content-type", "text/html; charset=utf-8");
-    res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
-    res.end(html);
-  } catch (e) {
-    // If error sending response, just try to end the response
-    log.error(`[Error Response] Failed to send error page: ${e}`);
+    // Send 500 response with safe error template
     try {
-      res.end();
-    } catch {
-      // Last resort: destroy socket
-      if (res.socket && !res.socket.destroyed) {
-        res.socket.destroy();
-      }
+        let html = ERROR_500_TEMPLATE;
+        if (showDetails && errorStack) {
+            // Escape HTML characters so the stack trace doesn't break the formatting
+            const safeStack = errorStack
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+            // Replace the ENTIRE hidden div with a visible one that contains the stack trace
+            html = html.replace('<div class="error-details" id="details" style="display:none;"></div>', `<div class="error-details" id="details" style="display:block;">\n${safeStack}\n</div>`);
+        }
+        res.statusCode = 500;
+        res.setHeader("content-type", "text/html; charset=utf-8");
+        res.setHeader("cache-control", "no-store, no-cache, must-revalidate");
+        res.end(html);
     }
-  }
+    catch (e) {
+        // If error sending response, just try to end the response
+        log.error(`[Error Response] Failed to send error page: ${e}`);
+        try {
+            res.end();
+        }
+        catch {
+            // Last resort: destroy socket
+            if (res.socket && !res.socket.destroyed) {
+                res.socket.destroy();
+            }
+        }
+    }
 }
 /**
  * Creates and configures the main HTTP application handler.
@@ -476,12 +466,20 @@ export async function createApp(opts) {
                     ctx.res.end(runtimeHydrateModule());
                     return;
                 }
+                if (ctx.url.pathname === "/__runtime/preact.js") {
+                    ctx.res.statusCode = 200;
+                    ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
+                    // Cache it forever so the browser only downloads it once
+                    ctx.res.setHeader("cache-control", "public, max-age=31536000, immutable");
+                    ctx.res.end(preactCode); // Use the variable from your runtimeServe file here
+                    return;
+                }
                 if (ctx.url.pathname === "/__runtime/island-hydration-client.js") {
                     ctx.res.statusCode = 200;
                     ctx.res.setHeader("content-type", "application/javascript; charset=utf-8");
                     const islandCode = `
-import { hydrate } from "https://esm.sh/preact@10";
-import { h } from "https://esm.sh/preact@10";
+import { hydrate } from "/__runtime/preact.js";
+import { h } from "/__runtime/preact.js";
 
 function extractIslands() {
   const islands = [];

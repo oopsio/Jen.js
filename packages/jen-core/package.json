@@ -1,0 +1,33 @@
+{
+  "name": "jen-core-engine",
+  "version": "1.0.0",
+  "description": "High-performance Go/WebAssembly engine for routing and HTTP utilities",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./wasm": "./src/vendor/engine.wasm"
+  },
+  "scripts": {
+    "build:wasm:unix": "bash build.sh",
+    "build:wasm:windows": "powershell -Command .\\build.ps1",
+    "build:wasm": "npm run build:wasm:unix || npm run build:wasm:windows"
+  },
+  "files": [
+    "index.ts",
+    "src/vendor/engine.wasm",
+    "src/vendor/wasm_exec.js"
+  ],
+  "keywords": [
+    "routing",
+    "wasm",
+    "webassembly",
+    "go",
+    "performance"
+  ],
+  "author": "Jen.js Team",
+  "license": "MIT"
+}

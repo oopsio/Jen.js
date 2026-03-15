@@ -113,6 +113,7 @@ export async function jenImport(specifier, opts) {
                 module: mod,
                 etag: generateEtag(outfile),
             });
+            log.info(`[jen.import] Cached: ${specifier}`);
         }
         log.info(`[jen.import] Successfully loaded: ${specifier}`);
         return mod;
@@ -122,6 +123,21 @@ export async function jenImport(specifier, opts) {
         log.error(`[jen.import] Failed to import "${specifier}": ${message}`);
         throw new Error(`jen.import() failed for "${specifier}": ${message}`);
     }
+}
+/**
+ * Get import cache statistics.
+ * @returns Object with cache info.
+ */
+export function getImportCacheStats() {
+    let size = 0;
+    for (const entry of importCache.values()) {
+        size += JSON.stringify(entry).length;
+    }
+    return {
+        total: importCache.size,
+        keys: Array.from(importCache.keys()),
+        size,
+    };
 }
 /**
  * Invalidate the import cache for a specific file.

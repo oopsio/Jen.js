@@ -5,6 +5,7 @@ import { existsSync } from "node:fs";
 import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
+export const preactCode = readFileSync(resolve(__dirname, "../vendor/preact/preact.module.js"), "utf-8");
 /**
  * Cache for compiled hydration modules.
  * Stores transpiled JS code and computed ETag hash per source file path.
@@ -34,7 +35,6 @@ function etagOf(s) {
 export function runtimeHydrateModule() {
     // Browser-safe runtime (ESM) using local vendored preact code
     // Inline preact directly from vendor directory for zero external dependencies
-    const preactCode = readFileSync(resolve(__dirname, "../vendor/preact/preact.module.js"), "utf-8");
     return `
 ${preactCode}
 

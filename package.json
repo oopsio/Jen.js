@@ -23,7 +23,8 @@
     "build:windows": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1",
     "prepare": "husky",
     "test:coverage": "npx vitest run --coverage",
-    "commit": "cross-env NODE_ENV=production node scripts/commit.js"
+    "commit": "cross-env NODE_ENV=production node scripts/commit.js",
+    "compile": "concurrently \"bunx tsc\" \"copyfiles -u 1 src/**/*.json src/**/*.wasm dist/\""
   },
   "dependencies": {
     "@jenjs/flowgen": "^1.0.0",
@@ -63,6 +64,8 @@
     "@typescript/native-preview": "7.0.0-dev.20260313.1",
     "@vitest/ui": "^4.0.18",
     "commitizen": "^4.3.1",
+    "concurrently": "^9.2.1",
+    "copyfiles": "^2.4.1",
     "dts-bundle-generator": "^9.5.1",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",

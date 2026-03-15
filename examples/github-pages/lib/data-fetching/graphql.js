@@ -1,15 +1,33 @@
 import { RestFetcher } from "./rest.js";
 import { executeCacheStrategy } from "./cache.js";
+import { log } from "../shared/log.js";
 /**
  * GraphQL client for querying GraphQL APIs.
  * Integrates with REST fetcher infrastructure for cache and interceptor support.
  *
  * Features:
- * - Query and mutation execution
+ * - Query and mutation execution with proper cache strategies
  * - Automatic error extraction from GraphQL responses
  * - Cache support with tag-based invalidation
  * - Request/response interceptors
  * - Type-safe operation configuration
+ * - Batch query execution
+ * - Operation caching with fine-grained control
+ *
+ * @example
+ * ```typescript
+ * const client = new GraphQLClient({
+ *   endpoint: '/api/graphql',
+ *   cache: new MemoryDataCache(),
+ *   defaultHeaders: { 'Authorization': 'Bearer token' }
+ * });
+ *
+ * const result = await client.query<User>(`
+ *   query GetUser($id: ID!) {
+ *     user(id: $id) { id name email }
+ *   }
+ * `, { id: '123' });
+ * ```
  */
 export class GraphQLClient {
     restFetcher;
@@ -78,16 +96,22 @@ export class GraphQLClient {
     }
     /**
      * Core GraphQL execution with cache and interceptor support.
+     * Handles caching strategy, interceptors, and error extraction.
+     *
+     * @param request GraphQL request with query and variables.
+     * @param config Fetch configuration including cache strategy.
+     * @returns Fetch result with data or error.
      */
     async execute(request, config) {
+        const operationName = this.extractOperationName(request);
         const cacheStrategy = config?.cache?.strategy || "cache-first";
         const cacheKey = this.createGraphQLCacheKey(request);
         const cacheTtl = config?.cache?.ttl || 300000;
-        const cacheTags = config?.cache?.tags || [
-            `gql:${this.extractOperationName(request)}`,
-        ];
+        const cacheTags = config?.cache?.tags || [`gql:${operationName}`];
         try {
+            log.info(`[GraphQL] Executing ${operationName} (cache: ${cacheStrategy})`);
             let data;
+            let fromCache = false;
             if (cacheStrategy !== "no-cache") {
                 const { data: cachedData, cached } = await executeCacheStrategy(cacheStrategy, {
                     key: cacheKey,
@@ -97,8 +121,13 @@ export class GraphQLClient {
                     tags: cacheTags,
                 });
                 data = cachedData;
+                fromCache = cached || false;
+                if (fromCache) {
+                    log.info(`[GraphQL] Cache HIT: ${operationName}`);
+                }
             }
             else {
+                log.info(`[GraphQL] Cache SKIP: ${operationName}`);
                 data = await this.performRequest(request);
             }
             const result = {
@@ -110,6 +139,7 @@ export class GraphQLClient {
                     headers: { "content-type": "application/json" },
                     url: this.endpoint,
                     ok: true,
+                    cached: fromCache,
                 },
             };
             // Run afterResponse interceptors
@@ -123,13 +153,16 @@ export class GraphQLClient {
                     }
                 }
             }
+            log.info(`[GraphQL] Success: ${operationName}`);
             return result;
         }
         catch (err) {
+            const errorMsg = err.message || "GraphQL request failed";
+            log.error(`[GraphQL] Error in ${operationName}: ${errorMsg}`);
             const errorResult = {
                 ok: false,
                 error: {
-                    message: err.message || "GraphQL request failed",
+                    message: errorMsg,
                     code: err.code,
                     details: err,
                 },
