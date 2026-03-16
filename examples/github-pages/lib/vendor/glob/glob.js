@@ -1,7 +1,7 @@
 import { fileURLToPath as t } from "node:url";
 import { posix as e, win32 as i } from "node:path";
 import { fileURLToPath as s } from "node:url";
-import { lstatSync as h, readdir as r, readdirSync as n, readlinkSync as o, realpathSync as a, } from "fs";
+import { lstatSync as h, readdir as r, readdirSync as n, readlinkSync as o, realpathSync as a, } from "node:fs";
 import * as l from "node:fs";
 import { lstat as c, readdir as u, readlink as p, realpath as d, } from "node:fs/promises";
 import { EventEmitter as f } from "node:events";

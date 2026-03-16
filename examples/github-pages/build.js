@@ -1,10 +1,64 @@
 import { dirname, join, extname, basename } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import fs from "node:fs/promises";
-import { readdirSync, statSync, writeFileSync } from "node:fs";
+import { readdirSync, statSync } from "node:fs";
 import { createHash } from "node:crypto";
 import esbuild from "esbuild";
-import { minify } from "html-minifier-terser";
+import swcHtml from "@swc/html";
+
+// Detect our high-speed runtimes
+const isBun = typeof Bun !== "undefined";
+const isDeno = typeof Deno !== "undefined";
+
+// The high-speed memory bank
+const fileCache = new Map();
+
+// Automatically clear the Map when the script finishes or is closed
+process.on("exit", () => {
+  fileCache.clear();
+  console.log("[MEMORY] Cache cleared and memory freed.");
+});
+
+// Catch Ctrl+C to ensure the exit event fires
+process.on("SIGINT", () => {
+  process.exit(0);
+});
+
+// The Universal I/O Wrapper with Branchless Execution and Caching
+const io = {
+  hash: isBun 
+    ? (content) => new Bun.CryptoHasher("md5").update(content).digest("hex").slice(0, 10)
+    // Deno natively polyfills node:crypto perfectly, so we keep this sync for both Deno and Node
+    : (content) => createHash("md5").update(content).digest("hex").slice(0, 10),
+    
+  read: async (path) => {
+    // If we already read this file, grab it from RAM instantly
+    if (fileCache.has(path)) {
+      return fileCache.get(path);
+    }
+    
+    let content;
+    if (isBun) {
+      content = await Bun.file(path).text();
+    } else if (isDeno) {
+      content = await Deno.readTextFile(path);
+    } else {
+      content = await fs.readFile(path, "utf-8");
+    }
+    
+    fileCache.set(path, content); // Save it for later
+    return content;
+  },
+  
+  write: async (path, content) => {
+    // Update the cache so the newest version is always in memory
+    fileCache.set(path, content);
+    
+    if (isBun) return await Bun.write(path, content);
+    if (isDeno) return await Deno.writeTextFile(path, content);
+    return await fs.writeFile(path, content, "utf-8");
+  }
+};
 
 const STANDALONE_SERVER_CODE = `
 import { createServer } from "node:http";
@@ -69,12 +123,10 @@ const __filename = fileURLToPath(import.meta.url);
 const currentDir = dirname(__filename);
 const rootDir = join(currentDir, ".");
 
-// Hash file content (MD5, first 10 chars)
 function hashFile(content) {
-  return createHash("md5").update(content).digest("hex").slice(0, 10);
+  return io.hash(content);
 }
 
-// Recursively find all files (with optional filter)
 function getAllFiles(dir, extensions = null) {
   let files = [];
   for (const entry of readdirSync(dir)) {
@@ -91,7 +143,6 @@ function getAllFiles(dir, extensions = null) {
   return files;
 }
 
-// Rename file with hash
 async function renameWithHash(filePath, content) {
   const hash = hashFile(content);
   const ext = extname(filePath);
@@ -106,9 +157,8 @@ async function renameWithHash(filePath, content) {
   return { oldPath: filePath, newPath: filePath, hash };
 }
 
-// Remove framework scripts + minify
 async function minifyHTMLFile(filePath) {
-  let html = await fs.readFile(filePath, "utf-8");
+  let html = await io.read(filePath);
 
   // Remove __FRAMEWORK_DATA__ JSON script if present
   html = html.replace(
@@ -116,27 +166,24 @@ async function minifyHTMLFile(filePath) {
     "",
   );
 
-  // Minify remaining HTML
-  const minified = await minify(html, {
-    collapseWhitespace: true,
+  // Minify using SWC
+  const { code } = await swcHtml.minify(Buffer.from(html), {
+    collapseWhitespaces: "all",
     removeComments: true,
-    removeRedundantAttributes: true,
-    removeEmptyAttributes: true,
-    removeOptionalTags: true,
-    minifyCSS: true,
-    minifyJS: true,
+    minifyJs: true,
+    minifyCss: true,
   });
 
-  await fs.writeFile(filePath, minified, "utf-8");
+  await io.write(filePath, code);
 }
 
 async function main() {
-  console.log("[BUILD] Starting build...");
+  const runtimeName = isBun ? "Bun" : isDeno ? "Deno" : "Node.js";
+  console.log(`[BUILD] Starting hybrid build on ${runtimeName}...`);
 
   const configPath = join(currentDir, "jen.config.ts");
   const outdir = join(currentDir, ".esbuild");
 
-  // Build the config first
   await esbuild.build({
     entryPoints: [configPath],
     outdir,
@@ -154,20 +201,18 @@ async function main() {
   const buildPath = pathToFileURL(join(rootDir, "lib/build/build.js")).href;
   const { buildSite } = await import(buildPath);
 
-  // Build the site
   await buildSite({ config });
 
   const distDir = join(process.cwd(), config.distDir || "dist");
   const manifest = {};
-  const fileMap = {}; // Maps old base filenames to new hashed base filenames
+  const fileMap = {};
 
-  // Step 1: Hash CSS and JS files
+  // Step 1: Hash assets in parallel
   const assetFiles = getAllFiles(distDir, [".css", ".js"]);
-  for (const filePath of assetFiles) {
-    const content = await fs.readFile(filePath, "utf-8");
+  await Promise.all(assetFiles.map(async (filePath) => {
+    const content = await io.read(filePath);
     const renamed = await renameWithHash(filePath, content);
     
-    // Extract just the filename (e.g., "styles.css")
     const oldBase = basename(renamed.oldPath);
     const newBase = basename(renamed.newPath);
 
@@ -176,70 +221,56 @@ async function main() {
       newPath: renamed.newPath,
     };
     
-    // Store the base names for replacement
     fileMap[oldBase] = newBase;
-    console.log(`[SUCCESS] Hashed Asset: ${renamed.newPath}`);
-  }
+    console.log(`[SUCCESS] Hashed Asset: ${newBase}`);
+  }));
 
-  // Sort by length descending to prevent partial path replacements
   const sortedFileMap = Object.entries(fileMap).sort((a, b) => b[0].length - a[0].length);
 
-  // Step 2: Minify, Update Paths, Inject Import Map & Rename HTML
+  // Step 2: Minify and update HTML in parallel
   const htmlFiles = getAllFiles(distDir, [".html"]);
-  for (const filePath of htmlFiles) {
+  await Promise.all(htmlFiles.map(async (filePath) => {
+    // 1. Minify with SWC first
     await minifyHTMLFile(filePath);
-    let content = await fs.readFile(filePath, "utf-8");
+    let content = await io.read(filePath);
 
-    // 1. Calculate how deep this HTML file is relative to the dist directory
+    // 2. Relative Path Logic
     const relDir = dirname(filePath).replace(distDir, "").replace(/\\/g, "/");
     const segments = relDir.split('/').filter(Boolean);
     const depth = segments.length;
     const rootPrefix = depth === 0 ? './' : '../'.repeat(depth);
 
-    // 2. Convert absolute root paths (href="/...", src="/...") to relative paths
     content = content.replace(/(href|src)=["']\/([^\/][^"']*)?["']/g, (match, attr, path) => {
       const cleanPath = path || "";
       return `${attr}="${rootPrefix}${cleanPath}"`;
     });
 
-    // 3. Convert absolute /__runtime/ module imports to relative paths
     content = content.replace(/from\s*["']\/__runtime\/([^"']+)["']/g, (match, filename) => {
       return `from "${rootPrefix}${filename}"`;
     });
 
-    // 4. Intercept the dev server hydrate call and point it to the unhashed component name
     content = content.replace(/hydrateClient\s*\(\s*["']\/__hydrate\?file=([^"']+)["']\s*\)/g, (match, encodedFile) => {
       const decoded = decodeURIComponent(encodedFile);
       const componentName = basename(decoded, extname(decoded));
       return `hydrateClient("${rootPrefix}components/${componentName}.js")`;
     });
 
-    // 5. Inject the Import Map for Preact
+    // 3. Import Map Injection
     const runtimeFile = fileMap["preact-runtime.js"] || "preact-runtime.js";
-    const importMap = `<script type="importmap">
-    {
-      "imports": {
-        "preact": "${rootPrefix}${runtimeFile}",
-        "preact/hooks": "${rootPrefix}${runtimeFile}",
-        "preact/compat": "${rootPrefix}${runtimeFile}",
-        "preact/jsx-runtime": "${rootPrefix}${runtimeFile}"
-      }
-    }
-    </script>`;
+    const importMap = `<script type="importmap">{"imports":{"preact":"${rootPrefix}${runtimeFile}","preact/hooks":"${rootPrefix}${runtimeFile}","preact/compat":"${rootPrefix}${runtimeFile}","preact/jsx-runtime":"${rootPrefix}${runtimeFile}"}}</script>`;
 
     if (content.includes("</head>")) {
-      content = content.replace("</head>", `${importMap}\n</head>`);
+      content = content.replace("</head>", `${importMap}</head>`);
     } else {
       content = importMap + content;
     }
 
-    // 6. Run the hash replacements
+    // 4. Hash Replacements
     for (const [oldName, newName] of sortedFileMap) {
       content = content.split(oldName).join(newName);
     }
     
-    // Save updated content before potential move
-    await fs.writeFile(filePath, content, "utf-8");
+    await io.write(filePath, content);
 
     const dir = dirname(filePath);
     const oldName = basename(filePath);
@@ -247,30 +278,18 @@ async function main() {
 
     if (oldName !== "index.html") {
       await fs.rename(filePath, newPath);
-      console.log(`[SUCCESS] Renamed: ${oldName} -> index.html`);
-    } else {
-      console.log(`[SUCCESS] Minified: ${oldName}`);
     }
 
-    manifest[filePath] = {
-      hash: "none",
-      newPath: newPath,
-    };
-  }
+    manifest[filePath] = { hash: "none", newPath: newPath };
+  }));
 
-  // Write manifest
   const manifestPath = join(distDir, "asset-manifest.json");
-  await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
-  console.log(`[SUCCESS] Asset manifest written: ${manifestPath}`);
+  await io.write(manifestPath, JSON.stringify(manifest, null, 2));
 
-  console.log(
-    "[SUCCESS] Site built: HTML is index.html and assets are hashed!"
-  );
   const serverPath = join(distDir, "server.js");
-  await fs.writeFile(serverPath, STANDALONE_SERVER_CODE, "utf-8");
-  console.log(`[SUCCESS] Standalone server created: ${serverPath}`);
+  await io.write(serverPath, STANDALONE_SERVER_CODE);
   
-  console.log("[SUCCESS] Build complete! Run 'node dist/server.js' to start.");
+  console.log(`[SUCCESS] Build complete! SWC minification and asset hashing finished at warp speed.`);
 }
 
 main().catch(console.error);
