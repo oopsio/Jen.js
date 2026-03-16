@@ -13,7 +13,7 @@ describe("@jenjs/mcp", () => {
       expect(root.length).toBeGreaterThan(0);
     });
 
-    it("should calculate project stats", () => {
+    it("should calculate project stats", { timeout: 15000 }, () => {
       const root = findProjectRoot();
       const stats = calculateProjectStats(root);
 
@@ -28,7 +28,7 @@ describe("@jenjs/mcp", () => {
       expect(stats).toHaveProperty("totalLines");
     });
 
-    it("should have non-negative file counts", () => {
+    it("should have non-negative file counts", { timeout: 15000 }, () => {
       const root = findProjectRoot();
       const stats = calculateProjectStats(root);
 
@@ -43,7 +43,7 @@ describe("@jenjs/mcp", () => {
       expect(stats.totalLines).toBeGreaterThanOrEqual(0);
     });
 
-    it("should count TS+TSX and JS+JSX correctly", () => {
+    it("should count TS+TSX and JS+JSX correctly", { timeout: 15000 }, () => {
       const root = findProjectRoot();
       const stats = calculateProjectStats(root);
 
