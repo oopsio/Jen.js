@@ -101,7 +101,7 @@ type Middleware = (ctx: any, next: () => Promise<void>) => Promise<void>;
  * HTML template for 500 Internal Server Error responses.
  * Used when middleware or request handlers throw uncaught exceptions.
  */
-const ERROR_500_TEMPLATE = `<!DOCTYPE html>
+const ERROR_500_TEMPLATE = /*html*/`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -299,6 +299,7 @@ function sendSafeError(
 
       // Replace the ENTIRE hidden div with a visible one that contains the stack trace
       html = html.replace(
+        
         '<div class="error-details" id="details" style="display:none;"></div>',
         `<div class="error-details" id="details" style="display:block;">\n${safeStack}\n</div>`
       );

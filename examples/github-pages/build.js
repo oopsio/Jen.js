@@ -89,34 +89,79 @@ const MIME_TYPES = {
   ".ico": "image/x-icon",
 };
 
-const server = createServer((req, res) => {
-  const url = new URL(req.url, \`http://\${req.headers.host}\`);
-  let filePath = join(__dirname, url.pathname);
+const isBun = typeof Bun !== "undefined";
+const isDeno = typeof Deno !== "undefined";
 
+function getFilePath(urlPath) {
+  let filePath = join(__dirname, urlPath);
   if (existsSync(filePath) && statSync(filePath).isDirectory()) {
     filePath = join(filePath, "index.html");
   }
-
   if (!existsSync(filePath)) {
     if (existsSync(filePath + ".html")) filePath += ".html";
     else if (existsSync(join(filePath, "index.html"))) filePath = join(filePath, "index.html");
   }
+  return filePath;
+}
 
-  if (existsSync(filePath) && !statSync(filePath).isDirectory()) {
-    const ext = extname(filePath).toLowerCase();
-    const contentType = MIME_TYPES[ext] || "application/octet-stream";
-    res.writeHead(200, { "Content-Type": contentType });
-    res.end(readFileSync(filePath));
-  } else {
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("404 Not Found");
+function printReady(runtime) {
+  if (typeof process !== "undefined" && process.stdout) {
+    process.stdout.write("\\x1Bc");
   }
-});
+  console.log(\` \\x1b[32m > Jen.js (\${runtime}) Server Ready at \\x1b[36mhttp://localhost:\${PORT} \${C.reset}\`);
+}
 
-server.listen(PORT, () => {
-  process.stdout.write("\\x1Bc");
-  console.log(\` \\x1b[32m > Ready at \\x1b[36mhttp://localhost:3000 \${C.reset}\`);
-});
+if (isBun) {
+  // Native Bun Server
+  Bun.serve({
+    port: PORT,
+    fetch(req) {
+      const url = new URL(req.url);
+      const filePath = getFilePath(url.pathname);
+      
+      if (existsSync(filePath) && !statSync(filePath).isDirectory()) {
+        return new Response(Bun.file(filePath));
+      }
+      return new Response("404 Not Found", { status: 404 });
+    }
+  });
+  printReady("Bun");
+
+} else if (isDeno) {
+  // Native Deno Server
+  Deno.serve({ port: PORT }, async (req) => {
+    const url = new URL(req.url);
+    const filePath = getFilePath(url.pathname);
+    
+    if (existsSync(filePath) && !statSync(filePath).isDirectory()) {
+      const ext = extname(filePath).toLowerCase();
+      const contentType = MIME_TYPES[ext] || "application/octet-stream";
+      const file = await Deno.readFile(filePath);
+      return new Response(file, { headers: { "Content-Type": contentType } });
+    }
+    return new Response("404 Not Found", { status: 404 });
+  });
+  printReady("Deno");
+
+} else {
+  // Fallback Node.js Server
+  const server = createServer((req, res) => {
+    const url = new URL(req.url, \`http://\${req.headers.host}\`);
+    const filePath = getFilePath(url.pathname);
+
+    if (existsSync(filePath) && !statSync(filePath).isDirectory()) {
+      const ext = extname(filePath).toLowerCase();
+      const contentType = MIME_TYPES[ext] || "application/octet-stream";
+      res.writeHead(200, { "Content-Type": contentType });
+      res.end(readFileSync(filePath));
+    } else {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("404 Not Found");
+    }
+  });
+
+  server.listen(PORT, () => printReady("Node.js"));
+}
 `;
 
 const __filename = fileURLToPath(import.meta.url);
