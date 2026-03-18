@@ -1,110 +1,188 @@
-import type { FrameworkConfig } from "../core/config.js";
-
 /**
- * Plugin lifecycle and hook system.
- * Plugins hook into key stages of build, dev, and request handling.
+ * Plugin System Types & Interfaces
+ *
+ * Defines the plugin architecture for Jen.js, allowing extensions at build,
+ * dev, request, and rendering stages. Inspired by Vite and Rollup.
  */
 
 /**
- * Hookable stages available to plugins.
+ * Available hook stages in the plugin lifecycle
  */
 export enum HookStage {
   // Build lifecycle
   BEFORE_BUILD = "beforeBuild",
+  BUILD_MODULES = "buildModules",
+  BUILD_OPTIMIZE = "buildOptimize",
   AFTER_BUILD = "afterBuild",
-  BEFORE_ASSET_OPTIMIZE = "beforeAssetOptimize",
-  AFTER_ASSET_OPTIMIZE = "afterAssetOptimize",
+
+  // Dev server lifecycle
+  BEFORE_DEV = "beforeDev",
+  DEV_HMR = "devHmr",
+  AFTER_DEV = "afterDev",
+
+  // Request/Server lifecycle
+  REQUEST_INIT = "requestInit",
+  REQUEST_MIDDLEWARE = "requestMiddleware",
   BEFORE_RENDER = "beforeRender",
   AFTER_RENDER = "afterRender",
 
-  // Request lifecycle
-  BEFORE_REQUEST = "beforeRequest",
-  AFTER_REQUEST = "afterRequest",
+  // Config resolution
+  RESOLVE_CONFIG = "resolveConfig",
 
-  // Response generation
-  BEFORE_RESPONSE = "beforeResponse",
-  AFTER_RESPONSE = "afterResponse",
-
-  // Cache operations
-  BEFORE_CACHE = "beforeCache",
-  AFTER_CACHE = "afterCache",
-
-  // Custom stage (plugins can register their own)
-  CUSTOM = "custom",
+  // Transformation hooks
+  TRANSFORM_CODE = "transformCode",
+  RESOLVE_ID = "resolveId",
 }
 
 /**
- * Plugin definition and metadata.
+ * Context passed to hook handlers
  */
-export interface JenPlugin {
-  /** Unique plugin identifier */
-  name: string;
-  /** Plugin version */
-  version: string;
-  /** Plugin description */
-  description?: string;
-  /** Plugin author */
-  author?: string;
-  /** Plugin hooks and handlers */
-  hooks?: Partial<Record<HookStage | string, PluginHookHandler>>;
-  /** Plugin configuration schema */
-  configSchema?: Record<string, unknown>;
-  /** Plugin initialization */
-  init?: (config: PluginContext) => Promise<void> | void;
+export interface PluginHookContext {
+  /** Current stage of execution */
+  stage: HookStage;
+
+  /** Request context (if applicable) */
+  request?: {
+    url: string;
+    method: string;
+    headers: Record<string, string>;
+  };
+
+  /** Build/render context */
+  build?: {
+    mode: "development" | "production";
+    root: string;
+    outDir: string;
+  };
+
+  /** Additional metadata */
+  meta?: Record<string, any>;
 }
 
 /**
- * Hook handler function signature.
+ * Handler function signature for hooks
  */
 export type PluginHookHandler = (
   context: PluginHookContext,
-) => Promise<void> | void;
+  ...args: any[]
+) => any | Promise<any>;
 
 /**
- * Context passed to plugin hooks.
+ * Plugin hook definition
  */
-export interface PluginHookContext {
-  /** The hook stage being executed */
-  stage: HookStage | string;
-  /** Framework configuration */
-  config: FrameworkConfig;
-  /** Request context (if applicable) */
-  request?: Record<string, unknown>;
-  /** Hook-specific data */
-  data?: Record<string, unknown>;
-  /** Plugin can modify this data and it will be passed forward */
-  mutate?: (key: string, value: unknown) => void;
+export interface PluginHook {
+  /** Hook identifier */
+  name: HookStage;
+
+  /** Handler function */
+  handler: PluginHookHandler;
+
+  /** Execution priority (higher = earlier) */
+  priority?: number;
+
+  /** Run in parallel with other hooks */
+  parallel?: boolean;
+
+  /** Enforce execution order (pre/post/normal) */
+  enforce?: "pre" | "post" | "normal";
 }
 
 /**
- * Plugin system context and manager.
+ * Plugin context available to plugins
  */
 export interface PluginContext {
-  /** Framework configuration */
-  config: FrameworkConfig;
-  /** Root directory */
-  rootDir: string;
-  /** Build mode (dev or production) */
-  mode: "development" | "production";
-  /** Register a new hook handler */
-  onHook: (stage: string, handler: PluginHookHandler) => void;
-  /** Emit a hook event to all registered handlers */
-  emitHook: (stage: string, context: PluginHookContext) => Promise<void>;
+  /** Framework version */
+  version: string;
+
+  /** Plugin name */
+  name: string;
+
+  /** Current working directory */
+  cwd: string;
+
+  /** Emit events */
+  emitEvent(event: string, data?: any): void;
+
+  /** Register middleware */
+  useMiddleware(handler: (req: any, res: any, next: () => void) => void): void;
+
+  /** Register a virtual module */
+  virtual(id: string, code: string): void;
+
+  /** Resolve a plugin resource */
+  resolve(id: string): string;
 }
 
 /**
- * Plugin configuration in jen.config.ts
+ * Plugin interface - the core plugin shape
+ */
+export interface JenPlugin {
+  /** Plugin name (unique identifier) */
+  name: string;
+
+  /** Plugin version */
+  version?: string;
+
+  /** Plugin description */
+  description?: string;
+
+  /** Apply plugin (called during setup) */
+  apply?: "build" | "serve" | ((config: any) => boolean);
+
+  /** Enforce plugin order */
+  enforce?: "pre" | "post";
+
+  /** Plugin configuration schema (optional) */
+  schema?: Record<string, any>;
+
+  /** Register hooks with framework */
+  hooks?: Record<HookStage, PluginHookHandler | PluginHook>;
+
+  /** Setup hook (called after plugin is registered) */
+  setup?(context: PluginContext): void | Promise<void>;
+
+  /** Cleanup hook (called on shutdown) */
+  cleanup?(context: PluginContext): void | Promise<void>;
+}
+
+/**
+ * Plugin configuration
  */
 export interface PluginConfig {
-  /** List of plugins to load */
-  plugins?: (JenPlugin | string)[];
-  /** Hook ordering and execution control */
+  /** Array of plugins to load */
+  plugins: (JenPlugin | string)[];
+
+  /** Global hook configuration */
   hooks?: {
-    /** Parallel vs sequential execution */
+    /** Run hooks in parallel */
     parallel?: boolean;
-    /** Timeout for hook execution in ms */
+
+    /** Hook timeout in ms */
     timeout?: number;
-    /** Catch and log errors instead of throwing */
+
+    /** Log hook execution */
+    verbose?: boolean;
+
+    /** Skip errors in hooks */
     silent?: boolean;
   };
+}
+
+/**
+ * Plugin registry entry
+ */
+export interface PluginEntry {
+  plugin: JenPlugin;
+  config?: Record<string, any>;
+  priority: number;
+}
+
+/**
+ * Hook execution result
+ */
+export interface HookExecutionResult {
+  stage: HookStage;
+  results: any[];
+  duration: number;
+  errors?: Error[];
 }

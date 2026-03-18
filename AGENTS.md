@@ -59,13 +59,12 @@ Answers should be conversational and inline — never as files.
 - `src/server/` - HTTP server app, runtime serving, API routes
 - `src/core/` - Config, routing, paths, types, middleware hooks
 - `src/runtime/` - Preact SSR + client hydration/runtime
+- `src/plugin/` - Advanced plugin system with hooks (build, dev, request, render stages)
 - `src/api/`, `src/auth/`, `src/db/`, `src/cache/` - Feature modules
 - `src/graphql/`, `src/i18n/`, `src/jdb/` - GraphQL, localization, embedded DB helpers
 - `src/css/` - SCSS/CSS compilation pipeline
 - `src/middleware/` - Express-style middleware pipeline + built-ins
-- `src/native/` - JS stubs for native dev-server/bundler/style-compiler/optimizer
-- `src/build-tools/` and `src/python/` - Legacy build utilities
-- `src/plugin/` - Plugin loader system
+- `src/build-tools/` - Legacy build utilities
 - `src/cli/` - CLI templates and banner output
 - `src/shared/` - Shared logging utilities
 
@@ -79,71 +78,144 @@ Answers should be conversational and inline — never as files.
 
 ## Repository layout
 
-- `packages/` - Monorepo packages (`create-jen-app`, `jenjs`, `jenjs-ghpackages`)
-- `jenpack/` and `preactsc/` - Packaging/build tooling and examples
-- `native/` - Rust/C++/stylepack native implementations
-- `example/` and `website/` - Example versions and website assets
+- `packages/` - Monorepo packages (13 packages: CLI, core, create-jen-app, jenjs, jenpack, jenpress, preactsc, mcp, etc.)
+- `src/` - Core framework source (30+ modules)
+- `tests/` - Test suite with fixtures, integration tests, and benchmarks
+- `apps/`, `examples/`, `bench/` - Example applications and benchmarks
+- `scripts/`, `site/` - Build scripts and framework website
 
 ## Monorepo Structure Overview
 
 ```
 jen.js/
+├── .agents/                      # Agent skills and workflows
+├── .cargo/                       # Rust/Cargo build artifacts
+├── .devcontainer/                # VS Code devcontainer config
+├── .esbuild/                     # ESBuild configuration/cache
+├── .git/                         # Git repository metadata
+├── .githooks/                    # Custom git hooks
+├── .github/                      # GitHub Actions workflows & templates
+├── .husky/                       # Husky git hooks config
+├── .jen/                         # Framework-specific cache/build artifacts
+├── .turbo/                       # Turbo build cache
+├── .vscode/                      # VS Code workspace settings
+│
 ├── src/                          # Core framework source
-│   ├── build/                    # SSG pipeline, asset hashing
-│   ├── server/                   # HTTP server, runtime serving
-│   ├── core/                     # Config, routing, core types
-│   ├── runtime/                  # Preact SSR + hydration
 │   ├── api/                      # API route handlers
+│   ├── assets/                   # Static assets (fonts, images, etc)
 │   ├── auth/                     # Authentication module
-│   ├── db/                       # Database integrations
+│   ├── build/                    # SSG pipeline, asset hashing
+│   ├── build-tools/              # Legacy build utilities
 │   ├── cache/                    # Caching layer
-│   ├── css/                      # SCSS/CSS compilation
-│   ├── middleware/               # Express-style middleware
+│   ├── cli/                      # CLI templates and banner output
+│   ├── client/                   # Client-side runtime and utilities
+│   ├── client-routing/           # Client-side routing module
+│   ├── compilers/                # Language and format compilers
+│   ├── core/                     # Config, routing, paths, types, middleware hooks
+│   ├── css/                      # SCSS/CSS compilation pipeline
+│   ├── data-fetching/            # Data fetching utilities
+│   ├── db/                       # Database integrations
+│   ├── devtools/                 # Development tools and debugging
+│   ├── fonts/                    # Font management and optimization
 │   ├── graphql/                  # GraphQL utilities
 │   ├── i18n/                     # Internationalization
+│   ├── import/                   # Module import handling
 │   ├── jdb/                      # Embedded DB helpers
-│   ├── plugin/                   # Plugin system
-│   ├── native/                   # Native JS stubs
-│   ├── cli/                      # CLI output/templates
-│   └── shared/                   # Shared utilities
+│   ├── middleware/               # Express-style middleware pipeline + built-ins
+│   ├── plugin/                   # Advanced plugin system with hooks (Vite/Rollup-like)
+│   ├── runtime/                  # Preact SSR + client hydration/runtime
+│   ├── security/                 # Security utilities and handlers
+│   ├── server/                   # HTTP server app, runtime serving
+│   ├── server-actions/           # Server action handlers
+│   ├── shared/                   # Shared logging utilities
+│   ├── telemetry/                # Telemetry and analytics
+│   ├── vendor/                   # Vendored dependencies
+│   └── index.ts                  # Framework entry point
 │
-├── packages/                     # Published npm packages
+├── packages/                     # Published npm packages (monorepo)
+│   ├── cli/                      # CLI utilities
+│   ├── cli-npm/                  # NPM CLI integration
 │   ├── create-jen-app/           # CLI scaffolder
+│   ├── eslint-config-jen/        # ESLint configuration
+│   ├── jen-core/                 # Core framework exports
 │   ├── jenjs/                    # Main framework package
 │   ├── jenjs-ghpackages/         # GitHub packages integration
-│   ├── types/                    # TypeScript definitions
-│   ├── eslint-config-jen/        # ESLint config (NEW)
-│   ├── third-parties-embeds/     # Third-party components (NEW)
-│   └── mcp/                      # MCP Server (NEW)
+│   ├── jenpack/                  # Packaging utilities
+│   ├── jenpress/                 # Static site generator
+│   ├── mcp/                      # MCP Server + CLI
+│   ├── preactsc/                 # Preact Server Components
+│   ├── third-parties-embeds/     # Third-party components (YouTube/Maps)
+│   └── types/                    # TypeScript definitions
 │
 ├── tests/                        # Test suite
 │   ├── api/                      # API route tests
 │   ├── auth/                     # Auth tests
+│   ├── benchmarks/               # Benchmark tests
 │   ├── build/                    # Build pipeline tests
+│   ├── cache/                    # Cache tests
+│   ├── client-routing/           # Client routing tests
 │   ├── core/                     # Core functionality tests
-│   ├── packages/                 # New package tests
+│   ├── data-fetching/            # Data fetching tests
+│   ├── db/                       # Database tests
+│   ├── fixtures/                 # Test fixtures and mocks
+│   ├── fonts/                    # Font tests
+│   ├── i18n/                     # Internationalization tests
+│   ├── integration/              # Integration tests
+│   ├── middleware/               # Middleware tests
+│   ├── packages/                 # Package-specific tests
+│   ├── runtime/                  # Runtime tests
+│   ├── security/                 # Security tests
 │   ├── server/                   # Server tests
-│   └── integration/              # Integration tests
+│   ├── shared/                   # Shared utilities tests
+│   ├── devtools.test.ts          # Devtools tests
+│   ├── layouts.test.ts           # Layout tests
+│   ├── lifecycle.test.ts         # Lifecycle tests
+│   ├── render-security.test.ts   # Render security tests
+│   ├── script-optimizer.test.ts  # Script optimizer tests
+│   ├── server-actions.test.ts    # Server actions tests
+│   └── README.md                 # Test documentation
 │
-├── native/                       # Native implementations
-│   ├── bundler/                  # Rust bundler
-│   ├── compiler/                 # C++ compiler
-│   └── optimizer/                # Performance optimizer
-│
-├── site/                         # Framework website
+├── apps/                         # Application examples
+├── bench/                        # Benchmark suites
+├── dist/                         # Build output directory
 ├── examples/                     # Example projects
-├── scripts/                      # Build/setup scripts
-├── bench/                        # Benchmarks
+├── scripts/                      # Build and setup scripts
+├── site/                         # Framework website/documentation
+├── node_modules/                 # Dependencies (generated by bun install)
 │
-├── server.ts                     # HTTP server entry
-├── build.ts                      # Build pipeline entry
-├── jen.config.ts                 # Framework config
-├── eslint.config.ts              # ESLint rules
-├── vitest.config.ts              # Test config
-├── tsconfig.json                 # TypeScript config
+├── .commitlintrc.json            # Commit linting rules
+├── .czrc                         # Commitizen config
+├── .env.example                  # Environment variables template
+├── .gitattributes                # Git attributes config
+├── .gitignore                    # Git ignore rules
+├── .npmignore                    # NPM publish ignore rules
+├── .npmrc                        # NPM configuration
+├── .nvmrc                        # Node version specifier
+├── .prettierignore               # Prettier format ignore
+├── .rustfmt.toml                 # Rust formatting config
+├── .typos.toml                   # Typo checker config
+├── AGENTS.md                     # Agent instructions (THIS FILE)
+├── build.js                      # Build script entry (JS)
+├── build.ts                      # Build pipeline entry (TypeScript)
+├── bun.lock                      # Bun lock file
+├── bundle.js                     # Bundling script
+├── CLAUDE.md                     # Claude-specific guidelines
+├── CODE_OF_CONDUCT.md            # Community code of conduct
+├── CONTRIBUTING.md               # Contribution guidelines
+├── eslint.config.ts              # ESLint configuration
+├── GEMINI.md                     # Gemini-specific guidelines
+├── jen.config.ts                 # Framework configuration
+├── jsdoc.config.json             # JSDoc generator config
+├── lerna.json                    # Lerna monorepo config
+├── LICENSE                       # License file
 ├── package.json                  # Root package manifest
-├── turbo.json                    # Turbo build config
-└── AGENTS.md                     # Agent instructions
+├── README.md                     # Project readme
+├── SECURITY.md                   # Security policy
+├── server.ts                     # HTTP server entry point
+├── TESTING.md                    # Testing guidelines
+├── tsconfig.json                 # TypeScript configuration
+├── turbo.json                    # Turbo build orchestration config
+└── vitest.config.ts              # Vitest test runner config
 ```
 
 ## Key Packages Breakdown
@@ -164,6 +236,173 @@ jen.js/
 - **TypeScript** strict mode enforced across all packages
 - **Vitest** runs tests in watch mode from `tests/` directory
 - **ESLint** configured in root `eslint.config.ts`
+
+## Plugin System
+
+Jen.js includes a powerful, Vite/Rollup-inspired plugin system that allows extending the framework at multiple lifecycle stages.
+
+### Plugin Architecture
+
+**Core Components:**
+- `PluginManager` - Orchestrates plugin lifecycle and hook execution
+- `HookStage` - Enumerated hook stages for plugin integration
+- `JenPlugin` interface - Standard plugin shape
+
+**Hook Stages:**
+
+```typescript
+// Build lifecycle
+HookStage.BEFORE_BUILD      // Before build starts
+HookStage.BUILD_MODULES     // During module compilation
+HookStage.BUILD_OPTIMIZE    // Optimization phase
+HookStage.AFTER_BUILD       // After build completes
+
+// Dev server lifecycle
+HookStage.BEFORE_DEV        // Before dev server starts
+HookStage.DEV_HMR           // Hot module replacement
+HookStage.AFTER_DEV         // After dev server stops
+
+// Request/Server lifecycle
+HookStage.REQUEST_INIT      // On incoming request
+HookStage.REQUEST_MIDDLEWARE // During middleware phase
+HookStage.BEFORE_RENDER     // Before page render
+HookStage.AFTER_RENDER      // After page render
+
+// Transformation
+HookStage.TRANSFORM_CODE    // Code transformation hook
+HookStage.RESOLVE_ID        // Module resolution hook
+HookStage.RESOLVE_CONFIG    // Config resolution hook
+```
+
+### Creating a Plugin
+
+```typescript
+import type { JenPlugin, PluginContext, PluginHookContext } from "jenjs";
+import { HookStage } from "jenjs";
+
+export default {
+  name: "my-plugin",
+  version: "1.0.0",
+  description: "My custom plugin",
+  
+  // Apply only during build
+  apply: "build",
+  
+  // Run before other plugins
+  enforce: "pre",
+  
+  // Setup hook (called during initialization)
+  async setup(context: PluginContext) {
+    console.log("Plugin setup:", context.name);
+    
+    // Register virtual module
+    context.virtual("virtual:my-module", "export default 'Hello';");
+    
+    // Add middleware
+    context.useMiddleware((req, res, next) => {
+      console.log("Request:", req.url);
+      next();
+    });
+  },
+  
+  // Define hooks
+  hooks: {
+    [HookStage.BEFORE_BUILD]: async (context: PluginHookContext) => {
+      console.log("Before build:", context.build?.mode);
+    },
+    
+    [HookStage.TRANSFORM_CODE]: async (context: PluginHookContext, code: string) => {
+      // Transform code
+      return code.replace(/foo/g, "bar");
+    },
+    
+    [HookStage.REQUEST_INIT]: {
+      handler: async (context: PluginHookContext) => {
+        context.meta ??= {};
+        context.meta.pluginData = "injected";
+      },
+      priority: 100,  // Higher priority = earlier execution
+      enforce: "pre"  // Run before normal hooks
+    }
+  },
+  
+  // Cleanup hook (called on shutdown)
+  async cleanup(context: PluginContext) {
+    console.log("Plugin cleanup");
+  }
+} satisfies JenPlugin;
+```
+
+### Plugin Configuration
+
+In `jen.config.ts`:
+
+```typescript
+import myPlugin from "./plugins/my-plugin.ts";
+import anotherPlugin from "./plugins/another-plugin.ts";
+
+export default {
+  plugins: {
+    plugins: [
+      myPlugin,
+      "path/to/plugin.ts", // Can load from string paths
+      anotherPlugin
+    ],
+    hooks: {
+      parallel: true,      // Run hooks in parallel
+      timeout: 30000,      // 30s timeout per hook
+      verbose: false,      // Log hook execution
+      silent: false        // Don't throw on errors
+    }
+  }
+} satisfies FrameworkConfig;
+```
+
+### Using the Plugin Manager
+
+```typescript
+import { getPluginManager } from "jenjs";
+
+const manager = getPluginManager();
+
+// Execute hooks at any stage
+const result = await manager.executeHooks("beforeBuild", {
+  build: {
+    mode: "production",
+    root: process.cwd(),
+    outDir: "dist"
+  }
+});
+
+console.log("Hook results:", result.results);
+console.log("Execution time:", result.duration + "ms");
+
+// Check if plugin is loaded
+if (manager.hasPlugin("my-plugin")) {
+  console.log("Plugin is loaded");
+}
+
+// Listen to plugin events
+manager.on("build:complete", (data) => {
+  console.log("Build completed", data);
+});
+
+// Get virtual module
+const code = manager.getVirtualModule("virtual:my-module");
+```
+
+### Plugin Best Practices
+
+1. **Always name your plugin** - Use reverse domain notation: `com.example.plugin-name`
+2. **Specify apply** - Declare when plugin should run: `"build" | "serve" | function`
+3. **Use enforce** - Order plugins with `"pre" | "post"` for critical plugins
+4. **Handle errors** - Plugins should not crash the build
+5. **Cleanup resources** - Implement cleanup hook for long-running operations
+6. **Emit events** - Use `context.emitEvent()` for async notifications
+7. **Register middleware** - Add request handlers via `context.useMiddleware()`
+8. **Use virtual modules** - Create in-memory modules with `context.virtual()`
+
+---
 
 ## Code Style
 
