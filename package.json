@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "start": "node server.ts start",
-    "build": "turbo run build",
+    "build": "turbo run build --filter '!sveltekit' --filter '!nuxt-3'",
     "bundle": "turbo run bundle",
     "clean": "turbo run clean",
     "typecheck": "turbo run typecheck",
@@ -58,13 +58,15 @@
     "svelte": "^5.51.1",
     "table": "^6.9.0",
     "tsx": "^4.21.0",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@commitlint/cz-commitlint": "^20.4.1",
     "@eslint/js": "^10.0.1",
     "@types/bun": "^1.3.10",
     "@types/node": "^25.2.3",
+    "@types/ws": "^8.18.1",
     "@typescript/native-preview": "7.0.0-dev.20260316.1",
     "@vitest/ui": "^4.0.18",
     "commitizen": "^4.3.1",
@@ -76,7 +78,7 @@
     "husky": "^9.1.7",
     "lerna": "^9.0.4",
     "prettier": "^3.8.1",
-    "turbo": "^2.8.7",
+    "turbo": "^2.8.17",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.55.0",
     "vitepress": "2.0.0-alpha.16",

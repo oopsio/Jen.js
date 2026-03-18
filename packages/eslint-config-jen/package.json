@@ -16,7 +16,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "tsx --transform-only index.ts",
+    "build": "bun run index.ts",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {

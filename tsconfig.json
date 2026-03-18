@@ -13,6 +13,7 @@
     "baseUrl": ".",
     "allowJs": true,
     "declaration": true,
+    "inlineSourceMap": true,
     "declarationDir": "dist/types", // emit types into a separate folder
     "paths": {
       "@src/*": ["src/*"]

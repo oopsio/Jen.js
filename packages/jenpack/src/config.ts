@@ -37,11 +37,11 @@ export async function loadConfig(
     }
   }
 
-  const config: ResolvedConfig = {
+  const config = {
     ...DEFAULT_CONFIG,
     ...userConfig,
     root,
-  };
+  } as ResolvedConfig;
 
   // Resolve paths relative to root
   if (!resolve(config.entry).startsWith(root)) {

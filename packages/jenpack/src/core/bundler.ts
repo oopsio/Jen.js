@@ -46,7 +46,7 @@ export class Bundler {
     for (const module of modules.values()) {
       if (module.type === "asset" || isAssetFile(module.path)) {
         assetModules.push(module);
-      } else if (module.type === "css" || isCssFile(module.path)) {
+      } else if ((module.type as string) === "css" || isCssFile(module.path)) {
         cssModules.push(module);
       } else {
         jsModules.push(module);

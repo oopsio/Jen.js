@@ -127,11 +127,14 @@ export async function parseFile(
   const isJSX = filename.endsWith(".jsx") || filename.endsWith(".tsx");
 
   try {
-    const ast = await parse(source, {
+    const parseOptions: any = {
       syntax: isTS ? "typescript" : "ecmascript",
-      typescript: isTS ? { tsx: isJSX, decorators: true } : undefined,
       jsx: !isTS && isJSX,
-    });
+    };
+    if (isTS) {
+      parseOptions.typescript = { tsx: isJSX, decorators: true };
+    }
+    const ast = await parse(source, parseOptions);
     return ast;
   } catch (error) {
     const err = error as any;

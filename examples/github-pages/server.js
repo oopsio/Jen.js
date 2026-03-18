@@ -1,6 +1,7 @@
-﻿import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import { createServer } from "vite";
+import { createServer as createHttpServer } from "node:http";
 
 // Silence the noise
 process.removeAllListeners('warning');
@@ -43,13 +44,41 @@ async function main() {
     process.exit(1);
   }
 
-  const server = await createServer({
-    root: "./dist",
-    server: { port: 3000, strictPort: true, host: "localhost" },
-    logLevel: "silent"
+  const httpServer = createHttpServer((req, res) => {
+    if (req.url?.startsWith("/__hydrate")) {
+      const url = new URL(req.url, `http://localhost:3000`);
+      const file = url.searchParams.get("file");
+      if (!file) {
+        res.statusCode = 400;
+        res.end("missing file");
+        return;
+      }
+      res.statusCode = 200;
+      res.setHeader("content-type", "application/javascript; charset=utf-8");
+      res.setHeader("cache-control", "no-store");
+      res.end("export default function Page() { return null; }");
+      return;
+    }
+
+    // Try to serve static file from dist
+    try {
+      const filePath = `./dist${decodeURIComponent(new URL(req.url, `http://localhost:3000`).pathname)}`;
+      const cleanPath = filePath.replace(/\.\.\//g, "");
+      if (existsSync(cleanPath)) {
+        const content = readFileSync(cleanPath);
+        const ext = cleanPath.split(".").pop();
+        const types = { js: "application/javascript", json: "application/json", html: "text/html", css: "text/css", png: "image/png", jpg: "image/jpeg", svg: "image/svg+xml" };
+        res.setHeader("content-type", types[ext] || "application/octet-stream");
+        res.end(content);
+        return;
+      }
+    } catch (e) {}
+
+    res.statusCode = 404;
+    res.end("not found");
   });
 
-  await server.listen();
+  httpServer.listen(3000, "localhost");
 
   const startupTime = (performance.now() - startTime).toFixed(0);
   

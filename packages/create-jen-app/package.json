@@ -12,7 +12,7 @@
     "templates"
   ],
   "scripts": {
-    "build": "esbuild src/index.ts --minify --bundle --platform=node --target=es2022 --format=esm --external:prompts --external:child_process --outfile=dist/index.js",
+    "build": "esbuild src/index.ts --minify --bundle --platform=node --target=es2022 --format=esm --external:prompts --external:child_process --outfile=dist/index.js && node -e \"const fs = require('fs'); const content = fs.readFileSync('dist/index.js', 'utf8'); fs.writeFileSync('dist/index.js', '#!/usr/bin/env node\\n' + content);\"",
     "dev": "tsx src/index.ts",
     "typecheck": "echo 'Type checking create-jen-app'"
   },
