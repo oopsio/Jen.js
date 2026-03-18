@@ -275,8 +275,7 @@ async function main() {
   // Step 2: Minify and update HTML in parallel
   const htmlFiles = getAllFiles(distDir, [".html"]);
   await Promise.all(htmlFiles.map(async (filePath) => {
-    // 1. Minify with SWC first
-    await minifyHTMLFile(filePath);
+    // 1. Read raw code first
     let content = await io.read(filePath);
 
     // 2. Relative Path Logic
@@ -315,7 +314,11 @@ async function main() {
       content = content.split(oldName).join(newName);
     }
     
+    // 5. Save replacements to memory cache before SWC runs
     await io.write(filePath, content);
+
+    // 6. Minify with SWC as the absolute last step
+    await minifyHTMLFile(filePath);
 
     const dir = dirname(filePath);
     const oldName = basename(filePath);
