@@ -78,7 +78,7 @@ Answers should be conversational and inline — never as files.
 
 ## Repository layout
 
-- `packages/` - Monorepo packages (13 packages: CLI, core, create-jen-app, jenjs, jenpack, jenpress, preactsc, mcp, etc.)
+- `packages/` - Monorepo packages (10 packages: CLI, core, create-jen-app, jenjs, mcp, etc.)
 - `src/` - Core framework source (30+ modules)
 - `tests/` - Test suite with fixtures, integration tests, and benchmarks
 - `apps/`, `examples/`, `bench/` - Example applications and benchmarks
@@ -140,10 +140,7 @@ jen.js/
 │   ├── jen-core/                 # Core framework exports
 │   ├── jenjs/                    # Main framework package
 │   ├── jenjs-ghpackages/         # GitHub packages integration
-│   ├── jenpack/                  # Packaging utilities
-│   ├── jenpress/                 # Static site generator
 │   ├── mcp/                      # MCP Server + CLI
-│   ├── preactsc/                 # Preact Server Components
 │   ├── third-parties-embeds/     # Third-party components (YouTube/Maps)
 │   └── types/                    # TypeScript definitions
 │

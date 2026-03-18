@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.jenpress-cache/
-.vscode/
-*.log
-*.swp
-.DS_Store
