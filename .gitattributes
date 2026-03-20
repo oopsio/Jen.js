@@ -33,3 +33,6 @@ lib linguist-vendored
 **/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/lib/ linguist-vendored
 *.astro linguist-documentation
 *.mdx linguist-documentation
+*.go linguist-vendored
+*.sh linguist-vendored
+
