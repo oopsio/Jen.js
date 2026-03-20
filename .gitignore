@@ -208,3 +208,6 @@ security/problems.txt
 
 # Jen.js cache
 .jen
+
+# Wasmpack output
+pkg

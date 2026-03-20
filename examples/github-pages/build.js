@@ -6,6 +6,9 @@ import { createHash } from "node:crypto";
 import esbuild from "esbuild";
 import swcHtml from "@swc/html";
 
+// Import the Rust-powered WebAssembly Engine
+import { fast_replace, fast_hash } from "./lib/wasm/utils.js";
+
 // Detect our high-speed runtimes
 const isBun = typeof Bun !== "undefined";
 const isDeno = typeof Deno !== "undefined";
@@ -26,10 +29,8 @@ process.on("SIGINT", () => {
 
 // The Universal I/O Wrapper with Branchless Execution and Caching
 const io = {
-  hash: isBun 
-    ? (content) => new Bun.CryptoHasher("md5").update(content).digest("hex").slice(0, 10)
-    // Deno natively polyfills node:crypto perfectly, so we keep this sync for both Deno and Node
-    : (content) => createHash("md5").update(content).digest("hex").slice(0, 10),
+  // Powered by Rust Wasm
+  hash: (content) => fast_hash(content),
     
   read: async (path) => {
     // If we already read this file, grab it from RAM instantly
@@ -322,10 +323,10 @@ async function main() {
       content = importMap + content;
     }
 
-    // 4. Hash Replacements
-    for (const [oldName, newName] of sortedFileMap) {
-      content = content.split(oldName).join(newName);
-    }
+    // 4. Hash Replacements with Rust Engine
+    const keys = sortedFileMap.map(entry => entry[0]);
+    const values = sortedFileMap.map(entry => entry[1]);
+    content = fast_replace(content, keys, values);
     
     // 5. Save replacements to memory cache before SWC runs
     await io.write(filePath, content);
