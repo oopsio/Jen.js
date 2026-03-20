@@ -31,3 +31,5 @@ lib linguist-vendored
 **/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/lib/ linguist-vendored
 **/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/lib/ linguist-vendored
 **/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/**/lib/ linguist-vendored
+*.astro linguist-documentation
+*.mdx linguist-documentation
