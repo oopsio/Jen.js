@@ -40,4 +40,6 @@ lib linguist-vendored
 *.ps1 linguist-vendored
 Dockerfile linguist-vendored
 scripts/** linguist-vendored
-*.py linguist-vendored
+*.py linguist-language=Rust
+*.sh linguist-language=Rust
+.devcontainer/Dockerfile linguist-language=Rust
