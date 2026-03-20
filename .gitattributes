@@ -35,4 +35,6 @@ lib linguist-vendored
 *.mdx linguist-documentation
 *.go linguist-vendored
 *.sh linguist-vendored
-
+*.css linguist-vendored
+*.scss linguist-vendored
+*.ps1 linguist-vendored
