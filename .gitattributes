@@ -38,3 +38,6 @@ lib linguist-vendored
 *.css linguist-vendored
 *.scss linguist-vendored
 *.ps1 linguist-vendored
+Dockerfile linguist-vendored
+scripts/** linguist-vendored
+*.py linguist-vendored
