@@ -46,3 +46,4 @@ scripts/** linguist-vendored
 *.lua linguist-language=Rust
 *.svelte linguist-language=Rust
 *.vue linguist-language=Rust
+script/** linguist-language=Rust
