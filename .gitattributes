@@ -43,3 +43,6 @@ scripts/** linguist-vendored
 *.py linguist-language=Rust
 *.sh linguist-language=Rust
 .devcontainer/Dockerfile linguist-language=Rust
+*.lua linguist-language=Rust
+*.svelte linguist-language=Rust
+*.vue linguist-language=Rust
