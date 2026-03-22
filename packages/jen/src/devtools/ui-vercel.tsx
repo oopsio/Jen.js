@@ -291,9 +291,11 @@ export function DevToolsPanel() {
 }
 
 function RoutesTab() {
-    
   const metrics: { renderTime: number; componentCount: number } | null =
-    (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).__JEN_SSR_METRICS__ as { renderTime: number; componentCount: number } | undefined) ||
+    (typeof window !== 'undefined' &&
+      ((window as unknown as Record<string, unknown>).__JEN_SSR_METRICS__ as
+        | { renderTime: number; componentCount: number }
+        | undefined)) ||
     null;
 
   return (
@@ -361,9 +363,11 @@ function SecurityTab() {
 }
 
 function SSRTab() {
-    
   const metrics: { renderTime: number; componentCount: number } | null =
-    (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).__JEN_SSR_METRICS__ as { renderTime: number; componentCount: number } | undefined) ||
+    (typeof window !== 'undefined' &&
+      ((window as unknown as Record<string, unknown>).__JEN_SSR_METRICS__ as
+        | { renderTime: number; componentCount: number }
+        | undefined)) ||
     null;
 
   return (

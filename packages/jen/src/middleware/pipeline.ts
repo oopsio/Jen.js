@@ -22,20 +22,20 @@ export class MiddlewarePipeline {
   }
 
   /**
-    * Register middleware
-    */
-   use(name: string, handler: MiddlewareHandler, priority?: number): this {
-     this.middlewares.push({ handler, name });
+   * Register middleware
+   */
+  use(name: string, handler: MiddlewareHandler, priority?: number): this {
+    this.middlewares.push({ handler, name });
 
-     // Sort by priority (lower = first)
-     this.middlewares.sort((a, b) => {
-       const aPriority = priority ?? this.getMiddlewarePriority(a.name);
-       const bPriority = priority ?? this.getMiddlewarePriority(b.name);
-       return aPriority - bPriority;
-     });
+    // Sort by priority (lower = first)
+    this.middlewares.sort((a, b) => {
+      const aPriority = priority ?? this.getMiddlewarePriority(a.name);
+      const bPriority = priority ?? this.getMiddlewarePriority(b.name);
+      return aPriority - bPriority;
+    });
 
-     return this;
-   }
+    return this;
+  }
 
   /**
    * Get priority for middleware

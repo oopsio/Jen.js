@@ -113,12 +113,12 @@ export class PluginRegistry {
         const result = await hook.apply(plugin, args);
         results.push({ plugin: name, result });
       } catch (error) {
-         const err = error instanceof Error ? error : new Error(String(error));
-         const message = `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`;
-         const newError = new Error(message);
-         newError.cause = err;
-         throw newError;
-       }
+        const err = error instanceof Error ? error : new Error(String(error));
+        const message = `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`;
+        const newError = new Error(message);
+        newError.cause = err;
+        throw newError;
+      }
     }
     return results;
   }
@@ -131,7 +131,9 @@ export class PluginRegistry {
     ...args: unknown[]
   ): Promise<unknown[]> {
     const promises = this.getWithHook(hookName).map(([name, plugin]) => {
-      const hook = plugin[hookName] as unknown as ((...args: unknown[]) => Promise<unknown>);
+      const hook = plugin[hookName] as unknown as (
+        ...args: unknown[]
+      ) => Promise<unknown>;
       return hook.apply(plugin, args).catch((error: unknown) => {
         throw new Error(
           `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`,
@@ -175,15 +177,15 @@ export class PluginRegistry {
           value = result;
         }
       } catch (error) {
-         const err = error instanceof Error ? error : new Error(String(error));
-         const message = `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`;
-         const newError = new Error(message);
-         newError.cause = err;
-         throw newError;
-       }
+        const err = error instanceof Error ? error : new Error(String(error));
+        const message = `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`;
+        const newError = new Error(message);
+        newError.cause = err;
+        throw newError;
       }
-      return value;
-      }
+    }
+    return value;
+  }
 
   /**
    * Initialize all plugins

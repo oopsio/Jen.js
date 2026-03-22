@@ -108,10 +108,10 @@ function logRequest(
 
 class ProductionSSREngine {
   /**
-    * Render a page component from the dist bundle
-    * All modules must be pre-built and bundled
-    */
-   public static async renderPage(componentPath: string): Promise<string> {
+   * Render a page component from the dist bundle
+   * All modules must be pre-built and bundled
+   */
+  public static async renderPage(componentPath: string): Promise<string> {
     try {
       // Dynamic import from pre-bundled dist
       // In production, this should resolve from your bundled output
@@ -271,9 +271,9 @@ export async function startProductionServer(
       route.filePathTsx,
       route.filePathJsx,
       async (req, ctx) => {
-         try {
-           const filePath = ctx.filePath;
-           const html = await ProductionSSREngine.renderPage(filePath);
+        try {
+          const filePath = ctx.filePath;
+          const html = await ProductionSSREngine.renderPage(filePath);
           return new Response(html, {
             headers: { 'Content-Type': 'text/html', ...buildSecurityHeaders() },
           });
@@ -431,11 +431,15 @@ export class ProductionServerManager {
       console.log(
         `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
       );
-      console.log(`${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`);
+      console.log(
+        `${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`,
+      );
     });
 
     server.on('error', (error: Error) => {
-      console.error(`${colors.red}✗ Server error: ${error.message}${colors.reset}`);
+      console.error(
+        `${colors.red}✗ Server error: ${error.message}${colors.reset}`,
+      );
       process.exit(1);
     });
   }
@@ -462,7 +466,9 @@ export class ProductionServerManager {
     console.log(
       `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
     );
-    console.log(`${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`);
+    console.log(
+      `${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`,
+    );
   }
 
   private static async startDenoServer(port: number): Promise<void> {
@@ -475,7 +481,9 @@ export class ProductionServerManager {
     console.log(
       `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
     );
-    console.log(`${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`);
+    console.log(
+      `${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`,
+    );
   }
 }
 

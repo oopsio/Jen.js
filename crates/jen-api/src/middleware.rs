@@ -134,9 +134,8 @@ impl MiddlewareResponse {
 }
 
 /// Middleware handler type
-pub type MiddlewareHandler = Box<
-    dyn Fn(&MiddlewareContext) -> Result<Option<MiddlewareResponse>> + Send + Sync,
->;
+pub type MiddlewareHandler =
+    Box<dyn Fn(&MiddlewareContext) -> Result<Option<MiddlewareResponse>> + Send + Sync>;
 
 /// Middleware definition
 #[derive(Debug, Clone)]
@@ -174,7 +173,11 @@ mod tests {
 
     #[test]
     fn test_middleware_context() {
-        let ctx = MiddlewareContext::new("GET".to_string(), "http://localhost/api".to_string(), "/api".to_string());
+        let ctx = MiddlewareContext::new(
+            "GET".to_string(),
+            "http://localhost/api".to_string(),
+            "/api".to_string(),
+        );
         assert_eq!(ctx.method, "GET");
         assert_eq!(ctx.pathname, "/api");
     }

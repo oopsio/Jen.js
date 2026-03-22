@@ -9,8 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "format": "prettier --write .",
+    "build": "cd packages/jen && bunx tsc && cd ../../crates/jen && wasm-pack build --target nodejs && cd ../../crates/jen-api && cargo build --release && cd ../../crates/jen_code_frame && cargo build --release",
+    "format": "prettier --write . && cd crates/jen && cargo fmt && cd .. && cd jen-api && cargo fmt && cd .. && cd jen_code_frame && cargo fmt",
     "lint": "eslint . --fix && cd crates/jen && cargo clippy --fix && cd .. && cd jen-api && cargo clippy --fix && cd .. && cd jen_code_frame && cargo clippy --fix"
   },
   "devDependencies": {

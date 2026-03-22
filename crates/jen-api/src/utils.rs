@@ -23,13 +23,7 @@ pub fn parse_query_string(query: &str) -> HashMap<String, String> {
 pub fn build_query_string(params: &HashMap<String, String>) -> String {
     params
         .iter()
-        .map(|(k, v)| {
-            format!(
-                "{}={}",
-                urlencoding::encode(k),
-                urlencoding::encode(v)
-            )
-        })
+        .map(|(k, v)| format!("{}={}", urlencoding::encode(k), urlencoding::encode(v)))
         .collect::<Vec<_>>()
         .join("&")
 }
@@ -140,5 +134,3 @@ mod tests {
         assert!(format_bytes(1024 * 1024).contains("MB"));
     }
 }
-
-

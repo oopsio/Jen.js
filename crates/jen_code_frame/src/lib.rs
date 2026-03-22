@@ -68,7 +68,12 @@ pub fn generate_code_frame(
     // Print the custom or original error message
     frame.push_str(&format!("\x1b[31mERROR:\x1b[0m {}\n\n", message));
 
-    for (i, &line) in lines.iter().enumerate().skip(start_idx).take(end_idx - start_idx + 1) {
+    for (i, &line) in lines
+        .iter()
+        .enumerate()
+        .skip(start_idx)
+        .take(end_idx - start_idx + 1)
+    {
         let current_line_num = i + 1;
         let is_target_line = i == target_idx;
 

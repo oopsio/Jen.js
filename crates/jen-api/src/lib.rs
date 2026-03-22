@@ -25,18 +25,18 @@
 //! }
 //! ```
 
+pub mod config;
 pub mod context;
 pub mod error;
 pub mod middleware;
 pub mod plugin;
-pub mod config;
 pub mod route;
 pub mod utils;
 
 pub use context::PluginContext;
-pub use error::{Result, JenError};
-pub use plugin::Plugin;
+pub use error::{JenError, Result};
 pub use middleware::MiddlewareHandler;
+pub use plugin::Plugin;
 
 /// Jen.js version info
 pub const VERSION: &str = "0.1.0";

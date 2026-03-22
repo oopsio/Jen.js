@@ -36,8 +36,6 @@ export default function Counter() {
     fontFamily: 'monospace',
   };
 
-
-
   return (
     <div style={containerStyle}>
       <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>{count}</h1>

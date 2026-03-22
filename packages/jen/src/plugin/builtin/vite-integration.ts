@@ -18,7 +18,7 @@ export class ViteIntegrationPlugin implements Plugin {
 
   config(config: Record<string, unknown>) {
     // Ensure Vite-specific settings
-    const buildConfig = config.build as Record<string, unknown> ?? {};
+    const buildConfig = (config.build as Record<string, unknown>) ?? {};
     return {
       ...config,
       build: {

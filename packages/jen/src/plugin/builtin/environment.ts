@@ -22,7 +22,7 @@ export class EnvironmentPlugin implements Plugin {
     if (!this.env) return config;
 
     // Apply environment-specific settings
-    const buildConfig = config.build as Record<string, unknown> ?? {};
+    const buildConfig = (config.build as Record<string, unknown>) ?? {};
     if (this.env.isDev) {
       return {
         ...config,

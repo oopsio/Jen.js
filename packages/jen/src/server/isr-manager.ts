@@ -13,9 +13,9 @@ export class ISRManager {
   private static isEnabled: boolean = false;
 
   /**
-    * Initialize ISR system (called once at startup)
-    */
-   public static async initialize(): Promise<void> {
+   * Initialize ISR system (called once at startup)
+   */
+  public static async initialize(): Promise<void> {
     if (!RuntimeConfig.isr?.enabled) {
       this.isEnabled = false;
       return;

@@ -123,11 +123,9 @@ export class DevServerManager {
 
         return () => {
           // Initialize ISR system now that compiler is ready
-          ISRManager.initialize().catch(
-            (error) => {
-              console.error('Failed to initialize ISR:', error);
-            },
-          );
+          ISRManager.initialize().catch((error) => {
+            console.error('Failed to initialize ISR:', error);
+          });
 
           server.middlewares.use(async (req, res, next) => {
             try {

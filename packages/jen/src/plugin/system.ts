@@ -78,7 +78,10 @@ export class PluginSystem {
   static async transformContext(
     context: MiddlewareContext,
   ): Promise<MiddlewareContext> {
-    const result = await PluginRegistry.callHookChain('transformContext', context);
+    const result = await PluginRegistry.callHookChain(
+      'transformContext',
+      context,
+    );
     return result as MiddlewareContext;
   }
 
