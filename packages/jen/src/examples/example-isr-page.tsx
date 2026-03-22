@@ -67,7 +67,9 @@ export default function BlogPage({ slug }: PageProps) {
         </div>
 
         <article>
-          <p>This page is cached and regenerated every 3600 seconds (1 hour).</p>
+          <p>
+            This page is cached and regenerated every 3600 seconds (1 hour).
+          </p>
           <p>
             Generated at: <strong>{generatedAt}</strong>
           </p>
@@ -99,9 +101,7 @@ export default function BlogPage({ slug }: PageProps) {
           <pre>{`export const revalidate = 3600; // seconds`}</pre>
 
           <h2>Response Headers</h2>
-          <p>
-            Check the response headers to see ISR status:
-          </p>
+          <p>Check the response headers to see ISR status:</p>
           <ul>
             <li>
               <code>X-Cache-Status</code>: MISS | HIT_FRESH | HIT_STALE
@@ -116,8 +116,9 @@ export default function BlogPage({ slug }: PageProps) {
         </article>
 
         <div className="cache-info">
-          <strong>💡 Tip:</strong> Use DevTools Network tab to see cache headers.
-          F5 reload the page and notice the instant response with cache headers.
+          <strong>💡 Tip:</strong> Use DevTools Network tab to see cache
+          headers. F5 reload the page and notice the instant response with cache
+          headers.
         </div>
       </body>
     </html>

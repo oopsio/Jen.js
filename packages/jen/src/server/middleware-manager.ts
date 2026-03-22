@@ -40,20 +40,13 @@ export class MiddlewareManager {
 
     if (config.requestLogger ?? true) {
       const isDev = process.env.NODE_ENV !== 'production';
-      this.pipeline.use(
-        'request-logger',
-        new RequestLogger(isDev).handler,
-        10,
-      );
+      this.pipeline.use('request-logger', new RequestLogger(isDev).handler, 10);
     }
 
     if (config.bodyParser) {
-      const options = typeof config.bodyParser === 'object' ? config.bodyParser : {};
-      this.pipeline.use(
-        'body-parser',
-        new BodyParser(options).handler,
-        20,
-      );
+      const options =
+        typeof config.bodyParser === 'object' ? config.bodyParser : {};
+      this.pipeline.use('body-parser', new BodyParser(options).handler, 20);
     }
 
     if (config.cors) {

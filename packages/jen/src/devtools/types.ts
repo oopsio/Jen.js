@@ -24,7 +24,12 @@ export interface SecurityHeader {
   name: string;
   value: string | null;
   compliant: boolean;
-  standard: 'CSP' | 'HSTS' | 'X-Frame-Options' | 'X-Content-Type-Options' | 'OTHER';
+  standard:
+    | 'CSP'
+    | 'HSTS'
+    | 'X-Frame-Options'
+    | 'X-Content-Type-Options'
+    | 'OTHER';
   severity: 'error' | 'warning' | 'info';
   message: string;
 }
@@ -102,7 +107,7 @@ export type DevToolsMessageType =
   | 'heartbeat'
   | 'config';
 
-export interface DevToolsMessage<T = any> {
+export interface DevToolsMessage<T = unknown> {
   type: DevToolsMessageType;
   timestamp: number;
   data: T;

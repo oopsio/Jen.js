@@ -1,12 +1,12 @@
 /**
  * Jen.js DevTools - Zero-Production-Cost Sidecar System
- * 
+ *
  * Complete development visibility into framework internals:
  * - Router telemetry (WASM RouteMatcher tracing)
  * - Security header auditing (OWASP ASVS)
  * - SSR/hydration mismatch detection
  * - Database query monitoring
- * 
+ *
  * 100% tree-shaken in production.
  */
 

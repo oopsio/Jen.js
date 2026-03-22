@@ -4,7 +4,7 @@
  */
 
 import { h, Fragment } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 
 const styles = `
 * {
@@ -282,9 +282,7 @@ export function DevToolsPanel() {
               {activeTab === 'db' && <DatabaseTab />}
             </div>
 
-            <div class="jen-devtools-footer">
-              jen.js • development mode
-            </div>
+            <div class="jen-devtools-footer">jen.js • development mode</div>
           </div>
         )}
       </div>
@@ -293,7 +291,10 @@ export function DevToolsPanel() {
 }
 
 function RoutesTab() {
-  const metrics = (typeof window !== 'undefined' && (window as any).__JEN_SSR_METRICS__) || null;
+    
+  const metrics: { renderTime: number; componentCount: number } | null =
+    (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).__JEN_SSR_METRICS__ as { renderTime: number; componentCount: number } | undefined) ||
+    null;
 
   return (
     <div>
@@ -352,9 +353,7 @@ function SecurityTab() {
       <div class="jen-devtools-section">
         <div class="jen-devtools-label">Compliance</div>
         <div style={{ marginTop: '8px' }}>
-          <span class="jen-devtools-status-badge pass">
-            OWASP ASVS Level 1
-          </span>
+          <span class="jen-devtools-status-badge pass">OWASP ASVS Level 1</span>
         </div>
       </div>
     </div>
@@ -362,7 +361,10 @@ function SecurityTab() {
 }
 
 function SSRTab() {
-  const metrics = (typeof window !== 'undefined' && (window as any).__JEN_SSR_METRICS__) || null;
+    
+  const metrics: { renderTime: number; componentCount: number } | null =
+    (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).__JEN_SSR_METRICS__ as { renderTime: number; componentCount: number } | undefined) ||
+    null;
 
   return (
     <div>
@@ -415,9 +417,9 @@ export async function initDevToolsUI(): Promise<void> {
   // Use preact.render to mount the UI
   // This requires preact to be available globally or imported
   try {
-    // Try to use preact if available
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const preact = (globalThis as any).preact || (await import('preact'));
-    const { render } = preact;
+    const { render } = preact as { render: typeof import('preact').render };
 
     if (render) {
       render(h(DevToolsPanel, {}), container);

@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { MiddlewarePipeline, ContextBuilder } from '../index';
-import type { MiddlewareContext, NextFunction } from '../index';
+import type { MiddlewareContext } from '../index';
 
 describe('MiddlewarePipeline', () => {
   let pipeline: MiddlewarePipeline;
@@ -101,7 +101,7 @@ describe('MiddlewarePipeline', () => {
     it('should catch middleware errors with error boundary enabled', async () => {
       pipeline = new MiddlewarePipeline({ errorBoundary: true });
 
-      pipeline.use('error', async (ctx, next) => {
+      pipeline.use('error', async () => {
         throw new Error('Middleware error');
       });
 
@@ -114,11 +114,13 @@ describe('MiddlewarePipeline', () => {
     it('should throw errors with error boundary disabled', async () => {
       pipeline = new MiddlewarePipeline({ errorBoundary: false });
 
-      pipeline.use('error', async (ctx, next) => {
+      pipeline.use('error', async () => {
         throw new Error('Middleware error');
       });
 
-      await expect(pipeline.execute(context)).rejects.toThrow('Middleware error');
+      await expect(pipeline.execute(context)).rejects.toThrow(
+        'Middleware error',
+      );
     });
 
     it('should continue to next middleware after error', async () => {
@@ -126,7 +128,7 @@ describe('MiddlewarePipeline', () => {
       const order: string[] = [];
 
       pipeline
-        .use('error', async (ctx, next) => {
+        .use('error', async () => {
           order.push('error');
           throw new Error('Error in middleware');
         })
@@ -146,9 +148,8 @@ describe('MiddlewarePipeline', () => {
       const order: string[] = [];
 
       pipeline
-        .use('first', async (ctx, next) => {
+        .use('first', async () => {
           order.push('first');
-          // Don't call next()
         })
         .use('second', async (ctx, next) => {
           order.push('second');
@@ -184,7 +185,7 @@ describe('MiddlewarePipeline', () => {
           await next();
         })
         .use('getter', async (ctx, next) => {
-          ctx.state.value2 = ctx.state.value * 2;
+          ctx.state.value2 = (ctx.state.value as number) * 2;
           await next();
         });
 

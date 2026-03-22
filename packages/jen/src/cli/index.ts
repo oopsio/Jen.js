@@ -1,6 +1,6 @@
 import { DevServerManager } from '../server/app';
 import { StaticSiteGenerator } from '../build/build';
-import { startProductionServer } from '../server/production';
+import { ProductionServerManager } from '../server/production';
 import { ConfigLoader } from '../config/loader';
 import { RuntimeConfig } from '../config/config';
 import { handleInfoCommand } from './commands';
@@ -18,8 +18,12 @@ export class CliParser {
         break;
 
       case 'start':
-        // Production server: Use DevServerManager with security headers, devtools disabled
-        await DevServerManager.start(RuntimeConfig.port);
+        // Production server: Build then serve with NIST/OWASP hardening
+        console.log('\x1b[36m→ Building project for production...\x1b[0m');
+        await StaticSiteGenerator.generate();
+        console.log('\x1b[32m✓ Build complete\x1b[0m');
+        console.log('\x1b[36m→ Starting production server...\x1b[0m');
+        await ProductionServerManager.start(RuntimeConfig.port);
         break;
 
       case 'build':

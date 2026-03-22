@@ -9,7 +9,7 @@ import type { RouteMetadata } from '../types';
 export interface RouteExport {
   revalidate?: number;
   isDynamic?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export class RouteMetadataExtractor {
@@ -17,9 +17,9 @@ export class RouteMetadataExtractor {
    * Extract metadata from a route module
    */
   static async fromModule(
-    modulePath: string,
+    _modulePath: string,
     urlPath: string,
-    moduleExports: Record<string, any>,
+    moduleExports: Record<string, unknown>,
   ): Promise<RouteMetadata> {
     const revalidate = this.extractRevalidate(moduleExports);
     const isDynamic = this.extractIsDynamic(moduleExports);
@@ -36,7 +36,7 @@ export class RouteMetadataExtractor {
    * Supports: export const revalidate = 60
    */
   private static extractRevalidate(
-    moduleExports: Record<string, any>,
+    moduleExports: Record<string, unknown>,
   ): number | undefined {
     const revalidate = moduleExports.revalidate;
 
@@ -65,7 +65,7 @@ export class RouteMetadataExtractor {
    * Supports: export const isDynamic = true
    */
   private static extractIsDynamic(
-    moduleExports: Record<string, any>,
+    moduleExports: Record<string, unknown>,
   ): boolean {
     const isDynamic = moduleExports.isDynamic;
     return isDynamic === true;

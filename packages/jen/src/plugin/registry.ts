@@ -2,7 +2,12 @@
  * Plugin Registry - Central plugin management
  */
 
-import type { Plugin, PluginContext, PluginInstance } from './types';
+import type {
+  Plugin,
+  PluginContext,
+  PluginInstance,
+  PluginHook,
+} from './types';
 
 /**
  * Central plugin registry and manager
@@ -89,8 +94,8 @@ export class PluginRegistry {
   static getWithHook<K extends keyof Plugin>(
     hookName: K,
   ): Array<[string, PluginInstance]> {
-    return Array.from(this.plugins.entries()).filter(([_, plugin]) =>
-      plugin[hookName],
+    return Array.from(this.plugins.entries()).filter(
+      ([, plugin]) => plugin[hookName],
     );
   }
 
@@ -99,17 +104,21 @@ export class PluginRegistry {
    */
   static async callHookSerial<K extends keyof Plugin>(
     hookName: K,
-    ...args: any[]
-  ): Promise<any[]> {
-    const results: any[] = [];
+    ...args: unknown[]
+  ): Promise<{ plugin: string; result: unknown }[]> {
+    const results: { plugin: string; result: unknown }[] = [];
     for (const [name, plugin] of this.getWithHook(hookName)) {
-      const hook = plugin[hookName] as Function;
+      const hook = plugin[hookName] as PluginHook;
       try {
         const result = await hook.apply(plugin, args);
         results.push({ plugin: name, result });
       } catch (error) {
-        throw new Error(`Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`);
-      }
+         const err = error instanceof Error ? error : new Error(String(error));
+         const message = `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`;
+         const newError = new Error(message);
+         newError.cause = err;
+         throw newError;
+       }
     }
     return results;
   }
@@ -119,11 +128,11 @@ export class PluginRegistry {
    */
   static async callHookParallel<K extends keyof Plugin>(
     hookName: K,
-    ...args: any[]
-  ): Promise<any[]> {
+    ...args: unknown[]
+  ): Promise<unknown[]> {
     const promises = this.getWithHook(hookName).map(([name, plugin]) => {
-      const hook = plugin[hookName] as Function;
-      return hook.apply(plugin, args).catch((error: any) => {
+      const hook = plugin[hookName] as unknown as ((...args: unknown[]) => Promise<unknown>);
+      return hook.apply(plugin, args).catch((error: unknown) => {
         throw new Error(
           `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`,
         );
@@ -139,12 +148,12 @@ export class PluginRegistry {
   static async callHookReduce<K extends keyof Plugin, V>(
     hookName: K,
     initial: V,
-    ...args: any[]
+    ...args: unknown[]
   ): Promise<V> {
     let value = initial;
-    for (const [_, plugin] of this.getWithHook(hookName)) {
-      const hook = plugin[hookName] as Function;
-      value = await hook.apply(plugin, [value, ...args]);
+    for (const [, plugin] of this.getWithHook(hookName)) {
+      const hook = plugin[hookName] as PluginHook;
+      value = (await hook.apply(plugin, [value, ...args])) as V;
     }
     return value;
   }
@@ -154,25 +163,27 @@ export class PluginRegistry {
    */
   static async callHookChain<K extends keyof Plugin>(
     hookName: K,
-    initial: any,
-    ...args: any[]
-  ): Promise<any> {
+    initial: unknown,
+    ...args: unknown[]
+  ): Promise<unknown> {
     let value = initial;
     for (const [name, plugin] of this.getWithHook(hookName)) {
-      const hook = plugin[hookName] as Function;
+      const hook = plugin[hookName] as PluginHook;
       try {
         const result = await hook.apply(plugin, [value, ...args]);
         if (result !== undefined && result !== null) {
           value = result;
         }
       } catch (error) {
-        throw new Error(
-          `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`,
-        );
+         const err = error instanceof Error ? error : new Error(String(error));
+         const message = `Hook "${String(hookName)}" in plugin "${name}" failed: ${error}`;
+         const newError = new Error(message);
+         newError.cause = err;
+         throw newError;
+       }
       }
-    }
-    return value;
-  }
+      return value;
+      }
 
   /**
    * Initialize all plugins

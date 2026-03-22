@@ -112,7 +112,9 @@ describe('BodyParser', () => {
     });
 
     it('should skip parsing for DELETE requests', async () => {
-      const request = new Request('http://localhost/test', { method: 'DELETE' });
+      const request = new Request('http://localhost/test', {
+        method: 'DELETE',
+      });
       context = ContextBuilder.build(request);
       const middleware = parser.middleware();
 

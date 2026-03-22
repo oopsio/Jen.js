@@ -7,15 +7,12 @@ import os from 'os';
 import {
   getPackageVersion,
   getBinaryVersion,
-  formatBytes,
-  formatDuration,
   getJenConfig,
   getPluginInfo,
   getEnvironmentInfo,
   getRelevantPackages,
   getCPUInfo,
   getMemoryInfo,
-  TaskResult,
 } from './info-utils';
 
 const colors = {
@@ -84,8 +81,8 @@ ${Object.entries(relevantPackages)
   .join('\n')}
 
 ${bold('Framework Configuration:')}
-  middleware: ${jenConfig.middleware?.enabled !== false ? 'enabled' : 'disabled'}
-  isr: ${jenConfig.isr?.enabled !== false ? 'enabled' : 'disabled'}
+   middleware: ${(jenConfig.middleware as Record<string, unknown>)?.enabled !== false ? 'enabled' : 'disabled'}
+   isr: ${(jenConfig.isr as Record<string, unknown>)?.enabled !== false ? 'enabled' : 'disabled'}
   config_file: ${jenConfig.source || 'default'}
 `);
 }
@@ -109,14 +106,18 @@ ${JSON.stringify(process.memoryUsage(), null, 2)}
 
 ${bold('RUNTIME INFO')}
 ${'─'.repeat(60)}
-${JSON.stringify({
-  cwd: process.cwd(),
-  pid: process.pid,
-  platform: process.platform,
-  arch: process.arch,
-  NODE_ENV: process.env.NODE_ENV,
-  uptime: process.uptime() + 's',
-}, null, 2)}
+${JSON.stringify(
+  {
+    cwd: process.cwd(),
+    pid: process.pid,
+    platform: process.platform,
+    arch: process.arch,
+    NODE_ENV: process.env.NODE_ENV,
+    uptime: process.uptime() + 's',
+  },
+  null,
+  2,
+)}
 
 ${bold('='.repeat(60))}
 Generated: ${new Date().toISOString()}
@@ -124,74 +125,12 @@ ${bold('='.repeat(60))}
 `);
 }
 
-function isFileSystemWritable(): boolean {
-  try {
-    const testFile = `${os.tmpdir()}/.jen-test-${Date.now()}`;
-    require('fs').writeFileSync(testFile, 'test');
-    require('fs').unlinkSync(testFile);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function isNodeModulesAccessible(): boolean {
-  try {
-    require.resolve('preact');
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function generateRecommendations(
-  jenVersion: string,
-  packages: Record<string, string>,
-): string[] {
-  const recommendations: string[] = [];
-
-  // Check TypeScript
-  if (packages.typescript === 'N/A') {
-    recommendations.push(
-      `  ${colorize('⚠', 'yellow')} TypeScript not installed. Install with: npm install -D typescript`,
-    );
-  }
-
-  // Check Node version
-  const nodeVersion = process.versions.node.split('.')[0];
-  if (parseInt(nodeVersion) < 16) {
-    recommendations.push(
-      `  ${colorize('✗', 'red')} Node.js ${nodeVersion} is outdated. Upgrade to Node 16+`,
-    );
-  } else {
-    recommendations.push(
-      `  ${colorize('✓', 'green')} Node.js version is compatible`,
-    );
-  }
-
-  // Check critical dependencies
-  const criticalDeps = ['preact', 'vite', 'esbuild'];
-  for (const dep of criticalDeps) {
-    if (packages[dep] !== 'N/A') {
-      recommendations.push(`  ${colorize('✓', 'green')} ${dep} installed`);
-    } else {
-      recommendations.push(
-        `  ${colorize('✗', 'red')} ${dep} missing. Install with: npm install ${dep}`,
-      );
-    }
-  }
-
-  if (recommendations.length === 0) {
-    recommendations.push(`  ${colorize('✓', 'green')} All checks passed!`);
-  }
-
-  return recommendations;
-}
-
 /**
  * Main info command handler
  */
-export async function handleInfoCommand(verbose: boolean = false): Promise<void> {
+export async function handleInfoCommand(
+  verbose: boolean = false,
+): Promise<void> {
   try {
     if (verbose) {
       await printVerboseInfo();

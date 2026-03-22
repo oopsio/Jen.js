@@ -86,9 +86,9 @@ export class CacheManager {
         status: 'MISS',
       };
     } catch (error) {
-      throw new Error(
-        `Failed to render page ${route.path}: ${String(error)}`,
-      );
+      throw new Error(`Failed to render page ${route.path}: ${String(error)}`, {
+        cause: error,
+      });
     }
   }
 
@@ -109,10 +109,7 @@ export class CacheManager {
 
     // Fire and forget with error handling
     this.regenerateInBackground(cacheKey, route, render).catch((error) => {
-      console.error(
-        `Background regeneration failed for ${route.path}:`,
-        error,
-      );
+      console.error(`Background regeneration failed for ${route.path}:`, error);
     });
   }
 
@@ -133,7 +130,7 @@ export class CacheManager {
       };
 
       await this.storage.set(cacheKey, entry);
-    } catch (error) {
+    } catch {
       // Retry logic
       if (attempt < this.config.maxRetries) {
         await this.delay(this.config.retryDelay);
@@ -204,6 +201,6 @@ export class CacheManager {
    * Helper for async delays
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

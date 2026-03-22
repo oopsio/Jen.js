@@ -31,7 +31,10 @@ export class MetricsPlugin implements Plugin {
     }
   }
 
-  async buildComplete(result: { outputDir: string; duration: number }): Promise<void> {
+  async buildComplete(result: {
+    outputDir: string;
+    duration: number;
+  }): Promise<void> {
     this.metrics.buildTime = result.duration;
 
     if (process.env.NODE_ENV !== 'production') {

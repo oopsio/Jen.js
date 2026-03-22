@@ -4,7 +4,12 @@
  */
 
 // Types
-export type { RouteMetadata, CacheEntry, FreshnessResult, ISRResponse } from './types';
+export type {
+  RouteMetadata,
+  CacheEntry,
+  FreshnessResult,
+  ISRResponse,
+} from './types';
 export type { ISRConfig, IStorageProvider, RenderFunction } from './types';
 
 // Freshness checking

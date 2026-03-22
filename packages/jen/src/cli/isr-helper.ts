@@ -7,12 +7,14 @@ export class ISRHelper {
   /**
    * Enable ISR with given configuration
    */
-  static enableISR(options: {
-    cacheDir?: string;
-    globalRevalidate?: number;
-    maxRetries?: number;
-    retryDelay?: number;
-  } = {}): void {
+  static enableISR(
+    options: {
+      cacheDir?: string;
+      globalRevalidate?: number;
+      maxRetries?: number;
+      retryDelay?: number;
+    } = {},
+  ): void {
     updateRuntimeConfig({
       isr: {
         enabled: true,
@@ -46,6 +48,7 @@ export class ISRHelper {
    * Get ISR status
    */
   static printStatus(): void {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { RuntimeConfig } = require('../config/config');
     const isr = RuntimeConfig.isr;
 

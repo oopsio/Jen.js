@@ -24,7 +24,10 @@ export const RuntimeConfig: JenConfig = {
 export function updateRuntimeConfig(userSettings: Partial<JenConfig>): void {
   // Merge middleware config properly
   if (userSettings.middleware) {
-    RuntimeConfig.middleware = { ...RuntimeConfig.middleware, ...userSettings.middleware };
+    RuntimeConfig.middleware = {
+      ...RuntimeConfig.middleware,
+      ...userSettings.middleware,
+    };
     delete userSettings.middleware;
   }
   // Merge ISR config properly

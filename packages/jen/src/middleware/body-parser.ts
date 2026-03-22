@@ -2,7 +2,11 @@
  * High-performance Body Parser Middleware
  * Handles JSON, form-urlencoded, and raw streams
  */
-import type { MiddlewareContext, NextFunction, BodyParserOptions } from './types';
+import type {
+  MiddlewareContext,
+  NextFunction,
+  BodyParserOptions,
+} from './types';
 import { MiddlewareError } from './types';
 
 export class BodyParser {
@@ -51,7 +55,9 @@ export class BodyParser {
         // Parse based on content-type
         if (context.contentType.includes('application/json')) {
           await this.parseJSON(context);
-        } else if (context.contentType.includes('application/x-www-form-urlencoded')) {
+        } else if (
+          context.contentType.includes('application/x-www-form-urlencoded')
+        ) {
           await this.parseFormUrlEncoded(context);
         } else if (context.contentType.includes('multipart/form-data')) {
           // For multipart, just store raw body - parse with specialized library if needed
@@ -90,11 +96,7 @@ export class BodyParser {
 
       context.body = JSON.parse(text);
     } catch (error) {
-      throw new MiddlewareError(
-        `Invalid JSON: ${String(error)}`,
-        400,
-        context,
-      );
+      throw new MiddlewareError(`Invalid JSON: ${String(error)}`, 400, context);
     }
   }
 

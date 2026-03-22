@@ -1,9 +1,9 @@
 /**
  * Universal Jen.js Production Server
- * 
+ *
  * NIST SP 800-44 & OWASP ASVS Level 1 Compliant
  * Runtime-agnostic: Works on Bun, Deno, and Node.js
- * 
+ *
  * Security Features:
  * - Rust Router Gatekeeper: All requests validated before processing
  * - Hardened Security Headers: CSP, HSTS, X-Content-Type-Options, X-Frame-Options
@@ -108,13 +108,10 @@ function logRequest(
 
 class ProductionSSREngine {
   /**
-   * Render a page component from the dist bundle
-   * All modules must be pre-built and bundled
-   */
-  public static async renderPage(
-    componentPath: string,
-    url: string,
-  ): Promise<string> {
+    * Render a page component from the dist bundle
+    * All modules must be pre-built and bundled
+    */
+   public static async renderPage(componentPath: string): Promise<string> {
     try {
       // Dynamic import from pre-bundled dist
       // In production, this should resolve from your bundled output
@@ -187,7 +184,7 @@ class ProductionSSREngine {
 async function handleRequest(req: Request): Promise<Response> {
   const startTime = performance.now();
   const url = new URL(req.url);
-  const { pathname, search } = url;
+  const { pathname } = url;
 
   try {
     // ────────────────────────────────────────────────────────────────────
@@ -218,7 +215,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
     return new Response(responseBody, {
       status: jenResponse.status,
-      headers: { ...Object.fromEntries(jenResponse.headers), ...securityHeaders },
+      headers: {
+        ...Object.fromEntries(jenResponse.headers),
+        ...securityHeaders,
+      },
     });
   } catch (error) {
     // ────────────────────────────────────────────────────────────────────
@@ -249,7 +249,9 @@ async function handleRequest(req: Request): Promise<Response> {
 // RUNTIME DETECTION & SERVER START
 // ============================================================================
 
-export async function startProductionServer(port: number = getPort()): Promise<void> {
+export async function startProductionServer(
+  port: number = getPort(),
+): Promise<void> {
   const runtime = RuntimeDetector.detect();
 
   if (runtime === 'unknown') {
@@ -269,9 +271,9 @@ export async function startProductionServer(port: number = getPort()): Promise<v
       route.filePathTsx,
       route.filePathJsx,
       async (req, ctx) => {
-        try {
-          const filePath = ctx.filePath;
-          const html = await ProductionSSREngine.renderPage(filePath, ctx.url);
+         try {
+           const filePath = ctx.filePath;
+           const html = await ProductionSSREngine.renderPage(filePath);
           return new Response(html, {
             headers: { 'Content-Type': 'text/html', ...buildSecurityHeaders() },
           });
@@ -289,8 +291,12 @@ export async function startProductionServer(port: number = getPort()): Promise<v
     `${colors.magenta}╭─${colors.reset} ${colors.green}Jen.js Production Server${colors.reset}`,
   );
   console.log(`${colors.magenta}├─${colors.reset} Runtime: ${runtime}`);
-  console.log(`${colors.magenta}├─${colors.reset} Mode: ${isProductionMode() ? 'production' : 'development'}`);
-  console.log(`${colors.magenta}├─${colors.reset} Security: NIST SP 800-44 + OWASP ASVS L1`);
+  console.log(
+    `${colors.magenta}├─${colors.reset} Mode: ${isProductionMode() ? 'production' : 'development'}`,
+  );
+  console.log(
+    `${colors.magenta}├─${colors.reset} Security: NIST SP 800-44 + OWASP ASVS L1`,
+  );
   console.log(
     `${colors.magenta}╰─${colors.reset} ${colors.blue}${serverUrl}${colors.reset}`,
   );
@@ -299,6 +305,7 @@ export async function startProductionServer(port: number = getPort()): Promise<v
   // BUN.SERVE
   // ────────────────────────────────────────────────────────────────────
   if (runtime === 'bun') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalThis as any).Bun.serve({
       port,
       fetch: handleRequest,
@@ -316,6 +323,7 @@ export async function startProductionServer(port: number = getPort()): Promise<v
   // DENO.SERVE
   // ────────────────────────────────────────────────────────────────────
   if (runtime === 'deno') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (globalThis as any).Deno.serve(
       { port, hostname: 'localhost' },
       handleRequest,
@@ -360,6 +368,114 @@ export async function startProductionServer(port: number = getPort()): Promise<v
     });
 
     return;
+  }
+}
+
+// ============================================================================
+// PRODUCTION SERVER MANAGER
+// ============================================================================
+
+export class ProductionServerManager {
+  /**
+   * Start production server with build artifacts
+   * NIST SP 800-44 & OWASP ASVS L1 compliant
+   */
+  public static async start(port: number): Promise<void> {
+    const runtime = RuntimeDetector.detect();
+
+    if (runtime === 'node') {
+      return this.startNodeServer(port);
+    } else if (runtime === 'bun') {
+      return this.startBunServer(port);
+    } else if (runtime === 'deno') {
+      return this.startDenoServer(port);
+    } else {
+      throw new Error('Unsupported runtime');
+    }
+  }
+
+  private static async startNodeServer(port: number): Promise<void> {
+    const http = await import('node:http');
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+
+    const distDir = path.resolve(process.cwd(), 'dist/static');
+    if (!fs.existsSync(distDir)) {
+      console.error(
+        '\x1b[31m✗ dist/static not found. Run "jen build" first.\x1b[0m',
+      );
+      process.exit(1);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const server = http.createServer(async (req: any, res: any) => {
+      try {
+        const request = new Request(`http://${req.headers.host}${req.url}`, {
+          method: req.method,
+          headers: req.headers as HeadersInit,
+        });
+
+        const response = await handleRequest(request);
+        const body = await response.text();
+
+        res.writeHead(response.status, Object.fromEntries(response.headers));
+        res.end(body);
+      } catch (error) {
+        console.error('Production server error:', error);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Internal Server Error');
+      }
+    });
+
+    server.listen(port, () => {
+      console.log(
+        `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
+      );
+      console.log(`${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`);
+    });
+
+    server.on('error', (error: Error) => {
+      console.error(`${colors.red}✗ Server error: ${error.message}${colors.reset}`);
+      process.exit(1);
+    });
+  }
+
+  private static async startBunServer(port: number): Promise<void> {
+    const distDir = Bun.env.PWD + '/dist/static';
+    if (!Bun.file(distDir).exists()) {
+      console.error(
+        '\x1b[31m✗ dist/static not found. Run "jen build" first.\x1b[0m',
+      );
+      process.exit(1);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).Bun.serve({
+      port,
+      fetch: handleRequest,
+      error: (error: Error) => {
+        console.error('Bun server error:', error);
+        return new Response('Internal Server Error', { status: 500 });
+      },
+    });
+
+    console.log(
+      `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
+    );
+    console.log(`${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`);
+  }
+
+  private static async startDenoServer(port: number): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (globalThis as any).Deno.serve(
+      { port, hostname: 'localhost' },
+      handleRequest,
+    );
+
+    console.log(
+      `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
+    );
+    console.log(`${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`);
   }
 }
 

@@ -41,7 +41,6 @@ export class RequestLogger {
    */
   private logRequest(context: MiddlewareContext): void {
     const { method, pathname } = context;
-    const userAgent = context.userAgent || 'Unknown';
     const ip = context.ip || 'Unknown';
 
     if (this.isDevelopment) {
@@ -73,7 +72,11 @@ export class RequestLogger {
             : colors.red;
 
     const durationColor =
-      duration < 100 ? colors.green : duration < 500 ? colors.yellow : colors.red;
+      duration < 100
+        ? colors.green
+        : duration < 500
+          ? colors.yellow
+          : colors.red;
 
     if (this.isDevelopment) {
       console.log(

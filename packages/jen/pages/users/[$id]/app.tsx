@@ -1,27 +1,60 @@
-import { h } from 'preact';
+import { useRouter } from '../../../src/client/router';
+import { Link } from '../../../src/client/link';
 
-// In a real Jen.js app, we'd pass the params from the RouterMap
-// For now, this shows the component structure
 export default function UserProfile() {
-  // In the future, we will extract this from the URL via a Jen.js hook
+  const router = useRouter();
+
+  // In a real implementation, we'd extract the ID from the URL or router state
   const userId =
     typeof window !== 'undefined'
       ? window.location.pathname.split('/').pop()
-      : 'Loading...';
+      : '...';
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>User Profile</h1>
+    <div
+      style={{ padding: '40px', fontFamily: 'monospace', textAlign: 'center' }}
+    >
+      <h2
+        style={{
+          background: '#000',
+          color: '#00ff00',
+          padding: '10px',
+          display: 'inline-block',
+        }}
+      >
+        USER_PROFILE: {userId}
+      </h2>
+
       <div
-        style={{ background: '#f4f4f4', padding: '20px', borderRadius: '10px' }}
+        style={{
+          marginTop: '30px',
+          border: '2px solid #000',
+          padding: '20px',
+          boxShadow: '8px 8px 0px #000',
+        }}
       >
         <p>
-          Viewing data for User ID:{' '}
-          <span style={{ color: 'blue', fontWeight: 'bold' }}>{userId}</span>
+          This is a dynamic route for User ID: <strong>{userId}</strong>
         </p>
+        <p>Current Path: {router.path}</p>
       </div>
-      <br />
-      <a href="/">← Back to Home</a>
+
+      <div style={{ marginTop: '30px' }}>
+        <Link
+          href="/"
+          style={{
+            background: '#ff00ff',
+            color: '#fff',
+            padding: '10px 20px',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            border: '2px solid #000',
+            boxShadow: '4px 4px 0px #000',
+          }}
+        >
+          BACK TO HOME
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,11 +1,7 @@
 /**
  * Factory for creating ISR system with dependency injection
  */
-import type {
-  ISRConfig,
-  IStorageProvider,
-  RenderFunction,
-} from '../types';
+import type { ISRConfig, IStorageProvider, RenderFunction } from '../types';
 import { CacheManager } from '../cache/cache-manager';
 import { ISRRequestHandler } from '../request/request-handler';
 import { MemoryStorage } from '../storage/memory-storage';

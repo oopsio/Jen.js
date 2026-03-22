@@ -1,6 +1,6 @@
 /**
  * Jen.js DevTools Vite Plugin
- * 
+ *
  * Injects the DevTools client exclusively in development mode.
  * Completely tree-shaken in production builds.
  */

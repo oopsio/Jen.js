@@ -1,7 +1,7 @@
 use syntect::easy::HighlightLines;
 use syntect::highlighting::{Style, ThemeSet};
 use syntect::parsing::SyntaxSet;
-use syntect::util::{LinesWithEndings, as_24_bit_terminal_escaped};
+use syntect::util::as_24_bit_terminal_escaped;
 use wasm_bindgen::prelude::*;
 
 /// A quick check to see if frontend code is actually Rust
@@ -68,12 +68,12 @@ pub fn generate_code_frame(
     // Print the custom or original error message
     frame.push_str(&format!("\x1b[31mERROR:\x1b[0m {}\n\n", message));
 
-    for i in start_idx..=end_idx {
+    for (i, &line) in lines.iter().enumerate().skip(start_idx).take(end_idx - start_idx + 1) {
         let current_line_num = i + 1;
         let is_target_line = i == target_idx;
 
         // syntect requires lines to have newline characters for accurate parsing
-        let line_with_ending = format!("{}\n", lines[i]);
+        let line_with_ending = format!("{}\n", line);
 
         // Apply the library's syntax highlighting
         let ranges: Vec<(Style, &str)> = h.highlight_line(&line_with_ending, &ps).unwrap();

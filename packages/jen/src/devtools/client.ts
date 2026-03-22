@@ -13,7 +13,7 @@ export class DevToolsClient {
   private reconnectDelay = 1000;
   private messageQueue: DevToolsMessage[] = [];
   private requestIdCounter = 0;
-  private pendingRequests = new Map<string, (data: any) => void>();
+  private pendingRequests = new Map<string, (data: unknown) => void>();
 
   constructor(wsUrl: string = 'ws://localhost:3001') {
     this.wsUrl = wsUrl;
@@ -80,9 +80,9 @@ export class DevToolsClient {
   /**
    * Send message to DevTools server
    */
-  public async send(type: string, data: any): Promise<void> {
+  public async send(type: string, data: unknown): Promise<void> {
     const message: DevToolsMessage = {
-      type: type as any,
+      type: type as DevToolsMessage['type'],
       timestamp: Date.now(),
       data,
     };
@@ -97,14 +97,14 @@ export class DevToolsClient {
   /**
    * Send request and wait for response
    */
-  public async request(type: string, data: any): Promise<any> {
+  public async request(type: string, data: unknown): Promise<unknown> {
     const requestId = `req-${++this.requestIdCounter}`;
 
     return new Promise((resolve) => {
       this.pendingRequests.set(requestId, resolve);
 
       const message: DevToolsMessage = {
-        type: type as any,
+        type: type as DevToolsMessage['type'],
         timestamp: Date.now(),
         data,
         requestId,
@@ -148,7 +148,10 @@ export class DevToolsClient {
    * Flush queued messages
    */
   private flushMessageQueue(): void {
-    while (this.messageQueue.length > 0 && this.ws?.readyState === WebSocket.OPEN) {
+    while (
+      this.messageQueue.length > 0 &&
+      this.ws?.readyState === WebSocket.OPEN
+    ) {
       const message = this.messageQueue.shift()!;
       this.ws.send(JSON.stringify(message));
     }
@@ -158,7 +161,9 @@ export class DevToolsClient {
    * Send periodic heartbeat
    */
   private sendHeartbeat(): void {
-    this.send('heartbeat', { pid: typeof window !== 'undefined' ? 'browser' : 'ssr' });
+    this.send('heartbeat', {
+      pid: typeof window !== 'undefined' ? 'browser' : 'ssr',
+    });
     setTimeout(() => this.sendHeartbeat(), 30000);
   }
 
@@ -182,10 +187,10 @@ let devToolsInstance: DevToolsClient | null = null;
 
 export function getDevToolsClient(): DevToolsClient | null {
   if (typeof window === 'undefined') return null;
-  
+
   if (!devToolsInstance) {
     devToolsInstance = new DevToolsClient();
   }
-  
+
   return devToolsInstance;
 }

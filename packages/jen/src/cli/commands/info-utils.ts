@@ -73,7 +73,7 @@ export function formatDuration(ms: number): string {
 /**
  * Get Jen.js configuration
  */
-export function getJenConfig(): Record<string, any> {
+export function getJenConfig(): Record<string, unknown> {
   try {
     const configPath = path.join(process.cwd(), 'jen.config.mjs');
     if (!fs.existsSync(configPath)) {
@@ -107,8 +107,8 @@ export function getPluginInfo(): {
 /**
  * Check if running in special environment
  */
-export function getEnvironmentInfo(): Record<string, any> {
-  const env: Record<string, any> = {
+export function getEnvironmentInfo(): Record<string, unknown> {
+  const env: Record<string, unknown> = {
     node_env: process.env.NODE_ENV || 'development',
   };
 

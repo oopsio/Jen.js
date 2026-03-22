@@ -25,18 +25,18 @@ export interface JenConfig {
   name?: string;
   middleware?: {
     enabled?: boolean;
-    cors?: boolean | Record<string, any>;
-    bodyParser?: boolean | Record<string, any>;
+    cors?: boolean | Record<string, unknown>;
+    bodyParser?: boolean | Record<string, unknown>;
     errorBoundary?: boolean;
     requestLogger?: boolean;
     custom?: Array<{
       name: string;
-      handler: (context: any, next: any) => Promise<void>;
+      handler: (context: unknown, next: () => Promise<void>) => Promise<void>;
       priority?: number;
     }>;
   };
   isr?: {
-    enabled: boolean;
+    enabled?: boolean;
     cacheDir?: string;
     maxRetries?: number;
     retryDelay?: number;

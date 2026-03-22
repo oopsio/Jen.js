@@ -20,7 +20,9 @@ describe('CORS', () => {
       const middleware = cors.middleware();
       await middleware(context, async () => {});
 
-      expect(context.responseHeaders.get('Access-Control-Allow-Origin')).toBe('*');
+      expect(context.responseHeaders.get('Access-Control-Allow-Origin')).toBe(
+        '*',
+      );
     });
 
     it('should allow specific origin', async () => {
@@ -119,9 +121,9 @@ describe('CORS', () => {
       const middleware = cors.middleware();
       await middleware(context, async () => {});
 
-      expect(context.responseHeaders.get('Access-Control-Allow-Credentials')).toBe(
-        'true',
-      );
+      expect(
+        context.responseHeaders.get('Access-Control-Allow-Credentials'),
+      ).toBe('true');
     });
   });
 
@@ -135,13 +137,17 @@ describe('CORS', () => {
       const middleware = cors.middleware();
       await middleware(context, async () => {});
 
-      expect(context.responseHeaders.get('Access-Control-Max-Age')).toBe('3600');
+      expect(context.responseHeaders.get('Access-Control-Max-Age')).toBe(
+        '3600',
+      );
     });
   });
 
   describe('Preflight Requests', () => {
     it('should handle OPTIONS requests', async () => {
-      const request = new Request('http://localhost/test', { method: 'OPTIONS' });
+      const request = new Request('http://localhost/test', {
+        method: 'OPTIONS',
+      });
       context = ContextBuilder.build(request);
 
       const middleware = cors.middleware();
@@ -152,7 +158,9 @@ describe('CORS', () => {
     });
 
     it('should return no content for preflight', async () => {
-      const request = new Request('http://localhost/test', { method: 'OPTIONS' });
+      const request = new Request('http://localhost/test', {
+        method: 'OPTIONS',
+      });
       context = ContextBuilder.build(request);
 
       const middleware = cors.middleware();

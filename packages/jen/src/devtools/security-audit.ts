@@ -61,7 +61,11 @@ export class SecurityAuditor {
         value: headerValue,
         compliant: isCompliant,
         standard: this.getStandard(headerName),
-        severity: this.getSeverity(headerName, isCompliant, requirement.required),
+        severity: this.getSeverity(
+          headerName,
+          isCompliant,
+          requirement.required,
+        ),
         message: requirement.message,
       });
 
@@ -98,7 +102,7 @@ export class SecurityAuditor {
    */
   private static checkCompliance(
     headerValue: string | null,
-    requirement: any,
+    requirement: { required: boolean; pattern?: RegExp },
   ): boolean {
     if (!headerValue) {
       return !requirement.required;
@@ -131,7 +135,8 @@ export class SecurityAuditor {
     headerName: string,
   ): 'CSP' | 'HSTS' | 'X-Frame-Options' | 'X-Content-Type-Options' | 'OTHER' {
     if (headerName.includes('CSP')) return 'CSP';
-    if (headerName.includes('HSTS') || headerName.includes('Strict')) return 'HSTS';
+    if (headerName.includes('HSTS') || headerName.includes('Strict'))
+      return 'HSTS';
     if (headerName.includes('X-Frame')) return 'X-Frame-Options';
     if (headerName.includes('X-Content')) return 'X-Content-Type-Options';
     return 'OTHER';
@@ -140,9 +145,7 @@ export class SecurityAuditor {
   /**
    * Generate compliance report
    */
-  public static generateReport(
-    audits: SecurityAuditResult[],
-  ): {
+  public static generateReport(audits: SecurityAuditResult[]): {
     passRate: number;
     criticalIssues: string[];
     recommendations: string[];
@@ -151,12 +154,15 @@ export class SecurityAuditor {
     const passedChecks = audits.reduce(
       (sum, audit) =>
         sum +
-        audit.headers.filter((h) => h.compliant && h.severity !== 'info').length,
+        audit.headers.filter((h) => h.compliant && h.severity !== 'info')
+          .length,
       0,
     );
 
     const criticalIssues = audits
-      .flatMap((a) => a.headers.filter((h) => h.severity === 'error').map((h) => h.message))
+      .flatMap((a) =>
+        a.headers.filter((h) => h.severity === 'error').map((h) => h.message),
+      )
       .filter((v, i, a) => a.indexOf(v) === i); // Dedupe
 
     const recommendations = audits

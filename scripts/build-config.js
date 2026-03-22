@@ -1,4 +1,3 @@
-
 import fs from 'node:fs';
 import path from 'node:path';
 import readline from 'node:readline/promises';
@@ -11,7 +10,6 @@ const rl = readline.createInterface({
 async function runInjector() {
   console.log('\x1b[36m--- Jen.js Interactive Config Injector ---\x1b[0m\n');
 
-  
   const key = await rl.question(
     '\x1b[33m1. What is the name of the new config option? (e.g., customRouting): \x1b[0m',
   );
@@ -28,7 +26,6 @@ async function runInjector() {
     `\n\x1b[36m[System] Injecting '${key}' into framework architecture...\x1b[0m`,
   );
 
-  
   const typesPath = path.resolve(process.cwd(), 'packages/jen/src/types.ts');
   const runtimePath = path.resolve(
     process.cwd(),
@@ -36,7 +33,6 @@ async function runInjector() {
   );
 
   try {
-    
     let typesContent = fs.readFileSync(typesPath, 'utf-8');
     const interfaceRegex = /(export interface JenConfig\s*\{)([^}]*)(\})/;
     typesContent = typesContent.replace(
@@ -45,15 +41,13 @@ async function runInjector() {
     );
     fs.writeFileSync(typesPath, typesContent);
 
-    
     let runtimeContent = fs.readFileSync(runtimePath, 'utf-8');
     const defaultRegex =
       /(export const RuntimeConfig:\s*JenConfig\s*=\s*\{)([^}]*)(\});/;
 
-    
     let formattedDefault = defaultValue;
     if (typeType === 'string') {
-      formattedDefault = `'${defaultValue}'`; 
+      formattedDefault = `'${defaultValue}'`;
     }
 
     runtimeContent = runtimeContent.replace(

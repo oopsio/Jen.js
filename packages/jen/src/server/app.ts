@@ -9,7 +9,6 @@ import checker from 'vite-plugin-checker';
 import { createDevToolsPlugin } from '../devtools/vite-plugin';
 import { RouterBridge } from '../devtools/router-bridge';
 import { SecurityAuditor } from '../devtools/security-audit';
-import { SSRHydrationDetector } from '../devtools/ssr-hydration';
 
 const colors = {
   reset: '\x1b[0m',
@@ -26,7 +25,8 @@ const colors = {
 // ============================================================================
 function buildSecurityHeaders(): Record<string, string> {
   return {
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:",
+    'Content-Security-Policy':
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:",
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
@@ -98,7 +98,7 @@ export class DevServerManager {
 
           const originalEnd = res.end;
 
-          res.end = function (...args: any[]) {
+          res.end = function (...args: unknown[]) {
             const end = performance.now();
             const duration = (end - start).toFixed(2);
 
@@ -112,17 +112,22 @@ export class DevServerManager {
               `${methodColor}${method}${reset} ${urlColor}${url}${reset} - ${timeColor}${duration}ms${reset}`,
             );
 
-            return originalEnd.apply(this, args as any);
+            return originalEnd.apply(
+              this,
+              args as Parameters<typeof originalEnd>,
+            );
           };
 
           next();
         });
 
         return () => {
-           // Initialize ISR system now that compiler is ready
-           ISRManager.initialize(server as unknown as ViteDevServer).catch((error) => {
-             console.error('Failed to initialize ISR:', error);
-           });
+          // Initialize ISR system now that compiler is ready
+          ISRManager.initialize().catch(
+            (error) => {
+              console.error('Failed to initialize ISR:', error);
+            },
+          );
 
           server.middlewares.use(async (req, res, next) => {
             try {
@@ -150,14 +155,22 @@ export class DevServerManager {
               // ═══════════════════════════════════════════════════════════════
               RouterBridge.captureMatch(
                 url,
-                jenResponse.status === 404 ? null : { found: true, pathname: url, filePathTsx: '', filePathJsx: '', params: '{}' },
+                jenResponse.status === 404
+                  ? null
+                  : {
+                      found: true,
+                      pathname: url,
+                      filePathTsx: '',
+                      filePathJsx: '',
+                      params: '{}',
+                    },
                 routeDuration,
               );
 
               // ═══════════════════════════════════════════════════════════════
               // DEVTOOLS: Capture security headers
               // ═══════════════════════════════════════════════════════════════
-              const securityAudit = SecurityAuditor.audit(
+              SecurityAuditor.audit(
                 url,
                 Object.fromEntries(
                   Array.from(Object.entries(jenResponse.headers || {})),
@@ -185,16 +198,23 @@ export class DevServerManager {
 
               console.log(`${colors.blue}→ ${url}${colors.reset}`);
               next();
-            } catch (error: any) {
-              server.ssrFixStacktrace(error);
+            } catch (error: unknown) {
+              if (error instanceof Error) {
+                server.ssrFixStacktrace(error);
+              }
 
+              const errorMessage =
+                error instanceof Error ? error.message : String(error);
               console.error(`\n${colors.error}error: ${colors.reset}`);
-              console.error(`\x1b[33m${error.message}${colors.reset}`);
+              console.error(`\x1b[33m${errorMessage}${colors.reset}`);
 
-              if (error.frame) {
-                console.error(`\n${error.frame}\n`);
-              } else {
+              if (error instanceof Error && 'frame' in error) {
+                const viteError = error as unknown as { frame?: string };
+                console.error(`\n${viteError.frame}\n`);
+              } else if (error instanceof Error) {
                 console.error(error.stack);
+              } else {
+                console.error(error);
               }
 
               next(error);

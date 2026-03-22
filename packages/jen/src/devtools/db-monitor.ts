@@ -107,13 +107,11 @@ export class DatabaseMonitor {
   /**
    * Get all query logs
    */
-  public static getQueryLogs(
-    filter?: {
-      driver?: string;
-      status?: 'success' | 'slow' | 'error';
-      limit?: number;
-    },
-  ): QueryLog[] {
+  public static getQueryLogs(filter?: {
+    driver?: string;
+    status?: 'success' | 'slow' | 'error';
+    limit?: number;
+  }): QueryLog[] {
     let logs = [...this.queryLogs];
 
     if (filter?.driver) {
@@ -146,7 +144,6 @@ export class DatabaseMonitor {
     let totalQueries = 0;
     let totalTime = 0;
     let slowCount = 0;
-    let errorCount = 0;
 
     for (const [driverName, metrics] of this.driverMetrics) {
       drivers[driverName] = metrics;
@@ -155,7 +152,9 @@ export class DatabaseMonitor {
       slowCount += metrics.slowQueries.length;
     }
 
-    errorCount = this.queryLogs.filter((l) => l.status === 'error').length;
+    const errorCount = this.queryLogs.filter(
+      (l) => l.status === 'error',
+    ).length;
 
     return {
       totalQueries,

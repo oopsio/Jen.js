@@ -89,23 +89,12 @@ impl Default for ISRConfig {
 }
 
 /// Framework configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct FrameworkConfig {
     pub build: BuildConfig,
     pub server: ServerConfig,
     pub isr: ISRConfig,
     pub custom: HashMap<String, Value>,
-}
-
-impl Default for FrameworkConfig {
-    fn default() -> Self {
-        Self {
-            build: BuildConfig::default(),
-            server: ServerConfig::default(),
-            isr: ISRConfig::default(),
-            custom: HashMap::new(),
-        }
-    }
 }
 
 impl FrameworkConfig {

@@ -50,10 +50,10 @@ impl RouteConfig {
     fn extract_params(path: &str) -> Vec<String> {
         path.split('/')
             .filter_map(|segment| {
-                if segment.starts_with(':') {
-                    Some(segment[1..].to_string())
-                } else if segment.starts_with('[') && segment.ends_with(']') {
-                    Some(segment[1..segment.len() - 1].to_string())
+                if let Some(stripped) = segment.strip_prefix(':') {
+                    Some(stripped.to_string())
+                } else if let Some(stripped) = segment.strip_prefix('[') {
+                    stripped.strip_suffix(']').map(|param| param.to_string())
                 } else {
                     None
                 }
@@ -102,12 +102,12 @@ impl RouteConfig {
         }
 
         for (route_part, path_part) in route_parts.iter().zip(path_parts.iter()) {
-            if route_part.starts_with(':') {
-                let param_name = &route_part[1..];
+            if let Some(param_name) = route_part.strip_prefix(':') {
                 params.insert(param_name.to_string(), path_part.to_string());
-            } else if route_part.starts_with('[') && route_part.ends_with(']') {
-                let param_name = &route_part[1..route_part.len() - 1];
-                params.insert(param_name.to_string(), path_part.to_string());
+            } else if let Some(stripped) = route_part.strip_prefix('[') {
+                if let Some(param_name) = stripped.strip_suffix(']') {
+                    params.insert(param_name.to_string(), path_part.to_string());
+                }
             }
         }
 

@@ -13,9 +13,9 @@ export class ISRManager {
   private static isEnabled: boolean = false;
 
   /**
-   * Initialize ISR system (called once at startup)
-   */
-  public static async initialize(vite: ViteDevServer): Promise<void> {
+    * Initialize ISR system (called once at startup)
+    */
+   public static async initialize(): Promise<void> {
     if (!RuntimeConfig.isr?.enabled) {
       this.isEnabled = false;
       return;
@@ -24,9 +24,7 @@ export class ISRManager {
     this.isEnabled = true;
 
     // Create render function that uses Jen.js SSR engine
-    const render = async (path: string): Promise<string> => {
-      // Find the file path for this route (simplified - in real use, would look up from route registry)
-      // For now, we'll handle this at the handler level
+    const render = async (): Promise<string> => {
       return '<html><body>Placeholder</body></html>';
     };
 
@@ -63,7 +61,7 @@ export class ISRManager {
   public static async extractMetadata(
     filePath: string,
     urlPath: string,
-    moduleExports: Record<string, any>,
+    moduleExports: Record<string, unknown>,
   ): Promise<RouteMetadata> {
     let metadata = await RouteMetadataExtractor.fromModule(
       filePath,
@@ -90,7 +88,7 @@ export class ISRManager {
     request: Request,
     filePath: string,
     urlPath: string,
-    moduleExports: Record<string, any>,
+    moduleExports: Record<string, unknown>,
     vite: ViteDevServer,
   ): Promise<Response | null> {
     if (!this.isISREnabled() || !this.isrHandler) {
@@ -104,10 +102,17 @@ export class ISRManager {
 
     try {
       // Extract metadata from module
-      const metadata = await this.extractMetadata(filePath, urlPath, moduleExports);
+      const metadata = await this.extractMetadata(
+        filePath,
+        urlPath,
+        moduleExports,
+      );
 
       // Skip caching if no revalidate set and not explicitly enabled
-      if (metadata.revalidate === undefined && !RuntimeConfig.isr?.globalRevalidate) {
+      if (
+        metadata.revalidate === undefined &&
+        !RuntimeConfig.isr?.globalRevalidate
+      ) {
         return null;
       }
 
@@ -118,8 +123,7 @@ export class ISRManager {
 
       // Create a minimal handler that uses our custom render
       const cacheManager = ISRFactory.createCacheManager(
-        // We need to get the storage from the handler - for now use a simplified approach
-        this.getCacheStorage(),
+        await this.getCacheStorage(),
         {
           cacheDir: RuntimeConfig.isr?.cacheDir || '.cache/isr',
           maxRetries: RuntimeConfig.isr?.maxRetries || 3,
@@ -153,7 +157,10 @@ export class ISRManager {
       return new Response(result.html, { status: 200, headers });
     } catch (error) {
       // Log ISR error but don't block - fall through to normal rendering
-      console.error('ISR request failed, falling back to standard rendering:', error);
+      console.error(
+        'ISR request failed, falling back to standard rendering:',
+        error,
+      );
       return null;
     }
   }
@@ -161,9 +168,8 @@ export class ISRManager {
   /**
    * Get cache storage instance (lazy initialized)
    */
-  private static getCacheStorage() {
-    // Import here to avoid circular dependencies
-    const { MemoryStorage } = require('../isr');
+  private static async getCacheStorage() {
+    const { MemoryStorage } = await import('../isr');
     return new MemoryStorage();
   }
 }

@@ -207,6 +207,12 @@ impl RouteMatcher {
     }
 }
 
+impl Default for RouteMatcher {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

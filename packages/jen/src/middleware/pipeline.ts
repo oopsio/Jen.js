@@ -7,7 +7,6 @@ import type {
   NextFunction,
   MiddlewarePipelineConfig,
 } from './types';
-import { MiddlewareError } from './types';
 
 export class MiddlewarePipeline {
   private middlewares: Array<{ handler: MiddlewareHandler; name: string }> = [];
@@ -23,24 +22,20 @@ export class MiddlewarePipeline {
   }
 
   /**
-   * Register middleware
-   */
-  use(
-    name: string,
-    handler: MiddlewareHandler,
-    priority: number = 100,
-  ): this {
-    this.middlewares.push({ handler, name });
-    
-    // Sort by priority (lower = first)
-    this.middlewares.sort((a, b) => {
-      const aPriority = this.getMiddlewarePriority(a.name);
-      const bPriority = this.getMiddlewarePriority(b.name);
-      return aPriority - bPriority;
-    });
+    * Register middleware
+    */
+   use(name: string, handler: MiddlewareHandler, priority?: number): this {
+     this.middlewares.push({ handler, name });
 
-    return this;
-  }
+     // Sort by priority (lower = first)
+     this.middlewares.sort((a, b) => {
+       const aPriority = priority ?? this.getMiddlewarePriority(a.name);
+       const bPriority = priority ?? this.getMiddlewarePriority(b.name);
+       return aPriority - bPriority;
+     });
+
+     return this;
+   }
 
   /**
    * Get priority for middleware
@@ -50,8 +45,8 @@ export class MiddlewarePipeline {
       'error-boundary': 0,
       'request-logger': 10,
       'body-parser': 20,
-      'cors': 30,
-      'custom': 100,
+      cors: 30,
+      custom: 100,
     };
     return priorityMap[name] || 100;
   }
@@ -96,7 +91,7 @@ export class MiddlewarePipeline {
    * Get registered middlewares
    */
   getMiddlewares(): string[] {
-    return this.middlewares.map(m => m.name);
+    return this.middlewares.map((m) => m.name);
   }
 
   /**

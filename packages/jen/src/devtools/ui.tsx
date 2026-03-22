@@ -3,10 +3,15 @@
  * Old School 2014-2018 Aesthetic (Retro Minimalist)
  */
 
-import { h, Fragment } from 'preact';
+import { Fragment } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import { DevToolsClient } from './client';
-import type { RouteMatchTrace, SecurityAuditResult, SSRMetrics, QueryLog } from './types';
+import type {
+  RouteMatchTrace,
+  SecurityAuditResult,
+  SSRMetrics,
+  QueryLog,
+} from './types';
 
 const styles = `
 .jen-devtools-overlay {
@@ -151,14 +156,14 @@ interface DevToolsUIProps {
 }
 
 export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
-  const [activeTab, setActiveTab] = useState<'routes' | 'security' | 'ssr' | 'db'>(
-    'routes',
-  );
+  const [activeTab, setActiveTab] = useState<
+    'routes' | 'security' | 'ssr' | 'db'
+  >('routes');
   const [isOpen, setIsOpen] = useState(true);
-  const [routes, setRoutes] = useState<RouteMatchTrace[]>([]);
-  const [security, setSecurity] = useState<SecurityAuditResult | null>(null);
-  const [ssr, setSSR] = useState<SSRMetrics | null>(null);
-  const [queries, setQueries] = useState<QueryLog[]>([]);
+  const [routes] = useState<RouteMatchTrace[]>([]);
+  const [security] = useState<SecurityAuditResult | null>(null);
+  const [ssr] = useState<SSRMetrics | null>(null);
+  const [queries] = useState<QueryLog[]>([]);
 
   useEffect(() => {
     const client = new DevToolsClient(wsUrl);
@@ -255,13 +260,16 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
                 <div class="jen-devtools-section-title">Security Audit</div>
                 {security ? (
                   <Fragment>
-                    <div 
-                      class={`jen-devtools-status ${security.overallCompliant ? 'pass' : 'fail'}`}>
+                    <div
+                      class={`jen-devtools-status ${security.overallCompliant ? 'pass' : 'fail'}`}
+                    >
                       {security.overallCompliant ? '✓ COMPLIANT' : '✗ ISSUES'}
                     </div>
                     {security.headers.map((h) => (
                       <div class="jen-devtools-metric">
-                        <span style={{ color: h.compliant ? '#00ff00' : '#ff0000' }}>
+                        <span
+                          style={{ color: h.compliant ? '#00ff00' : '#ff0000' }}
+                        >
                           {h.compliant ? '✓' : '✗'} {h.name}
                         </span>
                         <div style={{ color: '#888', marginLeft: '16px' }}>
@@ -282,7 +290,10 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
                 {ssr ? (
                   <Fragment>
                     <div class="jen-devtools-metric">
-                      Render: <span style={{ color: '#00ff00' }}>{ssr.renderTime.toFixed(0)}ms</span>
+                      Render:{' '}
+                      <span style={{ color: '#00ff00' }}>
+                        {ssr.renderTime.toFixed(0)}ms
+                      </span>
                     </div>
                     <div class="jen-devtools-metric">
                       Components: {ssr.componentCount}
@@ -317,8 +328,13 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
                 ) : (
                   queries.slice(-5).map((q) => (
                     <div class="jen-devtools-log">
-                      <div style={{ color: q.status === 'error' ? '#ff0000' : '#00ff00' }}>
-                        {q.status === 'error' ? '✗' : '✓'} {q.duration.toFixed(0)}ms
+                      <div
+                        style={{
+                          color: q.status === 'error' ? '#ff0000' : '#00ff00',
+                        }}
+                      >
+                        {q.status === 'error' ? '✗' : '✓'}{' '}
+                        {q.duration.toFixed(0)}ms
                       </div>
                       <div style={{ color: '#888' }}>{q.query}</div>
                     </div>
@@ -339,7 +355,7 @@ export async function initDevToolsUI(): Promise<void> {
   const container = document.createElement('div');
   container.id = 'jen-devtools-root';
   document.body.appendChild(container);
-  
+
   // Mount the DevTools UI
   // This would use preact.render in the actual implementation
 }

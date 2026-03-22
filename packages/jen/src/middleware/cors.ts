@@ -9,8 +9,18 @@ export class CORS {
   constructor(options: CORSOptions = {}) {
     this.options = {
       origin: options.origin || '*',
-      methods: options.methods || ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-      allowedHeaders: options.allowedHeaders || ['Content-Type', 'Authorization'],
+      methods: options.methods || [
+        'GET',
+        'HEAD',
+        'PUT',
+        'PATCH',
+        'POST',
+        'DELETE',
+      ],
+      allowedHeaders: options.allowedHeaders || [
+        'Content-Type',
+        'Authorization',
+      ],
       exposedHeaders: options.exposedHeaders || [],
       credentials: options.credentials || false,
       maxAge: options.maxAge || 86400, // 24 hours
@@ -92,7 +102,10 @@ export class CORS {
     }
 
     // Allow methods
-    headers.set('Access-Control-Allow-Methods', this.options.methods.join(', '));
+    headers.set(
+      'Access-Control-Allow-Methods',
+      this.options.methods.join(', '),
+    );
 
     // Allow headers
     headers.set(

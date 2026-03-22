@@ -17,14 +17,13 @@ interface WasmRouteMatch {
 }
 
 export class RouterBridge {
-  private static traceCallback: ((trace: RouteMatchTrace) => void) | null = null;
+  private static traceCallback: ((trace: RouteMatchTrace) => void) | null =
+    null;
 
   /**
    * Register callback for route traces
    */
-  public static onTrace(
-    callback: (trace: RouteMatchTrace) => void,
-  ): void {
+  public static onTrace(callback: (trace: RouteMatchTrace) => void): void {
     this.traceCallback = callback;
   }
 
@@ -37,9 +36,7 @@ export class RouterBridge {
     wasmMatch: WasmRouteMatch | null,
     executionTime: number,
   ): RouteMatchTrace {
-    const params = wasmMatch?.params 
-      ? JSON.parse(wasmMatch.params) 
-      : {};
+    const params = wasmMatch?.params ? JSON.parse(wasmMatch.params) : {};
 
     const trace: RouteMatchTrace = {
       pathname,
@@ -90,7 +87,9 @@ export class RouterBridge {
     // Check for repeated 404s
     const notFoundTraces = traces.filter((t) => !t.matched);
     if (notFoundTraces.length > traces.length * 0.3) {
-      issues.push(`⚠️ High 404 rate: ${notFoundTraces.length}/${traces.length}`);
+      issues.push(
+        `⚠️ High 404 rate: ${notFoundTraces.length}/${traces.length}`,
+      );
     }
 
     // Check for parameter parsing issues
@@ -98,9 +97,7 @@ export class RouterBridge {
       (t) => Object.keys(t.params).length > 3,
     );
     if (complexParams.length > 0) {
-      issues.push(
-        `ℹ️ ${complexParams.length} routes with multiple parameters`,
-      );
+      issues.push(`ℹ️ ${complexParams.length} routes with multiple parameters`);
     }
 
     return issues;

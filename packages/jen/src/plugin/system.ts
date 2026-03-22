@@ -6,6 +6,8 @@ import type { Plugin, PluginContext } from './types';
 import { PluginRegistry } from './registry';
 import type { MiddlewareHandler, MiddlewareContext } from '../middleware';
 
+type RouteHandler = (...args: unknown[]) => unknown;
+
 /**
  * Plugin system entry point and orchestrator
  */
@@ -76,21 +78,27 @@ export class PluginSystem {
   static async transformContext(
     context: MiddlewareContext,
   ): Promise<MiddlewareContext> {
-    return PluginRegistry.callHookChain('transformContext', context);
+    const result = await PluginRegistry.callHookChain('transformContext', context);
+    return result as MiddlewareContext;
   }
 
   /**
    * Resolve route through plugins
    */
   static async resolveRoute(filePath: string, urlPath: string) {
-    return PluginRegistry.callHookChain('resolveRoute', null, filePath, urlPath);
+    return PluginRegistry.callHookChain(
+      'resolveRoute',
+      null,
+      filePath,
+      urlPath,
+    );
   }
 
   /**
    * Resolve module ID through plugins
    */
   static resolveId(id: string): string | null {
-    for (const [_, plugin] of PluginRegistry.getWithHook('resolveId')) {
+    for (const [, plugin] of PluginRegistry.getWithHook('resolveId')) {
       if (!plugin.resolveId) continue;
       const result = plugin.resolveId(id);
       if (result) {
@@ -104,7 +112,7 @@ export class PluginSystem {
    * Load resolved module through plugins
    */
   static load(id: string): string | null {
-    for (const [_, plugin] of PluginRegistry.getWithHook('load')) {
+    for (const [, plugin] of PluginRegistry.getWithHook('load')) {
       if (!plugin.load) continue;
       const result = plugin.load(id);
       if (result) {
@@ -117,10 +125,10 @@ export class PluginSystem {
   /**
    * Wrap route handler through plugins
    */
-  static wrapRoute(handler: Function, routePath: string): Function {
-    let wrapped = handler;
+  static wrapRoute(handler: RouteHandler, routePath: string): RouteHandler {
+    let wrapped: RouteHandler = handler;
 
-    for (const [_, plugin] of PluginRegistry.getWithHook('wrapRoute')) {
+    for (const [, plugin] of PluginRegistry.getWithHook('wrapRoute')) {
       if (!plugin.wrapRoute) continue;
       wrapped = plugin.wrapRoute(wrapped, routePath) || wrapped;
     }
@@ -131,8 +139,12 @@ export class PluginSystem {
   /**
    * Modify configuration through plugins
    */
-  static async modifyConfig(config: any): Promise<any> {
-    return PluginRegistry.callHookReduce('config', config);
+  static async modifyConfig(
+    config: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    return PluginRegistry.callHookReduce('config', config) as Promise<
+      Record<string, unknown>
+    >;
   }
 
   /**

@@ -71,7 +71,7 @@ describe('CacheManager', () => {
 
       await cacheManager.getPage(route, render);
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const result = await cacheManager.getPage(route, render);
       expect(result.age).toBeDefined();
@@ -86,7 +86,7 @@ describe('CacheManager', () => {
       const render = async () => {
         renderCount++;
         // Simulate async render work
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 50));
         return `<div>Render ${renderCount}</div>`;
       };
 
@@ -96,7 +96,7 @@ describe('CacheManager', () => {
       expect(result1.html).toBe('<div>Render 1</div>');
 
       // Wait for cache to become stale
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Second request: cache hit (stale) - returns immediately
       const result2 = await cacheManager.getPage(route, render);
@@ -105,7 +105,7 @@ describe('CacheManager', () => {
 
       // Background regeneration should be queued and will complete shortly
       // Wait for it to finish
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Verify background render completed
       expect(renderCount).toBe(2);
@@ -116,7 +116,7 @@ describe('CacheManager', () => {
       let renderCount = 0;
       const render = async () => {
         renderCount++;
-        await new Promise(resolve => setTimeout(resolve, 100)); // Slow render
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Slow render
         return `<div>Render ${renderCount}</div>`;
       };
 
@@ -124,7 +124,7 @@ describe('CacheManager', () => {
       await cacheManager.getPage(route, render);
 
       // Wait for stale
-      await new Promise(resolve => setTimeout(resolve, 60));
+      await new Promise((resolve) => setTimeout(resolve, 60));
 
       // Multiple simultaneous requests
       await Promise.all([
@@ -134,7 +134,7 @@ describe('CacheManager', () => {
       ]);
 
       // Wait for background regeneration
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       expect(renderCount).toBe(2); // Only 1 background render (not 3)
     });
@@ -150,7 +150,7 @@ describe('CacheManager', () => {
       };
 
       await cacheManager.getPage(route, render);
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const result = await cacheManager.getPage(route, render);
       expect(result.status).toBe('HIT_FRESH');

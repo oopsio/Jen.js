@@ -18,15 +18,16 @@ export class EnvironmentPlugin implements Plugin {
     console.log(`[Plugin] Environment configured: ${envName}`);
   }
 
-  config(config: any) {
+  config(config: Record<string, unknown>) {
     if (!this.env) return config;
 
     // Apply environment-specific settings
+    const buildConfig = config.build as Record<string, unknown> ?? {};
     if (this.env.isDev) {
       return {
         ...config,
         build: {
-          ...config.build,
+          ...buildConfig,
           sourcemap: true,
           minify: false,
         },
@@ -35,7 +36,7 @@ export class EnvironmentPlugin implements Plugin {
       return {
         ...config,
         build: {
-          ...config.build,
+          ...buildConfig,
           sourcemap: false,
           minify: 'esbuild',
         },

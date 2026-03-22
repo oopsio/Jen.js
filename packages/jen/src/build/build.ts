@@ -20,9 +20,8 @@ export class HtmlGenerator {
     const relativePath =
       '/' + path.relative(rootDir, pageFilePath).replace(/\\/g, '/');
 
-    const styleTag = cssFiles.length > 0 
-      ? `<style>${cssFiles.join('\n')}</style>` 
-      : '';
+    const styleTag =
+      cssFiles.length > 0 ? `<style>${cssFiles.join('\n')}</style>` : '';
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -37,23 +36,43 @@ export class HtmlGenerator {
     
     <script type="module">
         import { hydrate, h } from 'preact';
-
+        
         async function init() {
             const container = document.getElementById('jen-root');
             if (!container) return;
 
-            const scriptPath = container.dataset.pagePath;
+            const initialPagePath = container.dataset.pagePath;
+            const currentPath = window.location.pathname;
             
             try {
-                // Import the actual component file
-                const module = await import(/* @vite-ignore */ scriptPath);
-                const Page = module.default;
+                // 1. Load the Router and the Page component in parallel
+                const [routerModule, pageModule] = await Promise.all([
+                    import('/src/client/router.tsx'),
+                    import(/* @vite-ignore */ initialPagePath)
+                ]);
 
-                if (Page) {
-                    hydrate(h(Page, {}), container);
+                const { Router } = routerModule;
+                const Page = pageModule.default;
+
+                if (Router && Page) {
+                    // Hydrate with EXACTLY the same structure as SSR:
+                    // h(Router, { children: h(Page, {}) })
+                    hydrate(
+                        h(Router, { 
+                            initialPath: currentPath, 
+                            initialPagePath: initialPagePath,
+                            children: h(Page, {})
+                        }), 
+                        container
+                    );
                 }
             } catch (e) {
                 console.error('Jen.js Hydration Error:', e);
+                // Fallback to simple hydration if Router fails
+                const module = await import(/* @vite-ignore */ initialPagePath);
+                if (module.default) {
+                    hydrate(h(module.default, {}), container);
+                }
             }
         }
 
@@ -160,14 +179,17 @@ if (root) {
     console.log('\x1b[36m→ Building static assets...\x1b[0m');
 
     // 4. Run the build with Preact rules applied
+    // NO devtools plugin in production builds
     await build({
       root: tempDir,
+      mode: 'production',
       build: {
         outDir: outDir,
         emptyOutDir: true,
         rollupOptions: {
           input: inputFiles,
         },
+        minify: 'esbuild',
       },
       esbuild: {
         jsxFactory: 'h',

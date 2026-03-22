@@ -2,6 +2,7 @@
  * Plugin Utilities - Helper functions for plugin creation
  */
 
+import type { MiddlewareHandler } from '../middleware';
 import type { Plugin, PluginFactory } from './types';
 
 /**
@@ -18,9 +19,9 @@ export function createPlugin(plugin: Plugin): Plugin {
  * Define a plugin with factory function
  * Rollup-style: plugins can be functions that return plugin objects
  */
-export function definePlugin<T extends Record<string, any> = Record<string, any>>(
-  factory: PluginFactory<T>,
-): PluginFactory<T> {
+export function definePlugin<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(factory: PluginFactory<T>): PluginFactory<T> {
   return factory;
 }
 
@@ -38,7 +39,6 @@ export function compose(...plugins: Plugin[]): Plugin {
       }
     },
     async destroy() {
-      // Destroy in reverse order
       for (let i = plugins.length - 1; i >= 0; i--) {
         await plugins[i].destroy?.();
       }
@@ -51,15 +51,15 @@ export function compose(...plugins: Plugin[]): Plugin {
  */
 export function createMiddlewarePlugin(
   name: string,
-  handler: Function,
-  options: Record<string, any> = {},
+  handler: MiddlewareHandler,
+  options: Record<string, unknown> = {},
 ): Plugin {
   return createPlugin({
     name,
     description: `Middleware plugin: ${name}`,
     options,
     middleware() {
-      return handler as any;
+      return handler;
     },
   });
 }
@@ -69,8 +69,8 @@ export function createMiddlewarePlugin(
  */
 export function createConfigPlugin(
   name: string,
-  modifier: (config: any) => any,
-  options: Record<string, any> = {},
+  modifier: (config: Record<string, unknown>) => Record<string, unknown>,
+  options: Record<string, unknown> = {},
 ): Plugin {
   return createPlugin({
     name,
@@ -86,7 +86,7 @@ export function createConfigPlugin(
 export function createHookPlugin(
   name: string,
   hooks: Partial<Plugin>,
-  options: Record<string, any> = {},
+  options: Record<string, unknown> = {},
 ): Plugin {
   return createPlugin({
     name,
@@ -102,8 +102,7 @@ export function when(
   condition: boolean | (() => boolean),
   plugin: Plugin | PluginFactory,
 ): Plugin | null {
-  const shouldApply =
-    typeof condition === 'function' ? condition() : condition;
+  const shouldApply = typeof condition === 'function' ? condition() : condition;
 
   if (!shouldApply) {
     return null;

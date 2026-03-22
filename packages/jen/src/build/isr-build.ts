@@ -8,7 +8,6 @@ import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 import type { ViteDevServer } from 'vite';
 import fs from 'node:fs';
-import path from 'node:path';
 
 export class ISRBuildIntegration {
   /**
@@ -30,14 +29,11 @@ export class ISRBuildIntegration {
 
     // Initialize file storage
     const storage = new FileStorage(cacheDir);
-    const cacheManager = ISRFactory.createCacheManager(
-      storage,
-      {
-        cacheDir,
-        maxRetries: RuntimeConfig.isr.maxRetries || 3,
-        retryDelay: RuntimeConfig.isr.retryDelay || 1000,
-      },
-    );
+    const cacheManager = ISRFactory.createCacheManager(storage, {
+      cacheDir,
+      maxRetries: RuntimeConfig.isr.maxRetries || 3,
+      retryDelay: RuntimeConfig.isr.retryDelay || 1000,
+    });
 
     let cached = 0;
     let skipped = 0;
@@ -101,7 +97,9 @@ export class ISRBuildIntegration {
       }
     }
 
-    console.log(`\x1b[32m✓ ISR cache: ${cached} routes (${skipped} skipped)\x1b[0m`);
+    console.log(
+      `\x1b[32m✓ ISR cache: ${cached} routes (${skipped} skipped)\x1b[0m`,
+    );
   }
 
   /**

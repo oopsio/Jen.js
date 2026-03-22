@@ -26,8 +26,8 @@ export interface MiddlewareContext {
   contentLength?: number;
 
   // State management
-  state: Record<string, any>;
-  locals: Record<string, any>;
+  state: Record<string, unknown>;
+  locals: Record<string, unknown>;
 
   // Request metadata
   startTime: number;

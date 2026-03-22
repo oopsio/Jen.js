@@ -39,14 +39,16 @@ export class FileStorage extends StorageProvider {
     try {
       const filePath = this.getFilePath(key);
       const { writeFile, mkdir } = await this.getFileModule();
-      
+
       // Ensure directory exists
       await mkdir(this.cacheDir, { recursive: true });
-      
+
       // Write with pretty formatting
       await writeFile(filePath, JSON.stringify(entry, null, 2), 'utf-8');
     } catch (error) {
-      throw new Error(`Failed to write cache: ${String(error)}`);
+      throw new Error(`Failed to write cache: ${String(error)}`, {
+        cause: error,
+      });
     }
   }
 
@@ -80,18 +82,26 @@ export class FileStorage extends StorageProvider {
       // Deno
       return {
         readFile: async (path: string) => Deno.readTextFile(path),
-        writeFile: async (path: string, data: string) => Deno.writeTextFile(path, data),
-        mkdir: async (path: string, _opts: any) => Deno.mkdir(path, { recursive: true }),
+        writeFile: async (path: string, data: string) =>
+          Deno.writeTextFile(path, data),
+        mkdir: async (path: string) => Deno.mkdir(path, { recursive: true }),
         unlink: async (path: string) => Deno.remove(path),
         access: async (path: string) => Deno.stat(path),
       };
-    } else if (typeof window === 'undefined' && typeof process !== 'undefined') {
+    } else if (
+      typeof window === 'undefined' &&
+      typeof process !== 'undefined'
+    ) {
       // Node.js or Bun
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fs = await import('fs').then((m: any) => m.promises);
       return {
-        readFile: (path: string, encoding: string) => fs.readFile(path, encoding),
-        writeFile: (path: string, data: string, encoding: string) => fs.writeFile(path, data, encoding),
-        mkdir: (path: string, opts: any) => fs.mkdir(path, opts),
+        readFile: (path: string, encoding: string) =>
+          fs.readFile(path, encoding),
+        writeFile: (path: string, data: string, encoding: string) =>
+          fs.writeFile(path, data, encoding),
+        mkdir: (path: string, opts: { recursive?: boolean }) =>
+          fs.mkdir(path, opts),
         unlink: (path: string) => fs.unlink(path),
         access: (path: string) => fs.access(path),
       };

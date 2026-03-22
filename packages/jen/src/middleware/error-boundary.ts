@@ -43,7 +43,6 @@ export class ErrorBoundary {
   private handleError(context: MiddlewareContext, error: unknown): void {
     let statusCode = 500;
     let message = 'Internal Server Error';
-    let details: Record<string, any> = {};
 
     if (error instanceof MiddlewareError) {
       statusCode = error.statusCode;

@@ -42,7 +42,9 @@ export type ResolveRouteHook = (
 /**
  * Hook to modify build configuration
  */
-export type ConfigHook = (config: any) => any | undefined;
+export type ConfigHook = (
+  config: Record<string, unknown>,
+) => Record<string, unknown> | undefined;
 
 /**
  * Hook to transform middleware context
@@ -70,9 +72,9 @@ export type DestroyHook = () => void | Promise<void>;
  * Hook for custom route handler wrapping
  */
 export type WrapRouteHook = (
-  handler: Function,
+  handler: (...args: unknown[]) => unknown,
   routePath: string,
-) => Function;
+) => (...args: unknown[]) => unknown;
 
 /**
  * Hook for build artifacts
@@ -90,6 +92,11 @@ export type BuildCompleteHook = (result: {
 }) => void | Promise<void>;
 
 /**
+ * Generic plugin hook type for dynamic invocation
+ */
+export type PluginHook = (...args: unknown[]) => unknown;
+
+/**
  * Core plugin interface - Rollup-style
  */
 export interface Plugin {
@@ -103,7 +110,7 @@ export interface Plugin {
   description?: string;
 
   /** Plugin options */
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
 
   // Initialization
   /** Called when plugin is loaded */
@@ -149,9 +156,9 @@ export interface Plugin {
 /**
  * Plugin factory function signature
  */
-export type PluginFactory<T extends Record<string, any> = Record<string, any>> = (
-  options?: T,
-) => Plugin;
+export type PluginFactory<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> = (options?: T) => Plugin;
 
 /**
  * Plugin instance with normalized metadata

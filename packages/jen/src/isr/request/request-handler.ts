@@ -17,10 +17,7 @@ export class ISRRequestHandler {
    * Process request through ISR pipeline
    * Returns Response with cache metadata headers
    */
-  async handle(
-    request: Request,
-    route: RouteMetadata,
-  ): Promise<Response> {
+  async handle(request: Request, route: RouteMetadata): Promise<Response> {
     // Only cache GET requests
     if (request.method !== 'GET') {
       const html = await this.render(route.path);

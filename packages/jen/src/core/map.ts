@@ -1,6 +1,5 @@
-import { RequestHandler, RenderContext } from '../types';
+import type { RequestHandler } from '../types';
 import { ContextBuilder } from '../middleware';
-import type { MiddlewareManager } from '../server/middleware-manager';
 import { RouteMatcher } from './jen_router.js';
 
 interface RouteData {
@@ -23,13 +22,9 @@ export class RouterMap {
   ): void {
     const cleanPath = path === '/' ? '/' : path.replace(/\/$/, '');
     this.routeStorage.set(cleanPath, { handler, filePathTsx, filePathJsx });
-    
+
     // Register in WASM matcher for fast route resolution
-    this.matcher.register(
-      cleanPath,
-      filePathTsx || '',
-      filePathJsx || '',
-    );
+    this.matcher.register(cleanPath, filePathTsx || '', filePathJsx || '');
   }
 
   private static getFilePath(
@@ -50,7 +45,7 @@ export class RouterMap {
   public static async resolveRequest(request: Request): Promise<Response> {
     // Execute middleware pipeline if enabled (lazy import to avoid circular dependency)
     const { MiddlewareManager } = await import('../server/middleware-manager');
-    
+
     if (MiddlewareManager.isEnabled()) {
       const context = await MiddlewareManager.executeMiddleware(request);
 
@@ -66,7 +61,8 @@ export class RouterMap {
     }
 
     const url = new URL(request.url);
-    const pathName = url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '');
+    const pathName =
+      url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '');
 
     // Use WASM-based router for O(1) static and efficient dynamic route matching
     const match = this.matcher.match_route(pathName);
