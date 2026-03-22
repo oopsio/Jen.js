@@ -1,0 +1,8 @@
+[target.x86_64-pc-windows-gnu]
+rustflags = [
+    "-C", "link-self-contained=yes",
+    "-C", "target-feature=+crt-static",
+]
+
+[build]
+target = "wasm32-unknown-unknown"
