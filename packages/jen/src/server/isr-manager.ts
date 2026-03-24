@@ -7,6 +7,7 @@ import { ISRFactory, ISRRequestHandler } from '../isr';
 import type { ViteDevServer } from 'vite';
 import type { RouteMetadata } from '../isr';
 import { SsrEngine } from './ssr';
+import { RouteDefinition } from '../types';
 
 export class ISRManager {
   private static isrHandler: ISRRequestHandler | null = null;
@@ -86,7 +87,7 @@ export class ISRManager {
    */
   public static async handleRequest(
     request: Request,
-    filePath: string,
+    route: RouteDefinition,
     urlPath: string,
     moduleExports: Record<string, unknown>,
     vite: ViteDevServer,
@@ -102,6 +103,7 @@ export class ISRManager {
 
     try {
       // Extract metadata from module
+      const filePath = route.filePathTsx || route.filePathJsx || '';
       const metadata = await this.extractMetadata(
         filePath,
         urlPath,
@@ -118,7 +120,12 @@ export class ISRManager {
 
       // Create SSR render function scoped to this route
       const renderFunction = async (): Promise<string> => {
-        return SsrEngine.renderPage(filePath, urlPath, vite);
+        const result = await SsrEngine.renderPage(route, urlPath, vite);
+        // If result is a Response, throw error (should not happen for ISR)
+        if (result instanceof Response) {
+          throw new Error('ISR does not support Response returns');
+        }
+        return result as string;
       };
 
       // Create a minimal handler that uses our custom render

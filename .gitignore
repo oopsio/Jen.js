@@ -8,4 +8,7 @@ node_modules
 crates/jen/target/**/**
 crates/**/target/**/**
 ROADMAP.md
+.jen
+.vercel
+
 

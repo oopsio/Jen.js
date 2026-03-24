@@ -1,0 +1,9 @@
+{
+  "name": "@jenjs/jen-code-frame",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "cargo build --release",
+    "format": "cargo fmt",
+    "lint": "cargo clippy --fix --allow-dirty --allow-staged"
+  }
+}

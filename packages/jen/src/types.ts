@@ -1,11 +1,43 @@
 export type RuntimeEnvironment = 'bun' | 'deno' | 'node' | 'unknown';
 
+export interface RouteLayout {
+  tsx?: string;
+  jsx?: string;
+}
+
 export interface RouteDefinition {
   filePathTsx?: string; // Might be undefined if they only made a JSX file
   filePathJsx?: string; // Might be undefined if they only made a TSX file
+  layouts?: RouteLayout[]; // Nested layout hierarchy
   urlPath: string;
   isDynamic: boolean;
   dynamicParamName?: string;
+}
+
+export interface Metadata {
+  title?: string;
+  description?: string;
+  openGraph?: {
+    title?: string;
+    description?: string;
+    url?: string;
+    siteName?: string;
+    images?: Array<{
+      url: string;
+      width?: number;
+      height?: number;
+      alt?: string;
+    }>;
+    locale?: string;
+    type?: string;
+  };
+  twitter?: {
+    card?: string;
+    site?: string;
+    creator?: string;
+  };
+  robots?: string;
+  [key: string]: unknown;
 }
 
 export interface RenderContext {
@@ -42,4 +74,9 @@ export interface JenConfig {
     retryDelay?: number;
     globalRevalidate?: number; // global fallback in seconds
   };
+  i18n?: {
+    locales: string[];
+    defaultLocale: string;
+  };
+  requireDangerouslySetScripts?: boolean;
 }

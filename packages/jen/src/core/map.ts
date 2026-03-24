@@ -2,18 +2,37 @@ import type { RequestHandler } from '../types';
 import { ContextBuilder } from '../middleware';
 import { RouteMatcher } from './jen_router.js';
 
+/**
+ * Internal route handler data structure.
+ */
 interface RouteData {
+  /** The request handler executing the route logic */
   handler: RequestHandler;
+  /** Optional absolute path to a .tsx file for the route */
   filePathTsx?: string;
+  /** Optional absolute path to a .jsx file for the route */
   filePathJsx?: string;
 }
 
+/**
+ * High-level TypeScript Router Mapping.
+ * Combines a fast WASM-based matcher for rapid URL resolution with
+ * a standard TS map storing the corresponding execution handlers.
+ */
 export class RouterMap {
-  // Handler storage (separate from WASM router)
+  /** Handler storage (separate from WASM router) */
   private static routeStorage = new Map<string, RouteData>();
-  // High-performance WASM-based route matcher
+  /** High-performance WASM-based route matcher */
   private static matcher = new RouteMatcher();
 
+  /**
+   * Registers a route to both the TS storage map and the WASM matcher.
+   *
+   * @param path The URL path pattern (e.g. `/users/:id`)
+   * @param filePathTsx Absolute path to `.tsx` handler file
+   * @param filePathJsx Absolute path to `.jsx` handler file
+   * @param handler The asynchronous request handler function
+   */
   public static registerRoute(
     path: string,
     filePathTsx: string | undefined,
@@ -42,6 +61,14 @@ export class RouterMap {
     return filePathTsx || filePathJsx || '';
   }
 
+  /**
+   * Resolves an incoming HTTP Request using the registered routes.
+   * First runs middleware pipeline, then uses the WASM matcher to extract
+   * dynamic parameters before calling the appropriate TS handler.
+   *
+   * @param request The inbound web Request object
+   * @returns A promise resolving to the generated Response
+   */
   public static async resolveRequest(request: Request): Promise<Response> {
     // Execute middleware pipeline if enabled (lazy import to avoid circular dependency)
     const { MiddlewareManager } = await import('../server/middleware-manager');

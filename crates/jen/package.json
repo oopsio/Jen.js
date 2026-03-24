@@ -1,0 +1,8 @@
+{
+  "name": "@jenjs/jen-rs",
+  "version": "0.1.0",
+  "scripts": {
+    "format": "cargo fmt",
+    "lint": "cargo clippy --fix --allow-dirty --allow-staged"
+  }
+}

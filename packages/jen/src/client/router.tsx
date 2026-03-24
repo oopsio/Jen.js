@@ -1,6 +1,12 @@
 import { h, createContext, ComponentType } from 'preact';
 import { useContext, useEffect, useState } from 'preact/hooks';
 
+declare global {
+  interface Window {
+    __JEN_ROUTE_MANIFEST__?: Record<string, { page: string; layouts: string[]; isDynamic: boolean }>;
+  }
+}
+
 // Context to provide router state and methods
 const RouterContext = createContext<{
   path: string;
@@ -18,23 +24,64 @@ export function useRouter() {
 
 export interface RouterProps {
   initialPath: string;
-  initialPagePath: string;
-  children?: preact.ComponentChildren;
+  initialPagePath?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialComponents?: ComponentType<any>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  children?: any;
 }
 
+function matchRouteManifest(href: string) {
+  const manifest = typeof window !== 'undefined' ? window.__JEN_ROUTE_MANIFEST__ : null;
+  if (!manifest) return null;
+
+  const url = new URL(href, window.location.origin);
+  const pathName = url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '');
+
+  for (const [routePattern, routeDef] of Object.entries(manifest)) {
+    if (!routeDef.isDynamic) {
+      if (routePattern === pathName) return routeDef;
+    } else {
+      const regexStr = '^' + routePattern.replace(/:[^\s/]+/g, '([^/]+)') + '$';
+      if (new RegExp(regexStr).test(pathName)) {
+        return routeDef;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Recursively mounts the component tree to preserve parent layout states.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function RouteNode({ components, depth }: { components: ComponentType<any>[]; depth: number }) {
+  const Component = components[depth];
+  if (!Component) return null;
+
+  if (depth === components.length - 1) {
+    return h(Component, {});
+  }
+
+  return h(Component, {}, h(RouteNode, { components, depth: depth + 1 }));
+}
+
+/**
+ * Client-side Router component.
+ * Features state-preserving nested layout routing leveraging Vite's code-splitting.
+ */
 export function Router({
   initialPath,
-  initialPagePath,
-  children: initialChildren,
+  initialComponents,
+  children,
 }: RouterProps) {
   const [path, setPath] = useState(initialPath);
-  const [, setPagePath] = useState(initialPagePath);
-  // On hydration, PageComponent should be null to allow 'children' (the SSR'd content) to render
-  const [PageComponent, setPageComponent] = useState<ComponentType | null>(
-    null,
-  );
-  const [children, setChildren] = useState(initialChildren);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [componentsTree, setComponentsTree] = useState<ComponentType<any>[]>(initialComponents || []);
   const [loading, setLoading] = useState(false);
+
+  // SSR fallback: if no initialComponents were provided, render children directly
+  const isSSR = typeof window === 'undefined';
 
   const navigate = async (href: string, replace = false) => {
     if (typeof window === 'undefined') return;
@@ -42,22 +89,27 @@ export function Router({
     setLoading(true);
 
     try {
-      // 1. Fetch the page to get its data-page-path
+      // 1. Fetch the HTML to guarantee server side effects and extract metadata (title, metrics)
       const response = await fetch(href);
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-      const container = doc.getElementById('jen-root');
+      
+      const routeDef = matchRouteManifest(href);
+      if (!routeDef) {
+        throw new Error(`Route ${href} not found in client manifest.`);
+      }
 
-      if (!container) throw new Error('No #jen-root found in target page');
+      // 2. Import the layout tree and the leaf page dynamically in parallel
+      const layoutPromises = routeDef.layouts.map(l => import(/* @vite-ignore */ l));
+      const pagePromise = import(/* @vite-ignore */ routeDef.page);
+      
+      const layoutModules = await Promise.all(layoutPromises);
+      const pageModule = await pagePromise;
 
-      const nextPagePath = container.dataset.pagePath;
-      if (!nextPagePath) throw new Error('No data-page-path found');
+      const newComponents = [...layoutModules.map(m => m.default), pageModule.default];
 
-      // 2. Import the new component
-      const module = await import(/* @vite-ignore */ nextPagePath);
-
-      // 3. Update state and History API
+      // 3. Update router state 
       if (replace) {
         window.history.replaceState({}, '', href);
       } else {
@@ -66,17 +118,14 @@ export function Router({
 
       document.title = doc.title;
       setPath(href);
-      setPagePath(nextPagePath);
-      setPageComponent(() => module.default);
-      setChildren(null); // Clear initial children once we navigate away
+      setComponentsTree(newComponents);
 
-      // Notify custom Link components if they aren't using this Router state
       window.dispatchEvent(
         new CustomEvent('jen-route-change', { detail: { href } }),
       );
     } catch (e) {
-      console.error('[Jen Router] Navigation failed:', e);
-      // Fallback: hard navigation
+      console.error('[Jen Router] Soft navigation failed:', e);
+      // Hard navigation fallback
       window.location.href = href;
     } finally {
       setLoading(false);
@@ -84,11 +133,7 @@ export function Router({
   };
 
   useEffect(() => {
-    const handlePopState = () => {
-      // On popstate, we have to do a full "soft" navigate because we need the component
-      navigate(window.location.pathname, true);
-    };
-
+    const handlePopState = () => navigate(window.location.pathname, true);
     const handleJenNav = (e: Event) => {
       const customEvent = e as CustomEvent<{ href: string }>;
       navigate(customEvent.detail.href);
@@ -108,7 +153,8 @@ export function Router({
 
   return (
     <RouterContext.Provider value={{ path, push, replace }}>
-      {PageComponent ? h(PageComponent, {}) : children || null}
+      {isSSR && children ? children : componentsTree.length > 0 ? h(RouteNode, { components: componentsTree, depth: 0 }) : children}
+      
       {loading && (
         <div
           style={{

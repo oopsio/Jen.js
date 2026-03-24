@@ -1,3 +1,7 @@
+//! Jen.js Core Router WASM module.
+//!
+//! Provides a high-performance routing core compiled to WebAssembly.
+
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
@@ -13,6 +17,15 @@ pub struct RouteMatch {
 
 #[wasm_bindgen]
 impl RouteMatch {
+    /// Creates a new RouteMatch instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `found` - Whether the route was matched successfully
+    /// * `pathname` - The matched pathname
+    /// * `params` - A JSON-encoded string of route parameters
+    /// * `file_path_tsx` - The path to the resolved `.tsx` file
+    /// * `file_path_jsx` - The path to the resolved `.jsx` file
     #[wasm_bindgen(constructor)]
     pub fn new(
         found: bool,
@@ -30,32 +43,38 @@ impl RouteMatch {
         }
     }
 
+    /// Returns true if the route was successfully matched.
     #[wasm_bindgen(getter)]
     pub fn found(&self) -> bool {
         self.found
     }
 
+    /// Gets the normalized pathname that was matched.
     #[wasm_bindgen(getter)]
     pub fn pathname(&self) -> String {
         self.pathname.clone()
     }
 
+    /// Gets the JSON string containing route parameters.
     #[wasm_bindgen(getter)]
     pub fn params(&self) -> String {
         self.params.clone()
     }
 
+    /// Gets the resolved `.tsx` file path, if any.
     #[wasm_bindgen(getter, js_name = filePathTsx)]
     pub fn file_path_tsx(&self) -> String {
         self.file_path_tsx.clone()
     }
 
+    /// Gets the resolved `.jsx` file path, if any.
     #[wasm_bindgen(getter, js_name = filePathJsx)]
     pub fn file_path_jsx(&self) -> String {
         self.file_path_jsx.clone()
     }
 }
 
+/// Internal data structure storing matched route file paths.
 #[derive(Clone, Debug)]
 struct RouteData {
     file_path_tsx: String,
@@ -82,7 +101,13 @@ impl RouteMatcher {
         }
     }
 
-    /// Register a route pattern
+    /// Register a route pattern.
+    ///
+    /// # Arguments
+    ///
+    /// * `path` - The route pattern (can contain dynamic segments like `:id`)
+    /// * `file_path_tsx` - The associated `.tsx` file path
+    /// * `file_path_jsx` - The associated `.jsx` file path
     pub fn register(&mut self, path: String, file_path_tsx: String, file_path_jsx: String) {
         let clean_path = if path == "/" {
             "/".to_string()
@@ -103,7 +128,14 @@ impl RouteMatcher {
         }
     }
 
-    /// Match a pathname against registered routes
+    /// Match a pathname against registered routes.
+    ///
+    /// First looks for exact static matches (O(1)), then falls back
+    /// to evaluating dynamic routes.
+    ///
+    /// # Arguments
+    ///
+    /// * `pathname` - The incoming URL pathname to match
     pub fn match_route(&self, pathname: &str) -> RouteMatch {
         let clean_pathname = if pathname == "/" {
             "/".to_string()

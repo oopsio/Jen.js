@@ -5,7 +5,16 @@ import { ConfigLoader } from '../config/loader';
 import { RuntimeConfig } from '../config/config';
 import { handleInfoCommand } from './commands';
 
+/**
+ * Main Command Line Interface Parser and Executor.
+ * Responsible for correctly routing the user's `jen` terminal commands.
+ */
 export class CliParser {
+  /**
+   * Evaluates passed arguments to invoke the proper framework action (dev, build, start, info).
+   *
+   * @param args The sliced array of CLI arguments (e.g. `process.argv.slice(2)`)
+   */
   public static async executeCommand(args: string[]): Promise<void> {
     await ConfigLoader.initialize();
 
@@ -26,9 +35,21 @@ export class CliParser {
         await ProductionServerManager.start(RuntimeConfig.port);
         break;
 
-      case 'build':
-        await StaticSiteGenerator.generate();
+      case 'build': {
+        const adapterIndex = args.indexOf('--adapter');
+        let adapter: string | undefined = undefined;
+        if (adapterIndex !== -1 && args[adapterIndex + 1]) {
+          adapter = args[adapterIndex + 1];
+        }
+        
+        const adapterPrefixMatch = args.find(a => a.startsWith('--adapter='));
+        if (adapterPrefixMatch) {
+          adapter = adapterPrefixMatch.split('=')[1];
+        }
+
+        await StaticSiteGenerator.generate({ adapter });
         break;
+      }
 
       case 'info':
         await handleInfoCommand(hasVerboseFlag);
@@ -47,6 +68,9 @@ export class CliParser {
     }
   }
 
+  /**
+   * Prints the standard CLI help menu and usage examples to the console.
+   */
   private static printHelp(): void {
     console.log(`
 Jen.js - High-performance web framework

@@ -1,3 +1,8 @@
+//! Code Frame Generator
+//!
+//! Provides a WASM utility for visualizing errors in code, complete with
+//! syntax highlighting and context lines around the error location.
+
 use syntect::easy::HighlightLines;
 use syntect::highlighting::{Style, ThemeSet};
 use syntect::parsing::SyntaxSet;
@@ -22,6 +27,20 @@ fn is_accidentally_rust(source: &str) -> bool {
         .any(|&indicator| source.contains(indicator))
 }
 
+/// Generates an ANSI-colored console code frame indicating an error location.
+///
+/// Builds a visual snippet of the source code highlighting the specific line
+/// and column where an error occurred.
+///
+/// # Arguments
+///
+/// * `source` - The complete source code block containing the error
+/// * `target_line` - The 1-based index of the line where the error occurred
+/// * `target_column` - The 1-based index of the column
+/// * `message` - The error message to display above the code block
+/// * `lines_above` - How many contextual lines to show before the error
+/// * `lines_below` - How many contextual lines to show after the error
+/// * `file_extension` - The type of file (e.g. "tsx" or "rs") used for syntax highlighting
 #[wasm_bindgen(js_name = generateCodeFrame)]
 pub fn generate_code_frame(
     source: &str,

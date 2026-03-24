@@ -1,21 +1,70 @@
-import renderToString from 'preact-render-to-string';
+import { renderToReadableStream } from 'preact-render-to-string/stream';
 import { HtmlGenerator } from '../build/build';
 import type { ViteDevServer } from 'vite';
 import { h } from 'preact';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getUsedFonts } from '../fonts/google';
+import { AppShellManager } from '../core/app-shell';
+import { ErrorBoundary } from '../core/error-boundary';
+import { DataLoaderManager } from '../core/data-loader';
+import { parseMetadata } from './metadata';
+
+import { RouteDefinition } from '../types';
 
 export class SsrEngine {
+  public static manifest: string = '{}';
+
   public static async renderPage(
-    filePath: string,
+    route: RouteDefinition,
     url: string,
     vite: ViteDevServer,
-  ): Promise<string> {
+    locale?: string,
+  ): Promise<string | Response> {
     const ssrStartTime = performance.now();
+
+    // Initialize app shell on first render
+    await AppShellManager.initialize(vite);
+
+    const filePath = route.filePathTsx || route.filePathJsx;
+    if (!filePath) throw new Error(`Route ${route.urlPath} has no component file.`);
 
     const pageModule = await vite.ssrLoadModule(filePath);
     const PageComponent = pageModule.default;
+
+    // ═══════════════════════════════════════════════════════════════
+    // LOAD PAGE DATA (if load() function exists)
+    // ═══════════════════════════════════════════════════════════════
+    let pageProps: Record<string, unknown> = {};
+
+    try {
+      const context = DataLoaderManager.buildContext(url);
+      const loadResult = await DataLoaderManager.loadPageData(filePath, vite, context);
+
+      if (loadResult) {
+        // Handle redirect
+        if (loadResult.redirect) {
+          return DataLoaderManager.createRedirectResponse(loadResult.redirect);
+        }
+
+        // Handle not found
+        if (loadResult.notFound) {
+          return DataLoaderManager.createNotFoundResponse();
+        }
+
+        pageProps = loadResult.props;
+      }
+    } catch (error) {
+      // Log data loader errors but don't fail the render
+      if (typeof console !== 'undefined') {
+        console.error('[Data Loader Error]', error instanceof Error ? error.message : String(error));
+      }
+      // Continue with empty props
+    }
+
+    if (locale) {
+      pageProps.locale = locale;
+    }
 
     // ═══════════════════════════════════════════════════════════════
     // LOAD ROUTER VIA VITE: To avoid Context mismatch ("Dual Instance")
@@ -39,28 +88,79 @@ export class SsrEngine {
       cssFiles.push(cssContent);
     }
 
-    // Wrap the page component in the Router so that hooks like useRouter work during SSR
-    const componentHtml = renderToString(
-      h(ViteRouter, {
-        initialPath: url,
-        initialPagePath: filePath,
-        children: h(PageComponent, {}),
-      }),
-    );
+    // Get app shell components if they exist
+    const AppComponent = AppShellManager.getAppComponent();
+    // const DocumentComponent = AppShellManager.getDocumentComponent(); // unused but could have side effects?
+    const ErrorComponent = AppShellManager.getErrorComponent();
+
+    // Build the component tree: Router > ErrorBoundary > App > ...layouts > Page
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let page: any = h(PageComponent as any, pageProps);
+
+    // Apply nested layout wrappers sequentially
+    if (route.layouts && route.layouts.length > 0) {
+      for (let i = route.layouts.length - 1; i >= 0; i--) {
+        const layoutFile = route.layouts[i].tsx || route.layouts[i].jsx;
+        if (layoutFile) {
+          const layoutModule = await vite.ssrLoadModule(layoutFile);
+          const LayoutCmp = layoutModule.default;
+          if (LayoutCmp) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            page = h(LayoutCmp as any, null, page);
+          }
+        }
+      }
+    }
+
+    // If _app.tsx exists, wrap the page in it
+    if (AppComponent) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      page = h(AppComponent as any, {
+        Component: PageComponent,
+        pageProps,
+        children: page,
+      });
+    }
+
+    // Wrap in error boundary to catch rendering errors
+    page = h(ErrorBoundary, {
+      fallback: ErrorComponent || undefined,
+      onError: (error: Error) => {
+        if (typeof console !== 'undefined') {
+          console.error('[SSR Error Boundary]', error.message);
+          console.error('[SSR Error Stack]', error.stack);
+        }
+      },
+      children: page,
+    });
+
     const ssrDuration = performance.now() - ssrStartTime;
 
-    let html = HtmlGenerator.constructDocument(
-      componentHtml,
-      filePath,
-      cssFiles,
-    );
+    // Evaluate dynamic or static SEO metadata properties
+    let metadataHtml = '';
+    if (typeof pageModule.generateMetadata === 'function') {
+      try {
+        const dynamicMeta = await pageModule.generateMetadata(pageProps);
+        metadataHtml = parseMetadata(dynamicMeta);
+      } catch (err) {
+        if (typeof console !== 'undefined') console.error('[Metadata Error]', err);
+      }
+    } else if (pageModule.metadata) {
+      metadataHtml = parseMetadata(pageModule.metadata);
+    }
+
+    // Shell configuration with empty root
+    let template = HtmlGenerator.constructTemplate(filePath, cssFiles, metadataHtml);
+    if (locale) {
+      template = template.replace('<html lang="en">', `<html lang="${locale}">`);
+    }
 
     // ═════════════════════════════════════════════════════════════════
     // DEVTOOLS: Inject SSR metrics into HTML
     // ═════════════════════════════════════════════════════════════════
     const ssrMetrics = {
       renderTime: ssrDuration,
-      componentCount: 1,
+      componentCount: 1, // Optional: tracking components explicitly limits performance scaling
       url,
     };
 
@@ -68,11 +168,53 @@ export class SsrEngine {
       .map((url) => `<link rel="stylesheet" href="${url}">`)
       .join('\n');
 
-    html = html.replace(
+    const manifestScript = `<script>window.__JEN_ROUTE_MANIFEST__ = ${SsrEngine.manifest};</script>`;
+    template = template.replace(
       '</head>',
-      `${fontLinks}\n<script>window.__JEN_SSR_METRICS__ = ${JSON.stringify(ssrMetrics)};</script>\n</head>`,
+      `${fontLinks}\n<script>window.__JEN_SSR_METRICS__ = ${JSON.stringify(ssrMetrics)};</script>\n${manifestScript}\n</head>`,
     );
 
-    return await vite.transformIndexHtml(url, html);
+    // Give Vite the opportunity to attach HMR connections into the split document
+    template = await vite.transformIndexHtml(url, template);
+
+    const [headChunk, tailChunk] = template.split('<!--app-html-->');
+
+    // Activate the Preact Stream
+    const componentStream = renderToReadableStream(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      h(ViteRouter as any, {
+        initialPath: url,
+        initialPagePath: filePath,
+        children: page,
+      })
+    );
+
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+
+    (async () => {
+      try {
+        const encoder = new TextEncoder();
+        await writer.write(encoder.encode(headChunk));
+
+        const reader = componentStream.getReader();
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          // value is Uint8Array
+          await writer.write(value);
+        }
+
+        await writer.write(encoder.encode(tailChunk));
+      } catch (error) {
+        console.error('[SSR Streaming Error]', error);
+      } finally {
+        await writer.close();
+      }
+    })();
+
+    return new Response(readable, {
+      headers: { 'Content-Type': 'text/html' }
+    });
   }
 }

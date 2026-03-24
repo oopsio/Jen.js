@@ -15,6 +15,7 @@
 import { RuntimeDetector } from './runtime';
 import { RouterMap } from '../core/map';
 import { RouteScanner } from '../core/scan';
+import { RuntimeConfig } from '../config/config';
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 
@@ -111,7 +112,7 @@ class ProductionSSREngine {
    * Render a page component from the dist bundle
    * All modules must be pre-built and bundled
    */
-  public static async renderPage(componentPath: string): Promise<string> {
+  public static async renderPage(componentPath: string, locale?: string): Promise<string> {
     try {
       // Dynamic import from pre-bundled dist
       // In production, this should resolve from your bundled output
@@ -122,8 +123,10 @@ class ProductionSSREngine {
         throw new Error(`Component at ${componentPath} has no default export`);
       }
 
-      const componentHtml = renderToString(h(PageComponent, {}));
-      return this.constructDocument(componentHtml, componentPath);
+      const pageProps: Record<string, unknown> = {};
+      if (locale) pageProps.locale = locale;
+      const componentHtml = renderToString(h(PageComponent, pageProps));
+      return this.constructDocument(componentHtml, componentPath, locale);
     } catch (error) {
       // Log full error server-side
       console.error('SSR Error:', error);
@@ -137,9 +140,10 @@ class ProductionSSREngine {
   private static constructDocument(
     renderedHtml: string,
     componentPath: string,
+    locale?: string,
   ): string {
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${locale || 'en'}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -181,12 +185,77 @@ class ProductionSSREngine {
 // REQUEST HANDLER
 // ============================================================================
 
-async function handleRequest(req: Request): Promise<Response> {
+type MiddlewareFn = (req: Request) => Response | void | Promise<Response | void>;
+let globalMiddleware: MiddlewareFn | undefined;
+
+export function setMiddleware(fn: MiddlewareFn): void {
+  globalMiddleware = fn;
+}
+
+async function handleRequest(request: Request): Promise<Response> {
+  let req = request;
   const startTime = performance.now();
   const url = new URL(req.url);
   const { pathname } = url;
 
   try {
+    // ────────────────────────────────────────────────────────────────────
+    // 0. MIDDLEWARE: Intercept request before routing
+    // ────────────────────────────────────────────────────────────────────
+    if (globalMiddleware) {
+      const mwResponse = await globalMiddleware(req);
+      if (mwResponse instanceof Response) {
+        // If middleware returns a Response, short-circuit
+        // Check for 'x-jen-middleware: next' to continue
+        if (mwResponse.headers.get('x-jen-middleware') !== 'next') {
+          return mwResponse;
+        }
+        
+        // Handle Rewrite
+        const rewriteUrl = mwResponse.headers.get('x-jen-rewrite');
+        if (rewriteUrl) {
+          const newUrl = new URL(rewriteUrl, req.url);
+          req = new Request(newUrl, {
+            method: req.method,
+            headers: req.headers,
+            body: req.body,
+          });
+        }
+      }
+    }
+
+    // ────────────────────────────────────────────────────────────────────
+    // 0.5. i18n LOCALE ROUTING: Intercept and rewrite locale prefixes
+    // ────────────────────────────────────────────────────────────────────
+    const i18nConfig = RuntimeConfig.i18n;
+    if (i18nConfig && i18nConfig.locales) {
+      const urlObj = new URL(req.url);
+      const pathParts = urlObj.pathname.split('/');
+      const firstPath = pathParts[1];
+
+      if (firstPath && i18nConfig.locales.includes(firstPath)) {
+        pathParts.splice(1, 1);
+        urlObj.pathname = pathParts.join('/') || '/';
+        
+        const newHeaders = new Headers(req.headers);
+        newHeaders.set('x-jen-locale', firstPath);
+        
+        req = new Request(urlObj.toString(), {
+          method: req.method,
+          headers: newHeaders,
+          body: req.body
+        });
+      } else {
+        const newHeaders = new Headers(req.headers);
+        newHeaders.set('x-jen-locale', i18nConfig.defaultLocale || 'en');
+        req = new Request(req.url, {
+          method: req.method,
+          headers: newHeaders,
+          body: req.body
+        });
+      }
+    }
+
     // ────────────────────────────────────────────────────────────────────
     // 1. RUST ROUTER GATEKEEPER: Validate route before any processing
     // ────────────────────────────────────────────────────────────────────
@@ -264,6 +333,19 @@ export async function startProductionServer(
   // ────────────────────────────────────────────────────────────────────
   const scanner = new RouteScanner();
   const routes = scanner.scanPages();
+  const middlewarePath = scanner.scanMiddleware();
+
+  if (middlewarePath) {
+    try {
+      const middlewareModule = await import(/* @vite-ignore */ middlewarePath);
+      if (typeof middlewareModule.default === 'function') {
+        setMiddleware(middlewareModule.default);
+        console.log(`${colors.green}Middleware${colors.reset} registered from ${middlewarePath}`);
+      }
+    } catch (e) {
+      console.error('Failed to load middleware:', e);
+    }
+  }
 
   for (const route of routes) {
     RouterMap.registerRoute(
@@ -272,8 +354,9 @@ export async function startProductionServer(
       route.filePathJsx,
       async (req, ctx) => {
         try {
+          const locale = req.headers.get('x-jen-locale') || undefined;
           const filePath = ctx.filePath;
-          const html = await ProductionSSREngine.renderPage(filePath);
+          const html = await ProductionSSREngine.renderPage(filePath, locale);
           return new Response(html, {
             headers: { 'Content-Type': 'text/html', ...buildSecurityHeaders() },
           });

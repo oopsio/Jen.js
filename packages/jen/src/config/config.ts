@@ -1,5 +1,9 @@
 import { JenConfig } from '../types';
 
+/**
+ * Global parsed runtime configuration object for the Jen.js framework.
+ * Holds defaults until overridden by a loaded `jen.config.ts`.
+ */
 export const RuntimeConfig: JenConfig = {
   port: 3000,
   buildDirectory: 'dist/static',
@@ -19,8 +23,15 @@ export const RuntimeConfig: JenConfig = {
     retryDelay: 1000,
     globalRevalidate: undefined,
   },
+  requireDangerouslySetScripts: true,
 };
 
+/**
+ * Merges partial user-provided settings securely into the global runtime configuration.
+ * Distinctly handles nested config objects like `middleware` and `isr` to prevent overwriting.
+ *
+ * @param userSettings A partial configuration provided by the developer
+ */
 export function updateRuntimeConfig(userSettings: Partial<JenConfig>): void {
   // Merge middleware config properly
   if (userSettings.middleware) {

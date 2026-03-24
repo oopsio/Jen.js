@@ -4,11 +4,15 @@ import { RouterMap } from '../core/map';
 import { SsrEngine } from './ssr';
 import { ISRManager } from './isr-manager';
 import { MiddlewareManager } from './middleware-manager';
+import { APIRouteScanner, APIRouter, APIResponse, type HTTPMethod, type APIRequest } from '../core/api-router';
 import { Buffer } from 'node:buffer';
 import checker from 'vite-plugin-checker';
 import { createDevToolsPlugin } from '../devtools/vite-plugin';
+import { jenImageOptimizerPlugin } from '../plugin/image';
+import { RuntimeConfig } from '../config/config';
 import { RouterBridge } from '../devtools/router-bridge';
 import { SecurityAuditor } from '../devtools/security-audit';
+import path from 'node:path';
 
 const colors = {
   reset: '\x1b[0m',
@@ -33,12 +37,73 @@ function buildSecurityHeaders(): Record<string, string> {
   };
 }
 
+/**
+ * Development Server Manager.
+ * Orchestrates Vite, the Javascript runtime, Incremental Static Regeneration (ISR),
+ * and dynamic route rendering to serve the application during development.
+ */
 export class DevServerManager {
   private static viteCompiler: ViteDevServer;
 
+  /**
+   * Starts the Jen.js development server.
+   * Internally boots up Vite, assigns route handlers from the RouteScanner,
+   * sets up middleware, ISR cache checks, and injects Security headers.
+   *
+   * @param serverPort The port to listen on (default: 3000)
+   */
   public static async start(serverPort: number = 3000): Promise<void> {
+    // ═══════════════════════════════════════════════════════════════
+    // SCAN & REGISTER API ROUTES
+    // ═══════════════════════════════════════════════════════════════
+    const apiRoutes = APIRouteScanner.scanAPIRoutes();
+    for (const apiRoute of apiRoutes) {
+      try {
+        const moduleExports = await (await import(apiRoute.filePath)).default;
+        
+        // Collect all HTTP method handlers from the module
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+        const handlers: Record<string, Function> = {};
+        for (const method of ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']) {
+          if (typeof moduleExports[method] === 'function') {
+            handlers[method] = moduleExports[method];
+          }
+        }
+
+        APIRouter.registerRoute(apiRoute.pathname, handlers);
+        
+        if (Object.keys(handlers).length > 0) {
+          console.log(
+            `${colors.green}API${colors.reset} ${Object.keys(handlers).join('|')} ${colors.blue}${apiRoute.pathname}${colors.reset}`,
+          );
+        }
+      } catch {
+        // API route failed to load, continue
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // SCAN & REGISTER PAGE ROUTES
+    // ═══════════════════════════════════════════════════════════════
     const scanner = new RouteScanner();
     const routes = scanner.scanPages();
+
+    // Compute route manifest for client hydration
+    const manifestObj: Record<string, unknown> = {};
+    for (const r of routes) {
+      if (!r.filePathTsx && !r.filePathJsx) continue;
+      const rPath = r.filePathTsx || r.filePathJsx || '';
+      manifestObj[r.urlPath] = {
+        page: '/' + path.relative(process.cwd(), rPath).replace(/\\/g, '/'),
+        layouts: (r.layouts || []).map(l => {
+          const lp = l.tsx || l.jsx;
+          if (!lp) return '';
+          return '/' + path.relative(process.cwd(), lp).replace(/\\/g, '/');
+        }).filter(Boolean),
+        isDynamic: r.isDynamic,
+      };
+    }
+    SsrEngine.manifest = JSON.stringify(manifestObj);
 
     for (const route of routes) {
       // Pass both file paths into the registerRoute function
@@ -48,6 +113,8 @@ export class DevServerManager {
         route.filePathJsx,
         async (req, ctx) => {
           // Try ISR first (if enabled)
+          const locale = req.headers.get('x-jen-locale') || undefined;
+          
           if (ISRManager.isISREnabled()) {
             // Load module to get exports (revalidate, isDynamic, etc.)
             const moduleExports = route.filePathTsx
@@ -56,7 +123,7 @@ export class DevServerManager {
 
             const isrResponse = await ISRManager.handleRequest(
               req,
-              ctx.filePath,
+              route,
               ctx.url,
               moduleExports,
               this.viteCompiler,
@@ -68,11 +135,20 @@ export class DevServerManager {
           }
 
           // Fall back to normal SSR
-          const html = await SsrEngine.renderPage(
-            ctx.filePath,
+          const ssrResult = await SsrEngine.renderPage(
+            route,
             ctx.url,
             this.viteCompiler,
+            locale
           );
+
+          // If SSR returns a Response (redirect, 404, etc), return it
+          if (ssrResult instanceof Response) {
+            return ssrResult;
+          }
+
+          // Otherwise, return the HTML
+          const html = ssrResult as string;
           return new Response(html, {
             headers: {
               'Content-Type': 'text/html',
@@ -140,10 +216,143 @@ export class DevServerManager {
               const host = req.headers.host || `localhost:${serverPort}`;
               const fullUrl = `${protocol}://${host}${url}`;
 
-              const webRequest = new Request(fullUrl, {
+              // ═══════════════════════════════════════════════════════════════
+              // CHECK FOR API ROUTES FIRST
+              // ═══════════════════════════════════════════════════════════════
+              if (APIRouter.isAPIRoute(url)) {
+                const method = (req.method || 'GET').toUpperCase() as HTTPMethod;
+                const handler = APIRouter.findRoute(url, method);
+
+                if (handler) {
+                  const apiReq = new Request(fullUrl, {
+                    method: req.method,
+                    headers: req.headers as HeadersInit,
+                  }) as APIRequest;
+
+                  // Parse query string
+                  const urlObj = new URL(fullUrl);
+                  apiReq.query = Object.fromEntries(urlObj.searchParams);
+
+                  // Parse body for POST/PUT/PATCH
+                  if (['POST', 'PUT', 'PATCH'].includes(method)) {
+                    const bodyText = await new Promise<string>((resolve) => {
+                      let data = '';
+                      req.on('data', (chunk) => {
+                        data += chunk;
+                      });
+                      req.on('end', () => resolve(data));
+                    });
+
+                    if (bodyText) {
+                      try {
+                        apiReq.body = JSON.parse(bodyText);
+                      } catch {
+                        apiReq.body = bodyText;
+                      }
+                    }
+                  }
+
+                  try {
+                    const apiRes = new APIResponse();
+                    const apiResponse = await handler(apiReq, apiRes);
+
+                    const routeDuration = performance.now() - routeStartTime;
+                    console.log(
+                      `${colors.green}${method}${colors.reset} ${colors.blue}${url}${colors.reset} - ${colors.magenta}${apiResponse.status}${colors.reset} ${colors.reset}(${routeDuration.toFixed(2)}ms)${colors.reset}`,
+                    );
+
+                    res.writeHead(apiResponse.status, {
+                      ...Object.fromEntries(apiResponse.headers),
+                    });
+                    res.end(await apiResponse.text());
+                    return;
+                  } catch (error: unknown) {
+                    console.error(`${colors.error}API Error:${colors.reset}`, error);
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(
+                      JSON.stringify({
+                        error: 'Internal Server Error',
+                        message: error instanceof Error ? error.message : String(error),
+                      }),
+                    );
+                    return;
+                  }
+                }
+              }
+
+              let webRequest = new Request(fullUrl, {
                 method: req.method,
                 headers: req.headers as HeadersInit,
               });
+
+              // ────────────────────────────────────────────────────────────────────
+              // 0. MIDDLEWARE: Intercept request before routing
+              // ────────────────────────────────────────────────────────────────────
+              const scanner = new RouteScanner();
+              const middlewarePath = scanner.scanMiddleware();
+              
+              if (middlewarePath && DevServerManager.viteCompiler) {
+                const middlewareModule = await DevServerManager.viteCompiler.ssrLoadModule(middlewarePath);
+                const middleware = middlewareModule.default;
+                
+                if (typeof middleware === 'function') {
+                  const mwResponse = await middleware(webRequest);
+                  if (mwResponse instanceof Response) {
+                    if (mwResponse.headers.get('x-jen-middleware') !== 'next') {
+                      // Short-circuit with middleware response
+                      res.statusCode = mwResponse.status;
+                      for (const [key, value] of mwResponse.headers.entries()) {
+                        res.setHeader(key, value);
+                      }
+                      res.end(await mwResponse.text());
+                      return;
+                    }
+
+                    // Handle Rewrite
+                    const rewriteUrl = mwResponse.headers.get('x-jen-rewrite');
+                    if (rewriteUrl) {
+                      const newUrl = new URL(rewriteUrl, webRequest.url);
+                      webRequest = new Request(newUrl, {
+                        method: webRequest.method,
+                        headers: webRequest.headers,
+                        body: webRequest.body,
+                      });
+                    }
+                  }
+                }
+              }
+
+              // ────────────────────────────────────────────────────────────────────
+              // 0.5. i18n LOCALE ROUTING: Intercept and rewrite locale prefixes
+              // ────────────────────────────────────────────────────────────────────
+              const i18nConfig = RuntimeConfig.i18n;
+              if (i18nConfig && i18nConfig.locales) {
+                const urlObj = new URL(webRequest.url);
+                const pathParts = urlObj.pathname.split('/');
+                const firstPath = pathParts[1];
+
+                if (firstPath && i18nConfig.locales.includes(firstPath)) {
+                  pathParts.splice(1, 1);
+                  urlObj.pathname = pathParts.join('/') || '/';
+                  
+                  const newHeaders = new Headers(webRequest.headers);
+                  newHeaders.set('x-jen-locale', firstPath);
+                  
+                  webRequest = new Request(urlObj.toString(), {
+                    method: webRequest.method,
+                    headers: newHeaders,
+                    body: webRequest.body
+                  });
+                } else {
+                  const newHeaders = new Headers(webRequest.headers);
+                  newHeaders.set('x-jen-locale', i18nConfig.defaultLocale || 'en');
+                  webRequest = new Request(webRequest.url, {
+                    method: webRequest.method,
+                    headers: newHeaders,
+                    body: webRequest.body
+                  });
+                }
+              }
 
               const jenResponse = await RouterMap.resolveRequest(webRequest);
               const routeDuration = performance.now() - routeStartTime;
@@ -183,14 +392,46 @@ export class DevServerManager {
                     `${colors.yellow}${cacheStatus}${colors.reset} (age: ${cacheAge}s) ${colors.green}${url}${colors.reset}`,
                   );
                 }
-                const body = await jenResponse.text();
-                res.writeHead(jenResponse.status, {
-                  'Content-Type': 'text/html',
-                  'Content-Length': Buffer.byteLength(body),
-                  ...buildSecurityHeaders(),
-                  ...Object.fromEntries(jenResponse.headers),
-                });
-                res.end(body);
+                
+                res.statusCode = jenResponse.status;
+                
+                const responseHeaders = Object.fromEntries(jenResponse.headers || {});
+                for (const [key, value] of Object.entries(responseHeaders)) {
+                   if (key.toLowerCase() !== 'content-length') {
+                     res.setHeader(key, String(value));
+                   }
+                }
+                
+                for (const [key, value] of Object.entries(buildSecurityHeaders())) {
+                   res.setHeader(key, value);
+                }
+                
+                res.setHeader('Content-Type', 'text/html');
+                
+                if (jenResponse.body && jenResponse.body instanceof ReadableStream) {
+                   res.setHeader('Transfer-Encoding', 'chunked');
+                   const reader = jenResponse.body.getReader();
+                   
+                   try {
+                     while(true) {
+                       const { done, value } = await reader.read();
+                       if (done) {
+                         res.end();
+                         break;
+                       }
+                       res.write(Buffer.from(value));
+                     }
+                   } catch(streamErr) {
+                     console.error('[Streaming Pipeline Failure]', streamErr);
+                     if (!res.headersSent) res.writeHead(500);
+                     res.end('Streaming abort');
+                   }
+                } else {
+                   const bodyText = await jenResponse.text();
+                   res.setHeader('Content-Length', Buffer.byteLength(bodyText));
+                   res.end(bodyText);
+                }
+                
                 return;
               }
 
@@ -225,9 +466,13 @@ export class DevServerManager {
     this.viteCompiler = await createViteServer({
       plugins: [
         jenJsPlugin(),
+        jenImageOptimizerPlugin(),
         createDevToolsPlugin(),
         checker({ typescript: true }),
       ],
+      define: {
+        __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(RuntimeConfig.requireDangerouslySetScripts ?? true),
+      },
       server: { port: serverPort, strictPort: true, middlewareMode: false },
       appType: 'custom',
       root: process.cwd(),

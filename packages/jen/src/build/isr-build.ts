@@ -69,11 +69,35 @@ export class ISRBuildIntegration {
         // Render the page
         const pageModule = await vite.ssrLoadModule(filePath);
         const PageComponent = pageModule.default;
-        if (!PageComponent) {
-          continue;
+        if (!PageComponent) continue;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let page: any = h(PageComponent as any, {});
+
+        if (route.layouts && route.layouts.length > 0) {
+          for (let i = route.layouts.length - 1; i >= 0; i--) {
+            const layoutPath = route.layouts[i].tsx || route.layouts[i].jsx;
+            if (layoutPath) {
+              const layoutModule = await vite.ssrLoadModule(layoutPath);
+              const Layout = layoutModule.default;
+              if (Layout) {
+                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                 page = h(Layout as any, null, page);
+              }
+            }
+          }
         }
 
-        const componentHtml = renderToString(h(PageComponent, {}));
+        const componentHtml = renderToString(page);
+
+        const manifestObj: Record<string, unknown> = {};
+        const NodePath = await import('node:path');
+        const rPath = route.filePathTsx || route.filePathJsx || '';
+        manifestObj[route.urlPath] = {
+          page: '/' + NodePath.relative(process.cwd(), rPath).replace(/\\/g, '/'),
+          layouts: (route.layouts || []).map(l => '/' + NodePath.relative(process.cwd(), l.tsx || l.jsx || '').replace(/\\/g, '/')),
+          isDynamic: route.isDynamic,
+        };
 
         // Create HTML document
         const html = `<!DOCTYPE html>
@@ -82,6 +106,7 @@ export class ISRBuildIntegration {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jen.js App</title>
+    <script id="jen-route-manifest" type="application/json">${JSON.stringify(manifestObj)}</script>
 </head>
 <body>
     <div id="jen-root">${componentHtml}</div>
