@@ -1,8 +1,8 @@
 /**
  * Request lifecycle handler with ISR integration
  */
-import type { RouteMetadata, RenderFunction } from '../types';
-import { CacheManager } from '../cache/cache-manager';
+import type { RouteMetadata, RenderFunction } from '../types.js';
+import { CacheManager } from '../cache/cache-manager.js';
 
 /**
  * ISR-aware request handler

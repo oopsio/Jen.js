@@ -56,9 +56,15 @@ export class ErrorBoundary extends Component<
     }
 
     // Log to console in development
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    if (
+      typeof window !== 'undefined' &&
+      process.env.NODE_ENV === 'development'
+    ) {
       console.error('[ErrorBoundary] Caught error:', error);
-      console.error('[ErrorBoundary] Component stack:', errorInfo.componentStack);
+      console.error(
+        '[ErrorBoundary] Component stack:',
+        errorInfo.componentStack,
+      );
     }
   }
 
@@ -92,7 +98,11 @@ export class ErrorBoundary extends Component<
           fontFamily: 'monospace',
         },
         children: [
-          h('h2', { style: { color: '#f00', margin: '0 0 1rem 0' } }, '⚠️ Error'),
+          h(
+            'h2',
+            { style: { color: '#f00', margin: '0 0 1rem 0' } },
+            '⚠️ Error',
+          ),
           h('pre', {
             style: {
               background: '#fff',

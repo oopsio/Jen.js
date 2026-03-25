@@ -20,7 +20,8 @@ const inter = GoogleFont('Inter', {
  * - reset: Function to reset the error state and try again
  */
 export default function ErrorPage({ error, reset }: ErrorFallbackProps): VNode {
-  const isDev = typeof process !== 'undefined' && process.env.NODE_ENV === 'development';
+  const isDev =
+    typeof process !== 'undefined' && process.env.NODE_ENV === 'development';
 
   return (
     <div

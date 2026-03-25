@@ -1,8 +1,8 @@
 /**
  * In-memory storage provider for development
  */
-import type { CacheEntry } from '../types';
-import { StorageProvider } from './storage-provider';
+import type { CacheEntry } from '../types.js';
+import { StorageProvider } from './storage-provider.js';
 
 export class MemoryStorage extends StorageProvider {
   private cache: Map<string, CacheEntry> = new Map();

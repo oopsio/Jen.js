@@ -1,24 +1,24 @@
 // src/build/StaticSiteGenerator.ts
 import { build, createServer as createViteServer, ViteDevServer } from 'vite';
-import { RouteScanner } from '../core/scan';
-import { ISRBuildIntegration } from './isr-build';
-import { ConfigLoader } from '../config/loader';
+import { RouteScanner } from '../core/scan.js';
+import { ISRBuildIntegration } from './isr-build.js';
+import { ConfigLoader } from '../config/loader.js';
 import { AdapterManager } from '../adapters/index.js';
-import { RuntimeConfig } from '../config/config';
+import { RuntimeConfig } from '../config/config.js';
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
-import { jenImageOptimizerPlugin } from '../plugin/image';
+import { jenImageOptimizerPlugin } from '../plugin/image.js';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseMetadata } from '../server/metadata';
+import { parseMetadata } from '../server/metadata.js';
 
 /**
  * Utility for constructing complete HTML documents during the build phase.
  */
 export class HtmlGenerator {
   /**
-   * Generates a structural HTML template with the interpolation token `<!--app-html-->` 
-   * exactly where the core React tree should mount, making chunked string replacement or 
+   * Generates a structural HTML template with the interpolation token `<!--app-html-->`
+   * exactly where the core React tree should mount, making chunked string replacement or
    * streams viable without duplicating the head and hydrate hooks.
    */
   public static constructTemplate(
@@ -126,7 +126,10 @@ export class HtmlGenerator {
     cssFiles: string[] = [],
     metadataHtml: string = '',
   ): string {
-    return this.constructTemplate(pageFilePath, cssFiles, metadataHtml).replace('<!--app-html-->', renderedHtml);
+    return this.constructTemplate(pageFilePath, cssFiles, metadataHtml).replace(
+      '<!--app-html-->',
+      renderedHtml,
+    );
   }
 }
 
@@ -168,11 +171,13 @@ export class StaticSiteGenerator {
       const rPath = r.filePathTsx || r.filePathJsx || '';
       manifestObj[r.urlPath] = {
         page: '/' + path.relative(process.cwd(), rPath).replace(/\\/g, '/'),
-        layouts: (r.layouts || []).map(l => {
-          const lp = l.tsx || l.jsx;
-          if (!lp) return '';
-          return '/' + path.relative(process.cwd(), lp).replace(/\\/g, '/');
-        }).filter(Boolean),
+        layouts: (r.layouts || [])
+          .map((l) => {
+            const lp = l.tsx || l.jsx;
+            if (!lp) return '';
+            return '/' + path.relative(process.cwd(), lp).replace(/\\/g, '/');
+          })
+          .filter(Boolean),
         isDynamic: r.isDynamic,
       };
     }
@@ -193,37 +198,46 @@ export class StaticSiteGenerator {
           route.urlPath === '/'
             ? 'index'
             : route.urlPath.replace(/^\//, '').replace(/\//g, '-');
-        
-        const fileKeyName = locale ? `${locale}/${route.urlPath === '/' ? 'index' : route.urlPath.replace(/^\//, '')}` : baseRouteName;
-        const safeTempName = locale ? `${locale}-${baseRouteName}` : baseRouteName;
+
+        const fileKeyName = locale
+          ? `${locale}/${route.urlPath === '/' ? 'index' : route.urlPath.replace(/^\//, '')}`
+          : baseRouteName;
+        const safeTempName = locale
+          ? `${locale}-${baseRouteName}`
+          : baseRouteName;
 
         const outDirForHtml = path.join(tempDir, locale || '.');
-        if (!fs.existsSync(outDirForHtml)) fs.mkdirSync(outDirForHtml, { recursive: true });
+        if (!fs.existsSync(outDirForHtml))
+          fs.mkdirSync(outDirForHtml, { recursive: true });
 
         const htmlPath = path.join(outDirForHtml, `${baseRouteName}.html`);
         const entryName = `entry-${safeTempName}.tsx`;
         const entryPath = path.join(outDirForHtml, entryName);
 
-      // 1. Create a physical TSX file for Vite to bundle
-      let relativeComponentPath = path
-        .relative(outDirForHtml, filePath)
-        .replace(/\\/g, '/');
-      if (!relativeComponentPath.startsWith('.')) relativeComponentPath = './' + relativeComponentPath;
-      
-      let imports = `import Page from '${relativeComponentPath}';\n`;
-      let structure = `h(Page, {})`;
-      if (route.layouts && route.layouts.length > 0) {
-        for (let i = route.layouts.length - 1; i >= 0; i--) {
-          const lPath = route.layouts[i].tsx || route.layouts[i].jsx;
-          if (!lPath) continue;
-          let relativeLayoutPath = path.relative(outDirForHtml, lPath).replace(/\\/g, '/');
-          if (!relativeLayoutPath.startsWith('.')) relativeLayoutPath = './' + relativeLayoutPath;
-          imports += `import Layout${i} from '${relativeLayoutPath}';\n`;
-          structure = `h(Layout${i}, null, ${structure})`;
+        // 1. Create a physical TSX file for Vite to bundle
+        let relativeComponentPath = path
+          .relative(outDirForHtml, filePath)
+          .replace(/\\/g, '/');
+        if (!relativeComponentPath.startsWith('.'))
+          relativeComponentPath = './' + relativeComponentPath;
+
+        let imports = `import Page from '${relativeComponentPath}';\n`;
+        let structure = `h(Page, {})`;
+        if (route.layouts && route.layouts.length > 0) {
+          for (let i = route.layouts.length - 1; i >= 0; i--) {
+            const lPath = route.layouts[i].tsx || route.layouts[i].jsx;
+            if (!lPath) continue;
+            let relativeLayoutPath = path
+              .relative(outDirForHtml, lPath)
+              .replace(/\\/g, '/');
+            if (!relativeLayoutPath.startsWith('.'))
+              relativeLayoutPath = './' + relativeLayoutPath;
+            imports += `import Layout${i} from '${relativeLayoutPath}';\n`;
+            structure = `h(Layout${i}, null, ${structure})`;
+          }
         }
-      }
-      
-      const entryContent = `
+
+        const entryContent = `
 import { hydrate, h } from 'preact';
 ${imports}
 const root = document.getElementById('jen-root');
@@ -231,49 +245,49 @@ if (root) {
     hydrate(${structure}, root);
 }
       `.trim();
-      fs.writeFileSync(entryPath, entryContent.trim());
+        fs.writeFileSync(entryPath, entryContent.trim());
 
-      // 2. Load the component directly (bypassing SsrEngine to avoid dev scripts)
-      const pageModule = await viteDev.ssrLoadModule(filePath);
-      const PageComponent = pageModule.default;
-      
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pageProps: any = {};
-      if (locale) pageProps.locale = locale;
+        // 2. Load the component directly (bypassing SsrEngine to avoid dev scripts)
+        const pageModule = await viteDev.ssrLoadModule(filePath);
+        const PageComponent = pageModule.default;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let page: any = h(PageComponent as any, pageProps);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const pageProps: any = {};
+        if (locale) pageProps.locale = locale;
 
-      // Nest inside layouts sequentially
-      if (route.layouts && route.layouts.length > 0) {
-        for (let i = route.layouts.length - 1; i >= 0; i--) {
-          const layoutPath = route.layouts[i].tsx || route.layouts[i].jsx;
-          if (layoutPath) {
-            const layoutModule = await viteDev.ssrLoadModule(layoutPath);
-            const Layout = layoutModule.default;
-            if (Layout) {
-               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-               page = h(Layout as any, null, page);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let page: any = h(PageComponent as any, pageProps);
+
+        // Nest inside layouts sequentially
+        if (route.layouts && route.layouts.length > 0) {
+          for (let i = route.layouts.length - 1; i >= 0; i--) {
+            const layoutPath = route.layouts[i].tsx || route.layouts[i].jsx;
+            if (layoutPath) {
+              const layoutModule = await viteDev.ssrLoadModule(layoutPath);
+              const Layout = layoutModule.default;
+              if (Layout) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                page = h(Layout as any, null, page);
+              }
             }
           }
         }
-      }
 
-      const componentHtml = renderToString(page);
+        const componentHtml = renderToString(page);
 
-      // Evaluate static metadata
-      let metadataHtml = '';
-      if (typeof pageModule.generateMetadata === 'function') {
-        try {
-           const dynamicMeta = await pageModule.generateMetadata({});
-           metadataHtml = parseMetadata(dynamicMeta);
-        } catch(e) {}
-      } else if (pageModule.metadata) {
-        metadataHtml = parseMetadata(pageModule.metadata);
-      }
+        // Evaluate static metadata
+        let metadataHtml = '';
+        if (typeof pageModule.generateMetadata === 'function') {
+          try {
+            const dynamicMeta = await pageModule.generateMetadata({});
+            metadataHtml = parseMetadata(dynamicMeta);
+          } catch (e) {}
+        } else if (pageModule.metadata) {
+          metadataHtml = parseMetadata(pageModule.metadata);
+        }
 
-      // 3. Create a totally clean HTML file with NO inline scripts
-      const html = `<!DOCTYPE html>
+        // 3. Create a totally clean HTML file with NO inline scripts
+        const html = `<!DOCTYPE html>
 <html lang="${locale || 'en'}">
 <head>
     <meta charset="UTF-8">
@@ -288,10 +302,10 @@ if (root) {
 </body>
 </html>`;
 
-      fs.writeFileSync(htmlPath, html);
-      inputFiles[fileKeyName] = htmlPath;
+        fs.writeFileSync(htmlPath, html);
+        inputFiles[fileKeyName] = htmlPath;
+      }
     }
-  }
 
     await viteDev.close();
 
@@ -318,7 +332,9 @@ if (root) {
       mode: 'production',
       plugins: [jenImageOptimizerPlugin()],
       define: {
-        __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(RuntimeConfig.requireDangerouslySetScripts ?? true),
+        __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(
+          RuntimeConfig.requireDangerouslySetScripts ?? true,
+        ),
       },
       build: {
         outDir: outDir,
@@ -338,14 +354,20 @@ if (root) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const siteUrl = (RuntimeConfig as any).baseUrl || 'https://example.com';
     const sitemapEntries = routes
-      .filter(r => !r.isDynamic)
-      .map(r => `  <url>\n    <loc>${siteUrl}${r.urlPath === '/' ? '' : r.urlPath}</loc>\n  </url>`)
+      .filter((r) => !r.isDynamic)
+      .map(
+        (r) =>
+          `  <url>\n    <loc>${siteUrl}${r.urlPath === '/' ? '' : r.urlPath}</loc>\n  </url>`,
+      )
       .join('\n');
-    
+
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries}\n</urlset>`;
-    
+
     fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemapXml);
-    fs.writeFileSync(path.join(outDir, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml`);
+    fs.writeFileSync(
+      path.join(outDir, 'robots.txt'),
+      `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml`,
+    );
 
     // 5. Clean up the temporary folder
     fs.rmSync(tempDir, { recursive: true });

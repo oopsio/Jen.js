@@ -1,0 +1,75 @@
+---
+title: Introduction
+description: Jen.js — The high-performance web framework built on Bun, Vite, Preact, and Rust.
+---
+
+**Jen.js** is a modern, full-stack web framework designed for speed. It combines [Bun](https://bun.sh) as the runtime, [Vite](https://vite.dev) as the bundler, [Preact](https://preactjs.com) for UI rendering, and [Rust/WASM](https://www.rust-lang.org) for critical-path routing — delivering a **3 kB** client runtime with streaming server-side rendering out of the box.
+
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash title="Install"
+    npm install we-jenjs
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash title="Install"
+    pnpm add we-jenjs
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash title="Install"
+    yarn add we-jenjs
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash title="Install"
+    bun add we-jenjs
+    ```
+  </Tab>
+</Tabs>
+
+## Key Features
+
+| Feature | Description |
+|---|---|
+| **Streaming SSR** | `renderToReadableStream` with `TransformStream` pipeline for fast TTFB |
+| **Static Site Generation** | Pre-render all routes to static HTML at build time |
+| **Incremental Static Regeneration** | Stale-while-revalidate caching with configurable TTLs |
+| **File-Based Routing** | `pages/` directory convention with dynamic `[$param]` segments |
+| **Nested Layouts** | Cascading `layout.tsx` files for persistent UI |
+| **Data Loaders** | `load()` / `server()` functions for server-side data fetching |
+| **API Routes** | `pages/api/*.ts` with typed HTTP method handlers |
+| **Edge Middleware** | `middleware.ts` with `NextResponse` for redirects, rewrites, headers |
+| **SEO Metadata** | `export const metadata` or `generateMetadata()` per page |
+| **i18n** | Locale-prefixed routing (`/en/about`, `/fr/about`) with automatic `<html lang>` |
+| **Image Optimization** | `<Image>` component powered by Sharp with WebP conversion |
+| **Font Optimization** | `GoogleFont()` with automatic SSR `<head>` injection |
+| **Script Management** | `<Script>` with `beforeInteractive` / `afterInteractive` / `lazyOnload` strategies |
+| **Edge Deployment** | Adapters for Vercel, Cloudflare Workers, and Node.js |
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│  Client (3 kB)                                  │
+│  Preact + Client Router + Hydration             │
+├─────────────────────────────────────────────────┤
+│  Server (Bun.serve)                             │
+│  Streaming SSR · ISR · Data Loaders · API Routes│
+├─────────────────────────────────────────────────┤
+│  Build (Vite)                                   │
+│  SSG · Image Optimizer · Font Injection         │
+├─────────────────────────────────────────────────┤
+│  Router (Rust → WASM)                           │
+│  RouterMap · Pattern Matching · Route Manifest   │
+└─────────────────────────────────────────────────┘
+```
+
+## What's Next?
+
+<Cards>
+  <Card title="Installation" href="/docs/installation" />
+  <Card title="Project Structure" href="/docs/project-structure" />
+  <Card title="Routing" href="/docs/routing" />
+  <Card title="CLI Reference" href="/docs/cli" />
+</Cards>

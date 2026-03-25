@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { RouteDefinition } from '../types';
+import { RouteDefinition } from '../types.js';
 
 const colors = {
   reset: '\x1b[0m',
@@ -46,8 +46,13 @@ export class RouteScanner {
    */
   public scanMiddleware(): string | undefined {
     const rootDir = path.dirname(this.pagesDirectory);
-    const middlewareFiles = ['middleware.ts', 'middleware.js', 'middleware.tsx', 'middleware.jsx'];
-    
+    const middlewareFiles = [
+      'middleware.ts',
+      'middleware.js',
+      'middleware.tsx',
+      'middleware.jsx',
+    ];
+
     for (const file of middlewareFiles) {
       const fullPath = path.join(rootDir, file).replace(/\\/g, '/');
       if (fs.existsSync(fullPath)) {
@@ -58,9 +63,9 @@ export class RouteScanner {
   }
 
   private walkAndScan(
-    directory: string, 
-    routes: RouteDefinition[], 
-    currentLayouts: { tsx?: string; jsx?: string }[] = []
+    directory: string,
+    routes: RouteDefinition[],
+    currentLayouts: { tsx?: string; jsx?: string }[] = [],
   ): void {
     if (!fs.existsSync(directory)) return;
 
@@ -72,8 +77,12 @@ export class RouteScanner {
     const layouts = [...currentLayouts];
     if (hasLayoutTsx || hasLayoutJsx) {
       layouts.push({
-        tsx: hasLayoutTsx ? path.join(directory, 'layout.tsx').replace(/\\/g, '/') : undefined,
-        jsx: hasLayoutJsx ? path.join(directory, 'layout.jsx').replace(/\\/g, '/') : undefined,
+        tsx: hasLayoutTsx
+          ? path.join(directory, 'layout.tsx').replace(/\\/g, '/')
+          : undefined,
+        jsx: hasLayoutJsx
+          ? path.join(directory, 'layout.jsx').replace(/\\/g, '/')
+          : undefined,
       });
     }
 

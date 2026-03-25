@@ -5,13 +5,13 @@
 
 import { Fragment } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
-import { DevToolsClient } from './client';
+import { DevToolsClient } from './client.js';
 import type {
   RouteMatchTrace,
   SecurityAuditResult,
   SSRMetrics,
   QueryLog,
-} from './types';
+} from './types.js';
 
 const styles = `
 .jen-devtools-overlay {

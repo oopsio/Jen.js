@@ -1,8 +1,8 @@
-export * from './link';
-export * from './router';
-export * from '../components/image';
-export * from '../components/script';
-export { ErrorBoundary } from '../core/error-boundary';
+export * from './link.js';
+export * from './router.js';
+export * from '../components/image.js';
+export * from '../components/script.js';
+export { ErrorBoundary } from '../core/error-boundary.js';
 export {
   APIRouter,
   APIResponse,
@@ -11,17 +11,17 @@ export {
   type APIRoute,
   type APIRouteHandlers,
   type HTTPMethod,
-} from '../core/api-router';
+} from '../core/api-router.js';
 export {
   DataLoaderManager,
   type LoadContext,
   type LoadResult,
   type DataLoader,
   type PageModule,
-} from '../core/data-loader';
+} from '../core/data-loader.js';
 export {
   CacheRevalidationAPI,
   jen,
   type RevalidateOptions,
   type RevalidateResult,
-} from '../core/cache-revalidation';
+} from '../core/cache-revalidation.js';

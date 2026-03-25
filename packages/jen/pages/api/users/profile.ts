@@ -1,6 +1,6 @@
 /**
  * GET /api/users/profile - Get current user profile
- * 
+ *
  * Returns the profile of the current authenticated user
  */
 

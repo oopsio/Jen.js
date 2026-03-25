@@ -1,0 +1,65 @@
+---
+title: Routing
+description: File-based routing powered by Rust/WASM.
+---
+
+Jen.js uses a **file-system based router**. Every directory under `pages/` containing an `app.tsx` (or `app.jsx`) file is automatically registered as a route.
+
+## How It Works
+
+The `RouteScanner` walks the `pages/` directory at startup and builds a route manifest. This manifest is compiled into a high-performance `RouterMap` backed by a Rust/WASM module for near-instant pattern matching.
+
+```
+pages/
+├── app.tsx              → /
+├── about/
+│   └── app.tsx          → /about
+├── blog/
+│   ├── app.tsx          → /blog
+│   └── [$slug]/
+│       └── app.tsx      → /blog/:slug
+└── dashboard/
+    ├── layout.tsx       → shared layout
+    ├── app.tsx          → /dashboard
+    └── settings/
+        └── app.tsx      → /dashboard/settings
+```
+
+## Route Components
+
+Each `app.tsx` file must export a **default Preact component**:
+
+```tsx title="pages/about/app.tsx"
+export default function About() {
+  return (
+    <div>
+      <h1>About Us</h1>
+      <p>Welcome to our site.</p>
+    </div>
+  );
+}
+```
+
+## Client-Side Navigation
+
+Jen.js intercepts navigation clicks using the `<Link>` component for smooth, SPA-like transitions without full page reloads:
+
+```tsx
+import { Link } from 'we-jenjs/client';
+
+export default function Nav() {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+      <Link href="/blog">Blog</Link>
+    </nav>
+  );
+}
+```
+
+The client router fetches the target page and swaps content while preserving layout state. See [Components → Link](/docs/components/link) for details.
+
+## Static Route Manifest
+
+During SSR, the route manifest is injected into the HTML as `window.__JEN_ROUTE_MANIFEST__`, enabling the client router to resolve pages without a server round-trip.

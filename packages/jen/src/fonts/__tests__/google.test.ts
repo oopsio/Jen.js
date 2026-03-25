@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { GoogleFont, getUsedFonts } from '../google';
+import { GoogleFont, getUsedFonts } from '../google.js';
 
 describe('GoogleFont', () => {
   it('should track used fonts', () => {

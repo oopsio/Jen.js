@@ -1,16 +1,17 @@
 import { renderToReadableStream } from 'preact-render-to-string/stream';
-import { HtmlGenerator } from '../build/build';
+import { HtmlGenerator } from '../build/build.js';
 import type { ViteDevServer } from 'vite';
 import { h } from 'preact';
 import fs from 'node:fs';
 import path from 'node:path';
-import { getUsedFonts } from '../fonts/google';
-import { AppShellManager } from '../core/app-shell';
-import { ErrorBoundary } from '../core/error-boundary';
-import { DataLoaderManager } from '../core/data-loader';
-import { parseMetadata } from './metadata';
+import { fileURLToPath } from 'node:url';
+import { getUsedFonts } from '../fonts/google.js';
+import { AppShellManager } from '../core/app-shell.js';
+import { ErrorBoundary } from '../core/error-boundary.js';
+import { DataLoaderManager } from '../core/data-loader.js';
+import { parseMetadata } from './metadata.js';
 
-import { RouteDefinition } from '../types';
+import { RouteDefinition } from '../types.js';
 
 export class SsrEngine {
   public static manifest: string = '{}';
@@ -27,7 +28,8 @@ export class SsrEngine {
     await AppShellManager.initialize(vite);
 
     const filePath = route.filePathTsx || route.filePathJsx;
-    if (!filePath) throw new Error(`Route ${route.urlPath} has no component file.`);
+    if (!filePath)
+      throw new Error(`Route ${route.urlPath} has no component file.`);
 
     const pageModule = await vite.ssrLoadModule(filePath);
     const PageComponent = pageModule.default;
@@ -39,7 +41,11 @@ export class SsrEngine {
 
     try {
       const context = DataLoaderManager.buildContext(url);
-      const loadResult = await DataLoaderManager.loadPageData(filePath, vite, context);
+      const loadResult = await DataLoaderManager.loadPageData(
+        filePath,
+        vite,
+        context,
+      );
 
       if (loadResult) {
         // Handle redirect
@@ -57,7 +63,10 @@ export class SsrEngine {
     } catch (error) {
       // Log data loader errors but don't fail the render
       if (typeof console !== 'undefined') {
-        console.error('[Data Loader Error]', error instanceof Error ? error.message : String(error));
+        console.error(
+          '[Data Loader Error]',
+          error instanceof Error ? error.message : String(error),
+        );
       }
       // Continue with empty props
     }
@@ -66,11 +75,11 @@ export class SsrEngine {
       pageProps.locale = locale;
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // LOAD ROUTER VIA VITE: To avoid Context mismatch ("Dual Instance")
-    // ═══════════════════════════════════════════════════════════════
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    // Resolve the router path relative to the framework directory, not the user's project
     const routerModule = await vite.ssrLoadModule(
-      path.resolve(process.cwd(), 'src/client/router.tsx'),
+      path.resolve(__dirname, '../client/router.js'),
     );
     const ViteRouter = routerModule.Router;
 
@@ -143,16 +152,24 @@ export class SsrEngine {
         const dynamicMeta = await pageModule.generateMetadata(pageProps);
         metadataHtml = parseMetadata(dynamicMeta);
       } catch (err) {
-        if (typeof console !== 'undefined') console.error('[Metadata Error]', err);
+        if (typeof console !== 'undefined')
+          console.error('[Metadata Error]', err);
       }
     } else if (pageModule.metadata) {
       metadataHtml = parseMetadata(pageModule.metadata);
     }
 
     // Shell configuration with empty root
-    let template = HtmlGenerator.constructTemplate(filePath, cssFiles, metadataHtml);
+    let template = HtmlGenerator.constructTemplate(
+      filePath,
+      cssFiles,
+      metadataHtml,
+    );
     if (locale) {
-      template = template.replace('<html lang="en">', `<html lang="${locale}">`);
+      template = template.replace(
+        '<html lang="en">',
+        `<html lang="${locale}">`,
+      );
     }
 
     // ═════════════════════════════════════════════════════════════════
@@ -186,7 +203,7 @@ export class SsrEngine {
         initialPath: url,
         initialPagePath: filePath,
         children: page,
-      })
+      }),
     );
 
     const { readable, writable } = new TransformStream();
@@ -214,7 +231,7 @@ export class SsrEngine {
     })();
 
     return new Response(readable, {
-      headers: { 'Content-Type': 'text/html' }
+      headers: { 'Content-Type': 'text/html' },
     });
   }
 }

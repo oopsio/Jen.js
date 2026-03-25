@@ -53,7 +53,7 @@ export async function load(context: LoadContext): Promise<LoadResult> {
   ];
 
   // You can also access query parameters, headers, etc.
-  const sortBy = context.query?.sort as string || 'date';
+  const sortBy = (context.query?.sort as string) || 'date';
 
   // Simulate sorting
   if (sortBy === 'title') {
@@ -108,18 +108,22 @@ export default function BlogPage({ posts, totalCount }: BlogPageProps): VNode {
               cursor: 'pointer',
             }}
             onMouseOver={(e) => {
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)';
+              (e.currentTarget as HTMLElement).style.transform =
+                'translateY(-4px)';
               (e.currentTarget as HTMLElement).style.borderColor = '#00ff00';
             }}
             onMouseOut={(e) => {
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+              (e.currentTarget as HTMLElement).style.transform =
+                'translateY(0)';
               (e.currentTarget as HTMLElement).style.borderColor = '#333';
             }}
           >
             <h2 style={{ margin: '0 0 0.5rem 0', color: '#fff' }}>
               {post.title}
             </h2>
-            <p style={{ color: '#aaa', margin: '0.5rem 0', fontSize: '0.9rem' }}>
+            <p
+              style={{ color: '#aaa', margin: '0.5rem 0', fontSize: '0.9rem' }}
+            >
               {post.excerpt}
             </p>
             <div

@@ -1,7 +1,7 @@
 /**
  * Extract route metadata from module exports and global config
  */
-import type { RouteMetadata } from '../types';
+import type { RouteMetadata } from '../types.js';
 
 /**
  * Route config export from pages

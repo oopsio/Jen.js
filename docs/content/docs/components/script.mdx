@@ -1,0 +1,71 @@
+---
+title: <Script>
+description: Manage third-party scripts with loading strategies and security controls.
+---
+
+The `<Script>` component controls when and how third-party scripts are loaded, with built-in security.
+
+## Import
+
+```tsx
+import { Script } from 'we-jenjs';
+```
+
+## Usage
+
+```tsx
+<Script
+  src="https://analytics.example.com/script.js"
+  strategy="afterInteractive"
+  dangerouslySetScripts
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `src` | `string` | — | External script URL |
+| `id` | `string` | — | Unique identifier (prevents duplicates) |
+| `strategy` | `'beforeInteractive' \| 'afterInteractive' \| 'lazyOnload'` | `'afterInteractive'` | Loading strategy |
+| `dangerouslySetScripts` | `boolean` | — | Required security acknowledgment |
+| `children` | `ComponentChildren` | — | Inline script content |
+
+## Loading Strategies
+
+| Strategy | When | Use Case |
+|---|---|---|
+| `beforeInteractive` | Rendered synchronously in SSR HTML | Critical scripts (polyfills) |
+| `afterInteractive` | Injected after client hydration | Analytics, widgets |
+| `lazyOnload` | Deferred via `requestIdleCallback` | Non-essential trackers |
+
+## Security
+
+By default, all `<Script>` components are **blocked** unless you explicitly opt in:
+
+```tsx
+// ✅ Allowed
+<Script src="..." dangerouslySetScripts />
+
+// ❌ Blocked (logs a security warning)
+<Script src="..." />
+```
+
+To disable this requirement globally, set `requireDangerouslySetScripts: false` in `jen.config.ts`:
+
+```typescript title="jen.config.ts"
+export default {
+  requireDangerouslySetScripts: false,
+};
+```
+
+## Inline Scripts
+
+```tsx
+<Script id="gtag" strategy="afterInteractive" dangerouslySetScripts>
+  {`window.dataLayer = window.dataLayer || [];`}
+</Script>
+```
+
+> [!CAUTION]
+> The `dangerouslySetScripts` prop exists as a security safeguard. Only enable it for scripts you trust.

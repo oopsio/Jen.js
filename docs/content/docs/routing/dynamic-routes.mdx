@@ -1,0 +1,65 @@
+---
+title: Dynamic Routes
+description: Create parameterized routes with dynamic path segments.
+---
+
+Dynamic routes let you create pages that match variable URL segments, like `/blog/:slug` or `/users/:id`.
+
+## Convention
+
+Wrap the parameter name in `[$...]` as a **folder name**:
+
+```
+pages/
+└── blog/
+    └── [$slug]/
+        └── app.tsx      → /blog/:slug
+```
+
+The folder `[$slug]` declares a dynamic segment. Any URL matching `/blog/*` will render this page with the parameter value available in the data loader.
+
+## Accessing Parameters
+
+Use the `load()` function to access dynamic parameters:
+
+```tsx title="pages/blog/[$slug]/app.tsx"
+import type { LoadContext, LoadResult } from 'we-jenjs/core/data-loader';
+
+export async function load(ctx: LoadContext): Promise<LoadResult> {
+  const slug = ctx.params?.slug;
+  const post = await fetchPost(slug);
+
+  return {
+    props: { post },
+  };
+}
+
+export default function BlogPost({ post }: { post: Post }) {
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <div>{post.content}</div>
+    </article>
+  );
+}
+```
+
+The `params` object on `LoadContext` contains all extracted dynamic segments from the URL.
+
+## Multiple Dynamic Segments
+
+You can nest dynamic segments:
+
+```
+pages/
+└── users/
+    └── [$userId]/
+        └── posts/
+            └── [$postId]/
+                └── app.tsx   → /users/:userId/posts/:postId
+```
+
+Both `ctx.params.userId` and `ctx.params.postId` are available in `load()`.
+
+> [!NOTE]
+> Dynamic routes are **excluded from static site generation** by default since their paths are only known at runtime. They render via streaming SSR or ISR.

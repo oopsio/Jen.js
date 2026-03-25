@@ -1,5 +1,5 @@
 // import path from 'node:path';
-import { ISRManager } from '../server/isr-manager';
+import { ISRManager } from '../server/isr-manager.js';
 
 /**
  * Revalidation options
@@ -22,24 +22,24 @@ export interface RevalidateResult {
 
 /**
  * Cache Revalidation API
- * 
+ *
  * Provides programmatic on-demand cache invalidation for ISR
  */
 export class CacheRevalidationAPI {
   /**
    * Revalidate a specific path on-demand
-   * 
+   *
    * @param pathToRevalidate - URL path to revalidate (e.g., '/blog/post-1')
    * @param options - Revalidation options
    * @returns Result of revalidation
-   * 
+   *
    * @example
    * // In an API route
    * export async function POST(req: APIRequest, res: APIResponse) {
    *   const { path } = req.body;
-   *   
+   *
    *   const result = await jen.revalidate(path);
-   *   
+   *
    *   return res.json(result);
    * }
    */
@@ -218,7 +218,9 @@ export class CacheRevalidationAPI {
    * Recursively invalidate child paths
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private static async invalidateCacheRecursive(_pathname: string): Promise<void> {
+  private static async invalidateCacheRecursive(
+    _pathname: string,
+  ): Promise<void> {
     // This would find all cached paths that start with this pathname
     // and invalidate them
     // Example: /blog invalidates /blog, /blog/post-1, /blog/post-2, etc.
@@ -242,14 +244,14 @@ export class CacheRevalidationAPI {
 export const jen = {
   /**
    * Revalidate a path on-demand
-   * 
+   *
    * @example
    * await jen.revalidate('/blog/post-1');
-   * 
+   *
    * @example
    * // With recursive invalidation
    * await jen.revalidate('/blog', { recursive: true });
-   * 
+   *
    * @example
    * // From a webhook handler
    * export async function POST(req: APIRequest, res: APIResponse) {

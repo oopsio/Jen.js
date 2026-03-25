@@ -1,6 +1,6 @@
 /**
  * /api/users - Users API endpoint
- * 
+ *
  * GET /api/users - List all users
  * POST /api/users - Create a new user
  */

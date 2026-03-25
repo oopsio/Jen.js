@@ -1,8 +1,8 @@
 /**
  * Context Builder - Creates middleware context from Request
  */
-import type { MiddlewareContext } from './types';
-import { RequestLogger } from './request-logger';
+import type { MiddlewareContext } from './types.js';
+import { RequestLogger } from './request-logger.js';
 
 export class ContextBuilder {
   /**

@@ -2,7 +2,7 @@
  * Freshness checker tests
  */
 import { describe, it, expect } from 'bun:test';
-import { FreshnessChecker } from '../freshness/freshness-checker';
+import { FreshnessChecker } from '../freshness/freshness-checker.js';
 
 describe('FreshnessChecker', () => {
   describe('check', () => {

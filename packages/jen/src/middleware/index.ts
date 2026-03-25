@@ -11,27 +11,27 @@ export type {
   MiddlewarePipelineConfig,
   CORSOptions,
   BodyParserOptions,
-} from './types';
-export { MiddlewareError } from './types';
+} from './types.js';
+export { MiddlewareError } from './types.js';
 
 // Pipeline
-export { MiddlewarePipeline } from './pipeline';
+export { MiddlewarePipeline } from './pipeline.js';
 
 // Built-in Middleware
-export { BodyParser } from './body-parser';
-export { CORS } from './cors';
-export { ErrorBoundary } from './error-boundary';
-export { RequestLogger } from './request-logger';
+export { BodyParser } from './body-parser.js';
+export { CORS } from './cors.js';
+export { ErrorBoundary } from './error-boundary.js';
+export { RequestLogger } from './request-logger.js';
 
 // Context
-export { ContextBuilder } from './context-builder';
+export { ContextBuilder } from './context-builder.js';
 
 // Imports for factory
-import { CORS } from './cors';
-import { BodyParser } from './body-parser';
-import { ErrorBoundary } from './error-boundary';
-import { RequestLogger } from './request-logger';
-import { MiddlewarePipeline } from './pipeline';
+import { CORS } from './cors.js';
+import { BodyParser } from './body-parser.js';
+import { ErrorBoundary } from './error-boundary.js';
+import { RequestLogger } from './request-logger.js';
+import { MiddlewarePipeline } from './pipeline.js';
 
 /**
  * Middleware Factory - Easy setup of common middleware

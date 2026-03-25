@@ -1,5 +1,5 @@
 // src/server/RuntimeDetector.ts
-import { RuntimeEnvironment } from '../types';
+import { RuntimeEnvironment } from '../types.js';
 
 export class RuntimeDetector {
   public static detect(): RuntimeEnvironment {

@@ -1,17 +1,23 @@
 import { createServer as createViteServer, ViteDevServer, Plugin } from 'vite';
-import { RouteScanner } from '../core/scan';
-import { RouterMap } from '../core/map';
-import { SsrEngine } from './ssr';
-import { ISRManager } from './isr-manager';
-import { MiddlewareManager } from './middleware-manager';
-import { APIRouteScanner, APIRouter, APIResponse, type HTTPMethod, type APIRequest } from '../core/api-router';
+import { RouteScanner } from '../core/scan.js';
+import { RouterMap } from '../core/map.js';
+import { SsrEngine } from './ssr.js';
+import { ISRManager } from './isr-manager.js';
+import { MiddlewareManager } from './middleware-manager.js';
+import {
+  APIRouteScanner,
+  APIRouter,
+  APIResponse,
+  type HTTPMethod,
+  type APIRequest,
+} from '../core/api-router.js';
 import { Buffer } from 'node:buffer';
 import checker from 'vite-plugin-checker';
-import { createDevToolsPlugin } from '../devtools/vite-plugin';
-import { jenImageOptimizerPlugin } from '../plugin/image';
-import { RuntimeConfig } from '../config/config';
-import { RouterBridge } from '../devtools/router-bridge';
-import { SecurityAuditor } from '../devtools/security-audit';
+import { createDevToolsPlugin } from '../devtools/vite-plugin.js';
+import { jenImageOptimizerPlugin } from '../plugin/image.js';
+import { RuntimeConfig } from '../config/config.js';
+import { RouterBridge } from '../devtools/router-bridge.js';
+import { SecurityAuditor } from '../devtools/security-audit.js';
 import path from 'node:path';
 
 const colors = {
@@ -59,19 +65,34 @@ export class DevServerManager {
     const apiRoutes = APIRouteScanner.scanAPIRoutes();
     for (const apiRoute of apiRoutes) {
       try {
-        const moduleExports = await (await import(apiRoute.filePath)).default;
-        
+        const importedModule = await import(apiRoute.filePath);
+        // Support both patterns:
+        //   1. Named exports:  export function GET(req, res) { ... }
+        //   2. Default export: export default { GET(req, res) { ... } }
+        const moduleExports = importedModule.default ?? importedModule;
+
         // Collect all HTTP method handlers from the module
         // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         const handlers: Record<string, Function> = {};
-        for (const method of ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']) {
-          if (typeof moduleExports[method] === 'function') {
+        for (const method of [
+          'GET',
+          'POST',
+          'PUT',
+          'DELETE',
+          'PATCH',
+          'HEAD',
+          'OPTIONS',
+        ]) {
+          // Check named exports first, then default export object
+          if (typeof importedModule[method] === 'function') {
+            handlers[method] = importedModule[method];
+          } else if (moduleExports && typeof moduleExports[method] === 'function') {
             handlers[method] = moduleExports[method];
           }
         }
 
         APIRouter.registerRoute(apiRoute.pathname, handlers);
-        
+
         if (Object.keys(handlers).length > 0) {
           console.log(
             `${colors.green}API${colors.reset} ${Object.keys(handlers).join('|')} ${colors.blue}${apiRoute.pathname}${colors.reset}`,
@@ -95,11 +116,13 @@ export class DevServerManager {
       const rPath = r.filePathTsx || r.filePathJsx || '';
       manifestObj[r.urlPath] = {
         page: '/' + path.relative(process.cwd(), rPath).replace(/\\/g, '/'),
-        layouts: (r.layouts || []).map(l => {
-          const lp = l.tsx || l.jsx;
-          if (!lp) return '';
-          return '/' + path.relative(process.cwd(), lp).replace(/\\/g, '/');
-        }).filter(Boolean),
+        layouts: (r.layouts || [])
+          .map((l) => {
+            const lp = l.tsx || l.jsx;
+            if (!lp) return '';
+            return '/' + path.relative(process.cwd(), lp).replace(/\\/g, '/');
+          })
+          .filter(Boolean),
         isDynamic: r.isDynamic,
       };
     }
@@ -114,7 +137,7 @@ export class DevServerManager {
         async (req, ctx) => {
           // Try ISR first (if enabled)
           const locale = req.headers.get('x-jen-locale') || undefined;
-          
+
           if (ISRManager.isISREnabled()) {
             // Load module to get exports (revalidate, isDynamic, etc.)
             const moduleExports = route.filePathTsx
@@ -139,7 +162,7 @@ export class DevServerManager {
             route,
             ctx.url,
             this.viteCompiler,
-            locale
+            locale,
           );
 
           // If SSR returns a Response (redirect, 404, etc), return it
@@ -184,8 +207,11 @@ export class DevServerManager {
             const urlColor = '\x1b[90m'; // Gray
             const reset = '\x1b[0m';
 
+            const statusCode = res.statusCode || 200;
+            const statusColor = statusCode >= 400 ? '\x1b[31m' : '\x1b[32m';
+
             console.log(
-              `${methodColor}${method}${reset} ${urlColor}${url}${reset} - ${timeColor}${duration}ms${reset}`,
+              `${statusColor}${statusCode}${reset} ${methodColor}${method}${reset} ${urlColor}${url}${reset} - ${timeColor}${duration}ms${reset}`,
             );
 
             return originalEnd.apply(
@@ -220,7 +246,9 @@ export class DevServerManager {
               // CHECK FOR API ROUTES FIRST
               // ═══════════════════════════════════════════════════════════════
               if (APIRouter.isAPIRoute(url)) {
-                const method = (req.method || 'GET').toUpperCase() as HTTPMethod;
+                const method = (
+                  req.method || 'GET'
+                ).toUpperCase() as HTTPMethod;
                 const handler = APIRouter.findRoute(url, method);
 
                 if (handler) {
@@ -267,12 +295,18 @@ export class DevServerManager {
                     res.end(await apiResponse.text());
                     return;
                   } catch (error: unknown) {
-                    console.error(`${colors.error}API Error:${colors.reset}`, error);
+                    console.error(
+                      `${colors.error}API Error:${colors.reset}`,
+                      error,
+                    );
                     res.writeHead(500, { 'Content-Type': 'application/json' });
                     res.end(
                       JSON.stringify({
                         error: 'Internal Server Error',
-                        message: error instanceof Error ? error.message : String(error),
+                        message:
+                          error instanceof Error
+                            ? error.message
+                            : String(error),
                       }),
                     );
                     return;
@@ -290,11 +324,14 @@ export class DevServerManager {
               // ────────────────────────────────────────────────────────────────────
               const scanner = new RouteScanner();
               const middlewarePath = scanner.scanMiddleware();
-              
+
               if (middlewarePath && DevServerManager.viteCompiler) {
-                const middlewareModule = await DevServerManager.viteCompiler.ssrLoadModule(middlewarePath);
+                const middlewareModule =
+                  await DevServerManager.viteCompiler.ssrLoadModule(
+                    middlewarePath,
+                  );
                 const middleware = middlewareModule.default;
-                
+
                 if (typeof middleware === 'function') {
                   const mwResponse = await middleware(webRequest);
                   if (mwResponse instanceof Response) {
@@ -334,22 +371,25 @@ export class DevServerManager {
                 if (firstPath && i18nConfig.locales.includes(firstPath)) {
                   pathParts.splice(1, 1);
                   urlObj.pathname = pathParts.join('/') || '/';
-                  
+
                   const newHeaders = new Headers(webRequest.headers);
                   newHeaders.set('x-jen-locale', firstPath);
-                  
+
                   webRequest = new Request(urlObj.toString(), {
                     method: webRequest.method,
                     headers: newHeaders,
-                    body: webRequest.body
+                    body: webRequest.body,
                   });
                 } else {
                   const newHeaders = new Headers(webRequest.headers);
-                  newHeaders.set('x-jen-locale', i18nConfig.defaultLocale || 'en');
+                  newHeaders.set(
+                    'x-jen-locale',
+                    i18nConfig.defaultLocale || 'en',
+                  );
                   webRequest = new Request(webRequest.url, {
                     method: webRequest.method,
                     headers: newHeaders,
-                    body: webRequest.body
+                    body: webRequest.body,
                   });
                 }
               }
@@ -392,50 +432,96 @@ export class DevServerManager {
                     `${colors.yellow}${cacheStatus}${colors.reset} (age: ${cacheAge}s) ${colors.green}${url}${colors.reset}`,
                   );
                 }
-                
+
                 res.statusCode = jenResponse.status;
-                
-                const responseHeaders = Object.fromEntries(jenResponse.headers || {});
+
+                const responseHeaders = Object.fromEntries(
+                  jenResponse.headers || {},
+                );
                 for (const [key, value] of Object.entries(responseHeaders)) {
-                   if (key.toLowerCase() !== 'content-length') {
-                     res.setHeader(key, String(value));
-                   }
+                  if (key.toLowerCase() !== 'content-length') {
+                    res.setHeader(key, String(value));
+                  }
                 }
-                
-                for (const [key, value] of Object.entries(buildSecurityHeaders())) {
-                   res.setHeader(key, value);
+
+                for (const [key, value] of Object.entries(
+                  buildSecurityHeaders(),
+                )) {
+                  res.setHeader(key, value);
                 }
-                
+
                 res.setHeader('Content-Type', 'text/html');
-                
-                if (jenResponse.body && jenResponse.body instanceof ReadableStream) {
-                   res.setHeader('Transfer-Encoding', 'chunked');
-                   const reader = jenResponse.body.getReader();
-                   
-                   try {
-                     while(true) {
-                       const { done, value } = await reader.read();
-                       if (done) {
-                         res.end();
-                         break;
-                       }
-                       res.write(Buffer.from(value));
-                     }
-                   } catch(streamErr) {
-                     console.error('[Streaming Pipeline Failure]', streamErr);
-                     if (!res.headersSent) res.writeHead(500);
-                     res.end('Streaming abort');
-                   }
+
+                if (
+                  jenResponse.body &&
+                  jenResponse.body instanceof ReadableStream
+                ) {
+                  res.setHeader('Transfer-Encoding', 'chunked');
+                  const reader = jenResponse.body.getReader();
+
+                  try {
+                    while (true) {
+                      const { done, value } = await reader.read();
+                      if (done) {
+                        res.end();
+                        break;
+                      }
+                      res.write(Buffer.from(value));
+                    }
+                  } catch (streamErr) {
+                    console.error('[Streaming Pipeline Failure]', streamErr);
+                    if (!res.headersSent) res.writeHead(500);
+                    res.end('Streaming abort');
+                  }
                 } else {
-                   const bodyText = await jenResponse.text();
-                   res.setHeader('Content-Length', Buffer.byteLength(bodyText));
-                   res.end(bodyText);
+                  const bodyText = await jenResponse.text();
+                  res.setHeader('Content-Length', Buffer.byteLength(bodyText));
+                  res.end(bodyText);
                 }
-                
+
                 return;
               }
 
-              console.log(`${colors.blue}→ ${url}${colors.reset}`);
+              console.log(`${colors.yellow}404${colors.reset} ${colors.blue}→ ${url}${colors.reset}`);
+
+              // ═══════════════════════════════════════════════════════════
+              // Render _error.tsx for 404 responses instead of falling
+              // through to Vite's default "Cannot GET" page
+              // ═══════════════════════════════════════════════════════════
+              const { AppShellManager } = await import('../core/app-shell.js');
+              await AppShellManager.initialize(DevServerManager.viteCompiler);
+              const ErrorComponent = AppShellManager.getErrorComponent();
+
+              if (ErrorComponent && DevServerManager.viteCompiler) {
+                try {
+                  const { h } = await import('preact');
+                  const { render } = await import('preact-render-to-string');
+                  const { HtmlGenerator } = await import('../build/build.js');
+
+                  const errorElement = h(ErrorComponent, {
+                    error: new Error(`Page not found: ${url}`),
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    reset: () => {},
+                  });
+
+                  const html = render(errorElement);
+                  let template = HtmlGenerator.constructTemplate('_error.tsx', [], '');
+                  template = await DevServerManager.viteCompiler.transformIndexHtml(url, template);
+                  const fullHtml = template.replace('<!--app-html-->', html);
+
+                  res.statusCode = 404;
+                  res.setHeader('Content-Type', 'text/html');
+                  for (const [key, value] of Object.entries(buildSecurityHeaders())) {
+                    res.setHeader(key, value);
+                  }
+                  res.end(fullHtml);
+                  return;
+                } catch (errorRenderErr) {
+                  console.error(`${colors.error}[Error Page Render Failed]${colors.reset}`, errorRenderErr);
+                }
+              }
+
+              // No custom error page found — fall through to Vite
               next();
             } catch (error: unknown) {
               if (error instanceof Error) {
@@ -471,7 +557,9 @@ export class DevServerManager {
         checker({ typescript: true }),
       ],
       define: {
-        __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(RuntimeConfig.requireDangerouslySetScripts ?? true),
+        __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(
+          RuntimeConfig.requireDangerouslySetScripts ?? true,
+        ),
       },
       server: { port: serverPort, strictPort: true, middlewareMode: false },
       appType: 'custom',

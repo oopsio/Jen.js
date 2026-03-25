@@ -1,0 +1,109 @@
+---
+title: SEO & Metadata
+description: Per-page metadata, OpenGraph, Twitter cards, sitemaps, and robots.txt.
+---
+
+Jen.js provides a first-class Metadata API for managing page titles, descriptions, and social sharing tags — with automatic sitemap and robots.txt generation.
+
+## Static Metadata
+
+Export a `metadata` object from any page:
+
+```tsx title="pages/about/app.tsx"
+import type { Metadata } from 'we-jenjs/types';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn more about our company.',
+  openGraph: {
+    title: 'About Us',
+    siteName: 'My App',
+    images: [{ url: '/og-about.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@myapp',
+  },
+};
+
+export default function About() {
+  return <h1>About Us</h1>;
+}
+```
+
+## Dynamic Metadata
+
+Export an async `generateMetadata()` function for data-dependent metadata:
+
+```tsx title="pages/blog/[$slug]/app.tsx"
+export async function generateMetadata(pageProps: Record<string, unknown>) {
+  const post = pageProps.post as Post;
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      images: [{ url: post.coverImage }],
+    },
+  };
+}
+```
+
+`generateMetadata()` receives the same props that `load()` passes to the page component.
+
+## Metadata Type
+
+```typescript
+interface Metadata {
+  title?: string;
+  description?: string;
+  openGraph?: {
+    title?: string;
+    description?: string;
+    url?: string;
+    siteName?: string;
+    images?: Array<{
+      url: string;
+      width?: number;
+      height?: number;
+      alt?: string;
+    }>;
+    locale?: string;
+    type?: string;
+  };
+  twitter?: {
+    card?: string;
+    site?: string;
+    creator?: string;
+  };
+  robots?: string;
+}
+```
+
+## Automatic Sitemap & Robots
+
+During `jen build`, the following files are generated automatically in `dist/static/`:
+
+### sitemap.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://example.com</loc>
+  </url>
+  <url>
+    <loc>https://example.com/about</loc>
+  </url>
+</urlset>
+```
+
+### robots.txt
+
+```
+User-agent: *
+Allow: /
+Sitemap: https://example.com/sitemap.xml
+```
+
+All non-dynamic routes discovered by the `RouteScanner` are included in the sitemap.

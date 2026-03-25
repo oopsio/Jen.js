@@ -2,9 +2,9 @@
  * Plugin System - Main plugin orchestration
  */
 
-import type { Plugin, PluginContext } from './types';
-import { PluginRegistry } from './registry';
-import type { MiddlewareHandler, MiddlewareContext } from '../middleware';
+import type { Plugin, PluginContext } from './types.js';
+import { PluginRegistry } from './registry.js';
+import type { MiddlewareHandler, MiddlewareContext } from '../middleware/index.js';
 
 type RouteHandler = (...args: unknown[]) => unknown;
 

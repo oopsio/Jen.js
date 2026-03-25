@@ -2,8 +2,8 @@
  * Body Parser Middleware Tests
  */
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { BodyParser, ContextBuilder } from '../index';
-import type { MiddlewareContext } from '../index';
+import { BodyParser, ContextBuilder } from '../index.js';
+import type { MiddlewareContext } from '../index.js';
 
 describe('BodyParser', () => {
   let parser: BodyParser;

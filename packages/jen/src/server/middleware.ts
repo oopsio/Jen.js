@@ -23,7 +23,7 @@ export class NextResponse extends Response {
     return new Response(null, {
       status,
       headers: {
-        'Location': url.toString(),
+        Location: url.toString(),
       },
     });
   }

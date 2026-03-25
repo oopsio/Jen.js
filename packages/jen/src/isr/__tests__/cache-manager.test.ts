@@ -2,9 +2,9 @@
  * Cache manager integration tests
  */
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { CacheManager } from '../cache/cache-manager';
-import { MemoryStorage } from '../storage/memory-storage';
-import type { ISRConfig, RouteMetadata } from '../types';
+import { CacheManager } from '../cache/cache-manager.js';
+import { MemoryStorage } from '../storage/memory-storage.js';
+import type { ISRConfig, RouteMetadata } from '../types.js';
 
 describe('CacheManager', () => {
   let cacheManager: CacheManager;

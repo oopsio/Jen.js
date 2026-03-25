@@ -26,7 +26,7 @@ export function Image({
   // If the src is an absolute URL (external), we ideally don't process it at build time unless we fetch it.
   // For local assets imported via Vite, we append hints to trigger the optimizer plugin.
   const isExternal = /^https?:\/\//.test(src);
-  
+
   let finalSrc = src;
   if (!isExternal) {
     const queryChar = src.includes('?') ? '&' : '?';

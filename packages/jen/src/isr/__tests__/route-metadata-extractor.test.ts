@@ -2,7 +2,7 @@
  * Route metadata extractor tests
  */
 import { describe, it, expect } from 'bun:test';
-import { RouteMetadataExtractor } from '../metadata/route-metadata-extractor';
+import { RouteMetadataExtractor } from '../metadata/route-metadata-extractor.js';
 
 describe('RouteMetadataExtractor', () => {
   describe('fromModule', () => {

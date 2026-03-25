@@ -24,7 +24,9 @@ export interface LoadResult {
 /**
  * Data loader function type
  */
-export type DataLoader = (context: LoadContext) => LoadResult | Promise<LoadResult>;
+export type DataLoader = (
+  context: LoadContext,
+) => LoadResult | Promise<LoadResult>;
 
 export interface PageModule {
   default: unknown; // Component
@@ -44,29 +46,29 @@ export class DataLoaderManager {
     vite: ViteDevServer,
     context: LoadContext,
   ): Promise<LoadResult | null> {
-      const module = (await vite.ssrLoadModule(filePath)) as PageModule;
+    const module = (await vite.ssrLoadModule(filePath)) as PageModule;
 
-      // Try load() first, then server()
-      const loader = module.load || module.server;
+    // Try load() first, then server()
+    const loader = module.load || module.server;
 
-      if (!loader || typeof loader !== 'function') {
-        // No data loader, return null
-        return null;
-      }
+    if (!loader || typeof loader !== 'function') {
+      // No data loader, return null
+      return null;
+    }
 
-      // Call the loader function
-      const result = await loader(context);
+    // Call the loader function
+    const result = await loader(context);
 
-      // Validate result
-      if (!result || typeof result !== 'object') {
-        throw new Error('Data loader must return an object with { props, ... }');
-      }
+    // Validate result
+    if (!result || typeof result !== 'object') {
+      throw new Error('Data loader must return an object with { props, ... }');
+    }
 
-      if (!('props' in result) || typeof result.props !== 'object') {
-        throw new Error('Data loader must return { props: {...}, ... }');
-      }
+    if (!('props' in result) || typeof result.props !== 'object') {
+      throw new Error('Data loader must return { props: {...}, ... }');
+    }
 
-      return result as LoadResult;
+    return result as LoadResult;
   }
 
   /**
@@ -101,7 +103,9 @@ export class DataLoaderManager {
   /**
    * Handle not found response
    */
-  public static createNotFoundResponse(message: string = 'Page not found'): Response {
+  public static createNotFoundResponse(
+    message: string = 'Page not found',
+  ): Response {
     return new Response(message, {
       status: 404,
       headers: {

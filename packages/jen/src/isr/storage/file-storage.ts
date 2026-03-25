@@ -1,8 +1,8 @@
 /**
  * File-based storage provider for production
  */
-import type { CacheEntry } from '../types';
-import { StorageProvider } from './storage-provider';
+import type { CacheEntry } from '../types.js';
+import { StorageProvider } from './storage-provider.js';
 
 /**
  * File storage with configurable directory

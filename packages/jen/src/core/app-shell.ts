@@ -2,7 +2,7 @@ import { ComponentType } from 'preact';
 import path from 'node:path';
 import fs from 'node:fs';
 import type { ViteDevServer } from 'vite';
-import type { ErrorFallbackProps } from './error-boundary';
+import type { ErrorFallbackProps } from './error-boundary.js';
 
 /**
  * AppComponent receives any props the page passes + Component (the page) + pageProps
@@ -27,8 +27,10 @@ export interface DocumentComponentProps {
  */
 export class AppShellManager {
   private static appComponent: ComponentType<AppComponentProps> | null = null;
-  private static documentComponent: ComponentType<DocumentComponentProps> | null = null;
-  private static errorComponent: ComponentType<ErrorFallbackProps> | null = null;
+  private static documentComponent: ComponentType<DocumentComponentProps> | null =
+    null;
+  private static errorComponent: ComponentType<ErrorFallbackProps> | null =
+    null;
   private static isInitialized = false;
 
   /**

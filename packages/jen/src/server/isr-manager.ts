@@ -1,13 +1,13 @@
 /**
  * ISR Manager - Integrates ISR system into Jen.js framework
  */
-import { RuntimeConfig } from '../config/config';
-import { RouteMetadataExtractor } from '../isr';
-import { ISRFactory, ISRRequestHandler } from '../isr';
+import { RuntimeConfig } from '../config/config.js';
+import { RouteMetadataExtractor } from '../isr/index.js';
+import { ISRFactory, ISRRequestHandler } from '../isr/index.js';
 import type { ViteDevServer } from 'vite';
-import type { RouteMetadata } from '../isr';
-import { SsrEngine } from './ssr';
-import { RouteDefinition } from '../types';
+import type { RouteMetadata } from '../isr/index.js';
+import { SsrEngine } from './ssr.js';
+import { RouteDefinition } from '../types.js';
 
 export class ISRManager {
   private static isrHandler: ISRRequestHandler | null = null;
@@ -176,7 +176,7 @@ export class ISRManager {
    * Get cache storage instance (lazy initialized)
    */
   private static async getCacheStorage() {
-    const { MemoryStorage } = await import('../isr');
+    const { MemoryStorage } = await import('../isr/index.js');
     return new MemoryStorage();
   }
 }

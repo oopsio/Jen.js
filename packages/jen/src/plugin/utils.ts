@@ -2,8 +2,8 @@
  * Plugin Utilities - Helper functions for plugin creation
  */
 
-import type { MiddlewareHandler } from '../middleware';
-import type { Plugin, PluginFactory } from './types';
+import type { MiddlewareHandler } from '../middleware/index.js';
+import type { Plugin, PluginFactory } from './types.js';
 
 /**
  * Create a simple plugin

@@ -1,6 +1,7 @@
-import type { RequestHandler } from '../types';
-import { ContextBuilder } from '../middleware';
-import { RouteMatcher } from './jen_router.js';
+import type { RequestHandler } from '../types.js';
+import { ContextBuilder } from '../middleware/index.js';
+import * as jenRouter from './jen_router.cjs';
+const { RouteMatcher } = jenRouter;
 
 /**
  * Internal route handler data structure.
@@ -71,7 +72,7 @@ export class RouterMap {
    */
   public static async resolveRequest(request: Request): Promise<Response> {
     // Execute middleware pipeline if enabled (lazy import to avoid circular dependency)
-    const { MiddlewareManager } = await import('../server/middleware-manager');
+    const { MiddlewareManager } = await import('../server/middleware-manager.js');
 
     if (MiddlewareManager.isEnabled()) {
       const context = await MiddlewareManager.executeMiddleware(request);
@@ -95,7 +96,25 @@ export class RouterMap {
     const match = this.matcher.match_route(pathName);
 
     if (match.found) {
-      const routeData = this.routeStorage.get(match.pathname);
+      // Static routes: direct lookup by exact pathname
+      let routeData = this.routeStorage.get(match.pathname);
+
+      // Dynamic routes: the WASM matcher returns the resolved URL (e.g. /users/123)
+      // but routeStorage is keyed by the pattern (e.g. /users/:id).
+      // Fall back to pattern-matching against stored dynamic keys.
+      if (!routeData) {
+        for (const [pattern, data] of this.routeStorage) {
+          if (!pattern.includes(':')) continue;
+          const regex = new RegExp(
+            '^' + pattern.replace(/:[^\s/]+/g, '([^/]+)') + '$',
+          );
+          if (regex.test(match.pathname)) {
+            routeData = data;
+            break;
+          }
+        }
+      }
+
       if (routeData) {
         const filePath = this.getFilePath(
           match.filePathTsx,

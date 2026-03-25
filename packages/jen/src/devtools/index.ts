@@ -10,11 +10,11 @@
  * 100% tree-shaken in production.
  */
 
-export * from './types';
-export { DevToolsClient, getDevToolsClient } from './client';
-export { createDevToolsPlugin } from './vite-plugin';
-export { RouterBridge } from './router-bridge';
-export { SecurityAuditor } from './security-audit';
-export { SSRHydrationDetector } from './ssr-hydration';
-export { DatabaseMonitor } from './db-monitor';
-export { DevToolsPanel, initDevToolsUI } from './ui-vercel';
+export * from './types.js';
+export { DevToolsClient, getDevToolsClient } from './client.js';
+export { createDevToolsPlugin } from './vite-plugin.js';
+export { RouterBridge } from './router-bridge.js';
+export { SecurityAuditor } from './security-audit.js';
+export { SSRHydrationDetector } from './ssr-hydration.js';
+export { DatabaseMonitor } from './db-monitor.js';
+export { DevToolsPanel, initDevToolsUI } from './ui-vercel.js';

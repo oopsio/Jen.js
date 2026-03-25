@@ -3,7 +3,7 @@
  * Verifies server-rendered HTML matches client-side state
  */
 
-import type { SSRMetrics, HydrationChecksum } from './types';
+import type { SSRMetrics, HydrationChecksum } from './types.js';
 
 export class SSRHydrationDetector {
   /**

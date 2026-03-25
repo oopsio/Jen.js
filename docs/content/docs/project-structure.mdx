@@ -1,0 +1,56 @@
+---
+title: Project Structure
+description: Understand the Jen.js directory conventions and special files.
+---
+
+A typical Jen.js project follows this layout:
+
+```
+my-app/
+├── pages/                  # File-based routes
+│   ├── app.tsx             # → /
+│   ├── layout.tsx          # Root layout (wraps all pages)
+│   ├── about/
+│   │   └── app.tsx         # → /about
+│   ├── blog/
+│   │   ├── layout.tsx      # Nested layout for /blog/*
+│   │   ├── app.tsx         # → /blog
+│   │   └── [$slug]/
+│   │       └── app.tsx     # → /blog/:slug (dynamic)
+│   └── api/
+│       └── users.ts        # → /api/users (API Route)
+├── _app.tsx                # Global application shell (optional)
+├── _error.tsx              # Custom error page (optional)
+├── middleware.ts           # Edge middleware (optional)
+├── jen.config.ts           # Framework configuration
+└── package.json
+```
+
+## Special Files
+
+| File | Purpose |
+|---|---|
+| `pages/**/app.tsx` | Page component — each resolved as a route |
+| `pages/**/layout.tsx` | Layout component — wraps child pages in its subtree |
+| `pages/api/*.ts` | API Route — exports HTTP method handlers (`GET`, `POST`, etc.) |
+| `_app.tsx` | Global application shell wrapping every page |
+| `_document.tsx` | Custom HTML document template |
+| `_error.tsx` | Error boundary fallback component |
+| `middleware.ts` | Edge middleware interceptor (runs before routing) |
+| `jen.config.ts` | Framework configuration file |
+
+## Route Resolution
+
+Jen.js uses a **filesystem-based router** powered by the `RouteScanner`. Each directory under `pages/` that contains an `app.tsx` (or `app.jsx`) file becomes a route:
+
+- `pages/app.tsx` → `/`
+- `pages/about/app.tsx` → `/about`
+- `pages/blog/[$slug]/app.tsx` → `/blog/:slug`
+
+Dynamic segments use the `[$paramName]` folder convention. See [Dynamic Routes](/docs/routing/dynamic-routes) for details.
+
+## Layouts
+
+`layout.tsx` files are automatically discovered and nested. A layout at `pages/layout.tsx` wraps all pages, while `pages/blog/layout.tsx` wraps only pages under `/blog/*`.
+
+See [Layouts](/docs/routing/layouts) for more details.

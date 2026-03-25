@@ -2,8 +2,8 @@
  * ISR Manager Integration Tests
  */
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { ISRManager } from '../isr-manager';
-import { RuntimeConfig, updateRuntimeConfig } from '../../config/config';
+import { ISRManager } from '../isr-manager.js';
+import { RuntimeConfig, updateRuntimeConfig } from '../../config/config.js';
 
 describe('ISRManager', () => {
   beforeEach(() => {

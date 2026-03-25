@@ -1,7 +1,7 @@
 /**
  * CORS Middleware - Flexible cross-origin resource sharing
  */
-import type { MiddlewareContext, NextFunction, CORSOptions } from './types';
+import type { MiddlewareContext, NextFunction, CORSOptions } from './types.js';
 
 export class CORS {
   private options: Required<CORSOptions>;

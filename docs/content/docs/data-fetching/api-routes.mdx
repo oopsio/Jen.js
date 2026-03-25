@@ -1,0 +1,80 @@
+---
+title: API Routes
+description: Build backend endpoints with pages/api/*.ts.
+---
+
+Jen.js supports API routes via the `pages/api/` directory. Each file exports HTTP method handlers following the standard Fetch API conventions.
+
+## Creating an API Route
+
+```typescript title="pages/api/users.ts"
+import type { APIRequest, APIResponse, APIHandler } from 'we-jenjs/core/api-router';
+
+export const GET: APIHandler = async (req, res) => {
+  const users = await db.getUsers();
+  return res.json({ users });
+};
+
+export const POST: APIHandler = async (req, res) => {
+  const body = req.body as { name: string; email: string };
+  const user = await db.createUser(body);
+  return res.setStatus(201).json({ user });
+};
+```
+
+## Route Mapping
+
+Files in `pages/api/` map to URL paths:
+
+| File | Route |
+|---|---|
+| `pages/api/users.ts` | `/api/users` |
+| `pages/api/posts.ts` | `/api/posts` |
+| `pages/api/auth/login.ts` | `/api/auth/login` |
+
+## Supported Methods
+
+Export any of these HTTP method handlers:
+
+- `GET`
+- `POST`
+- `PUT`
+- `DELETE`
+- `PATCH`
+- `HEAD`
+- `OPTIONS`
+
+## APIResponse Builder
+
+The `APIResponse` object provides fluent methods:
+
+```typescript
+// JSON response
+return res.json({ message: 'ok' });
+
+// Text response
+return res.text('Hello');
+
+// HTML response
+return res.html('<h1>Hello</h1>');
+
+// Custom status
+return res.setStatus(404).json({ error: 'Not found' });
+
+// Custom headers
+return res.setHeader('X-Custom', 'value').json({ data });
+
+// Empty response
+return res.setStatus(204).empty();
+```
+
+## Request Object
+
+The `APIRequest` extends the standard Fetch `Request` with:
+
+```typescript
+interface APIRequest extends Omit<Request, 'body'> {
+  query?: Record<string, string | string[]>;  // Parsed query params
+  body?: unknown;                              // Parsed request body
+}
+```

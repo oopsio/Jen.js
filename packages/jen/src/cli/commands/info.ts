@@ -13,7 +13,7 @@ import {
   getRelevantPackages,
   getCPUInfo,
   getMemoryInfo,
-} from './info-utils';
+} from './info-utils.js';
 
 const colors = {
   reset: '\x1b[0m',

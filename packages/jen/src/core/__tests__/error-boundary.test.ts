@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'bun:test';
 import { h } from 'preact';
 import { render } from 'preact-render-to-string';
-import { ErrorBoundary } from '../error-boundary';
+import { ErrorBoundary } from '../error-boundary.js';
 
 describe('ErrorBoundary', () => {
   it('should render children when no error occurs', () => {

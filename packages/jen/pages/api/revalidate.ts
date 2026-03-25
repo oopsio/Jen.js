@@ -1,9 +1,9 @@
 /**
  * POST /api/revalidate - On-demand ISR revalidation webhook
- * 
+ *
  * This endpoint is typically called by a CMS (like Contentful, Strapi, etc.)
  * whenever content is updated, to trigger immediate cache revalidation.
- * 
+ *
  * Usage:
  * curl -X POST http://localhost:3000/api/revalidate \
  *   -H "Content-Type: application/json" \
@@ -16,7 +16,8 @@ import { APIResponse } from '../../src/core/api-router';
 import { jen } from '../../src/client';
 
 // Replace with your actual secret token from environment
-const REVALIDATION_SECRET = process.env.REVALIDATION_SECRET || 'your-secret-token';
+const REVALIDATION_SECRET =
+  process.env.REVALIDATION_SECRET || 'your-secret-token';
 
 export async function POST(req: APIRequest, res: APIResponse) {
   // Verify authorization token
@@ -31,7 +32,10 @@ export async function POST(req: APIRequest, res: APIResponse) {
   }
 
   // Validate request body
-  const body = req.body as { path?: string; recursive?: boolean } | null | undefined;
+  const body = req.body as
+    | { path?: string; recursive?: boolean }
+    | null
+    | undefined;
   if (!body || !body.path) {
     return res.setStatus(400).json({
       error: 'Bad Request',
@@ -74,7 +78,7 @@ export async function GET(req: APIRequest, res: APIResponse) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer your-secret-token',
+      Authorization: 'Bearer your-secret-token',
     },
     body: {
       path: '/blog/post-1',

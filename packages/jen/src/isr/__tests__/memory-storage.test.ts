@@ -2,8 +2,8 @@
  * Memory storage tests
  */
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { MemoryStorage } from '../storage/memory-storage';
-import type { CacheEntry } from '../types';
+import { MemoryStorage } from '../storage/memory-storage.js';
+import type { CacheEntry } from '../types.js';
 
 describe('MemoryStorage', () => {
   let storage: MemoryStorage;

@@ -12,7 +12,7 @@ export interface ScriptProps {
    */
   dangerouslySetScripts?: boolean;
   /**
-   * Defines when the script executes. 
+   * Defines when the script executes.
    * - beforeInteractive: Rendered synchronously
    * - afterInteractive (default): Pushed after client load
    * - lazyOnload: Delayed with idle callbacks
@@ -34,11 +34,16 @@ export function Script({
   ...rest
 }: ScriptProps) {
   // Check custom script execution allowance via config flags
-  const isRequired = typeof __JEN_REQUIRE_SCRIPT_FLAG__ !== 'undefined' ? __JEN_REQUIRE_SCRIPT_FLAG__ : true;
-  
+  const isRequired =
+    typeof __JEN_REQUIRE_SCRIPT_FLAG__ !== 'undefined'
+      ? __JEN_REQUIRE_SCRIPT_FLAG__
+      : true;
+
   if (isRequired && !dangerouslySetScripts) {
     if (typeof console !== 'undefined') {
-      console.warn(`[Jen.js Security] Blocked script ${id || src || 'inline'} execution. You must set dangerouslySetScripts={true} or disable the requirement globally in jen.config.ts.`);
+      console.warn(
+        `[Jen.js Security] Blocked script ${id || src || 'inline'} execution. You must set dangerouslySetScripts={true} or disable the requirement globally in jen.config.ts.`,
+      );
     }
     return null; // Prevents the script from rendering entirely
   }
@@ -49,13 +54,15 @@ export function Script({
       id,
       src,
       ...rest,
-      dangerouslySetInnerHTML: children ? { __html: children as string } : undefined
+      dangerouslySetInnerHTML: children
+        ? { __html: children as string }
+        : undefined,
     });
   }
 
   // 2. Client Side Hydration (lazyOnload, afterInteractive)
   const isClient = typeof window !== 'undefined';
-  
+
   if (isClient) {
     useEffect(() => {
       if (id && document.getElementById(id)) return; // Prevent duplicate IDs
@@ -64,7 +71,7 @@ export function Script({
         const script = document.createElement('script');
         if (id) script.id = id;
         if (src) script.src = src;
-        
+
         // Pass down arbitrary DOM props (async, defer, crossOrigin, etc)
         for (const [key, value] of Object.entries(rest)) {
           if (value !== undefined && value !== null) {

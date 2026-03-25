@@ -18,9 +18,15 @@ export function jenImageOptimizerPlugin(): Plugin {
 
       // Scan through all emitted assets in the build
       for (const [fileName, asset] of Object.entries(bundle)) {
-        if (asset.type === 'asset' && imageExts.test(fileName) && asset.source instanceof Uint8Array) {
+        if (
+          asset.type === 'asset' &&
+          imageExts.test(fileName) &&
+          asset.source instanceof Uint8Array
+        ) {
           try {
-            console.log(`\x1b[33m[Jen.js Image]\x1b[0m Optimizing ${fileName}...`);
+            console.log(
+              `\x1b[33m[Jen.js Image]\x1b[0m Optimizing ${fileName}...`,
+            );
             // Compress the image with Sharp to WebP format
             const optimized = await sharp(asset.source)
               .webp({ quality: 80, effort: 4 })
@@ -31,7 +37,10 @@ export function jenImageOptimizerPlugin(): Plugin {
             // while serving highly compressed WebP bytes invisibly).
             asset.source = optimized;
           } catch (e) {
-            console.error(`\x1b[31m[Jen.js Image]\x1b[0m Failed to optimize build asset ${fileName}`, e);
+            console.error(
+              `\x1b[31m[Jen.js Image]\x1b[0m Failed to optimize build asset ${fileName}`,
+              e,
+            );
           }
         }
       }
@@ -53,36 +62,47 @@ export function jenImageOptimizerPlugin(): Plugin {
           // Resolve absolute path in development root
           let filePath = path.join(process.cwd(), 'public', rawPath);
           if (!fs.existsSync(filePath)) {
-               filePath = path.join(process.cwd(), rawPath);
+            filePath = path.join(process.cwd(), rawPath);
           }
 
           if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             const width = w ? parseInt(w, 10) : undefined;
             const quality = q ? parseInt(q, 10) : 80;
 
-            console.log(`\x1b[36m[Jen.js Image]\x1b[0m Dev optimizing: ${rawPath}`);
+            console.log(
+              `\x1b[36m[Jen.js Image]\x1b[0m Dev optimizing: ${rawPath}`,
+            );
             const buffer = fs.readFileSync(filePath);
 
             let transformer = sharp(buffer);
             if (width) {
-              transformer = transformer.resize({ width, withoutEnlargement: true });
+              transformer = transformer.resize({
+                width,
+                withoutEnlargement: true,
+              });
             }
-            
+
             const optimizedBuffer = await transformer
               .webp({ quality })
               .toBuffer();
 
             res.setHeader('Content-Type', 'image/webp');
-            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+            res.setHeader(
+              'Cache-Control',
+              'public, max-age=31536000, immutable',
+            );
             res.end(optimizedBuffer);
             return;
           }
         } catch (e) {
-          console.error(`\x1b[31m[Jen.js Image]\x1b[0m Dev failing fallback`, e);
+          console.error(
+            `\x1b[31m[Jen.js Image]\x1b[0m Dev failing fallback`,
+            e,
+          );
         }
 
         next();
       });
-    }
+    },
   };
 }

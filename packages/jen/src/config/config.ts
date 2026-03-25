@@ -1,4 +1,4 @@
-import { JenConfig } from '../types';
+import { JenConfig } from '../types.js';
 
 /**
  * Global parsed runtime configuration object for the Jen.js framework.

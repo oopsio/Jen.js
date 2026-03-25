@@ -3,7 +3,7 @@
  * OWASP ASVS Level 1 Compliance Checker
  */
 
-import type { SecurityHeader, SecurityAuditResult } from './types';
+import type { SecurityHeader, SecurityAuditResult } from './types.js';
 
 const OWASP_ASVS_REQUIREMENTS = {
   'Content-Security-Policy': {

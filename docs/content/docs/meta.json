@@ -1,0 +1,22 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "installation",
+    "project-structure",
+    "---Core Concepts---",
+    "...routing",
+    "...data-fetching",
+    "...rendering",
+    "...components",
+    "---Configuration---",
+    "configuration",
+    "middleware",
+    "seo",
+    "i18n",
+    "---Production---",
+    "...deployment",
+    "cli"
+  ]
+}

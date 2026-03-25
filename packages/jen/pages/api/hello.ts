@@ -1,6 +1,6 @@
 /**
  * GET /api/hello - Simple greeting endpoint
- * 
+ *
  * Returns: { message: "Hello, World!" }
  */
 

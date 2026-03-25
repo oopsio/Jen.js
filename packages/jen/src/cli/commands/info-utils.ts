@@ -136,7 +136,7 @@ export function getEnvironmentInfo(): Record<string, unknown> {
  */
 export function getRelevantPackages(): Record<string, string> {
   const packages = [
-    'jen',
+    'we-jenjs',
     'preact',
     'vite',
     'typescript',

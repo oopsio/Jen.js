@@ -20,15 +20,15 @@ export type {
   WrapRouteHook,
   ResolveBuildHook,
   BuildCompleteHook,
-} from './types';
+} from './types.js';
 
 // Core
-export { PluginRegistry } from './registry';
-export { PluginSystem } from './system';
+export { PluginRegistry } from './registry.js';
+export { PluginSystem } from './system.js';
 
 // Utilities
-export { createPlugin, definePlugin } from './utils';
-export { PluginError } from './errors';
+export { createPlugin, definePlugin } from './utils.js';
+export { PluginError } from './errors.js';
 
 // Built-in plugins
-export * from './builtin';
+export * from './builtin/index.js';

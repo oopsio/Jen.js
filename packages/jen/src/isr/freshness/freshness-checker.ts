@@ -1,7 +1,7 @@
 /**
  * Cache freshness checking utility
  */
-import type { FreshnessResult } from '../types';
+import type { FreshnessResult } from '../types.js';
 
 export class FreshnessChecker {
   /**

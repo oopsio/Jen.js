@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { CliParser } from '../cli';
+import { CliParser } from '../cli/index.js';
 
 const args = process.argv.slice(2);
 

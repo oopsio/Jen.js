@@ -1,7 +1,7 @@
 /**
  * Abstract storage provider for cache management
  */
-import type { CacheEntry, IStorageProvider } from '../types';
+import type { CacheEntry, IStorageProvider } from '../types.js';
 
 export abstract class StorageProvider implements IStorageProvider {
   abstract get(key: string): Promise<CacheEntry | null>;

@@ -3,7 +3,10 @@ import { useContext, useEffect, useState } from 'preact/hooks';
 
 declare global {
   interface Window {
-    __JEN_ROUTE_MANIFEST__?: Record<string, { page: string; layouts: string[]; isDynamic: boolean }>;
+    __JEN_ROUTE_MANIFEST__?: Record<
+      string,
+      { page: string; layouts: string[]; isDynamic: boolean }
+    >;
   }
 }
 
@@ -32,7 +35,8 @@ export interface RouterProps {
 }
 
 function matchRouteManifest(href: string) {
-  const manifest = typeof window !== 'undefined' ? window.__JEN_ROUTE_MANIFEST__ : null;
+  const manifest =
+    typeof window !== 'undefined' ? window.__JEN_ROUTE_MANIFEST__ : null;
   if (!manifest) return null;
 
   const url = new URL(href, window.location.origin);
@@ -55,7 +59,13 @@ function matchRouteManifest(href: string) {
  * Recursively mounts the component tree to preserve parent layout states.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function RouteNode({ components, depth }: { components: ComponentType<any>[]; depth: number }) {
+function RouteNode({
+  components,
+  depth,
+}: {
+  components: ComponentType<any>[];
+  depth: number;
+}) {
   const Component = components[depth];
   if (!Component) return null;
 
@@ -77,7 +87,9 @@ export function Router({
 }: RouterProps) {
   const [path, setPath] = useState(initialPath);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [componentsTree, setComponentsTree] = useState<ComponentType<any>[]>(initialComponents || []);
+  const [componentsTree, setComponentsTree] = useState<ComponentType<any>[]>(
+    initialComponents || [],
+  );
   const [loading, setLoading] = useState(false);
 
   // SSR fallback: if no initialComponents were provided, render children directly
@@ -94,22 +106,27 @@ export function Router({
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-      
+
       const routeDef = matchRouteManifest(href);
       if (!routeDef) {
         throw new Error(`Route ${href} not found in client manifest.`);
       }
 
       // 2. Import the layout tree and the leaf page dynamically in parallel
-      const layoutPromises = routeDef.layouts.map(l => import(/* @vite-ignore */ l));
+      const layoutPromises = routeDef.layouts.map(
+        (l) => import(/* @vite-ignore */ l),
+      );
       const pagePromise = import(/* @vite-ignore */ routeDef.page);
-      
+
       const layoutModules = await Promise.all(layoutPromises);
       const pageModule = await pagePromise;
 
-      const newComponents = [...layoutModules.map(m => m.default), pageModule.default];
+      const newComponents = [
+        ...layoutModules.map((m) => m.default),
+        pageModule.default,
+      ];
 
-      // 3. Update router state 
+      // 3. Update router state
       if (replace) {
         window.history.replaceState({}, '', href);
       } else {
@@ -153,8 +170,12 @@ export function Router({
 
   return (
     <RouterContext.Provider value={{ path, push, replace }}>
-      {isSSR && children ? children : componentsTree.length > 0 ? h(RouteNode, { components: componentsTree, depth: 0 }) : children}
-      
+      {isSSR && children
+        ? children
+        : componentsTree.length > 0
+          ? h(RouteNode, { components: componentsTree, depth: 0 })
+          : children}
+
       {loading && (
         <div
           style={{

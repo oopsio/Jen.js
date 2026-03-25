@@ -3,7 +3,7 @@
  * Captures Rust RouteMatcher output and formats for DevTools
  */
 
-import type { RouteMatchTrace } from './types';
+import type { RouteMatchTrace } from './types.js';
 
 /**
  * Result from Rust WASM RouteMatcher

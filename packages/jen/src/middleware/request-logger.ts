@@ -1,7 +1,7 @@
 /**
  * Request Logger Middleware - Logs all incoming requests
  */
-import type { MiddlewareContext, NextFunction } from './types';
+import type { MiddlewareContext, NextFunction } from './types.js';
 
 export class RequestLogger {
   private isDevelopment: boolean;

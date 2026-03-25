@@ -1,7 +1,7 @@
 /**
  * ISR Helper - Utility for CLI to set up ISR
  */
-import { updateRuntimeConfig } from '../config/config';
+import { updateRuntimeConfig } from '../config/config.js';
 
 export class ISRHelper {
   /**
@@ -49,7 +49,7 @@ export class ISRHelper {
    */
   static printStatus(): void {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { RuntimeConfig } = require('../config/config');
+    const { RuntimeConfig } = require('../config/config.js');
     const isr = RuntimeConfig.isr;
 
     console.log('\nISR Status:');

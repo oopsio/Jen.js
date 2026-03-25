@@ -1,0 +1,109 @@
+---
+title: Cloudflare Workers
+description: Deploy to Cloudflare Workers as a single-file edge bundle.
+---
+
+Jen.js includes a Cloudflare Workers adapter that compiles your application into a single JavaScript file compatible with the Workers runtime.
+
+## Build
+
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npx jen build --adapter=cloudflare
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen build --adapter=cloudflare
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn jen build --adapter=cloudflare
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bunx jen build --adapter=cloudflare
+    ```
+  </Tab>
+</Tabs>
+
+## What Gets Generated
+
+```
+dist/static/
+├── cloudflare-worker.js   ← Self-contained Worker bundle
+├── index.html
+├── about.html
+├── sitemap.xml
+└── robots.txt
+```
+
+## Architecture
+
+Cloudflare Workers prohibit filesystem APIs and dynamically-bound WASM imports. The Jen.js adapter handles this by:
+
+1. **Bypassing the Rust WASM RouterMap** — Generates a pure JavaScript `switch` evaluator for route matching
+2. **Inlining SSR** — Uses `preact-render-to-string` directly in the Worker
+3. **SWC minification** — Optimizes the bundle for V8 edge engines with `module: true, compress: true`
+
+## Deploy
+
+Deploy using [Wrangler](https://developers.cloudflare.com/workers/wrangler/):
+
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    # Install Wrangler
+    npm install -g wrangler
+    
+    # Deploy
+    wrangler deploy dist/static/cloudflare-worker.js
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    # Install Wrangler
+    pnpm add -g wrangler
+    
+    # Deploy
+    wrangler deploy dist/static/cloudflare-worker.js
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    # Install Wrangler
+    yarn global add wrangler
+    
+    # Deploy
+    wrangler deploy dist/static/cloudflare-worker.js
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    # Install Wrangler
+    bun add -g wrangler
+    
+    # Deploy
+    wrangler deploy dist/static/cloudflare-worker.js
+    ```
+  </Tab>
+</Tabs>
+
+## Configuration
+
+Create a `wrangler.toml` for custom Worker settings:
+
+```toml title="wrangler.toml"
+name = "my-jen-app"
+main = "dist/static/cloudflare-worker.js"
+compatibility_date = "2026-03-01"
+
+[site]
+bucket = "./dist/static"
+```
+
+> [!WARNING]
+> Dynamic routes using the Rust WASM router are unavailable in Cloudflare Workers. All routing is handled via the compiled JavaScript switch evaluator.

@@ -32,7 +32,7 @@ export async function load(context: LoadContext): Promise<LoadResult> {
   try {
     // In a real app, fetch from OpenWeather API or similar
     // const response = await fetch(`https://api.openweathermap.org/...`);
-    
+
     // Mock weather data
     const weatherData: WeatherData = {
       city,
@@ -74,7 +74,10 @@ export async function load(context: LoadContext): Promise<LoadResult> {
 /**
  * Weather page component
  */
-export default function WeatherPage({ weather, location }: WeatherPageProps): VNode {
+export default function WeatherPage({
+  weather,
+  location,
+}: WeatherPageProps): VNode {
   return (
     <div
       style={{
@@ -116,7 +119,9 @@ export default function WeatherPage({ weather, location }: WeatherPageProps): VN
             >
               {weather.temperature}°F
             </div>
-            <div style={{ color: '#666', fontSize: '1.1rem', marginTop: '0.5rem' }}>
+            <div
+              style={{ color: '#666', fontSize: '1.1rem', marginTop: '0.5rem' }}
+            >
               {weather.condition}
             </div>
           </div>

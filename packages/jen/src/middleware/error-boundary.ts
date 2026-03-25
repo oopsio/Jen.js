@@ -1,8 +1,8 @@
 /**
  * Error Boundary Middleware - Catches and handles errors gracefully
  */
-import type { MiddlewareContext, NextFunction } from './types';
-import { MiddlewareError } from './types';
+import type { MiddlewareContext, NextFunction } from './types.js';
+import { MiddlewareError } from './types.js';
 
 export class ErrorBoundary {
   private isDevelopment: boolean;

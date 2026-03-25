@@ -20,9 +20,15 @@ const inter = GoogleFont('Inter', {
  *
  * The Component prop is the current page, pageProps are its data.
  */
-export default function App({ Component, pageProps, children }: AppComponentProps & { children?: VNode }): VNode {
+export default function App({
+  Component,
+  pageProps,
+  children,
+}: AppComponentProps & { children?: VNode }): VNode {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div
+      style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}
+    >
       {/* Persistent Navbar */}
       <nav
         style={{
@@ -38,17 +44,36 @@ export default function App({ Component, pageProps, children }: AppComponentProp
       >
         <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Jen.js</h2>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
-          <a href="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold' }}>
+          <a
+            href="/"
+            style={{
+              color: '#fff',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+            }}
+          >
             Home
           </a>
-          <a href="/test" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold' }}>
+          <a
+            href="/test"
+            style={{
+              color: '#fff',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+            }}
+          >
             Test
           </a>
         </div>
       </nav>
 
       {/* Page Content - This is where each page renders */}
-      <main style={{ flex: 1, fontFamily: `${inter.style.fontFamily}, system-ui, sans-serif` }}>
+      <main
+        style={{
+          flex: 1,
+          fontFamily: `${inter.style.fontFamily}, system-ui, sans-serif`,
+        }}
+      >
         {children ? children : h(Component, pageProps)}
       </main>
 
@@ -63,13 +88,22 @@ export default function App({ Component, pageProps, children }: AppComponentProp
           fontSize: '0.875rem',
         }}
       >
-        <p>© 2025 Jen.js - The Next.js-Level Framework Built with Bun, Vite & Preact</p>
+        <p>
+          © 2025 Jen.js - The Next.js-Level Framework Built with Bun, Vite &
+          Preact
+        </p>
         <p style={{ marginTop: '0.5rem', color: '#666' }}>
-          <a href="https://github.com/oopsio/jen.js" style={{ color: '#00ff00', textDecoration: 'none' }}>
+          <a
+            href="https://github.com/oopsio/jen.js"
+            style={{ color: '#00ff00', textDecoration: 'none' }}
+          >
             GitHub
           </a>
           {' • '}
-          <a href="https://docs.jen.js" style={{ color: '#00ff00', textDecoration: 'none' }}>
+          <a
+            href="https://docs.jen.js"
+            style={{ color: '#00ff00', textDecoration: 'none' }}
+          >
             Docs
           </a>
         </p>

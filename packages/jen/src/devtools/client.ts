@@ -3,7 +3,7 @@
  * Communicates with the DevTools Server sidecar
  */
 
-import type { DevToolsMessage } from './types';
+import type { DevToolsMessage } from './types.js';
 
 export class DevToolsClient {
   private ws: WebSocket | null = null;

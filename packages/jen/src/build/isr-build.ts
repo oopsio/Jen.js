@@ -1,9 +1,9 @@
 /**
  * ISR Build Integration - Generates ISR cache during static build
  */
-import { RuntimeConfig } from '../config/config';
-import { RouteScanner } from '../core/scan';
-import { ISRFactory, RouteMetadataExtractor, FileStorage } from '../isr';
+import { RuntimeConfig } from '../config/config.js';
+import { RouteScanner } from '../core/scan.js';
+import { ISRFactory, RouteMetadataExtractor, FileStorage } from '../isr/index.js';
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 import type { ViteDevServer } from 'vite';
@@ -81,8 +81,8 @@ export class ISRBuildIntegration {
               const layoutModule = await vite.ssrLoadModule(layoutPath);
               const Layout = layoutModule.default;
               if (Layout) {
-                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                 page = h(Layout as any, null, page);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                page = h(Layout as any, null, page);
               }
             }
           }
@@ -94,8 +94,16 @@ export class ISRBuildIntegration {
         const NodePath = await import('node:path');
         const rPath = route.filePathTsx || route.filePathJsx || '';
         manifestObj[route.urlPath] = {
-          page: '/' + NodePath.relative(process.cwd(), rPath).replace(/\\/g, '/'),
-          layouts: (route.layouts || []).map(l => '/' + NodePath.relative(process.cwd(), l.tsx || l.jsx || '').replace(/\\/g, '/')),
+          page:
+            '/' + NodePath.relative(process.cwd(), rPath).replace(/\\/g, '/'),
+          layouts: (route.layouts || []).map(
+            (l) =>
+              '/' +
+              NodePath.relative(process.cwd(), l.tsx || l.jsx || '').replace(
+                /\\/g,
+                '/',
+              ),
+          ),
           isDynamic: route.isDynamic,
         };
 

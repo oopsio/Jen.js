@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'bun:test';
-import { DataLoaderManager, type LoadContext, type LoadResult } from '../data-loader';
+import {
+  DataLoaderManager,
+  type LoadContext,
+  type LoadResult,
+} from '../data-loader.js';
 
 describe('DataLoaderManager', () => {
   it('should build context from URL', () => {
@@ -70,7 +74,7 @@ describe('DataLoaderManager', () => {
     };
 
     expect(result.props.title).toBe('Test');
-    expect((result.props.data as number[])).toEqual([1, 2, 3]);
+    expect(result.props.data as number[]).toEqual([1, 2, 3]);
   });
 
   it('should handle load result with revalidate', () => {

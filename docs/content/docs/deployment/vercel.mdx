@@ -1,0 +1,101 @@
+---
+title: Vercel
+description: Deploy to Vercel with zero-config serverless functions.
+---
+
+Jen.js includes a built-in Vercel adapter that generates the `.vercel/output` directory structure for instant deployments.
+
+## Build
+
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    npx jen build --adapter=vercel
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen build --adapter=vercel
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn jen build --adapter=vercel
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bunx jen build --adapter=vercel
+    ```
+  </Tab>
+</Tabs>
+
+## What Gets Generated
+
+The adapter creates Vercel's [Build Output API v3](https://vercel.com/docs/build-output-api/v3) structure:
+
+```
+.vercel/output/
+├── config.json
+├── static/            ← Pre-rendered HTML, CSS, JS
+│   ├── index.html
+│   ├── about.html
+│   ├── sitemap.xml
+│   └── robots.txt
+└── functions/
+    └── index.func/    ← Serverless lambda wrapper
+        └── index.js
+```
+
+## Features
+
+- **Static assets** served from the Vercel CDN
+- **Serverless function** wrapping the Jen.js SSR engine for dynamic routes
+- **Edge Middleware** support (your `middleware.ts` is bundled into the function)
+- **SWC minification** targeting V8 edge engines
+
+## Deploy
+
+Push to your Git repository connected to Vercel, or deploy manually:
+
+<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+  <Tab value="npm">
+    ```bash
+    # Install Vercel CLI
+    npm install -g vercel
+    
+    # Deploy
+    vercel --prebuilt
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    # Install Vercel CLI
+    pnpm add -g vercel
+    
+    # Deploy
+    vercel --prebuilt
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    # Install Vercel CLI
+    yarn global add vercel
+    
+    # Deploy
+    vercel --prebuilt
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    # Install Vercel CLI
+    bun add -g vercel
+    
+    # Deploy
+    vercel --prebuilt
+    ```
+  </Tab>
+</Tabs>
+
+> [!NOTE]
+> The `--prebuilt` flag tells Vercel to use the `.vercel/output` directory that Jen.js already generated, skipping Vercel's own build step.

@@ -3,7 +3,7 @@
  * Tracks performance metrics and timing
  */
 
-import type { Plugin, PluginContext } from '../types';
+import type { Plugin, PluginContext } from '../types.js';
 
 interface MetricsData {
   buildTime: number;

@@ -6,7 +6,7 @@ import type {
   MiddlewareHandler,
   NextFunction,
   MiddlewarePipelineConfig,
-} from './types';
+} from './types.js';
 
 export class MiddlewarePipeline {
   private middlewares: Array<{ handler: MiddlewareHandler; name: string }> = [];

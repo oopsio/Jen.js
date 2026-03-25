@@ -3,7 +3,7 @@
  * Intercepts and logs queries from native drivers
  */
 
-import type { QueryLog, DriverMetrics } from './types';
+import type { QueryLog, DriverMetrics } from './types.js';
 
 export class DatabaseMonitor {
   private static slowQueryThreshold = 100; // ms

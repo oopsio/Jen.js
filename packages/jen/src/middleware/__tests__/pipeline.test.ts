@@ -2,8 +2,8 @@
  * Middleware Pipeline Tests
  */
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { MiddlewarePipeline, ContextBuilder } from '../index';
-import type { MiddlewareContext } from '../index';
+import { MiddlewarePipeline, ContextBuilder } from '../index.js';
+import type { MiddlewareContext } from '../index.js';
 
 describe('MiddlewarePipeline', () => {
   let pipeline: MiddlewarePipeline;

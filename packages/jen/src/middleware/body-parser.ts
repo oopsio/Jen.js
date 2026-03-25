@@ -6,8 +6,8 @@ import type {
   MiddlewareContext,
   NextFunction,
   BodyParserOptions,
-} from './types';
-import { MiddlewareError } from './types';
+} from './types.js';
+import { MiddlewareError } from './types.js';
 
 export class BodyParser {
   private maxSize: number;

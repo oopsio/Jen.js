@@ -1,0 +1,53 @@
+---
+title: <Link>
+description: Client-side navigation with prefetching.
+---
+
+The `<Link>` component enables SPA-like navigation without full page reloads.
+
+## Import
+
+```tsx
+import { Link } from 'we-jenjs/client';
+```
+
+## Usage
+
+```tsx
+<Link href="/about">About Us</Link>
+<Link href="/blog" className="nav-link">Blog</Link>
+```
+
+## Props
+
+| Prop | Type | Description |
+|---|---|---|
+| `href` | `string` | Target URL path |
+| `children` | `ComponentChildren` | Link content |
+| `className` | `string` | CSS class name |
+| `style` | `JSX.CSSProperties` | Inline styles |
+
+## How It Works
+
+1. **Intercepts clicks** — Left-clicks without modifier keys are prevented from triggering a full navigation
+2. **Updates URL** — Pushes the new path to `window.history`
+3. **Dispatches event** — Fires a `jen-navigation` custom event that the client router listens for
+4. **Swaps content** — The router fetches and renders the target page component without unmounting layouts
+
+Modifier clicks (Ctrl+click, Cmd+click, etc.) fall through to the browser's native behavior, opening links in new tabs as expected.
+
+## Example
+
+```tsx
+import { Link } from 'we-jenjs/client';
+
+export default function Navigation() {
+  return (
+    <nav>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+      <Link href="/blog" className="active">Blog</Link>
+    </nav>
+  );
+}
+```

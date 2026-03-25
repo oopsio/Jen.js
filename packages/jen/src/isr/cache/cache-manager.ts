@@ -8,8 +8,8 @@ import type {
   RenderFunction,
   RouteMetadata,
   IStorageProvider,
-} from '../types';
-import { FreshnessChecker } from '../freshness/freshness-checker';
+} from '../types.js';
+import { FreshnessChecker } from '../freshness/freshness-checker.js';
 
 export class CacheManager {
   private renderQueue: Set<string> = new Set();

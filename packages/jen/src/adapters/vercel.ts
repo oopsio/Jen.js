@@ -2,36 +2,41 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { build } from 'esbuild';
 import { minify } from '@swc/core';
-import { RouteScanner } from '../core/scan';
+import { RouteScanner } from '../core/scan.js';
 
 export class VercelAdapter {
   public static async build(options: { outDir: string; rootDir: string }) {
     console.log('\x1b[36m→ Building Vercel Serverless adapter...\x1b[0m');
     const vercelOut = path.join(options.rootDir, '.vercel', 'output');
-    
-    fs.mkdirSync(path.join(vercelOut, 'functions', 'index.func'), { recursive: true });
-    
+
+    fs.mkdirSync(path.join(vercelOut, 'functions', 'index.func'), {
+      recursive: true,
+    });
+
     const configObj = {
       version: 3,
-      routes: [
-        { handle: "filesystem" },
-        { src: "/(.*)", dest: "/" }
-      ]
+      routes: [{ handle: 'filesystem' }, { src: '/(.*)', dest: '/' }],
     };
-    fs.writeFileSync(path.join(vercelOut, 'config.json'), JSON.stringify(configObj, null, 2));
+    fs.writeFileSync(
+      path.join(vercelOut, 'config.json'),
+      JSON.stringify(configObj, null, 2),
+    );
 
     const funcConfig = {
-      runtime: "nodejs18.x",
-      handler: "index.js",
-      launcherType: "Nodejs"
+      runtime: 'nodejs18.x',
+      handler: 'index.js',
+      launcherType: 'Nodejs',
     };
-    fs.writeFileSync(path.join(vercelOut, 'functions', 'index.func', '.vc-config.json'), JSON.stringify(funcConfig, null, 2));
+    fs.writeFileSync(
+      path.join(vercelOut, 'functions', 'index.func', '.vc-config.json'),
+      JSON.stringify(funcConfig, null, 2),
+    );
 
     // Statically bind component payload routes to bypass runtime node traversal bugs on Vercel
     const scanner = new RouteScanner();
     const routes = scanner.scanPages();
     const middlewarePath = scanner.scanMiddleware();
-    
+
     let routeRegistrations = '';
     let imports = `import { h } from 'preact';\n`;
     imports += `import renderToString from 'preact-render-to-string';\n`;
@@ -41,14 +46,18 @@ export class VercelAdapter {
     }
 
     routes.forEach((route, i) => {
-       const tsxPath = route.filePathTsx ? route.filePathTsx.replace(/\\/g, '/') : '';
-       const jsxPath = route.filePathJsx ? route.filePathJsx.replace(/\\/g, '/') : '';
-       const targetPath = tsxPath || jsxPath;
-       
-       if (!targetPath) return;
-       imports += `import * as Page${i} from '${targetPath}';\n`;
-       
-       routeRegistrations += `
+      const tsxPath = route.filePathTsx
+        ? route.filePathTsx.replace(/\\/g, '/')
+        : '';
+      const jsxPath = route.filePathJsx
+        ? route.filePathJsx.replace(/\\/g, '/')
+        : '';
+      const targetPath = tsxPath || jsxPath;
+
+      if (!targetPath) return;
+      imports += `import * as Page${i} from '${targetPath}';\n`;
+
+      routeRegistrations += `
          if (pathname === '${route.urlPath}') {
              const html = renderToString(h(Page${i}.default || Page${i}, {}));
              const headers = new Headers({ 'Content-Type': 'text/html; charset=utf-8' });
@@ -103,7 +112,7 @@ export default async function handler(req, res) {
     fs.writeFileSync(entryPath, serverCode);
 
     const outfile = path.join(vercelOut, 'functions', 'index.func', 'index.js');
-    
+
     // Vercel bundle via specialized Node hooks
     await build({
       entryPoints: [entryPath],
@@ -112,21 +121,26 @@ export default async function handler(req, res) {
       platform: 'node',
       target: 'node18',
       format: 'esm',
-      external: ['preact', 'vite']
+      external: ['preact', 'vite'],
     });
 
     // SWC Minification Core Engine pass
     const bundledCode = fs.readFileSync(outfile, 'utf-8');
-    const minified = await minify(bundledCode, { 
-       module: true,
-       compress: true, 
-       mangle: true 
+    const minified = await minify(bundledCode, {
+      module: true,
+      compress: true,
+      mangle: true,
     });
     fs.writeFileSync(outfile, minified.code);
 
-    const pj = { type: "module" };
-    fs.writeFileSync(path.join(vercelOut, 'functions', 'index.func', 'package.json'), JSON.stringify(pj));
+    const pj = { type: 'module' };
+    fs.writeFileSync(
+      path.join(vercelOut, 'functions', 'index.func', 'package.json'),
+      JSON.stringify(pj),
+    );
 
-    console.log('\x1b[32m✓ Vercel adapter build complete in .vercel/output\x1b[0m');
+    console.log(
+      '\x1b[32m✓ Vercel adapter build complete in .vercel/output\x1b[0m',
+    );
   }
 }

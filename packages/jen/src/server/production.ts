@@ -12,10 +12,10 @@
  * - No dev dependencies: Uses only dist/ artifacts
  */
 
-import { RuntimeDetector } from './runtime';
-import { RouterMap } from '../core/map';
-import { RouteScanner } from '../core/scan';
-import { RuntimeConfig } from '../config/config';
+import { RuntimeDetector } from './runtime.js';
+import { RouterMap } from '../core/map.js';
+import { RouteScanner } from '../core/scan.js';
+import { RuntimeConfig } from '../config/config.js';
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 
@@ -112,7 +112,10 @@ class ProductionSSREngine {
    * Render a page component from the dist bundle
    * All modules must be pre-built and bundled
    */
-  public static async renderPage(componentPath: string, locale?: string): Promise<string> {
+  public static async renderPage(
+    componentPath: string,
+    locale?: string,
+  ): Promise<string> {
     try {
       // Dynamic import from pre-bundled dist
       // In production, this should resolve from your bundled output
@@ -185,7 +188,9 @@ class ProductionSSREngine {
 // REQUEST HANDLER
 // ============================================================================
 
-type MiddlewareFn = (req: Request) => Response | void | Promise<Response | void>;
+type MiddlewareFn = (
+  req: Request,
+) => Response | void | Promise<Response | void>;
 let globalMiddleware: MiddlewareFn | undefined;
 
 export function setMiddleware(fn: MiddlewareFn): void {
@@ -210,7 +215,7 @@ async function handleRequest(request: Request): Promise<Response> {
         if (mwResponse.headers.get('x-jen-middleware') !== 'next') {
           return mwResponse;
         }
-        
+
         // Handle Rewrite
         const rewriteUrl = mwResponse.headers.get('x-jen-rewrite');
         if (rewriteUrl) {
@@ -236,14 +241,14 @@ async function handleRequest(request: Request): Promise<Response> {
       if (firstPath && i18nConfig.locales.includes(firstPath)) {
         pathParts.splice(1, 1);
         urlObj.pathname = pathParts.join('/') || '/';
-        
+
         const newHeaders = new Headers(req.headers);
         newHeaders.set('x-jen-locale', firstPath);
-        
+
         req = new Request(urlObj.toString(), {
           method: req.method,
           headers: newHeaders,
-          body: req.body
+          body: req.body,
         });
       } else {
         const newHeaders = new Headers(req.headers);
@@ -251,7 +256,7 @@ async function handleRequest(request: Request): Promise<Response> {
         req = new Request(req.url, {
           method: req.method,
           headers: newHeaders,
-          body: req.body
+          body: req.body,
         });
       }
     }
@@ -340,7 +345,9 @@ export async function startProductionServer(
       const middlewareModule = await import(/* @vite-ignore */ middlewarePath);
       if (typeof middlewareModule.default === 'function') {
         setMiddleware(middlewareModule.default);
-        console.log(`${colors.green}Middleware${colors.reset} registered from ${middlewarePath}`);
+        console.log(
+          `${colors.green}Middleware${colors.reset} registered from ${middlewarePath}`,
+        );
       }
     } catch (e) {
       console.error('Failed to load middleware:', e);

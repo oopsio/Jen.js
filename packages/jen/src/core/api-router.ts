@@ -4,7 +4,14 @@ import fs from 'node:fs';
 /**
  * HTTP method type
  */
-export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+export type HTTPMethod =
+  | 'GET'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE'
+  | 'PATCH'
+  | 'HEAD'
+  | 'OPTIONS';
 
 /**
  * API request object (Fetch API compatible)
@@ -19,7 +26,9 @@ export interface APIRequest extends Omit<Request, 'body'> {
  */
 export class APIResponse {
   private status: number = 200;
-  private headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  private headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
   private body: unknown = null;
 
   constructor() {}
@@ -110,14 +119,19 @@ export class APIRouteScanner {
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        const relPath = relativePath ? `${relativePath}/${entry.name}` : entry.name;
+        const relPath = relativePath
+          ? `${relativePath}/${entry.name}`
+          : entry.name;
 
         if (entry.isDirectory()) {
           scan(fullPath, relPath);
-        } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))) {
+        } else if (
+          entry.isFile() &&
+          (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))
+        ) {
           // Convert file path to URL pathname
           // pages/api/users.ts -> /api/users
-// removed baseName
+          // removed baseName
           const urlPath = `/api/${relPath.replace(/\.(ts|tsx)$/, '').replace(/\\/g, '/')}`;
 
           apiRoutes.push({
@@ -143,7 +157,10 @@ export class APIRouter {
   /**
    * Register an API route with handlers
    */
-  public static registerRoute(pathname: string, handlers: APIRouteHandlers): void {
+  public static registerRoute(
+    pathname: string,
+    handlers: APIRouteHandlers,
+  ): void {
     this.routes.set(pathname, handlers);
   }
 

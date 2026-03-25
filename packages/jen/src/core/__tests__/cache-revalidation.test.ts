@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { CacheRevalidationAPI, jen } from '../cache-revalidation';
+import { CacheRevalidationAPI, jen } from '../cache-revalidation.js';
 
 describe('CacheRevalidationAPI', () => {
   it('should normalize paths correctly', async () => {
@@ -55,7 +55,11 @@ describe('CacheRevalidationAPI', () => {
 
     expect(results.length).toBe(3);
     expect(results.every((r) => r.success)).toBe(true);
-    expect(results.map((r) => r.path)).toEqual(['/blog/1', '/blog/2', '/blog/3']);
+    expect(results.map((r) => r.path)).toEqual([
+      '/blog/1',
+      '/blog/2',
+      '/blog/3',
+    ]);
   });
 
   it('should revalidate pattern', async () => {

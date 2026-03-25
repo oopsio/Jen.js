@@ -1,0 +1,79 @@
+---
+title: GoogleFont
+description: Automatic Google Font optimization with SSR head injection.
+---
+
+The `GoogleFont()` function registers optimized Google Fonts with automatic SSR `<head>` link injection.
+
+## Import
+
+```tsx
+import { GoogleFont } from 'we-jenjs';
+```
+
+## Usage
+
+```tsx
+const inter = GoogleFont('Inter', {
+  weight: [400, 600, 700],
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+export default function Page() {
+  return (
+    <div className={inter.className} style={inter.style}>
+      <h1>Hello with Inter font</h1>
+    </div>
+  );
+}
+```
+
+## Options
+
+```typescript
+interface GoogleFontOptions {
+  weight?: string | number | (string | number)[];  // Font weights
+  subsets?: string[];                               // e.g. ['latin', 'cyrillic']
+  display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
+}
+```
+
+## Return Value
+
+`GoogleFont()` returns an object for applying the font:
+
+| Property | Type | Description |
+|---|---|---|
+| `className` | `string` | Generated CSS class (e.g. `__jen-font-inter`) |
+| `variable` | `string` | CSS custom property (e.g. `--font-inter`) |
+| `style` | `object` | Inline style with `fontFamily` set |
+| `href` | `string` | Google Fonts CSS URL |
+
+## SSR Integration
+
+During server-side rendering, `GoogleFont()` automatically:
+
+1. Tracks all font URLs used on the page
+2. Injects `<link rel="stylesheet">` tags into the `<head>` before flushing
+3. Clears the tracked fonts after injection
+
+This means fonts are automatically available on first render with no layout shift.
+
+## CSS Variables
+
+Use the `variable` property for CSS custom properties:
+
+```tsx
+const outfit = GoogleFont('Outfit', { weight: '400..700' });
+
+export default function Page() {
+  return (
+    <div style={{ [outfit.variable]: outfit.style.fontFamily }}>
+      <p style={{ fontFamily: `var(${outfit.variable})` }}>
+        Variable font in action
+      </p>
+    </div>
+  );
+}
+```

@@ -1,0 +1,20 @@
+{
+  "name": "create-jen",
+  "version": "1.0.0",
+  "description": "Easily create a Jen.js application",
+  "homepage": "https://github.com/oopsio/jen.js#readme",
+  "bugs": {
+    "url": "https://github.com/oopsio/jen.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oopsio/jen.js.git"
+  },
+  "license": "MIT",
+  "author": "oopsio",
+  "type": "module",
+  "main": "bin/create-jen.js",
+  "scripts": {
+    "test": "echo \"None\""
+  }
+}

@@ -3,7 +3,7 @@
  * Provides caching layer for resolved routes and modules
  */
 
-import type { Plugin, PluginContext } from '../types';
+import type { Plugin, PluginContext } from '../types.js';
 
 interface CacheEntry<T> {
   value: T;

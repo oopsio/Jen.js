@@ -1,7 +1,7 @@
 // src/config/ConfigLoader.ts
 import path from 'node:path';
 import fs from 'node:fs';
-import { updateRuntimeConfig } from './config';
+import { updateRuntimeConfig } from './config.js';
 
 export class ConfigLoader {
   public static async initialize(): Promise<void> {

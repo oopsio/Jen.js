@@ -1,7 +1,7 @@
 /**
  * Middleware Manager - Integrates middleware system with Jen.js framework
  */
-import { RuntimeConfig } from '../config/config';
+import { RuntimeConfig } from '../config/config.js';
 import {
   MiddlewarePipeline,
   ContextBuilder,
@@ -10,7 +10,7 @@ import {
   ErrorBoundary,
   RequestLogger,
   MiddlewareContext,
-} from '../middleware';
+} from '../middleware/index.js';
 
 export class MiddlewareManager {
   private static pipeline: MiddlewarePipeline | null = null;

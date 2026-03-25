@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { APIRouter, APIResponse, APIRouteScanner } from '../api-router';
+import { APIRouter, APIResponse, APIRouteScanner } from '../api-router.js';
 
 describe('APIRouter', () => {
   beforeEach(() => {

@@ -7,7 +7,7 @@ import type {
   PluginContext,
   PluginInstance,
   PluginHook,
-} from './types';
+} from './types.js';
 
 /**
  * Central plugin registry and manager

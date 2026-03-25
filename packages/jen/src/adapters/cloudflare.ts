@@ -2,18 +2,18 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { build } from 'esbuild';
 import { minify } from '@swc/core';
-import { RouteScanner } from '../core/scan';
+import { RouteScanner } from '../core/scan.js';
 
 export class CloudflareAdapter {
   public static async build(options: { outDir: string; rootDir: string }) {
     console.log('\x1b[36m→ Building Cloudflare Worker adapter...\x1b[0m');
-    
-    // Cloudflare isolates cannot use Node.js \`fs\`. 
+
+    // Cloudflare isolates cannot use Node.js \`fs\`.
     // We must pre-register all dynamic routes structurally.
     const scanner = new RouteScanner();
     const routes = scanner.scanPages();
     const middlewarePath = scanner.scanMiddleware();
-    
+
     let routeRegistrations = '';
     let imports = `import { h } from 'preact';\n`;
     imports += `import renderToString from 'preact-render-to-string';\n`;
@@ -23,14 +23,18 @@ export class CloudflareAdapter {
     }
 
     routes.forEach((route, i) => {
-       const tsxPath = route.filePathTsx ? route.filePathTsx.replace(/\\/g, '/') : '';
-       const jsxPath = route.filePathJsx ? route.filePathJsx.replace(/\\/g, '/') : '';
-       const targetPath = tsxPath || jsxPath;
-       
-       if (!targetPath) return;
-       imports += `import * as Page${i} from '${targetPath}';\n`;
-       
-       routeRegistrations += `
+      const tsxPath = route.filePathTsx
+        ? route.filePathTsx.replace(/\\/g, '/')
+        : '';
+      const jsxPath = route.filePathJsx
+        ? route.filePathJsx.replace(/\\/g, '/')
+        : '';
+      const targetPath = tsxPath || jsxPath;
+
+      if (!targetPath) return;
+      imports += `import * as Page${i} from '${targetPath}';\n`;
+
+      routeRegistrations += `
          if (pathname === '${route.urlPath}') {
              const html = renderToString(h(Page${i}.default || Page${i}, {}));
              return new Response(typeof html === 'string' ? html : 'Render Error', { 
@@ -85,10 +89,12 @@ export default {
     const minified = await minify(bundledCode, {
       module: true,
       compress: true,
-      mangle: true
+      mangle: true,
     });
     fs.writeFileSync(outfile, minified.code);
 
-    console.log('\x1b[32m✓ Cloudflare Worker deployed to ' + outfile + '\x1b[0m');
+    console.log(
+      '\x1b[32m✓ Cloudflare Worker deployed to ' + outfile + '\x1b[0m',
+    );
   }
 }

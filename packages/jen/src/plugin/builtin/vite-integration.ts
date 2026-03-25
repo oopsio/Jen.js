@@ -3,7 +3,7 @@
  * Manages Vite-specific configurations and hooks
  */
 
-import type { Plugin, PluginContext } from '../types';
+import type { Plugin, PluginContext } from '../types.js';
 
 export class ViteIntegrationPlugin implements Plugin {
   name = '@jen/vite-integration';

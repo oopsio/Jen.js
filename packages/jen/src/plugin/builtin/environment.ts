@@ -3,7 +3,7 @@
  * Handles environment-specific configurations
  */
 
-import type { Plugin, PluginContext } from '../types';
+import type { Plugin, PluginContext } from '../types.js';
 
 export class EnvironmentPlugin implements Plugin {
   name = '@jen/environment';

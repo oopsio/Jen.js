@@ -1,9 +1,9 @@
-import { DevServerManager } from '../server/app';
-import { StaticSiteGenerator } from '../build/build';
-import { ProductionServerManager } from '../server/production';
-import { ConfigLoader } from '../config/loader';
-import { RuntimeConfig } from '../config/config';
-import { handleInfoCommand } from './commands';
+import { DevServerManager } from '../server/app.js';
+import { StaticSiteGenerator } from '../build/build.js';
+import { ProductionServerManager } from '../server/production.js';
+import { ConfigLoader } from '../config/loader.js';
+import { RuntimeConfig } from '../config/config.js';
+import { handleInfoCommand } from './commands/index.js';
 
 /**
  * Main Command Line Interface Parser and Executor.
@@ -41,8 +41,8 @@ export class CliParser {
         if (adapterIndex !== -1 && args[adapterIndex + 1]) {
           adapter = args[adapterIndex + 1];
         }
-        
-        const adapterPrefixMatch = args.find(a => a.startsWith('--adapter='));
+
+        const adapterPrefixMatch = args.find((a) => a.startsWith('--adapter='));
         if (adapterPrefixMatch) {
           adapter = adapterPrefixMatch.split('=')[1];
         }
