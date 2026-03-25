@@ -1,0 +1,212 @@
+# CLI Reference
+
+
+
+The `jen` CLI provides commands for development, building, and running your application.
+
+Usage [#usage]
+
+```bash
+jen <command> [options]
+```
+
+Commands [#commands]
+
+`jen dev` [#jen-dev]
+
+Start the development server with hot module replacement.
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen dev
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen dev
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen dev
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen dev
+    ```
+  </Tab>
+</Tabs>
+
+* Powered by Vite with HMR
+* Streaming SSR for all routes
+* API route support
+* Middleware execution
+* Runs on the port specified in `jen.config.ts` (default: 3000)
+
+***
+
+`jen build` [#jen-build]
+
+Generate a static site from all non-dynamic routes.
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen build
+    npx jen build --adapter=vercel
+    npx jen build --adapter=cloudflare
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen build
+    pnpm jen build --adapter=vercel
+    pnpm jen build --adapter=cloudflare
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen build
+    yarn jen build --adapter=vercel
+    yarn jen build --adapter=cloudflare
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen build
+    bunx jen build --adapter=vercel
+    bunx jen build --adapter=cloudflare
+    ```
+  </Tab>
+</Tabs>
+
+| Flag                   | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `--adapter=vercel`     | Generate Vercel Build Output API structure |
+| `--adapter=cloudflare` | Generate Cloudflare Worker bundle          |
+
+Outputs to `dist/static/` by default. Includes `sitemap.xml` and `robots.txt`.
+
+***
+
+`jen start` [#jen-start]
+
+Build and start a production-hardened server.
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen start
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen start
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen start
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen start
+    ```
+  </Tab>
+</Tabs>
+
+* Runs the full SSG build first
+* Starts the production HTTP server
+* NIST/OWASP security headers enabled
+* ISR cache management active
+
+***
+
+`jen info` [#jen-info]
+
+Display system and framework diagnostics.
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen info
+    npx jen info --verbose
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen info
+    pnpm jen info --verbose
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen info
+    yarn jen info --verbose
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen info
+    bunx jen info --verbose
+    ```
+  </Tab>
+</Tabs>
+
+| Flag              | Description                          |
+| ----------------- | ------------------------------------ |
+| `--verbose`, `-v` | Show extended diagnostic information |
+
+***
+
+`jen help` [#jen-help]
+
+Show the help menu.
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen help
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen help
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen help
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen help
+    ```
+  </Tab>
+</Tabs>
+
+Global Options [#global-options]
+
+| Flag              | Description       |
+| ----------------- | ----------------- |
+| `--verbose`, `-v` | Verbose output    |
+| `--help`, `-h`    | Show help message |

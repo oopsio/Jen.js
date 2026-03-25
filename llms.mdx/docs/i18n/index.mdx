@@ -1,0 +1,96 @@
+# Internationalization
+
+
+
+Jen.js supports native internationalization (i18n) with automatic locale routing, `<html lang>` injection, and per-locale static builds.
+
+Configuration [#configuration]
+
+Enable i18n in `jen.config.ts`:
+
+```typescript title="jen.config.ts"
+export default {
+  i18n: {
+    locales: ['en', 'fr', 'de'],
+    defaultLocale: 'en',
+  },
+};
+```
+
+Locale Routing [#locale-routing]
+
+With i18n enabled, routes automatically support locale prefixes:
+
+| URL         | Locale         | Page                  |
+| ----------- | -------------- | --------------------- |
+| `/en/about` | `en`           | `pages/about/app.tsx` |
+| `/fr/about` | `fr`           | `pages/about/app.tsx` |
+| `/about`    | `en` (default) | `pages/about/app.tsx` |
+
+The framework intercepts requests and:
+
+1. Extracts the first path segment
+2. Matches it against `i18n.locales`
+3. Strips the locale prefix before routing
+4. Injects `x-jen-locale` into the request context
+
+Accessing the Locale [#accessing-the-locale]
+
+The current locale is available as `pageProps.locale` in your component:
+
+```tsx title="pages/app.tsx"
+export default function Home({ locale }: { locale: string }) {
+  return (
+    <div>
+      <h1>{locale === 'fr' ? 'Bienvenue' : 'Welcome'}</h1>
+    </div>
+  );
+}
+```
+
+HTML Lang Injection [#html-lang-injection]
+
+Jen.js automatically sets the `<html lang="...">` attribute during SSR based on the detected locale:
+
+```html
+<!-- Request to /fr/about -->
+<html lang="fr">
+```
+
+Static Generation with i18n [#static-generation-with-i18n]
+
+During `jen build`, pages are generated for **every configured locale**:
+
+```
+dist/static/
+├── en/
+│   ├── index.html
+│   └── about.html
+└── fr/
+    ├── index.html
+    └── about.html
+```
+
+Each HTML file has the correct `lang` attribute and receives `locale` as a page prop during rendering.
+
+Translation Pattern [#translation-pattern]
+
+Use a lightweight dictionary pattern for translations:
+
+```tsx title="pages/app.tsx"
+const translations = {
+  en: { greeting: 'Hello', description: 'Welcome to our site' },
+  fr: { greeting: 'Bonjour', description: 'Bienvenue sur notre site' },
+};
+
+export default function Home({ locale }: { locale: string }) {
+  const t = translations[locale as keyof typeof translations] || translations.en;
+
+  return (
+    <div>
+      <h1>{t.greeting}</h1>
+      <p>{t.description}</p>
+    </div>
+  );
+}
+```

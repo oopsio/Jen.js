@@ -1,0 +1,94 @@
+# Incremental Static Regeneration
+
+
+
+Incremental Static Regeneration (ISR) lets you serve cached HTML while regenerating pages on a schedule in the background — combining the speed of static with the freshness of SSR.
+
+Enable ISR [#enable-isr]
+
+Add ISR configuration to `jen.config.ts`:
+
+```typescript title="jen.config.ts"
+export default {
+  isr: {
+    enabled: true,
+    cacheDir: '.cache/isr',    // Cache storage location
+    maxRetries: 3,             // Retry failed regenerations
+    retryDelay: 1000,          // Delay between retries (ms)
+    globalRevalidate: 300,     // Global fallback TTL (seconds)
+  },
+};
+```
+
+Per-Page Revalidation [#per-page-revalidation]
+
+Set a `revalidate` value in your `load()` function:
+
+```typescript title="pages/blog/app.tsx"
+export async function load(): Promise<LoadResult> {
+  const posts = await fetchPosts();
+
+  return {
+    props: { posts },
+    revalidate: 60, // Revalidate every 60 seconds
+  };
+}
+```
+
+How It Works [#how-it-works]
+
+The ISR system follows the **stale-while-revalidate** pattern:
+
+| Cache Status | Behavior                                           |
+| ------------ | -------------------------------------------------- |
+| `MISS`       | Render from scratch, cache the result              |
+| `HIT_FRESH`  | Serve cached HTML immediately                      |
+| `HIT_STALE`  | Serve cached HTML, trigger background regeneration |
+
+Cache Headers [#cache-headers]
+
+ISR responses include diagnostic headers:
+
+```
+X-Cache-Status: HIT_FRESH | HIT_STALE | MISS
+X-Cache-Age: 45    (seconds since cached)
+Cache-Control: public, max-age=31536000              (fresh)
+Cache-Control: public, max-age=0, stale-while-revalidate=31536000  (stale)
+```
+
+ISR Types [#isr-types]
+
+The ISR system exposes these core types:
+
+```typescript
+interface CacheEntry {
+  html: string;
+  timestamp: number;  // Unix epoch (ms)
+}
+
+interface FreshnessResult {
+  isFresh: boolean;
+  isStale: boolean;
+  age: number;        // milliseconds
+}
+
+type CacheStatus = 'MISS' | 'HIT_FRESH' | 'HIT_STALE';
+```
+
+Storage Providers [#storage-providers]
+
+ISR supports pluggable storage via the `IStorageProvider` interface:
+
+```typescript
+interface IStorageProvider {
+  get(key: string): Promise<CacheEntry | null>;
+  set(key: string, entry: CacheEntry): Promise<void>;
+  delete(key: string): Promise<void>;
+  exists(key: string): Promise<boolean>;
+}
+```
+
+The default provider uses in-memory storage. A filesystem-backed provider is used in production builds.
+
+> \[!NOTE]
+> ISR only caches `GET` requests. Non-GET requests always bypass the cache.

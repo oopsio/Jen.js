@@ -1,0 +1,49 @@
+# Server-Side Rendering
+
+
+
+Jen.js uses **streaming server-side rendering** for fast Time to First Byte (TTFB). Pages begin flushing HTML to the browser immediately while components are still rendering.
+
+How It Works [#how-it-works]
+
+The `SsrEngine` renders pages through a pipeline:
+
+1. **Load data** — Execute the page's `load()` function
+2. **Build component tree** — `Router` → `ErrorBoundary` → `_app.tsx` → Layouts → Page
+3. **Stream HTML** — Use `renderToReadableStream` from `preact-render-to-string/stream`
+4. **Inject head** — Font links, route manifest, SSR metrics
+5. **Flush response** — `TransformStream` pipes head chunk → component HTML → tail chunk
+
+```
+ ┌─ head chunk ─┐  ┌─ component stream ─┐  ┌─ tail chunk ─┐
+ │ <!DOCTYPE>   │  │  <div>...</div>     │  │  </body>     │
+ │ <head>...</>  │  │  (streamed)         │  │  </html>     │
+ └──────────────┘  └────────────────────┘  └─────────────┘
+```
+
+Hydration [#hydration]
+
+After the full HTML is streamed, the client-side Preact hydration script boots:
+
+1. Reads `window.__JEN_ROUTE_MANIFEST__` for route definitions
+2. Dynamically imports the page component and layouts
+3. Calls `hydrate()` on the `#jen-root` container
+
+This enables instant interactivity without re-fetching page data.
+
+Development Server [#development-server]
+
+During development, `jen dev` starts a Vite-powered dev server with:
+
+* Hot Module Replacement (HMR)
+* On-demand SSR via `vite.ssrLoadModule()`
+* Automatic CSS injection from `style.css` co-located with page components
+
+Production Server [#production-server]
+
+`jen start` runs a production-hardened server with:
+
+* NIST SP 800-44 and OWASP ASVS L1 security headers
+* Streaming SSR for all routes
+* ISR cache integration
+* Static asset serving from `dist/static/`

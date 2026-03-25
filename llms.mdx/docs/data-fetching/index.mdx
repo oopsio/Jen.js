@@ -1,0 +1,107 @@
+# Data Fetching
+
+
+
+Jen.js provides a built-in data loading system that runs exclusively on the server. Export a `load()` or `server()` function from any page to fetch data before rendering.
+
+Basic Usage [#basic-usage]
+
+```tsx title="pages/app.tsx"
+import type { LoadContext, LoadResult } from 'we-jenjs/core/data-loader';
+
+export async function load(ctx: LoadContext): Promise<LoadResult> {
+  const data = await fetch('https://api.example.com/posts').then(r => r.json());
+
+  return {
+    props: { posts: data },
+  };
+}
+
+export default function Home({ posts }: { posts: Post[] }) {
+  return (
+    <ul>
+      {posts.map(post => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+The `load()` function runs on the server during SSR and its return value is passed as props to your component.
+
+LoadContext [#loadcontext]
+
+The context object provides request information:
+
+```typescript
+interface LoadContext {
+  url: string;                              // Full request URL
+  pathname: string;                         // URL pathname
+  params?: Record<string, string>;          // Dynamic route params
+  query?: Record<string, string | string[]>; // Query string parameters
+  headers?: Headers;                        // Request headers
+}
+```
+
+LoadResult [#loadresult]
+
+The return object controls rendering behavior:
+
+```typescript
+interface LoadResult {
+  props: Record<string, unknown>;  // Data passed to the component
+  revalidate?: number;             // ISR revalidation time (seconds)
+  redirect?: string;               // Redirect URL (307)
+  notFound?: boolean;              // Return 404
+}
+```
+
+Redirects [#redirects]
+
+Return a `redirect` to send the user elsewhere:
+
+```typescript
+export async function load(ctx: LoadContext): Promise<LoadResult> {
+  const session = await getSession(ctx.headers);
+
+  if (!session) {
+    return { props: {}, redirect: '/login' };
+  }
+
+  return { props: { user: session.user } };
+}
+```
+
+Not Found [#not-found]
+
+Return `notFound: true` to trigger a 404 response:
+
+```typescript
+export async function load(ctx: LoadContext): Promise<LoadResult> {
+  const post = await getPost(ctx.params?.slug);
+
+  if (!post) {
+    return { props: {}, notFound: true };
+  }
+
+  return { props: { post } };
+}
+```
+
+ISR Revalidation [#isr-revalidation]
+
+Set `revalidate` to enable [Incremental Static Regeneration](/docs/rendering/isr):
+
+```typescript
+export async function load(): Promise<LoadResult> {
+  const data = await fetchData();
+  return {
+    props: { data },
+    revalidate: 60, // Re-generate every 60 seconds
+  };
+}
+```
+
+> \[!NOTE]
+> `server()` is an alias for `load()`. Both work identically — use whichever name you prefer.

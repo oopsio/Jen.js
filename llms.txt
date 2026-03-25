@@ -1,0 +1,33 @@
+# Documentation
+
+- **Getting Started**
+
+- [Introduction](/docs): Jen.js — The high-performance web framework built on Bun, Vite, Preact, and Rust.
+- [Installation](/docs/installation): Get up and running with Jen.js in minutes.
+- [Project Structure](/docs/project-structure): Understand the Jen.js directory conventions and special files.
+- **Core Concepts**
+
+- [Routing](/docs/routing): File-based routing powered by Rust/WASM.
+- [Dynamic Routes](/docs/routing/dynamic-routes): Create parameterized routes with dynamic path segments.
+- [Layouts](/docs/routing/layouts): Nested layouts, global app shell, and error boundaries.
+- [Data Fetching](/docs/data-fetching): Server-side data loading with load() and server() functions.
+- [API Routes](/docs/data-fetching/api-routes): Build backend endpoints with pages/api/*.ts.
+- [Server-Side Rendering](/docs/rendering): Streaming SSR with Preact and TransformStream.
+- [Static Site Generation](/docs/rendering/static-generation): Pre-render all routes to static HTML at build time.
+- [Incremental Static Regeneration](/docs/rendering/isr): Stale-while-revalidate caching for dynamic pages.
+- [<Link>](/docs/components/link): Client-side navigation with prefetching.
+- [<Image>](/docs/components/image): Optimized images with Sharp-powered WebP conversion.
+- [<Script>](/docs/components/script): Manage third-party scripts with loading strategies and security controls.
+- [GoogleFont](/docs/components/google-font): Automatic Google Font optimization with SSR head injection.
+- **Configuration**
+
+- [Configuration](/docs/configuration): Complete jen.config.ts reference.
+- [Middleware](/docs/middleware): Edge middleware with NextResponse for redirects, rewrites, and headers.
+- [SEO & Metadata](/docs/seo): Per-page metadata, OpenGraph, Twitter cards, sitemaps, and robots.txt.
+- [Internationalization](/docs/i18n): Locale-prefixed routing and multi-language static generation.
+- **Production**
+
+- [Deployment](/docs/deployment): Build and deploy your Jen.js application.
+- [Vercel](/docs/deployment/vercel): Deploy to Vercel with zero-config serverless functions.
+- [Cloudflare Workers](/docs/deployment/cloudflare): Deploy to Cloudflare Workers as a single-file edge bundle.
+- [CLI Reference](/docs/cli): Command-line interface for Jen.js.

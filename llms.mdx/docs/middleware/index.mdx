@@ -1,0 +1,81 @@
+# Middleware
+
+
+
+Jen.js supports a global `middleware.ts` file that intercepts every request before it reaches the router — ideal for authentication, redirects, A/B testing, and header manipulation.
+
+Create Middleware [#create-middleware]
+
+Add a `middleware.ts` file to your project root (next to `pages/`):
+
+```typescript title="middleware.ts"
+import { NextResponse } from 'we-jenjs';
+
+export default function middleware(req: Request) {
+  // Redirect legacy URLs
+  if (new URL(req.url).pathname === '/old-page') {
+    return NextResponse.redirect('/new-page');
+  }
+
+  // Continue to the router
+  return NextResponse.next();
+}
+```
+
+NextResponse API [#nextresponse-api]
+
+| Method                                | Description                                               |
+| ------------------------------------- | --------------------------------------------------------- |
+| `NextResponse.next(init?)`            | Continue to the router (optionally with modified headers) |
+| `NextResponse.redirect(url, status?)` | Redirect to a URL (default: 307)                          |
+| `NextResponse.rewrite(url)`           | Internally rewrite the request to a different path        |
+
+Redirect [#redirect]
+
+```typescript
+// Temporary redirect (307)
+return NextResponse.redirect('/login');
+
+// Permanent redirect (301)
+return NextResponse.redirect('/new-url', 301);
+```
+
+Rewrite [#rewrite]
+
+Rewrites serve content from a different path without changing the browser URL:
+
+```typescript
+// User sees /dashboard, but /app/dashboard is served
+return NextResponse.rewrite('/app/dashboard');
+```
+
+Proceed with Custom Headers [#proceed-with-custom-headers]
+
+```typescript
+return NextResponse.next({
+  headers: {
+    'X-Custom-Header': 'value',
+  },
+});
+```
+
+Middleware Discovery [#middleware-discovery]
+
+The `RouteScanner` looks for middleware files in this priority order:
+
+1. `middleware.ts`
+2. `middleware.js`
+3. `middleware.tsx`
+4. `middleware.jsx`
+
+Only the first match is used.
+
+How It Works [#how-it-works]
+
+1. A request arrives at the server
+2. If a middleware file exists, it is executed **before** the router
+3. If middleware returns a `Response`, it short-circuits (no routing occurs)
+4. If middleware returns via `NextResponse.next()`, the request proceeds normally
+
+> \[!IMPORTANT]
+> Middleware runs on both the development server and edge adapters (Vercel Edge, Cloudflare Workers).

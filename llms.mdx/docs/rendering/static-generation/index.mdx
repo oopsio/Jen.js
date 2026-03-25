@@ -1,0 +1,85 @@
+# Static Site Generation
+
+
+
+Jen.js can generate a fully static site from your pages during the build step — perfect for hosting on GitHub Pages, S3, Cloudflare Pages, or any static CDN.
+
+Build Command [#build-command]
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen build
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen build
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen build
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen build
+    ```
+  </Tab>
+</Tabs>
+
+This scans all non-dynamic routes, renders them with Preact, and outputs optimized HTML, CSS, and JS to `dist/static/`.
+
+What Gets Generated [#what-gets-generated]
+
+For each static route, the `StaticSiteGenerator`:
+
+1. Creates a Preact entry file per page (including layout composition)
+2. Server-renders the page to HTML with `renderToString`
+3. Evaluates `metadata` / `generateMetadata()` for SEO tags
+4. Bundles with Vite in production mode (esbuild minification)
+5. Injects the route manifest for client hydration
+
+Example Output [#example-output]
+
+```
+dist/static/
+├── index.html           ← /
+├── about/
+│   └── index.html       ← /about (if using rollup naming)
+├── sitemap.xml           ← Auto-generated
+└── robots.txt            ← Auto-generated
+```
+
+Automatic SEO Files [#automatic-seo-files]
+
+During build, Jen.js automatically generates:
+
+* **`sitemap.xml`** — Lists all static routes following the [sitemaps.org](https://www.sitemaps.org/) protocol
+* **`robots.txt`** — Standard crawler directives pointing to the sitemap
+
+Dynamic Routes [#dynamic-routes]
+
+Dynamic routes (e.g., `[$slug]`) are **excluded** from static generation since their paths are unknown at build time. They are served via SSR or ISR at runtime.
+
+Image Optimization [#image-optimization]
+
+The build pipeline integrates the `jenImageOptimizerPlugin` for Vite, automatically processing local images referenced in components with Sharp for WebP conversion and size optimization.
+
+i18n Static Output [#i18n-static-output]
+
+When [i18n](/docs/i18n) is configured, the build generates separate directories per locale:
+
+```
+dist/static/
+├── en/
+│   ├── index.html
+│   └── about.html
+└── fr/
+    ├── index.html
+    └── about.html
+```

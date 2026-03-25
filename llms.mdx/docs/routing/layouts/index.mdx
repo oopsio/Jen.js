@@ -1,0 +1,75 @@
+# Layouts
+
+
+
+Jen.js supports **cascading layouts** that persist across page navigations — keeping navbars, sidebars, and shared UI mounted.
+
+Layout Files [#layout-files]
+
+Place a `layout.tsx` file in any directory under `pages/`. It wraps all pages in that subtree:
+
+```tsx title="pages/layout.tsx"
+export default function RootLayout({ children }: { children: any }) {
+  return (
+    <div>
+      <header>My App</header>
+      <main>{children}</main>
+      <footer>© 2026</footer>
+    </div>
+  );
+}
+```
+
+Nesting [#nesting]
+
+Layouts compose automatically based on directory depth:
+
+```
+pages/
+├── layout.tsx              ← Root layout
+├── app.tsx                 ← / (inside root layout)
+└── dashboard/
+    ├── layout.tsx          ← Dashboard layout
+    ├── app.tsx             ← /dashboard (root → dashboard layout)
+    └── settings/
+        └── app.tsx         ← /dashboard/settings (root → dashboard layout)
+```
+
+When a user visits `/dashboard/settings`, both the root layout and the dashboard layout are applied in order.
+
+Global App Shell (`_app.tsx`) [#global-app-shell-_apptsx]
+
+For logic that must wrap **every** page globally (providers, themes, analytics), create a `_app.tsx` in the project root:
+
+```tsx title="_app.tsx"
+export default function App({ Component, pageProps, children }: any) {
+  return (
+    <ThemeProvider>
+      {children}
+    </ThemeProvider>
+  );
+}
+```
+
+The `_app.tsx` receives:
+
+* `Component` — the current page component
+* `pageProps` — props from `load()`
+* `children` — the pre-composed layout → page tree
+
+Error Boundary (`_error.tsx`) [#error-boundary-_errortsx]
+
+Create `_error.tsx` to catch rendering errors gracefully:
+
+```tsx title="_error.tsx"
+export default function ErrorPage({ error }: { error?: Error }) {
+  return (
+    <div>
+      <h1>Something went wrong</h1>
+      <p>{error?.message || 'An unexpected error occurred.'}</p>
+    </div>
+  );
+}
+```
+
+This component renders when a page or layout throws during SSR or client hydration.

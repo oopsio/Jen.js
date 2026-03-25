@@ -1,0 +1,136 @@
+# Deployment
+
+
+
+Jen.js supports multiple deployment targets through its adapter system.
+
+Static Export [#static-export]
+
+The simplest deployment model — pre-render all routes to static HTML:
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen build
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen build
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen build
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen build
+    ```
+  </Tab>
+</Tabs>
+
+Output lands in `dist/static/` and can be deployed to any static hosting:
+
+* GitHub Pages
+* Amazon S3 + CloudFront
+* Netlify
+* Cloudflare Pages (static mode)
+
+The output includes optimized HTML, JS, CSS, `sitemap.xml`, and `robots.txt`.
+
+Production Server [#production-server]
+
+For SSR, ISR, and API routes, use the full production server:
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen start
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen start
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen start
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen start
+    ```
+  </Tab>
+</Tabs>
+
+This builds the project and starts an HTTP server with:
+
+* Streaming SSR for all page routes
+* ISR cache management
+* API route handling
+* NIST SP 800-44 and OWASP ASVS L1 security headers
+* Static asset serving
+
+Edge Adapters [#edge-adapters]
+
+Deploy to edge platforms with the `--adapter` flag:
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    # Vercel Serverless / Edge Functions
+    npx jen build --adapter=vercel
+
+    # Cloudflare Workers
+    npx jen build --adapter=cloudflare
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    # Vercel Serverless / Edge Functions
+    pnpm jen build --adapter=vercel
+
+    # Cloudflare Workers
+    pnpm jen build --adapter=cloudflare
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    # Vercel Serverless / Edge Functions
+    yarn jen build --adapter=vercel
+
+    # Cloudflare Workers
+    yarn jen build --adapter=cloudflare
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    # Vercel Serverless / Edge Functions
+    bunx jen build --adapter=vercel
+
+    # Cloudflare Workers
+    bunx jen build --adapter=cloudflare
+    ```
+  </Tab>
+</Tabs>
+
+See the platform-specific guides:
+
+<Cards>
+  <Card title="Vercel" href="/docs/deployment/vercel" />
+
+  <Card title="Cloudflare Workers" href="/docs/deployment/cloudflare" />
+</Cards>

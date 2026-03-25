@@ -1,0 +1,142 @@
+# Installation
+
+
+
+Prerequisites [#prerequisites]
+
+* [Bun](https://bun.sh) v1.0 or later
+* Node.js 18+ (for Vite compatibility)
+
+Install [#install]
+
+Add `we-jenjs` to your project:
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash title="Install"
+    npm install we-jenjs
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash title="Install"
+    pnpm add we-jenjs
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash title="Install"
+    yarn add we-jenjs
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash title="Install"
+    bun add we-jenjs
+    ```
+  </Tab>
+</Tabs>
+
+Create Your First Page [#create-your-first-page]
+
+Create a `pages/` directory in your project root and add a page component:
+
+```tsx title="pages/app.tsx"
+export default function Home() {
+  return (
+    <div>
+      <h1>Hello, Jen.js!</h1>
+    </div>
+  );
+}
+```
+
+Start the Dev Server [#start-the-dev-server]
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    npx jen dev
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    pnpm jen dev
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    yarn jen dev
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    bunx jen dev
+    ```
+  </Tab>
+</Tabs>
+
+Your app is now running at [http://localhost:3000](http://localhost:3000) with hot module replacement powered by Vite.
+
+Configuration (Optional) [#configuration-optional]
+
+Create a `jen.config.ts` file in your project root to customize behavior:
+
+```typescript title="jen.config.ts"
+import type { JenConfig } from 'we-jenjs/types';
+
+export default {
+  port: 3000,
+  buildDirectory: 'dist/static',
+  name: 'My App',
+} satisfies Partial<JenConfig>;
+```
+
+See the [Configuration Reference](/docs/configuration) for all available options.
+
+Build for Production [#build-for-production]
+
+<Tabs items="[&#x22;npm&#x22;, &#x22;pnpm&#x22;, &#x22;yarn&#x22;, &#x22;bun&#x22;]">
+  <Tab value="npm">
+    ```bash
+    # Static site generation
+    npx jen build
+
+    # Production server (NIST/OWASP hardened)
+    npx jen start
+    ```
+  </Tab>
+
+  <Tab value="pnpm">
+    ```bash
+    # Static site generation
+    pnpm jen build
+
+    # Production server (NIST/OWASP hardened)
+    pnpm jen start
+    ```
+  </Tab>
+
+  <Tab value="yarn">
+    ```bash
+    # Static site generation
+    yarn jen build
+
+    # Production server (NIST/OWASP hardened)
+    yarn jen start
+    ```
+  </Tab>
+
+  <Tab value="bun">
+    ```bash
+    # Static site generation
+    bunx jen build
+
+    # Production server (NIST/OWASP hardened)
+    bunx jen start
+    ```
+  </Tab>
+</Tabs>

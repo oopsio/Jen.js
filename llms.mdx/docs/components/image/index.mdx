@@ -1,0 +1,51 @@
+# <Image>
+
+
+
+The `<Image>` component automatically optimizes local images during the build pipeline using [Sharp](https://sharp.pixelplumbing.com/).
+
+Import [#import]
+
+```tsx
+import { Image } from 'we-jenjs';
+```
+
+Usage [#usage]
+
+```tsx
+<Image
+  src="/images/hero.jpg"
+  alt="Hero banner"
+  width={1200}
+  height={630}
+  quality={85}
+/>
+```
+
+Props [#props]
+
+| Prop        | Type                | Default  | Description                           |
+| ----------- | ------------------- | -------- | ------------------------------------- |
+| `src`       | `string`            | —        | Image source path or external URL     |
+| `alt`       | `string`            | —        | Alt text (required for accessibility) |
+| `width`     | `number \| string`  | —        | Display width                         |
+| `height`    | `number \| string`  | —        | Display height                        |
+| `loading`   | `'lazy' \| 'eager'` | `'lazy'` | Loading strategy                      |
+| `className` | `string`            | —        | CSS class name                        |
+| `quality`   | `number`            | `80`     | Image quality (1–100)                 |
+
+Automatic Optimizations [#automatic-optimizations]
+
+* **Lazy loading** — `loading="lazy"` by default
+* **Async decoding** — `decoding="async"` for non-blocking rendering
+* **Aspect ratio** — Prevents CLS by setting `aspect-ratio` when `width` and `height` are provided
+* **Responsive sizing** — `max-width: 100%; height: auto` applied automatically
+* **Build-time processing** — Local images get `?jen-img=1&q=80` query hints for the Vite image optimizer plugin
+
+External Images [#external-images]
+
+External URLs (starting with `http://` or `https://`) are rendered as-is without build-time processing:
+
+```tsx
+<Image src="https://cdn.example.com/photo.jpg" alt="External photo" />
+```
