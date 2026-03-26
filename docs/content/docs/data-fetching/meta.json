@@ -1,4 +1,7 @@
 {
   "title": "Data Fetching",
-  "pages": ["index", "api-routes"]
+  "pages": [
+    "index",
+    "api-routes"
+  ]
 }

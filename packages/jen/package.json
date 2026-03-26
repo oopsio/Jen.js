@@ -2,7 +2,7 @@
   "name": "we-jenjs",
   "type": "module",
   "license": "MIT",
-  "version": "1.0.9",
+  "version": "1.1.1",
   "description": "The framework for the web",
   "bugs": "https://github.com/oopsio/Jen.js/issues",
   "homepage": "https://jen.js.org",

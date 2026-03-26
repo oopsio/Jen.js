@@ -1,4 +1,8 @@
 {
   "title": "Rendering",
-  "pages": ["index", "static-generation", "isr"]
+  "pages": [
+    "index",
+    "static-generation",
+    "isr"
+  ]
 }

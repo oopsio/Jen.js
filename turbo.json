@@ -2,26 +2,43 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "pkg/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "pkg/**"
+      ]
     },
     "@jenjs/jen-api#build": {
-      "dependsOn": ["@jenjs/jen-rs#build"]
+      "dependsOn": [
+        "@jenjs/jen-rs#build"
+      ]
     },
     "@jenjs/jen-code-frame#build": {
-      "dependsOn": ["@jenjs/jen-api#build"]
+      "dependsOn": [
+        "@jenjs/jen-api#build"
+      ]
     },
     "@jenjs/jen-api#lint": {
-      "dependsOn": ["@jenjs/jen-rs#lint"]
+      "dependsOn": [
+        "@jenjs/jen-rs#lint"
+      ]
     },
     "@jenjs/jen-code-frame#lint": {
-      "dependsOn": ["@jenjs/jen-api#lint"]
+      "dependsOn": [
+        "@jenjs/jen-api#lint"
+      ]
     },
     "format": {
-      "dependsOn": ["//#format:base"]
+      "dependsOn": [
+        "//#format:base"
+      ]
     },
     "lint": {
-      "dependsOn": ["//#lint:base"]
+      "dependsOn": [
+        "//#lint:base"
+      ]
     },
     "//#format:base": {},
     "//#lint:base": {}

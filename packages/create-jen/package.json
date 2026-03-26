@@ -10,11 +10,24 @@
     "type": "git",
     "url": "git+https://github.com/oopsio/jen.js.git"
   },
+  "files": [
+    "dist/main.js"
+  ],
   "license": "MIT",
   "author": "oopsio",
   "type": "module",
-  "main": "bin/create-jen.js",
+  "main": "dist/main.js",
+  "bin": {
+    "create-jen": "dist/main.js"
+  },
   "scripts": {
-    "test": "echo \"None\""
+    "build": "esbuild index.js --bundle --minify --sourcemap --format=esm --platform=node --outfile=dist/main.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.4",
+    "typescript": "^6.0.2"
   }
 }
