@@ -1,0 +1,28 @@
+{
+  "name": "@jenjs/env",
+  "version": "1.0.1",
+  "description": "A utility for managing .env files in Jen.js",
+  "keywords": [
+    "util",
+    "dotenv"
+  ],
+  "homepage": "https://github.com/oopsio/jen.js#readme",
+  "bugs": {
+    "url": "https://github.com/oopsio/jen.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oopsio/jen.js.git"
+  },
+  "license": "MIT",
+  "author": "oopsio",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"None\""
+  },
+  "dependencies": {
+    "dotenv": "17.3.1",
+    "dotenv-expand": "12.0.3"
+  }
+}
