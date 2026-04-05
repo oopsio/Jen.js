@@ -62,9 +62,6 @@ export class ErrorBoundary {
       error: {
         status: statusCode,
         message,
-        ...(this.isDevelopment && {
-          details: error instanceof Error ? error.stack : String(error),
-        }),
       },
     };
 
