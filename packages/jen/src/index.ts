@@ -8,3 +8,5 @@ export { ISRManager } from './server/isr-manager.js';
 export { GoogleFont } from './fonts/google.js';
 export { Image } from './components/image.js';
 export { Script } from './components/script.js';
+export { PartialRegistry } from './core/partials.js';
+export { Partial } from './components/partial.js';

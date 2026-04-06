@@ -11,6 +11,9 @@ High-performance, feature-packed web framework for the modern web.
 - **Optimization**: Deeply integrated Font and Image optimization plugins.
 - **Hardened**: NIST SP 800-44 and OWASP ASVS L1 security headers by default.
 
+> [!NOTE]
+> After building, you will need to rename the d.ts for jen_router.js to .d.cts and build the jen crate from crates/jen and copy the wasm binary to the dist/src/core directory.
+
 ## Quick Start
 
 ```bash

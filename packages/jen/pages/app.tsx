@@ -1,76 +1,37 @@
-import { useState } from 'preact/hooks';
-import { GoogleFont } from '../src/fonts/google';
-import { Link } from '../src/client/link';
+import { Partial } from '../src/components/partial.js';
+import { PartialRegistry } from '../src/core/partials.js';
+import Header from './partials/Header.js';
+import Card from './partials/Card.js';
 
-const inter = GoogleFont('Inter', {
-  weight: [400, 700],
-  subsets: ['latin'],
-  display: 'swap',
-});
+// Explicitly register partials for this page
+PartialRegistry.register('header', Header);
+PartialRegistry.register('card', Card);
 
-export default function Counter() {
-  const [count, setCount] = useState(0);
+// Alternatively, you could use:
+// PartialRegistry.registerGlob(import.meta.glob('./partials/*.tsx', { eager: true }));
 
-  const containerStyle = {
-    padding: '40px',
-    fontFamily: `${inter.style.fontFamily}, system-ui, sans-serif`,
-    textAlign: 'center',
-    color: 'var(--jen-text)',
-    background: 'var(--jen-bg)',
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
-  const buttonStyle = {
-    padding: '12px 24px',
-    fontSize: '18px',
-    cursor: 'pointer',
-    background: '#00ff00',
-    border: '2px solid #000',
-    fontWeight: 'bold',
-    margin: '10px',
-    boxShadow: '4px 4px 0px #000',
-    fontFamily: 'monospace',
-  };
-
+export default function HomePage() {
+  const time = new Date().toLocaleString();
   return (
-    <div style={containerStyle}>
-      <h1 style={{ fontSize: '48px', marginBottom: '20px' }}>{count}</h1>
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button style={buttonStyle} onClick={() => setCount(count - 1)}>
-          - DECREMENT
-        </button>
-        <button style={buttonStyle} onClick={() => setCount(count + 1)}>
-          + INCREMENT
-        </button>
-      </div>
+    <div style={{ fontFamily: 'sans-serif' }}>
+      <Partial name="header" title="Jen.js Framework" />
+      
+      <main style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+        <h2>Welcome to Jen.js</h2>
+        <p>Freshly server-rendered at: <strong>{time}</strong></p>
 
-      <div
-        style={{
-          marginTop: '30px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px',
-        }}
-      >
-        <Link
-          href="/test"
-          style={{
-            color: '#00ff00',
-            fontWeight: 'bold',
-            textDecoration: 'none',
-            fontSize: '18px',
-          }}
-        >
-          → GO TO TEST PAGE (Link Component)
-        </Link>
-      </div>
-      <p style={{ marginTop: '40px', color: '#888', fontSize: '12px' }}>
-        JEN.JS CLIENT ROUTER TEST (v1.0.0)
-      </p>
+        <Partial 
+          name="card" 
+          title="Dynamic Partials" 
+          description="This card is heavily decoupled! It is being rendered dynamically from the PartialRegistry." 
+        />
+        
+        <Partial 
+          name="card" 
+          title="Seamless Props" 
+          description="You can pass any props directly into the <Partial> tag, and they will cascade down to the target partial component." 
+        />
+      </main>
     </div>
   );
 }
