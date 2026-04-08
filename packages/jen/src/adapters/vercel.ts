@@ -121,7 +121,7 @@ export default async function handler(req, res) {
       platform: 'node',
       target: 'node18',
       format: 'esm',
-      external: ['preact', 'vite'],
+      external: ['vite'],
     });
 
     // SWC Minification Core Engine pass

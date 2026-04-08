@@ -160,18 +160,37 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
     'routes' | 'security' | 'ssr' | 'db'
   >('routes');
   const [isOpen, setIsOpen] = useState(true);
-  const [routes] = useState<RouteMatchTrace[]>([]);
-  const [security] = useState<SecurityAuditResult | null>(null);
-  const [ssr] = useState<SSRMetrics | null>(null);
-  const [queries] = useState<QueryLog[]>([]);
+  const [routes, setRoutes] = useState<RouteMatchTrace[]>([]);
+  const [security, setSecurity] = useState<SecurityAuditResult | null>(null);
+  const [ssr, setSSR] = useState<SSRMetrics | null>(null);
+  const [queries, setQueries] = useState<QueryLog[]>([]);
 
   useEffect(() => {
     const client = new DevToolsClient(wsUrl);
 
-    // This is where messages would be received from the server
-    // For now, this is a stub that shows the UI pattern
+    const unsubRoutes = client.on('route-trace', (data: RouteMatchTrace) => {
+      setRoutes((prev) => [...prev, data]);
+    });
+    
+    const unsubSecurity = client.on('security-audit', (data: SecurityAuditResult) => {
+      setSecurity(data);
+    });
+    
+    const unsubSSR = client.on('ssr-metrics', (data: SSRMetrics) => {
+      setSSR(data);
+    });
+    
+    const unsubDb = client.on('query-log', (data: QueryLog) => {
+      setQueries((prev) => [...prev, data]);
+    });
 
-    return () => client.close();
+    return () => {
+      unsubRoutes();
+      unsubSecurity();
+      unsubSSR();
+      unsubDb();
+      client.close();
+    };
   }, [wsUrl]);
 
   if (!isOpen) {

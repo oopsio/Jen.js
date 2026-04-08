@@ -10,6 +10,7 @@ import { AppShellManager } from '../core/app-shell.js';
 import { ErrorBoundary } from '../core/error-boundary.js';
 import { DataLoaderManager } from '../core/data-loader.js';
 import { parseMetadata } from './metadata.js';
+import { ErrorFormatter } from './error-formatter.js';
 
 import { RouteDefinition } from '../types.js';
 
@@ -62,11 +63,8 @@ export class SsrEngine {
       }
     } catch (error) {
       // Log data loader errors but don't fail the render
-      if (typeof console !== 'undefined') {
-        console.error(
-          '[Data Loader Error]',
-          error instanceof Error ? error.message : String(error),
-        );
+      if (typeof process !== 'undefined') {
+        ErrorFormatter.printError(error, 'Data Loader Error');
       }
       // Continue with empty props
     }
@@ -135,9 +133,8 @@ export class SsrEngine {
     page = h(ErrorBoundary, {
       fallback: ErrorComponent || undefined,
       onError: (error: Error) => {
-        if (typeof console !== 'undefined') {
-          console.error('[SSR Error Boundary]', error.message);
-          console.error('[SSR Error Stack]', error.stack);
+        if (typeof process !== 'undefined') {
+          ErrorFormatter.printError(error, 'SSR Error Boundary (Component crashed on server)');
         }
       },
       children: page,
@@ -152,8 +149,9 @@ export class SsrEngine {
         const dynamicMeta = await pageModule.generateMetadata(pageProps);
         metadataHtml = parseMetadata(dynamicMeta);
       } catch (err) {
-        if (typeof console !== 'undefined')
-          console.error('[Metadata Error]', err);
+        if (typeof process !== 'undefined') {
+          ErrorFormatter.printError(err, 'Metadata Error');
+        }
       }
     } else if (pageModule.metadata) {
       metadataHtml = parseMetadata(pageModule.metadata);
@@ -224,7 +222,7 @@ export class SsrEngine {
 
         await writer.write(encoder.encode(tailChunk));
       } catch (error) {
-        console.error('[SSR Streaming Error]', error);
+        ErrorFormatter.printError(error, 'SSR Streaming Error');
       } finally {
         await writer.close();
       }

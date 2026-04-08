@@ -126,6 +126,22 @@ export class DevToolsClient {
     });
   }
 
+  private listeners: Map<string, Array<(data: any) => void>> = new Map();
+
+  /**
+   * Subscribe to incoming DevTools messages
+   */
+  public on<T = any>(type: string, callback: (data: T) => void): () => void {
+    if (!this.listeners.has(type)) {
+      this.listeners.set(type, []);
+    }
+    this.listeners.get(type)!.push(callback);
+    return () => {
+      const arr = this.listeners.get(type)!;
+      this.listeners.set(type, arr.filter(cb => cb !== callback));
+    };
+  }
+
   /**
    * Handle incoming messages
    */
@@ -134,6 +150,11 @@ export class DevToolsClient {
       const resolve = this.pendingRequests.get(message.requestId)!;
       this.pendingRequests.delete(message.requestId);
       resolve(message.data);
+    }
+
+    const typeListeners = this.listeners.get(message.type);
+    if (typeListeners) {
+      typeListeners.forEach((cb) => cb(message.data));
     }
 
     // Dispatch to handlers

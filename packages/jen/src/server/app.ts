@@ -18,6 +18,7 @@ import { jenImageOptimizerPlugin } from '../plugin/image.js';
 import { RuntimeConfig } from '../config/config.js';
 import { RouterBridge } from '../devtools/router-bridge.js';
 import { SecurityAuditor } from '../devtools/security-audit.js';
+import { ErrorFormatter } from './error-formatter.js';
 import path from 'node:path';
 
 const colors = {
@@ -295,10 +296,7 @@ export class DevServerManager {
                     res.end(await apiResponse.text());
                     return;
                   } catch (error: unknown) {
-                    console.error(
-                      `${colors.error}API Error:${colors.reset}`,
-                      error,
-                    );
+                    ErrorFormatter.printError(error, 'API Route Error');
                     res.writeHead(500, { 'Content-Type': 'application/json' });
                     res.end(
                       JSON.stringify({
@@ -528,19 +526,7 @@ export class DevServerManager {
                 server.ssrFixStacktrace(error);
               }
 
-              const errorMessage =
-                error instanceof Error ? error.message : String(error);
-              console.error(`\n${colors.error}error: ${colors.reset}`);
-              console.error(`\x1b[33m${errorMessage}${colors.reset}`);
-
-              if (error instanceof Error && 'frame' in error) {
-                const viteError = error as unknown as { frame?: string };
-                console.error(`\n${viteError.frame}\n`);
-              } else if (error instanceof Error) {
-                console.error(error.stack);
-              } else {
-                console.error(error);
-              }
+              ErrorFormatter.printError(error, 'Vite / Route Rendering Error');
 
               next(error);
             }
