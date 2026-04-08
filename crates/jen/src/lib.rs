@@ -88,6 +88,8 @@ pub struct RouteMatcher {
     static_routes: HashMap<String, RouteData>,
     // Store dynamic route patterns for pattern matching
     dynamic_routes: Vec<(String, RouteData)>,
+    // Optional base path for multi-zone deployments
+    base_path: Option<String>,
 }
 
 #[wasm_bindgen]
@@ -98,6 +100,21 @@ impl RouteMatcher {
         RouteMatcher {
             static_routes: HashMap::new(),
             dynamic_routes: Vec::new(),
+            base_path: None,
+        }
+    }
+
+    /// Set an optional base path to strip from incoming requests
+    pub fn set_base_path(&mut self, base_path: String) {
+        if base_path.is_empty() || base_path == "/" {
+            self.base_path = None;
+        } else {
+            let mut bp = base_path;
+            if !bp.starts_with('/') {
+                bp = format!("/{}", bp);
+            }
+            let bp = bp.trim_end_matches('/').to_string();
+            self.base_path = Some(bp);
         }
     }
 
@@ -137,11 +154,20 @@ impl RouteMatcher {
     ///
     /// * `pathname` - The incoming URL pathname to match
     pub fn match_route(&self, pathname: &str) -> RouteMatch {
-        let clean_pathname = if pathname == "/" {
+        let mut clean_pathname = if pathname == "/" {
             "/".to_string()
         } else {
             pathname.trim_end_matches('/').to_string()
         };
+
+        if let Some(ref bp) = self.base_path {
+            if clean_pathname.starts_with(bp) {
+                clean_pathname = clean_pathname[bp.len()..].to_string();
+                if clean_pathname.is_empty() {
+                    clean_pathname = "/".to_string();
+                }
+            }
+        }
 
         // First try exact static match (O(1))
         if let Some(route_data) = self.static_routes.get(&clean_pathname) {

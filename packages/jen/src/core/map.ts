@@ -1,5 +1,6 @@
 import type { RequestHandler } from '../types.js';
 import { ContextBuilder } from '../middleware/index.js';
+import { RuntimeConfig } from '../config/config.js';
 import * as jenRouter from './jen_router.cjs';
 const { RouteMatcher } = jenRouter;
 
@@ -25,6 +26,7 @@ export class RouterMap {
   private static routeStorage = new Map<string, RouteData>();
   /** High-performance WASM-based route matcher */
   private static matcher = new RouteMatcher();
+  private static initialized = false;
 
   /**
    * Registers a route to both the TS storage map and the WASM matcher.
@@ -42,6 +44,13 @@ export class RouterMap {
   ): void {
     const cleanPath = path === '/' ? '/' : path.replace(/\/$/, '');
     this.routeStorage.set(cleanPath, { handler, filePathTsx, filePathJsx });
+
+    if (!this.initialized) {
+      if (RuntimeConfig?.zone?.basePath && typeof this.matcher.set_base_path === 'function') {
+        this.matcher.set_base_path(RuntimeConfig.zone.basePath);
+      }
+      this.initialized = true;
+    }
 
     // Register in WASM matcher for fast route resolution
     this.matcher.register(cleanPath, filePathTsx || '', filePathJsx || '');

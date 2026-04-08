@@ -3,19 +3,22 @@ import path from 'node:path';
 import { build } from 'esbuild';
 import { minify } from '@swc/core';
 import { RouteScanner } from '../core/scan.js';
+import { RuntimeConfig } from '../config/config.js';
 
 export class VercelAdapter {
   public static async build(options: { outDir: string; rootDir: string }) {
     console.log('\x1b[36m→ Building Vercel Serverless adapter...\x1b[0m');
     const vercelOut = path.join(options.rootDir, '.vercel', 'output');
+    const basePath = RuntimeConfig.zone?.basePath || '';
 
     fs.mkdirSync(path.join(vercelOut, 'functions', 'index.func'), {
       recursive: true,
     });
 
+    const srcRegex = basePath ? `${basePath}(/.*)?` : '/(.*)';
     const configObj = {
       version: 3,
-      routes: [{ handle: 'filesystem' }, { src: '/(.*)', dest: '/' }],
+      routes: [{ handle: 'filesystem' }, { src: srcRegex, dest: basePath ? `${basePath}/` : '/' }],
     };
     fs.writeFileSync(
       path.join(vercelOut, 'config.json'),
@@ -138,6 +141,18 @@ export default async function handler(req, res) {
       path.join(vercelOut, 'functions', 'index.func', 'package.json'),
       JSON.stringify(pj),
     );
+
+    // Nest static files if basePath is provided
+    if (basePath) {
+      const targetStaticPath = path.join(vercelOut, 'static', basePath.replace(/^\//, ''));
+      const defaultStaticSource = path.join(options.rootDir, 'dist/static');
+      if (fs.existsSync(defaultStaticSource)) {
+        fs.mkdirSync(targetStaticPath, { recursive: true });
+        // NOTE: In a real app we would copy the contents, here we'll just log and assume symlink or copy
+        fs.cpSync(defaultStaticSource, targetStaticPath, { recursive: true });
+        // Can conditionally remove the dist/static if preferred: fs.rmSync(defaultStaticSource, { recursive: true, force: true });
+      }
+    }
 
     console.log(
       '\x1b[32m✓ Vercel adapter build complete in .vercel/output\x1b[0m',

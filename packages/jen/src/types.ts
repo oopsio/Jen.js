@@ -78,5 +78,9 @@ export interface JenConfig {
     locales: string[];
     defaultLocale: string;
   };
+  zone?: {
+    basePath?: string;
+    assetPrefix?: string;
+  };
   requireDangerouslySetScripts?: boolean;
 }
