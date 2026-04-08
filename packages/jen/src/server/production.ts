@@ -17,6 +17,7 @@ import { RouterMap } from '../core/map.js';
 import { RouteScanner } from '../core/scan.js';
 import { RuntimeConfig } from '../config/config.js';
 import renderToString from 'preact-render-to-string';
+import { renderToReadableStream } from 'preact-render-to-string/stream';
 import { h } from 'preact';
 
 const colors = {
@@ -135,6 +136,110 @@ class ProductionSSREngine {
       console.error('SSR Error:', error);
       throw error;
     }
+  }
+
+  /**
+   * Render a page component using Dynamic HTML Streaming
+   * Returns a Response containing a ReadableStream of the HTML chunks
+   */
+  public static async renderPageStream(
+    componentPath: string,
+    locale?: string,
+  ): Promise<Response> {
+    try {
+      const module = await import(/* @vite-ignore */ componentPath);
+      const PageComponent = module.default;
+
+      if (!PageComponent) {
+        throw new Error(`Component at ${componentPath} has no default export`);
+      }
+
+      const pageProps: Record<string, unknown> = {};
+      if (locale) pageProps.locale = locale;
+
+      const [headChunk, tailChunk] = this.constructDocumentSplit(componentPath, locale);
+
+      const componentStream = renderToReadableStream(h(PageComponent, pageProps));
+
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter();
+
+      (async () => {
+        try {
+          const encoder = new TextEncoder();
+          await writer.write(encoder.encode(headChunk));
+
+          const reader = componentStream.getReader();
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            await writer.write(value);
+          }
+
+          await writer.write(encoder.encode(tailChunk));
+        } catch (error) {
+          console.error('SSR Streaming Error:', error);
+        } finally {
+          await writer.close();
+        }
+      })();
+
+      return new Response(readable, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    } catch (error) {
+      console.error('SSR Streaming Error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Construct minimal HTML5 shell split into head and tail for streaming
+   */
+  private static constructDocumentSplit(
+    componentPath: string,
+    locale?: string,
+  ): [string, string] {
+    const head = `<!DOCTYPE html>
+<html lang="${locale || 'en'}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jen.js</title>
+</head>
+<body>
+    <div id="jen-root" data-page-path="${componentPath}">`;
+
+    const tail = `</div>
+    
+    <script type="module">
+        import { hydrate, h } from 'preact';
+
+        async function init() {
+            const container = document.getElementById('jen-root');
+            if (!container) return;
+
+            const scriptPath = container.dataset.pagePath;
+            
+            try {
+                const module = await import(/* @vite-ignore */ scriptPath);
+                const Page = module.default;
+
+                if (Page) {
+                    hydrate(h(Page, {}), container);
+                }
+            } catch (e) {
+                console.error('Jen.js Hydration Error:', e);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>`;
+
+    return [head, tail];
   }
 
   /**
@@ -283,16 +388,16 @@ async function handleRequest(request: Request): Promise<Response> {
     const duration = performance.now() - startTime;
     logRequest(req.method, pathname, jenResponse.status, duration);
 
-    // Clone response and add security headers
-    const responseBody = await jenResponse.text();
+    // Clone response and add security headers without consuming the body
     const securityHeaders = buildSecurityHeaders();
+    const headers = new Headers(jenResponse.headers);
+    for (const [key, value] of Object.entries(securityHeaders as Record<string, string>)) {
+      headers.set(key, value);
+    }
 
-    return new Response(responseBody, {
+    return new Response(jenResponse.body, {
       status: jenResponse.status,
-      headers: {
-        ...Object.fromEntries(jenResponse.headers),
-        ...securityHeaders,
-      },
+      headers,
     });
   } catch (error) {
     // ────────────────────────────────────────────────────────────────────
@@ -363,10 +468,8 @@ export async function startProductionServer(
         try {
           const locale = req.headers.get('x-jen-locale') || undefined;
           const filePath = ctx.filePath;
-          const html = await ProductionSSREngine.renderPage(filePath, locale);
-          return new Response(html, {
-            headers: { 'Content-Type': 'text/html', ...buildSecurityHeaders() },
-          });
+          const response = await ProductionSSREngine.renderPageStream(filePath, locale);
+          return response;
         } catch (error) {
           console.error(`SSR error for ${ctx.url}:`, error);
           throw error;
