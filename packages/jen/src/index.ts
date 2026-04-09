@@ -10,3 +10,10 @@ export { Image } from './components/image.js';
 export { Script } from './components/script.js';
 export { PartialRegistry } from './core/partials.js';
 export { Partial } from './components/partial.js';
+export { Link } from './client/link.js';
+export { defineConfig } from './config/config.js';
+export { RouteScanner } from './core/scan.js';
+export { RouterMap } from './core/map.js';
+
+// Types
+export * from './types.js';

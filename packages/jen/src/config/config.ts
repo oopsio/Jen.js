@@ -65,3 +65,11 @@ export function updateRuntimeConfig(userSettings: Partial<JenConfig>): void {
   }
   Object.assign(RuntimeConfig, userSettings);
 }
+
+/**
+ * Type-safe configuration helper for Jen.js.
+ * @param config The configuration object
+ */
+export function defineConfig(config: JenConfig): JenConfig {
+  return config;
+}
