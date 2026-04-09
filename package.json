@@ -14,7 +14,8 @@
     "format": "turbo run format",
     "lint": "turbo run lint",
     "format:base": "prettier --write .",
-    "lint:base": "eslint . --fix"
+    "lint:base": "eslint . --fix",
+    "storybook": "bun run --cwd packages/jen storybook"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

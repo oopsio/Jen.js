@@ -135,7 +135,7 @@ export class DevToolsClient {
     if (!this.listeners.has(type)) {
       this.listeners.set(type, []);
     }
-    this.listeners.get(type)!.push(callback);
+    this.listeners.get(type)!.push(callback as (data: unknown) => void);
     return () => {
       const arr = this.listeners.get(type)!;
       this.listeners.set(
