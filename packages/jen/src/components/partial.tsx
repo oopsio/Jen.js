@@ -23,7 +23,7 @@ export function Partial({ name, ...rest }: PartialProps) {
   if (!Component) {
     throw new Error(
       `[Jen.js Partials] Error: Partial "${name}" not found. ` +
-        `Did you forget to register it? Ensure it's registered via PartialRegistry.register('${name}', ...)`
+        `Did you forget to register it? Ensure it's registered via PartialRegistry.register('${name}', ...)`,
     );
   }
 

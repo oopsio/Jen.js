@@ -3,7 +3,11 @@
  */
 import { RuntimeConfig } from '../config/config.js';
 import { RouteScanner } from '../core/scan.js';
-import { ISRFactory, RouteMetadataExtractor, FileStorage } from '../isr/index.js';
+import {
+  ISRFactory,
+  RouteMetadataExtractor,
+  FileStorage,
+} from '../isr/index.js';
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 import type { ViteDevServer } from 'vite';

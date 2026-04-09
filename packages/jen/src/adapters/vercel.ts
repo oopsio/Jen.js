@@ -18,7 +18,10 @@ export class VercelAdapter {
     const srcRegex = basePath ? `${basePath}(/.*)?` : '/(.*)';
     const configObj = {
       version: 3,
-      routes: [{ handle: 'filesystem' }, { src: srcRegex, dest: basePath ? `${basePath}/` : '/' }],
+      routes: [
+        { handle: 'filesystem' },
+        { src: srcRegex, dest: basePath ? `${basePath}/` : '/' },
+      ],
     };
     fs.writeFileSync(
       path.join(vercelOut, 'config.json'),
@@ -144,7 +147,11 @@ export default async function handler(req, res) {
 
     // Nest static files if basePath is provided
     if (basePath) {
-      const targetStaticPath = path.join(vercelOut, 'static', basePath.replace(/^\//, ''));
+      const targetStaticPath = path.join(
+        vercelOut,
+        'static',
+        basePath.replace(/^\//, ''),
+      );
       const defaultStaticSource = path.join(options.rootDir, 'dist/static');
       if (fs.existsSync(defaultStaticSource)) {
         fs.mkdirSync(targetStaticPath, { recursive: true });

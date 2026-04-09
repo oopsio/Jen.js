@@ -33,8 +33,8 @@ export default function Page() {
 
 ```typescript
 interface GoogleFontOptions {
-  weight?: string | number | (string | number)[];  // Font weights
-  subsets?: string[];                               // e.g. ['latin', 'cyrillic']
+  weight?: string | number | (string | number)[]; // Font weights
+  subsets?: string[]; // e.g. ['latin', 'cyrillic']
   display?: 'auto' | 'block' | 'swap' | 'fallback' | 'optional';
 }
 ```
@@ -43,12 +43,12 @@ interface GoogleFontOptions {
 
 `GoogleFont()` returns an object for applying the font:
 
-| Property | Type | Description |
-|---|---|---|
+| Property    | Type     | Description                                   |
+| ----------- | -------- | --------------------------------------------- |
 | `className` | `string` | Generated CSS class (e.g. `__jen-font-inter`) |
-| `variable` | `string` | CSS custom property (e.g. `--font-inter`) |
-| `style` | `object` | Inline style with `fontFamily` set |
-| `href` | `string` | Google Fonts CSS URL |
+| `variable`  | `string` | CSS custom property (e.g. `--font-inter`)     |
+| `style`     | `object` | Inline style with `fontFamily` set            |
+| `href`      | `string` | Google Fonts CSS URL                          |
 
 ## SSR Integration
 

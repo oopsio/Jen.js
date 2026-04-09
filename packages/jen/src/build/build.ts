@@ -273,7 +273,9 @@ if (root) {
           }
         }
 
-        const componentHtml = renderToString(page);
+        const componentHtml = RuntimeConfig.csr?.enabled
+          ? RuntimeConfig.csr.loadingIndicator || ''
+          : renderToString(page);
 
         // Evaluate static metadata
         let metadataHtml = '';

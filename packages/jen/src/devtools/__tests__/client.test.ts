@@ -36,7 +36,10 @@ describe('DevToolsClient', () => {
     // Simulate Server WebSocket sending a message
     const ws = (client as any).ws;
     ws.onmessage({
-      data: JSON.stringify({ type: 'route-trace', data: { pathname: '/dashboard' } })
+      data: JSON.stringify({
+        type: 'route-trace',
+        data: { pathname: '/dashboard' },
+      }),
     });
 
     // Callback should fire
@@ -48,7 +51,10 @@ describe('DevToolsClient', () => {
 
     // Simulate Server WebSocket sending another message post-unsubscribe
     ws.onmessage({
-      data: JSON.stringify({ type: 'route-trace', data: { pathname: '/login' } })
+      data: JSON.stringify({
+        type: 'route-trace',
+        data: { pathname: '/login' },
+      }),
     });
 
     // Callback should not fire again
@@ -58,7 +64,7 @@ describe('DevToolsClient', () => {
   test('should operate globally as a localized singleton', () => {
     const instanceA = getDevToolsClient();
     const instanceB = getDevToolsClient();
-    
+
     expect(instanceA).toBe(instanceB);
   });
 });

@@ -7,27 +7,11 @@ Jen.js can generate a fully static site from your pages during the build step â€
 
 ## Build Command
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen build
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen build
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen build
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen build
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen build ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen build ```</Tab>
+  <Tab value="yarn">```bash yarn jen build ```</Tab>
+  <Tab value="bun">```bash bunx jen build ```</Tab>
 </Tabs>
 
 This scans all non-dynamic routes, renders them with Preact, and outputs optimized HTML, CSS, and JS to `dist/static/`.

@@ -1,9 +1,4 @@
 {
   "title": "Components",
-  "pages": [
-    "link",
-    "image",
-    "script",
-    "google-font"
-  ]
+  "pages": ["link", "image", "script", "google-font"]
 }

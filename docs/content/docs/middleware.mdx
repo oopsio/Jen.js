@@ -25,11 +25,11 @@ export default function middleware(req: Request) {
 
 ## NextResponse API
 
-| Method | Description |
-|---|---|
-| `NextResponse.next(init?)` | Continue to the router (optionally with modified headers) |
-| `NextResponse.redirect(url, status?)` | Redirect to a URL (default: 307) |
-| `NextResponse.rewrite(url)` | Internally rewrite the request to a different path |
+| Method                                | Description                                               |
+| ------------------------------------- | --------------------------------------------------------- |
+| `NextResponse.next(init?)`            | Continue to the router (optionally with modified headers) |
+| `NextResponse.redirect(url, status?)` | Redirect to a URL (default: 307)                          |
+| `NextResponse.rewrite(url)`           | Internally rewrite the request to a different path        |
 
 ### Redirect
 

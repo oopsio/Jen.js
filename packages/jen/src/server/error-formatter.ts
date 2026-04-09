@@ -21,7 +21,7 @@ export class ErrorFormatter {
     const isError = error instanceof Error;
     const msg = isError ? error.message : String(error);
     const stack = isError ? error.stack : undefined;
-    
+
     let output = `\n${colors.bold}${colors.bgRed}${colors.white} [!] ${title} ${colors.reset}\n`;
     output += `${colors.bold}${colors.red}${msg}${colors.reset}\n\n`;
 
@@ -29,7 +29,11 @@ export class ErrorFormatter {
     const viteError = error as { frame?: string };
     if (viteError && viteError.frame) {
       output += `\n${colors.dim}Code Snippet:${colors.reset}\n`;
-      output += viteError.frame.split('\n').map((line: string) => `  ${line}`).join('\n') + '\n\n';
+      output +=
+        viteError.frame
+          .split('\n')
+          .map((line: string) => `  ${line}`)
+          .join('\n') + '\n\n';
     }
 
     if (stack) {
@@ -39,17 +43,20 @@ export class ErrorFormatter {
         if (line.includes(msg) && lines.indexOf(line) === 0) continue; // Skip the message in stack dump
 
         // if the line matches `at FunctionName (path:line:col)` or `at path:line:col`
-        const match = line.match(/^\s*at\s+(?:([^\s]+)\s+\()?(.*?):(\d+):(\d+)\)?$/);
+        const match = line.match(
+          /^\s*at\s+(?:([^\s]+)\s+\()?(.*?):(\d+):(\d+)\)?$/,
+        );
         if (match) {
           const [, func, filePath, lineNum, colNum] = match;
-          
+
           // Color internal modules dimly, user code cyan
-          const isInternal = filePath.includes('node_modules') || filePath.startsWith('node:');
+          const isInternal =
+            filePath.includes('node_modules') || filePath.startsWith('node:');
           const pathColor = isInternal ? colors.dim : colors.cyan;
           const funcColor = isInternal ? colors.dim : colors.magenta;
 
           const funcName = func ? func : '<anonymous>';
-          
+
           output += `  ${colors.dim}>${colors.reset} ${funcColor}${funcName}${colors.reset} ${colors.dim}at${colors.reset} ${pathColor}${filePath}:${lineNum}:${colNum}${colors.reset}\n`;
         } else {
           output += `  ${colors.dim}${line.trim()}${colors.reset}\n`;
@@ -65,7 +72,10 @@ export class ErrorFormatter {
   /**
    * Prints the beautifully formatted error directly to stderr.
    */
-  static printError(error: unknown, title: string = 'Unhandled Server Error'): void {
+  static printError(
+    error: unknown,
+    title: string = 'Unhandled Server Error',
+  ): void {
     console.error(ErrorFormatter.formatError(error, title));
   }
 }

@@ -44,15 +44,12 @@ For logic that must wrap **every** page globally (providers, themes, analytics),
 
 ```tsx title="_app.tsx"
 export default function App({ Component, pageProps, children }: any) {
-  return (
-    <ThemeProvider>
-      {children}
-    </ThemeProvider>
-  );
+  return <ThemeProvider>{children}</ThemeProvider>;
 }
 ```
 
 The `_app.tsx` receives:
+
 - `Component` — the current page component
 - `pageProps` — props from `load()`
 - `children` — the pre-composed layout → page tree

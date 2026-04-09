@@ -14,7 +14,7 @@ describe('jenFontPlugin Build Extraction', () => {
     process.env.NODE_ENV = 'production';
 
     const plugin = jenFontPlugin() as any;
-    
+
     const typescriptCode = `
       import { GoogleFont } from 'jen.js/fonts';
       export function Main() {
@@ -26,11 +26,11 @@ describe('jenFontPlugin Build Extraction', () => {
 
     // Passing through transformer
     const res = plugin.transform(typescriptCode, '/src/main.tsx');
-    
+
     // We expect the result to be null effectively allowing vite to handle natively doing nothing immediately.
     // Behind the scenes, the internal state Set tracking got filled.
     expect(res).toBeNull();
-    
+
     // Cleanup
     process.env.NODE_ENV = originalEnv;
   });

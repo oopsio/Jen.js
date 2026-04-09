@@ -7,27 +7,11 @@ Jen.js includes a built-in Vercel adapter that generates the `.vercel/output` di
 
 ## Build
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen build --adapter=vercel
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen build --adapter=vercel
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen build --adapter=vercel
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen build --adapter=vercel
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen build --adapter=vercel ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen build --adapter=vercel ```</Tab>
+  <Tab value="yarn">```bash yarn jen build --adapter=vercel ```</Tab>
+  <Tab value="bun">```bash bunx jen build --adapter=vercel ```</Tab>
 </Tabs>
 
 ## What Gets Generated
@@ -58,41 +42,21 @@ The adapter creates Vercel's [Build Output API v3](https://vercel.com/docs/build
 
 Push to your Git repository connected to Vercel, or deploy manually:
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
   <Tab value="npm">
-    ```bash
-    # Install Vercel CLI
-    npm install -g vercel
-    
-    # Deploy
-    vercel --prebuilt
-    ```
+    ```bash # Install Vercel CLI npm install -g vercel # Deploy vercel
+    --prebuilt ```
   </Tab>
   <Tab value="pnpm">
-    ```bash
-    # Install Vercel CLI
-    pnpm add -g vercel
-    
-    # Deploy
-    vercel --prebuilt
+    ```bash # Install Vercel CLI pnpm add -g vercel # Deploy vercel --prebuilt
     ```
   </Tab>
   <Tab value="yarn">
-    ```bash
-    # Install Vercel CLI
-    yarn global add vercel
-    
-    # Deploy
-    vercel --prebuilt
-    ```
+    ```bash # Install Vercel CLI yarn global add vercel # Deploy vercel
+    --prebuilt ```
   </Tab>
   <Tab value="bun">
-    ```bash
-    # Install Vercel CLI
-    bun add -g vercel
-    
-    # Deploy
-    vercel --prebuilt
+    ```bash # Install Vercel CLI bun add -g vercel # Deploy vercel --prebuilt
     ```
   </Tab>
 </Tabs>

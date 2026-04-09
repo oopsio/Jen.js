@@ -22,11 +22,11 @@ export default {
 
 With i18n enabled, routes automatically support locale prefixes:
 
-| URL | Locale | Page |
-|---|---|---|
-| `/en/about` | `en` | `pages/about/app.tsx` |
-| `/fr/about` | `fr` | `pages/about/app.tsx` |
-| `/about` | `en` (default) | `pages/about/app.tsx` |
+| URL         | Locale         | Page                  |
+| ----------- | -------------- | --------------------- |
+| `/en/about` | `en`           | `pages/about/app.tsx` |
+| `/fr/about` | `fr`           | `pages/about/app.tsx` |
+| `/about`    | `en` (default) | `pages/about/app.tsx` |
 
 The framework intercepts requests and:
 
@@ -55,7 +55,7 @@ Jen.js automatically sets the `<html lang="...">` attribute during SSR based on 
 
 ```html
 <!-- Request to /fr/about -->
-<html lang="fr">
+<html lang="fr"></html>
 ```
 
 ## Static Generation with i18n
@@ -85,7 +85,8 @@ const translations = {
 };
 
 export default function Home({ locale }: { locale: string }) {
-  const t = translations[locale as keyof typeof translations] || translations.en;
+  const t =
+    translations[locale as keyof typeof translations] || translations.en;
 
   return (
     <div>

@@ -11,6 +11,7 @@ import { ErrorBoundary } from '../core/error-boundary.js';
 import { DataLoaderManager } from '../core/data-loader.js';
 import { parseMetadata } from './metadata.js';
 import { ErrorFormatter } from './error-formatter.js';
+import { RuntimeConfig } from '../config/config.js';
 
 import { RouteDefinition } from '../types.js';
 
@@ -134,7 +135,10 @@ export class SsrEngine {
       fallback: ErrorComponent || undefined,
       onError: (error: Error) => {
         if (typeof process !== 'undefined') {
-          ErrorFormatter.printError(error, 'SSR Error Boundary (Component crashed on server)');
+          ErrorFormatter.printError(
+            error,
+            'SSR Error Boundary (Component crashed on server)',
+          );
         }
       },
       children: page,
@@ -193,6 +197,18 @@ export class SsrEngine {
     template = await vite.transformIndexHtml(url, template);
 
     const [headChunk, tailChunk] = template.split('<!--app-html-->');
+
+    if (RuntimeConfig.csr?.enabled) {
+      const loader = RuntimeConfig.csr.loadingIndicator || '';
+      return new Response(headChunk + loader + tailChunk, {
+        headers: { 'Content-Type': 'text/html' },
+      });
+    }
+
+    if (RuntimeConfig.ppr?.enabled) {
+      // For PPR we allow streaming of Suspense boundaries, which the readable stream natively handles
+      // No special logic needed here as renderToReadableStream handles it natively
+    }
 
     // Activate the Preact Stream
     const componentStream = renderToReadableStream(

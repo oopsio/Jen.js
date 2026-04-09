@@ -26,6 +26,7 @@ This policy applies to all core packages in the `packages/` directory and core l
 ## Security Standards
 
 Jen.js aims for high security standards out of the box, including:
+
 - **NIST SP 800-44** compliance for server hardening.
 - **OWASP ASVS L1** compliant security headers.
 

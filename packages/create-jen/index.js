@@ -27,47 +27,47 @@ async function main() {
   const pkg = {
     name: projectName,
     private: true,
-    version: "0.0.0",
-    type: "module",
+    version: '0.0.0',
+    type: 'module',
     scripts: {
-      "dev": "jen dev",
-      "build": "jen build",
-      "start": "serve dist/static"
+      dev: 'jen dev',
+      build: 'jen build',
+      start: 'serve dist/static',
     },
     dependencies: {
-      "preact": "latest",
-      "we-jenjs": "latest"
+      preact: 'latest',
+      'we-jenjs': 'latest',
     },
     devDependencies: {
-      "typescript": "latest",
-      "serve": "latest"
-    }
+      typescript: 'latest',
+      serve: 'latest',
+    },
   };
 
   await writeFile(
     path.join(projectDir, 'package.json'),
-    JSON.stringify(pkg, null, 2)
+    JSON.stringify(pkg, null, 2),
   );
 
   // 3. tsconfig.json setup
   const tsconfig = {
     compilerOptions: {
-      target: "ESNext",
-      module: "ESNext",
-      moduleResolution: "bundler",
-      jsx: "react-jsx",
-      jsxImportSource: "preact",
+      target: 'ESNext',
+      module: 'ESNext',
+      moduleResolution: 'bundler',
+      jsx: 'react-jsx',
+      jsxImportSource: 'preact',
       allowImportingTsExtensions: true,
       noEmit: true,
       strict: true,
-      skipLibCheck: true
+      skipLibCheck: true,
     },
-    include: ["pages"]
+    include: ['pages'],
   };
 
   await writeFile(
     path.join(projectDir, 'tsconfig.json'),
-    JSON.stringify(tsconfig, null, 2)
+    JSON.stringify(tsconfig, null, 2),
   );
 
   // 4. Create pages directory and app.tsx
@@ -119,10 +119,13 @@ export default function Counter() {
 
   s.stop('Project structure created!');
 
-  note(`Next steps:
+  note(
+    `Next steps:
   cd ${projectName}
   npm install
-  npm run dev`, 'Generated successfully');
+  npm run dev`,
+    'Generated successfully',
+  );
 
   outro(`Good luck building with Jen.js!`);
 }

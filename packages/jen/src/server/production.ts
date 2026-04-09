@@ -157,9 +157,25 @@ class ProductionSSREngine {
       const pageProps: Record<string, unknown> = {};
       if (locale) pageProps.locale = locale;
 
-      const [headChunk, tailChunk] = this.constructDocumentSplit(componentPath, locale);
+      const [headChunk, tailChunk] = this.constructDocumentSplit(
+        componentPath,
+        locale,
+      );
 
-      const componentStream = renderToReadableStream(h(PageComponent, pageProps));
+      if (RuntimeConfig.csr?.enabled) {
+        const loader = RuntimeConfig.csr.loadingIndicator || '';
+        return new Response(headChunk + loader + tailChunk, {
+          headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        });
+      }
+
+      if (RuntimeConfig.ppr?.enabled) {
+        // PPR relies on streaming Suspense boundaries dynamically while the static shell resolves
+      }
+
+      const componentStream = renderToReadableStream(
+        h(PageComponent, pageProps),
+      );
 
       const { readable, writable } = new TransformStream();
       const writer = writable.getWriter();
@@ -391,7 +407,9 @@ async function handleRequest(request: Request): Promise<Response> {
     // Clone response and add security headers without consuming the body
     const securityHeaders = buildSecurityHeaders();
     const headers = new Headers(jenResponse.headers);
-    for (const [key, value] of Object.entries(securityHeaders as Record<string, string>)) {
+    for (const [key, value] of Object.entries(
+      securityHeaders as Record<string, string>,
+    )) {
       headers.set(key, value);
     }
 
@@ -468,7 +486,10 @@ export async function startProductionServer(
         try {
           const locale = req.headers.get('x-jen-locale') || undefined;
           const filePath = ctx.filePath;
-          const response = await ProductionSSREngine.renderPageStream(filePath, locale);
+          const response = await ProductionSSREngine.renderPageStream(
+            filePath,
+            locale,
+          );
           return response;
         } catch (error) {
           console.error(`SSR error for ${ctx.url}:`, error);

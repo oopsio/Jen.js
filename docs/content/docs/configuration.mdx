@@ -21,16 +21,16 @@ export default {
 
 ```typescript
 interface JenConfig {
-  port: number;                    // Dev/production server port (default: 3000)
-  buildDirectory: string;          // Static output directory (default: 'dist/static')
-  name?: string;                   // Application name (default: 'Jen.js App')
+  port: number; // Dev/production server port (default: 3000)
+  buildDirectory: string; // Static output directory (default: 'dist/static')
+  name?: string; // Application name (default: 'Jen.js App')
 
   middleware?: {
-    enabled?: boolean;             // Enable middleware pipeline (default: true)
-    cors?: boolean | Record<string, unknown>;      // CORS config
+    enabled?: boolean; // Enable middleware pipeline (default: true)
+    cors?: boolean | Record<string, unknown>; // CORS config
     bodyParser?: boolean | Record<string, unknown>; // Body parsing
-    errorBoundary?: boolean;       // Error boundary (default: true)
-    requestLogger?: boolean;       // Request logging (default: true)
+    errorBoundary?: boolean; // Error boundary (default: true)
+    requestLogger?: boolean; // Request logging (default: true)
     custom?: Array<{
       name: string;
       handler: (context: unknown, next: () => Promise<void>) => Promise<void>;
@@ -39,16 +39,16 @@ interface JenConfig {
   };
 
   isr?: {
-    enabled?: boolean;             // Enable ISR (default: false)
-    cacheDir?: string;             // Cache directory (default: '.cache/isr')
-    maxRetries?: number;           // Max regeneration retries (default: 3)
-    retryDelay?: number;           // Retry delay in ms (default: 1000)
-    globalRevalidate?: number;     // Global TTL fallback in seconds
+    enabled?: boolean; // Enable ISR (default: false)
+    cacheDir?: string; // Cache directory (default: '.cache/isr')
+    maxRetries?: number; // Max regeneration retries (default: 3)
+    retryDelay?: number; // Retry delay in ms (default: 1000)
+    globalRevalidate?: number; // Global TTL fallback in seconds
   };
 
   i18n?: {
-    locales: string[];             // Supported locales (e.g. ['en', 'fr'])
-    defaultLocale: string;         // Default locale
+    locales: string[]; // Supported locales (e.g. ['en', 'fr'])
+    defaultLocale: string; // Default locale
   };
 
   requireDangerouslySetScripts?: boolean; // Require <Script> opt-in (default: true)
@@ -59,20 +59,20 @@ interface JenConfig {
 
 When no config file is provided, Jen.js uses these defaults:
 
-| Option | Default |
-|---|---|
-| `port` | `3000` |
-| `buildDirectory` | `'dist/static'` |
-| `name` | `'Jen.js App'` |
-| `middleware.enabled` | `true` |
-| `middleware.cors` | `false` |
-| `middleware.errorBoundary` | `true` |
-| `middleware.requestLogger` | `true` |
-| `isr.enabled` | `false` |
-| `isr.cacheDir` | `'.cache/isr'` |
-| `isr.maxRetries` | `3` |
-| `isr.retryDelay` | `1000` |
-| `requireDangerouslySetScripts` | `true` |
+| Option                         | Default         |
+| ------------------------------ | --------------- |
+| `port`                         | `3000`          |
+| `buildDirectory`               | `'dist/static'` |
+| `name`                         | `'Jen.js App'`  |
+| `middleware.enabled`           | `true`          |
+| `middleware.cors`              | `false`         |
+| `middleware.errorBoundary`     | `true`          |
+| `middleware.requestLogger`     | `true`          |
+| `isr.enabled`                  | `false`         |
+| `isr.cacheDir`                 | `'.cache/isr'`  |
+| `isr.maxRetries`               | `3`             |
+| `isr.retryDelay`               | `1000`          |
+| `requireDangerouslySetScripts` | `true`          |
 
 ## Config Loading
 

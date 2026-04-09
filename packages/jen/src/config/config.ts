@@ -23,6 +23,13 @@ export const RuntimeConfig: JenConfig = {
     retryDelay: 1000,
     globalRevalidate: undefined,
   },
+  csr: {
+    enabled: false,
+    loadingIndicator: '',
+  },
+  ppr: {
+    enabled: false,
+  },
   requireDangerouslySetScripts: true,
 };
 
@@ -45,6 +52,16 @@ export function updateRuntimeConfig(userSettings: Partial<JenConfig>): void {
   if (userSettings.isr) {
     RuntimeConfig.isr = { ...RuntimeConfig.isr, ...userSettings.isr };
     delete userSettings.isr;
+  }
+  // Merge CSR config properly
+  if (userSettings.csr) {
+    RuntimeConfig.csr = { ...RuntimeConfig.csr, ...userSettings.csr };
+    delete userSettings.csr;
+  }
+  // Merge PPR config properly
+  if (userSettings.ppr) {
+    RuntimeConfig.ppr = { ...RuntimeConfig.ppr, ...userSettings.ppr };
+    delete userSettings.ppr;
   }
   Object.assign(RuntimeConfig, userSettings);
 }

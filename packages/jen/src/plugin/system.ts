@@ -4,7 +4,10 @@
 
 import type { Plugin, PluginContext } from './types.js';
 import { PluginRegistry } from './registry.js';
-import type { MiddlewareHandler, MiddlewareContext } from '../middleware/index.js';
+import type {
+  MiddlewareHandler,
+  MiddlewareContext,
+} from '../middleware/index.js';
 
 type RouteHandler = (...args: unknown[]) => unknown;
 

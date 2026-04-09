@@ -138,7 +138,10 @@ export class DevToolsClient {
     this.listeners.get(type)!.push(callback);
     return () => {
       const arr = this.listeners.get(type)!;
-      this.listeners.set(type, arr.filter(cb => cb !== callback));
+      this.listeners.set(
+        type,
+        arr.filter((cb) => cb !== callback),
+      );
     };
   }
 

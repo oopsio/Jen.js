@@ -17,27 +17,11 @@ jen <command> [options]
 
 Start the development server with hot module replacement.
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen dev
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen dev
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen dev
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen dev
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen dev ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen dev ```</Tab>
+  <Tab value="yarn">```bash yarn jen dev ```</Tab>
+  <Tab value="bun">```bash bunx jen dev ```</Tab>
 </Tabs>
 
 - Powered by Vite with HMR
@@ -52,41 +36,29 @@ Start the development server with hot module replacement.
 
 Generate a static site from all non-dynamic routes.
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
   <Tab value="npm">
-    ```bash
-    npx jen build
-    npx jen build --adapter=vercel
-    npx jen build --adapter=cloudflare
-    ```
+    ```bash npx jen build npx jen build --adapter=vercel npx jen build
+    --adapter=cloudflare ```
   </Tab>
   <Tab value="pnpm">
-    ```bash
-    pnpm jen build
-    pnpm jen build --adapter=vercel
-    pnpm jen build --adapter=cloudflare
-    ```
+    ```bash pnpm jen build pnpm jen build --adapter=vercel pnpm jen build
+    --adapter=cloudflare ```
   </Tab>
   <Tab value="yarn">
-    ```bash
-    yarn jen build
-    yarn jen build --adapter=vercel
-    yarn jen build --adapter=cloudflare
-    ```
+    ```bash yarn jen build yarn jen build --adapter=vercel yarn jen build
+    --adapter=cloudflare ```
   </Tab>
   <Tab value="bun">
-    ```bash
-    bunx jen build
-    bunx jen build --adapter=vercel
-    bunx jen build --adapter=cloudflare
-    ```
+    ```bash bunx jen build bunx jen build --adapter=vercel bunx jen build
+    --adapter=cloudflare ```
   </Tab>
 </Tabs>
 
-| Flag | Description |
-|---|---|
-| `--adapter=vercel` | Generate Vercel Build Output API structure |
-| `--adapter=cloudflare` | Generate Cloudflare Worker bundle |
+| Flag                   | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `--adapter=vercel`     | Generate Vercel Build Output API structure |
+| `--adapter=cloudflare` | Generate Cloudflare Worker bundle          |
 
 Outputs to `dist/static/` by default. Includes `sitemap.xml` and `robots.txt`.
 
@@ -96,27 +68,11 @@ Outputs to `dist/static/` by default. Includes `sitemap.xml` and `robots.txt`.
 
 Build and start a production-hardened server.
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen start
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen start
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen start
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen start
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen start ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen start ```</Tab>
+  <Tab value="yarn">```bash yarn jen start ```</Tab>
+  <Tab value="bun">```bash bunx jen start ```</Tab>
 </Tabs>
 
 - Runs the full SSG build first
@@ -130,35 +86,15 @@ Build and start a production-hardened server.
 
 Display system and framework diagnostics.
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen info
-    npx jen info --verbose
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen info
-    pnpm jen info --verbose
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen info
-    yarn jen info --verbose
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen info
-    bunx jen info --verbose
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen info npx jen info --verbose ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen info pnpm jen info --verbose ```</Tab>
+  <Tab value="yarn">```bash yarn jen info yarn jen info --verbose ```</Tab>
+  <Tab value="bun">```bash bunx jen info bunx jen info --verbose ```</Tab>
 </Tabs>
 
-| Flag | Description |
-|---|---|
+| Flag              | Description                          |
+| ----------------- | ------------------------------------ |
 | `--verbose`, `-v` | Show extended diagnostic information |
 
 ---
@@ -167,32 +103,16 @@ Display system and framework diagnostics.
 
 Show the help menu.
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen help
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen help
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen help
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen help
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen help ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen help ```</Tab>
+  <Tab value="yarn">```bash yarn jen help ```</Tab>
+  <Tab value="bun">```bash bunx jen help ```</Tab>
 </Tabs>
 
 ## Global Options
 
-| Flag | Description |
-|---|---|
-| `--verbose`, `-v` | Verbose output |
-| `--help`, `-h` | Show help message |
+| Flag              | Description       |
+| ----------------- | ----------------- |
+| `--verbose`, `-v` | Verbose output    |
+| `--help`, `-h`    | Show help message |

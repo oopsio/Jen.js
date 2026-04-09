@@ -15,21 +15,23 @@ export default function HomePage() {
   return (
     <div style={{ fontFamily: 'sans-serif' }}>
       <Partial name="header" title="Jen.js Framework" />
-      
+
       <main style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
         <h2>Welcome to Jen.js</h2>
-        <p>Freshly server-rendered at: <strong>{time}</strong></p>
+        <p>
+          Freshly server-rendered at: <strong>{time}</strong>
+        </p>
 
-        <Partial 
-          name="card" 
-          title="Dynamic Partials" 
-          description="This card is heavily decoupled! It is being rendered dynamically from the PartialRegistry." 
+        <Partial
+          name="card"
+          title="Dynamic Partials"
+          description="This card is heavily decoupled! It is being rendered dynamically from the PartialRegistry."
         />
-        
-        <Partial 
-          name="card" 
-          title="Seamless Props" 
-          description="You can pass any props directly into the <Partial> tag, and they will cascade down to the target partial component." 
+
+        <Partial
+          name="card"
+          title="Seamless Props"
+          description="You can pass any props directly into the <Partial> tag, and they will cascade down to the target partial component."
         />
       </main>
     </div>

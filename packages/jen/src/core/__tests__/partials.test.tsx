@@ -16,17 +16,20 @@ describe('Jen.js Partials', () => {
   it('should register and retrieve a partial', () => {
     const TestComponent = () => h('div', { class: 'test' }, 'Test');
     PartialRegistry.register('test', TestComponent);
-    
+
     const retrieved = PartialRegistry.get('test');
     expect(retrieved).toBeDefined();
     expect(retrieved).toBe(TestComponent);
   });
 
   it('should render a registered partial using the <Partial> component', () => {
-    const Card = ({ title }: { title: string }) => h('div', { class: 'card' }, h('h1', null, title));
+    const Card = ({ title }: { title: string }) =>
+      h('div', { class: 'card' }, h('h1', null, title));
     PartialRegistry.register('card', Card);
 
-    const rendered = renderToString(h(Partial, { name: 'card', title: 'Hello World' }));
+    const rendered = renderToString(
+      h(Partial, { name: 'card', title: 'Hello World' }),
+    );
     expect(rendered).toContain('class="card"');
     expect(rendered).toContain('<h1>Hello World</h1>');
   });
@@ -38,11 +41,14 @@ describe('Jen.js Partials', () => {
   });
 
   it('should support nested partials', () => {
-    const Layout = ({ children }: any) => h('div', { class: 'layout' },
-      h(Partial, { name: 'header' }),
-      children,
-      h(Partial, { name: 'footer' })
-    );
+    const Layout = ({ children }: any) =>
+      h(
+        'div',
+        { class: 'layout' },
+        h(Partial, { name: 'header' }),
+        children,
+        h(Partial, { name: 'footer' }),
+      );
     const Header = () => h('header', null, 'Header');
     const Footer = () => h('footer', null, 'Footer');
 
@@ -50,7 +56,9 @@ describe('Jen.js Partials', () => {
     PartialRegistry.register('header', Header);
     PartialRegistry.register('footer', Footer);
 
-    const rendered = renderToString(h(Partial, { name: 'layout' }, h('p', null, 'Content')));
+    const rendered = renderToString(
+      h(Partial, { name: 'layout' }, h('p', null, 'Content')),
+    );
     expect(rendered).toContain('<div class="layout">');
     expect(rendered).toContain('<header>Header</header>');
     expect(rendered).toContain('<p>Content</p>');

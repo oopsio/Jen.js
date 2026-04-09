@@ -10,12 +10,12 @@ mock.module('node:fs', () => {
     default: {
       ...originalFs,
       existsSync: (path: string) => {
-        if (Array.from(mockFiles).some(f => path.endsWith(f))) return true;
+        if (Array.from(mockFiles).some((f) => path.endsWith(f))) return true;
         return originalFs.existsSync(path);
       },
     },
     existsSync: (path: string) => {
-      if (Array.from(mockFiles).some(f => path.endsWith(f))) return true;
+      if (Array.from(mockFiles).some((f) => path.endsWith(f))) return true;
       return originalFs.existsSync(path);
     },
   };

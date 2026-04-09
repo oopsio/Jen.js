@@ -24,7 +24,9 @@ export function Card({ title, href, icon, children }: CardProps) {
       <h3 className="mb-2 font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
         {title}
       </h3>
-      {children && <p className="text-sm text-gray-600 dark:text-gray-400">{children}</p>}
+      {children && (
+        <p className="text-sm text-gray-600 dark:text-gray-400">{children}</p>
+      )}
     </Link>
   );
 }

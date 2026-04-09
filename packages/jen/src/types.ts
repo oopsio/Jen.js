@@ -82,5 +82,12 @@ export interface JenConfig {
     basePath?: string;
     assetPrefix?: string;
   };
+  csr?: {
+    enabled?: boolean;
+    loadingIndicator?: string;
+  };
+  ppr?: {
+    enabled?: boolean;
+  };
   requireDangerouslySetScripts?: boolean;
 }

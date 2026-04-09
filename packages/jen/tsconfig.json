@@ -3,11 +3,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "strict": true,
@@ -18,21 +14,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    "types": [
-      "node",
-      "bun",
-      "vite/client",
-      "deno"
-    ],
+    "types": ["node", "bun", "vite/client", "deno"],
     "rootDir": "./",
     "outDir": "./dist"
   },
-  "include": [
-    "src/**/*",
-    "pages/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*", "pages/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

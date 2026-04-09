@@ -1,8 +1,4 @@
 {
   "title": "Deployment",
-  "pages": [
-    "index",
-    "vercel",
-    "cloudflare"
-  ]
+  "pages": ["index", "vercel", "cloudflare"]
 }

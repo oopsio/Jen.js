@@ -3,7 +3,10 @@
  * Rollup-style plugin API: simple, elegant, powerful
  */
 
-import type { MiddlewareHandler, MiddlewareContext } from '../middleware/index.js';
+import type {
+  MiddlewareHandler,
+  MiddlewareContext,
+} from '../middleware/index.js';
 
 /**
  * Plugin context - passed to plugin hooks

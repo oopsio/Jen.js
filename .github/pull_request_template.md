@@ -22,8 +22,9 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] Manual Verification (describe below)
 
 **Test Configuration**:
-* OS: (local environment)
-* Runtime: (Bun / Node / Deno)
+
+- OS: (local environment)
+- Runtime: (Bun / Node / Deno)
 
 ## Checklist:
 

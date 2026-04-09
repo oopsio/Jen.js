@@ -171,15 +171,18 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
     const unsubRoutes = client.on('route-trace', (data: RouteMatchTrace) => {
       setRoutes((prev) => [...prev, data]);
     });
-    
-    const unsubSecurity = client.on('security-audit', (data: SecurityAuditResult) => {
-      setSecurity(data);
-    });
-    
+
+    const unsubSecurity = client.on(
+      'security-audit',
+      (data: SecurityAuditResult) => {
+        setSecurity(data);
+      },
+    );
+
     const unsubSSR = client.on('ssr-metrics', (data: SSRMetrics) => {
       setSSR(data);
     });
-    
+
     const unsubDb = client.on('query-log', (data: QueryLog) => {
       setQueries((prev) => [...prev, data]);
     });

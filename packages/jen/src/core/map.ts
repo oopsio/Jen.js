@@ -46,7 +46,10 @@ export class RouterMap {
     this.routeStorage.set(cleanPath, { handler, filePathTsx, filePathJsx });
 
     if (!this.initialized) {
-      if (RuntimeConfig?.zone?.basePath && typeof this.matcher.set_base_path === 'function') {
+      if (
+        RuntimeConfig?.zone?.basePath &&
+        typeof this.matcher.set_base_path === 'function'
+      ) {
         this.matcher.set_base_path(RuntimeConfig.zone.basePath);
       }
       this.initialized = true;
@@ -81,7 +84,8 @@ export class RouterMap {
    */
   public static async resolveRequest(request: Request): Promise<Response> {
     // Execute middleware pipeline if enabled (lazy import to avoid circular dependency)
-    const { MiddlewareManager } = await import('../server/middleware-manager.js');
+    const { MiddlewareManager } =
+      await import('../server/middleware-manager.js');
 
     if (MiddlewareManager.isEnabled()) {
       const context = await MiddlewareManager.executeMiddleware(request);

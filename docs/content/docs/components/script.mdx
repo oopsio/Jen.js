@@ -23,21 +23,21 @@ import { Script } from 'we-jenjs';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `src` | `string` | — | External script URL |
-| `id` | `string` | — | Unique identifier (prevents duplicates) |
-| `strategy` | `'beforeInteractive' \| 'afterInteractive' \| 'lazyOnload'` | `'afterInteractive'` | Loading strategy |
-| `dangerouslySetScripts` | `boolean` | — | Required security acknowledgment |
-| `children` | `ComponentChildren` | — | Inline script content |
+| Prop                    | Type                                                        | Default              | Description                             |
+| ----------------------- | ----------------------------------------------------------- | -------------------- | --------------------------------------- |
+| `src`                   | `string`                                                    | —                    | External script URL                     |
+| `id`                    | `string`                                                    | —                    | Unique identifier (prevents duplicates) |
+| `strategy`              | `'beforeInteractive' \| 'afterInteractive' \| 'lazyOnload'` | `'afterInteractive'` | Loading strategy                        |
+| `dangerouslySetScripts` | `boolean`                                                   | —                    | Required security acknowledgment        |
+| `children`              | `ComponentChildren`                                         | —                    | Inline script content                   |
 
 ## Loading Strategies
 
-| Strategy | When | Use Case |
-|---|---|---|
+| Strategy            | When                               | Use Case                     |
+| ------------------- | ---------------------------------- | ---------------------------- |
 | `beforeInteractive` | Rendered synchronously in SSR HTML | Critical scripts (polyfills) |
-| `afterInteractive` | Injected after client hydration | Analytics, widgets |
-| `lazyOnload` | Deferred via `requestIdleCallback` | Non-essential trackers |
+| `afterInteractive`  | Injected after client hydration    | Analytics, widgets           |
+| `lazyOnload`        | Deferred via `requestIdleCallback` | Non-essential trackers       |
 
 ## Security
 

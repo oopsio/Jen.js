@@ -20,12 +20,12 @@ import { Link } from 'we-jenjs/client';
 
 ## Props
 
-| Prop | Type | Description |
-|---|---|---|
-| `href` | `string` | Target URL path |
-| `children` | `ComponentChildren` | Link content |
-| `className` | `string` | CSS class name |
-| `style` | `JSX.CSSProperties` | Inline styles |
+| Prop        | Type                | Description     |
+| ----------- | ------------------- | --------------- |
+| `href`      | `string`            | Target URL path |
+| `children`  | `ComponentChildren` | Link content    |
+| `className` | `string`            | CSS class name  |
+| `style`     | `JSX.CSSProperties` | Inline styles   |
 
 ## How It Works
 
@@ -46,7 +46,9 @@ export default function Navigation() {
     <nav>
       <Link href="/">Home</Link>
       <Link href="/about">About</Link>
-      <Link href="/blog" className="active">Blog</Link>
+      <Link href="/blog" className="active">
+        Blog
+      </Link>
     </nav>
   );
 }

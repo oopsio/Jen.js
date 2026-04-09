@@ -13,10 +13,10 @@ Add ISR configuration to `jen.config.ts`:
 export default {
   isr: {
     enabled: true,
-    cacheDir: '.cache/isr',    // Cache storage location
-    maxRetries: 3,             // Retry failed regenerations
-    retryDelay: 1000,          // Delay between retries (ms)
-    globalRevalidate: 300,     // Global fallback TTL (seconds)
+    cacheDir: '.cache/isr', // Cache storage location
+    maxRetries: 3, // Retry failed regenerations
+    retryDelay: 1000, // Delay between retries (ms)
+    globalRevalidate: 300, // Global fallback TTL (seconds)
   },
 };
 ```
@@ -40,11 +40,11 @@ export async function load(): Promise<LoadResult> {
 
 The ISR system follows the **stale-while-revalidate** pattern:
 
-| Cache Status | Behavior |
-|---|---|
-| `MISS` | Render from scratch, cache the result |
-| `HIT_FRESH` | Serve cached HTML immediately |
-| `HIT_STALE` | Serve cached HTML, trigger background regeneration |
+| Cache Status | Behavior                                           |
+| ------------ | -------------------------------------------------- |
+| `MISS`       | Render from scratch, cache the result              |
+| `HIT_FRESH`  | Serve cached HTML immediately                      |
+| `HIT_STALE`  | Serve cached HTML, trigger background regeneration |
 
 ## Cache Headers
 
@@ -64,13 +64,13 @@ The ISR system exposes these core types:
 ```typescript
 interface CacheEntry {
   html: string;
-  timestamp: number;  // Unix epoch (ms)
+  timestamp: number; // Unix epoch (ms)
 }
 
 interface FreshnessResult {
   isFresh: boolean;
   isStale: boolean;
-  age: number;        // milliseconds
+  age: number; // milliseconds
 }
 
 type CacheStatus = 'MISS' | 'HIT_FRESH' | 'HIT_STALE';

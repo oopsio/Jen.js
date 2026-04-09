@@ -7,27 +7,11 @@ Jen.js includes a Cloudflare Workers adapter that compiles your application into
 
 ## Build
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
-  <Tab value="npm">
-    ```bash
-    npx jen build --adapter=cloudflare
-    ```
-  </Tab>
-  <Tab value="pnpm">
-    ```bash
-    pnpm jen build --adapter=cloudflare
-    ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn jen build --adapter=cloudflare
-    ```
-  </Tab>
-  <Tab value="bun">
-    ```bash
-    bunx jen build --adapter=cloudflare
-    ```
-  </Tab>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">```bash npx jen build --adapter=cloudflare ```</Tab>
+  <Tab value="pnpm">```bash pnpm jen build --adapter=cloudflare ```</Tab>
+  <Tab value="yarn">```bash yarn jen build --adapter=cloudflare ```</Tab>
+  <Tab value="bun">```bash bunx jen build --adapter=cloudflare ```</Tab>
 </Tabs>
 
 ## What Gets Generated
@@ -53,42 +37,22 @@ Cloudflare Workers prohibit filesystem APIs and dynamically-bound WASM imports. 
 
 Deploy using [Wrangler](https://developers.cloudflare.com/workers/wrangler/):
 
-<Tabs items={["npm", "pnpm", "yarn", "bun"]}>
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
   <Tab value="npm">
-    ```bash
-    # Install Wrangler
-    npm install -g wrangler
-    
-    # Deploy
-    wrangler deploy dist/static/cloudflare-worker.js
-    ```
+    ```bash # Install Wrangler npm install -g wrangler # Deploy wrangler deploy
+    dist/static/cloudflare-worker.js ```
   </Tab>
   <Tab value="pnpm">
-    ```bash
-    # Install Wrangler
-    pnpm add -g wrangler
-    
-    # Deploy
-    wrangler deploy dist/static/cloudflare-worker.js
-    ```
+    ```bash # Install Wrangler pnpm add -g wrangler # Deploy wrangler deploy
+    dist/static/cloudflare-worker.js ```
   </Tab>
   <Tab value="yarn">
-    ```bash
-    # Install Wrangler
-    yarn global add wrangler
-    
-    # Deploy
-    wrangler deploy dist/static/cloudflare-worker.js
-    ```
+    ```bash # Install Wrangler yarn global add wrangler # Deploy wrangler deploy
+    dist/static/cloudflare-worker.js ```
   </Tab>
   <Tab value="bun">
-    ```bash
-    # Install Wrangler
-    bun add -g wrangler
-    
-    # Deploy
-    wrangler deploy dist/static/cloudflare-worker.js
-    ```
+    ```bash # Install Wrangler bun add -g wrangler # Deploy wrangler deploy
+    dist/static/cloudflare-worker.js ```
   </Tab>
 </Tabs>
 

@@ -87,7 +87,10 @@ export class DevServerManager {
           // Check named exports first, then default export object
           if (typeof importedModule[method] === 'function') {
             handlers[method] = importedModule[method];
-          } else if (moduleExports && typeof moduleExports[method] === 'function') {
+          } else if (
+            moduleExports &&
+            typeof moduleExports[method] === 'function'
+          ) {
             handlers[method] = moduleExports[method];
           }
         }
@@ -480,7 +483,9 @@ export class DevServerManager {
                 return;
               }
 
-              console.log(`${colors.yellow}404${colors.reset} ${colors.blue}→ ${url}${colors.reset}`);
+              console.log(
+                `${colors.yellow}404${colors.reset} ${colors.blue}→ ${url}${colors.reset}`,
+              );
 
               // ═══════════════════════════════════════════════════════════
               // Render _error.tsx for 404 responses instead of falling
@@ -503,19 +508,32 @@ export class DevServerManager {
                   });
 
                   const html = render(errorElement);
-                  let template = HtmlGenerator.constructTemplate('_error.tsx', [], '');
-                  template = await DevServerManager.viteCompiler.transformIndexHtml(url, template);
+                  let template = HtmlGenerator.constructTemplate(
+                    '_error.tsx',
+                    [],
+                    '',
+                  );
+                  template =
+                    await DevServerManager.viteCompiler.transformIndexHtml(
+                      url,
+                      template,
+                    );
                   const fullHtml = template.replace('<!--app-html-->', html);
 
                   res.statusCode = 404;
                   res.setHeader('Content-Type', 'text/html');
-                  for (const [key, value] of Object.entries(buildSecurityHeaders())) {
+                  for (const [key, value] of Object.entries(
+                    buildSecurityHeaders(),
+                  )) {
                     res.setHeader(key, value);
                   }
                   res.end(fullHtml);
                   return;
                 } catch (errorRenderErr) {
-                  console.error(`${colors.error}[Error Page Render Failed]${colors.reset}`, errorRenderErr);
+                  console.error(
+                    `${colors.error}[Error Page Render Failed]${colors.reset}`,
+                    errorRenderErr,
+                  );
                 }
               }
 
