@@ -217,10 +217,9 @@ export class CacheRevalidationAPI {
   /**
    * Recursively invalidate child paths
    */
+   
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private static async invalidateCacheRecursive(
-    _pathname: string,
-  ): Promise<void> {
+  private static async invalidateCacheRecursive(_pathname: string): Promise<void> {
     // This would find all cached paths that start with this pathname
     // and invalidate them
     // Example: /blog invalidates /blog, /blog/post-1, /blog/post-2, etc.

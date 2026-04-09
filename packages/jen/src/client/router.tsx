@@ -58,11 +58,12 @@ function matchRouteManifest(href: string) {
 /**
  * Recursively mounts the component tree to preserve parent layout states.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 function RouteNode({
   components,
   depth,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   components: ComponentType<any>[];
   depth: number;
 }) {

@@ -126,12 +126,12 @@ export class DevToolsClient {
     });
   }
 
-  private listeners: Map<string, Array<(data: any) => void>> = new Map();
+  private listeners: Map<string, Array<(data: unknown) => void>> = new Map();
 
   /**
    * Subscribe to incoming DevTools messages
    */
-  public on<T = any>(type: string, callback: (data: T) => void): () => void {
+  public on<T = unknown>(type: string, callback: (data: T) => void): () => void {
     if (!this.listeners.has(type)) {
       this.listeners.set(type, []);
     }

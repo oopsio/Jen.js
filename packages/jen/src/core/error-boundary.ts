@@ -294,10 +294,16 @@ export class ErrorBoundary extends Component<
                         '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
                     },
                     // Quick inline hover styles simulator
-                    onMouseOver: (e: any) =>
-                      (e.target.style.background = '#f1f5f9'),
-                    onMouseOut: (e: any) =>
-                      (e.target.style.background = '#ffffff'),
+                    onMouseOver: (e: Event) => {
+                      if (e.target instanceof HTMLElement) {
+                        e.target.style.background = '#f1f5f9';
+                      }
+                    },
+                    onMouseOut: (e: Event) => {
+                      if (e.target instanceof HTMLElement) {
+                        e.target.style.background = '#ffffff';
+                      }
+                    },
                     children: 'Try Again',
                   }),
                 ],

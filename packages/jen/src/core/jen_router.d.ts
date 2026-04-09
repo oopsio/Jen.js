@@ -1,5 +1,5 @@
 /* tslint:disable */
-/* eslint-disable */
+ 
 
 /**
  * Route match result with parameters and file paths

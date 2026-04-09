@@ -503,7 +503,7 @@ export class DevServerManager {
 
                   const errorElement = h(ErrorComponent, {
                     error: new Error(`Page not found: ${url}`),
-                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                     
                     reset: () => {},
                   });
 

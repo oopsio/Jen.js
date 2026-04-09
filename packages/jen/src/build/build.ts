@@ -1,5 +1,5 @@
 // src/build/StaticSiteGenerator.ts
-import { build, createServer as createViteServer, ViteDevServer } from 'vite';
+import { build, createServer as createViteServer } from 'vite';
 import { RouteScanner } from '../core/scan.js';
 import { ISRBuildIntegration } from './isr-build.js';
 import { ConfigLoader } from '../config/loader.js';
@@ -183,7 +183,9 @@ export class StaticSiteGenerator {
     }
     const manifestJson = JSON.stringify(manifestObj);
 
-    const locales = (RuntimeConfig as any).i18n?.locales || [undefined];
+    const locales = (
+      RuntimeConfig as { i18n?: { locales?: string[] } }
+    ).i18n?.locales || [undefined];
 
     for (const locale of locales) {
       for (const route of routes) {
@@ -283,7 +285,9 @@ if (root) {
           try {
             const dynamicMeta = await pageModule.generateMetadata({});
             metadataHtml = parseMetadata(dynamicMeta);
-          } catch (e) {}
+          } catch {
+            // Ignore metadata extraction errors
+          }
         } else if (pageModule.metadata) {
           metadataHtml = parseMetadata(pageModule.metadata);
         }

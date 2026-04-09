@@ -115,6 +115,17 @@ export default function Counter() {
   );
 }`;
 
+  const gitIgnore = `
+  node_modules/
+  dist
+  .jen/
+  .env
+  .env.local
+  .env.*.local
+  .DS_Store
+  Thumbs.db
+  `
+  await writeFile(path.join(projectDir, '.gitignore'), gitIgnore);
   await writeFile(path.join(projectDir, 'pages', 'app.tsx'), appTsxContent);
 
   s.stop('Project structure created!');

@@ -28,7 +28,7 @@ export const PartialRegistry = {
   registerGlob(globResult: Record<string, any>) {
     for (const [path, module] of Object.entries(globResult)) {
       // Extract the filename without the extension, e.g., '/partials/Card.tsx' -> 'Card'
-      const match = path.match(/([^\/]+)\.(?:tsx|ts|jsx|js)$/);
+      const match = path.match(/([^/]+)\.(?:tsx|ts|jsx|js)$/);
       if (match && module.default) {
         const name = match[1];
         partialRegistry.set(name, module.default); // Keep original casing or enforce lower-case? Keeping original is safer.

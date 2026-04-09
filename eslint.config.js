@@ -9,6 +9,15 @@ export default defineConfig([
       '**/dist/**',
       'crates/**/pkg/**',
       'packages/jen/src/core/jen_router.js',
+      'packages/jen/src/core/__tests__/**',
+      'packages/jen/src/devtools/__tests__/**',
+      'packages/jen/src/server/__tests__/**',
+      'packages/jen/.vercel/output/**',
+      'packages/jen/.vercel/cache/**',
+      'packages/jen/src/fonts/__tests__/**',
+      'packages/jen/src/client/__tests__/**',
+      'packages/jen/src/core/jen_router.cjs',
+      '**/**/.jen/**'
     ],
   },
   // Apply JS Recommended

@@ -5,8 +5,6 @@ import { expand as dotenvExpand } from 'dotenv-expand';
 
 export type Env = { [key: string]: string | undefined };
 
-let initialEnv: Env = { ...process.env };
-
 export function loadJenEnv(dir: string = process.cwd()) {
   const mode = process.env.NODE_ENV || 'development';
 
@@ -17,7 +15,7 @@ export function loadJenEnv(dir: string = process.cwd()) {
     '.env',
   ].filter(Boolean) as string[];
 
-  let combinedParsed: Env = {};
+  const combinedParsed: Env = {};
 
   for (const file of envFiles) {
     const filePath = path.resolve(dir, file);
