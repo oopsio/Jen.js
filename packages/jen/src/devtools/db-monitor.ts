@@ -175,19 +175,19 @@ export class DatabaseMonitor {
     for (const [driver, metrics] of this.driverMetrics) {
       if (metrics.totalQueries > 100) {
         issues.push(
-          `⚠️ ${driver}: ${metrics.totalQueries} total queries (${metrics.totalTime.toFixed(0)}ms)`,
+          `[!] ${driver}: ${metrics.totalQueries} total queries (${metrics.totalTime.toFixed(0)}ms)`,
         );
       }
 
       if (metrics.avgQueryTime > 50) {
         issues.push(
-          `⚠️ ${driver}: High average query time (${metrics.avgQueryTime.toFixed(2)}ms)`,
+          `[!] ${driver}: High average query time (${metrics.avgQueryTime.toFixed(2)}ms)`,
         );
       }
 
       if (metrics.slowQueries.length > 10) {
         issues.push(
-          `❌ ${driver}: ${metrics.slowQueries.length} slow queries detected`,
+          `[-] ${driver}: ${metrics.slowQueries.length} slow queries detected`,
         );
       }
     }
@@ -202,7 +202,7 @@ export class DatabaseMonitor {
     for (const [pattern, count] of queryPatterns) {
       if (count > 20) {
         issues.push(
-          `❌ Potential N+1 pattern: "${pattern}..." executed ${count} times`,
+          `[-] Potential N+1 pattern: "${pattern}..." executed ${count} times`,
         );
       }
     }

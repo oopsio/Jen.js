@@ -422,7 +422,7 @@ export async function initDevToolsUI() {
         </div>
         <div class="jen-devtools-section">
           <div class="jen-devtools-label">Status</div>
-          <span class="jen-devtools-badge pass">✓ Active</span>
+          <span class="jen-devtools-badge pass">[+] Active</span>
         </div>
       </div>
 
@@ -431,9 +431,9 @@ export async function initDevToolsUI() {
         <div class="jen-devtools-section">
           <div class="jen-devtools-label">Headers</div>
           <div style="line-height: 1.8;">
-            <div><span class="jen-devtools-badge pass">✓</span> Content-Security-Policy</div>
-            <div><span class="jen-devtools-badge pass">✓</span> X-Content-Type-Options</div>
-            <div><span class="jen-devtools-badge pass">✓</span> X-Frame-Options</div>
+            <div><span class="jen-devtools-badge pass">[+]</span> Content-Security-Policy</div>
+            <div><span class="jen-devtools-badge pass">[+]</span> X-Content-Type-Options</div>
+            <div><span class="jen-devtools-badge pass">[+]</span> X-Frame-Options</div>
             <div><span class="jen-devtools-badge warn">⚠</span> Strict-Transport-Security</div>
           </div>
         </div>
@@ -455,7 +455,7 @@ export async function initDevToolsUI() {
         </div>
         <div class="jen-devtools-section">
           <div class="jen-devtools-label">Hydration</div>
-          <span class="jen-devtools-badge pass">✓ Success</span>
+          <span class="jen-devtools-badge pass">[+] Success</span>
         </div>
       </div>
 

@@ -94,7 +94,7 @@ export class FileStorage extends StorageProvider {
     ) {
       // Node.js or Bun
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const fs = await import('fs').then((m: any) => m.promises);
+      const fs = (await import('fs-extra')) as any;
       return {
         readFile: (path: string, encoding: string) =>
           fs.readFile(path, encoding),

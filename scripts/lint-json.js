@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+import fs from 'fs-extra';
 import path from 'path';
 
 // Reads the .gitignore file and creates a list of rules

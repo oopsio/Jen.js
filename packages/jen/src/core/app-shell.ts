@@ -1,6 +1,6 @@
 import { ComponentType } from 'preact';
 import path from 'node:path';
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import type { ViteDevServer } from 'vite';
 import type { ErrorFallbackProps } from './error-boundary.js';
 

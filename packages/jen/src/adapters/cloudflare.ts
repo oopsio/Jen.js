@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import path from 'node:path';
 import { build } from 'esbuild';
 import { minify } from '@swc/core';
@@ -94,7 +94,7 @@ export default {
     fs.writeFileSync(outfile, minified.code);
 
     console.log(
-      '\x1b[32m✓ Cloudflare Worker deployed to ' + outfile + '\x1b[0m',
+      '\x1b[32m[+] Cloudflare Worker deployed to ' + outfile + '\x1b[0m',
     );
   }
 }

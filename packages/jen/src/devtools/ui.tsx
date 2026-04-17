@@ -204,7 +204,7 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
           onClick={() => setIsOpen(true)}
           title="Open DevTools"
         >
-          ▶
+          ->
         </button>
       </div>
     );
@@ -262,7 +262,7 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
                 ) : (
                   routes.slice(-5).map((r) => (
                     <div class="jen-devtools-log">
-                      {r.matched ? '✓' : '✗'} {r.pathname}
+                      {r.matched ? '[+]' : '[-]'} {r.pathname}
                       {Object.keys(r.params).length > 0 && (
                         <div style={{ color: '#ffff00' }}>
                           {JSON.stringify(r.params)}
@@ -285,14 +285,14 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
                     <div
                       class={`jen-devtools-status ${security.overallCompliant ? 'pass' : 'fail'}`}
                     >
-                      {security.overallCompliant ? '✓ COMPLIANT' : '✗ ISSUES'}
+                      {security.overallCompliant ? '[+] COMPLIANT' : '[-] ISSUES'}
                     </div>
                     {security.headers.map((h) => (
                       <div class="jen-devtools-metric">
                         <span
                           style={{ color: h.compliant ? '#00ff00' : '#ff0000' }}
                         >
-                          {h.compliant ? '✓' : '✗'} {h.name}
+                          {h.compliant ? '[+]' : '[-]'} {h.name}
                         </span>
                         <div style={{ color: '#888', marginLeft: '16px' }}>
                           {h.value || 'missing'}
@@ -355,7 +355,7 @@ export function DevToolsUI({ wsUrl = 'ws://localhost:3001' }: DevToolsUIProps) {
                           color: q.status === 'error' ? '#ff0000' : '#00ff00',
                         }}
                       >
-                        {q.status === 'error' ? '✗' : '✓'}{' '}
+                        {q.status === 'error' ? '[-]' : '[+]'}{' '}
                         {q.duration.toFixed(0)}ms
                       </div>
                       <div style={{ color: '#888' }}>{q.query}</div>

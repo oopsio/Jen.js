@@ -25,7 +25,7 @@ export class ISRHelper {
       },
     });
 
-    console.log('✓ ISR enabled with config:');
+    console.log('[+] ISR enabled with config:');
     console.log(`  Cache directory: ${options.cacheDir || '.cache/isr'}`);
     console.log(`  Global revalidate: ${options.globalRevalidate || 'none'}`);
     console.log(`  Max retries: ${options.maxRetries || 5}`);
@@ -41,7 +41,7 @@ export class ISRHelper {
       },
     });
 
-    console.log('✓ ISR disabled');
+    console.log('[+] ISR disabled');
   }
 
   /**

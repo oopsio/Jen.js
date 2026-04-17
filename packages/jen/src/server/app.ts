@@ -12,13 +12,14 @@ import {
   type APIRequest,
 } from '../core/api-router.js';
 import { Buffer } from 'node:buffer';
-import checker from 'vite-plugin-checker';
+
 import { createDevToolsPlugin } from '../devtools/vite-plugin.js';
 import { jenImageOptimizerPlugin } from '../plugin/image.js';
 import { RuntimeConfig } from '../config/config.js';
 import { RouterBridge } from '../devtools/router-bridge.js';
 import { SecurityAuditor } from '../devtools/security-audit.js';
 import { ErrorFormatter } from './error-formatter.js';
+import { jenServerPlugin } from '../plugin/server.js';
 import path from 'node:path';
 
 const colors = {
@@ -288,6 +289,10 @@ export class DevServerManager {
                     const apiRes = new APIResponse();
                     const apiResponse = await handler(apiReq, apiRes);
 
+                    if (!apiResponse || typeof apiResponse.status === 'undefined') {
+                      throw new Error('API Route handler must return a Response object (e.g. res.json())');
+                    }
+
                     const routeDuration = performance.now() - routeStartTime;
                     console.log(
                       `${colors.green}${method}${colors.reset} ${colors.blue}${url}${colors.reset} - ${colors.magenta}${apiResponse.status}${colors.reset} ${colors.reset}(${routeDuration.toFixed(2)}ms)${colors.reset}`,
@@ -460,6 +465,10 @@ export class DevServerManager {
                   res.setHeader('Transfer-Encoding', 'chunked');
                   const reader = jenResponse.body.getReader();
 
+                  req.on('close', () => {
+                    reader.cancel('Client disconnected').catch(() => {});
+                  });
+
                   try {
                     while (true) {
                       const { done, value } = await reader.read();
@@ -467,7 +476,9 @@ export class DevServerManager {
                         res.end();
                         break;
                       }
-                      res.write(Buffer.from(value));
+                      if (!res.writableEnded) {
+                        res.write(Buffer.from(value));
+                      }
                     }
                   } catch (streamErr) {
                     console.error('[Streaming Pipeline Failure]', streamErr);
@@ -534,6 +545,9 @@ export class DevServerManager {
                     `${colors.error}[Error Page Render Failed]${colors.reset}`,
                     errorRenderErr,
                   );
+                  res.statusCode = 500;
+                  res.end("Internal Server Error");
+                  return;
                 }
               }
 
@@ -556,9 +570,9 @@ export class DevServerManager {
     this.viteCompiler = await createViteServer({
       plugins: [
         jenJsPlugin(),
+        jenServerPlugin(),
         jenImageOptimizerPlugin(),
         createDevToolsPlugin(),
-        checker({ typescript: true }),
       ],
       define: {
         __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(

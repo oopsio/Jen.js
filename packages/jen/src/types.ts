@@ -89,5 +89,9 @@ export interface JenConfig {
   ppr?: {
     enabled?: boolean;
   };
+  images?: {
+    quality?: number;
+    effort?: number;
+  };
   requireDangerouslySetScripts?: boolean;
 }

@@ -8,9 +8,10 @@ import { RuntimeConfig } from '../config/config.js';
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 import { jenImageOptimizerPlugin } from '../plugin/image.js';
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import path from 'node:path';
 import { parseMetadata } from '../server/metadata.js';
+import { jenServerPlugin } from '../plugin/server.js';
 
 /**
  * Utility for constructing complete HTML documents during the build phase.
@@ -336,7 +337,7 @@ if (root) {
     await build({
       root: tempDir,
       mode: 'production',
-      plugins: [jenImageOptimizerPlugin()],
+      plugins: [jenServerPlugin(), jenImageOptimizerPlugin()],
       define: {
         __JEN_REQUIRE_SCRIPT_FLAG__: JSON.stringify(
           RuntimeConfig.requireDangerouslySetScripts ?? true,
@@ -378,7 +379,7 @@ if (root) {
     // 5. Clean up the temporary folder
     fs.rmSync(tempDir, { recursive: true });
 
-    console.log('\x1b[32m✓ Build complete\x1b[0m');
+    console.log('\x1b[32m[+] Build complete\x1b[0m');
 
     if (options?.adapter) {
       await AdapterManager.build(options.adapter, {

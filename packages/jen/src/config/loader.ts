@@ -1,6 +1,6 @@
 // src/config/ConfigLoader.ts
 import path from 'node:path';
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import { updateRuntimeConfig } from './config.js';
 
 export class ConfigLoader {

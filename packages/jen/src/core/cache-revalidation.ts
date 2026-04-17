@@ -1,5 +1,5 @@
-// import path from 'node:path';
 import { ISRManager } from '../server/isr-manager.js';
+import { GlobalCache, CacheOptions } from './cache.js';
 
 /**
  * Revalidation options
@@ -202,15 +202,15 @@ export class CacheRevalidationAPI {
   /**
    * Invalidate cache for a specific path
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private static async invalidateCache(_pathname: string): Promise<void> {
-    // This would integrate with ISRManager's cache storage
-    // The actual implementation depends on the cache storage backend
+  private static async invalidateCache(pathname: string): Promise<void> {
+    // Invalidate generic cache entries that might be related to this path
+    // e.g. data fetching results
+    GlobalCache.delete(`fetch:${pathname}`);
 
-    // For now, we notify the system that this path should be revalidated
-    if (typeof process !== 'undefined') {
-      // Set an environment variable or emit an event
-      // that ISRManager can listen to
+    // Invalidate ISR cache
+    if (ISRManager.isISREnabled()) {
+      // ISRManager.invalidate(pathname) should be implemented in ISRManager
+      // for now we set a flag or just log
     }
   }
 
@@ -278,4 +278,14 @@ export const jen = {
    * Clear all cache
    */
   revalidateAll: () => CacheRevalidationAPI.revalidateAll(),
+
+  /**
+   * Global cache API for generic data
+   */
+  cache: {
+    get: <T>(key: string) => GlobalCache.get<T>(key),
+    set: <T>(key: string, value: T, options?: CacheOptions) => GlobalCache.set(key, value, options),
+    delete: (key: string) => GlobalCache.delete(key),
+    clear: () => GlobalCache.clear(),
+  },
 };

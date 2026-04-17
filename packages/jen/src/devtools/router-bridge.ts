@@ -59,7 +59,7 @@ export class RouterBridge {
    */
   public static formatTraceForUI(trace: RouteMatchTrace): string {
     if (!trace.matched) {
-      return `❌ NO MATCH: ${trace.pathname}`;
+      return `[-] NO MATCH: ${trace.pathname}`;
     }
 
     const paramStr =
@@ -67,7 +67,7 @@ export class RouterBridge {
         ? ` → ${JSON.stringify(trace.params)}`
         : '';
 
-    return `✓ ${trace.matchedPath}${paramStr} (${trace.executionTime.toFixed(2)}ms)`;
+    return `[+] ${trace.matchedPath}${paramStr} (${trace.executionTime.toFixed(2)}ms)`;
   }
 
   /**
@@ -80,7 +80,7 @@ export class RouterBridge {
     const slowTraces = traces.filter((t) => t.executionTime > 10);
     if (slowTraces.length > 0) {
       issues.push(
-        `⚠️ ${slowTraces.length} slow route matches (>10ms detected)`,
+        `[!] ${slowTraces.length} slow route matches (>10ms detected)`,
       );
     }
 
@@ -88,7 +88,7 @@ export class RouterBridge {
     const notFoundTraces = traces.filter((t) => !t.matched);
     if (notFoundTraces.length > traces.length * 0.3) {
       issues.push(
-        `⚠️ High 404 rate: ${notFoundTraces.length}/${traces.length}`,
+        `[!] High 404 rate: ${notFoundTraces.length}/${traces.length}`,
       );
     }
 
@@ -97,7 +97,7 @@ export class RouterBridge {
       (t) => Object.keys(t.params).length > 3,
     );
     if (complexParams.length > 0) {
-      issues.push(`ℹ️ ${complexParams.length} routes with multiple parameters`);
+      issues.push(`[i] ${complexParams.length} routes with multiple parameters`);
     }
 
     return issues;

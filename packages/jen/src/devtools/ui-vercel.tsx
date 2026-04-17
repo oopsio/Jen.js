@@ -185,10 +185,10 @@ const styles = `
 type TabId = 'routes' | 'security' | 'ssr' | 'db';
 
 const TABS: { id: TabId; label: string; icon: string }[] = [
-  { id: 'routes', label: 'Route', icon: '📍' },
-  { id: 'security', label: 'Security', icon: '🛡️' },
+  { id: 'routes', label: 'Route', icon: '[Route]' },
+  { id: 'security', label: 'Security', icon: '[Security]' },
   { id: 'ssr', label: 'Metrics', icon: '⚡' },
-  { id: 'db', label: 'Data', icon: '🗄️' },
+  { id: 'db', label: 'Data', icon: '[Data]' },
 ];
 
 export function DevToolsPanel() {

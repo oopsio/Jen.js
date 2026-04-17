@@ -2,7 +2,7 @@ import { renderToReadableStream } from 'preact-render-to-string/stream';
 import { HtmlGenerator } from '../build/build.js';
 import type { ViteDevServer } from 'vite';
 import { h } from 'preact';
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getUsedFonts } from '../fonts/google.js';
@@ -102,8 +102,19 @@ export class SsrEngine {
     const ErrorComponent = AppShellManager.getErrorComponent();
 
     // Build the component tree: Router > ErrorBoundary > App > ...layouts > Page
+    // ═══════════════════════════════════════════════════════════════
+    // RESOLVE ASYNC COMPONENTS (Server Components)
+    // ═══════════════════════════════════════════════════════════════
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let page: any = h(PageComponent as any, pageProps);
+    const resolveAsync = async (Cmp: any, props: any, children?: any) => {
+      if (typeof Cmp === 'function' && (Cmp.constructor.name === 'AsyncFunction' || Cmp.toString().includes('__awaiter') || Cmp.toString().includes('async'))) {
+        return await Cmp({ ...props, children });
+      }
+      return h(Cmp, props, children);
+    };
+
+    let pageTreePromise = resolveAsync(PageComponent, pageProps);
 
     // Apply nested layout wrappers sequentially
     if (route.layouts && route.layouts.length > 0) {
@@ -113,17 +124,19 @@ export class SsrEngine {
           const layoutModule = await vite.ssrLoadModule(layoutFile);
           const LayoutCmp = layoutModule.default;
           if (LayoutCmp) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            page = h(LayoutCmp as any, null, page);
+            const currentTree = await pageTreePromise;
+            pageTreePromise = resolveAsync(LayoutCmp, null, currentTree);
           }
         }
       }
     }
 
+    let page = await pageTreePromise;
+
     // If _app.tsx exists, wrap the page in it
     if (AppComponent) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      page = h(AppComponent as any, {
+      // App component itself might be async (rare but supported)
+      page = await resolveAsync(AppComponent as any, {
         Component: PageComponent,
         pageProps,
         children: page,

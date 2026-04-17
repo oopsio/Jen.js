@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import path from 'node:path';
 import { build } from 'esbuild';
 import { minify } from '@swc/core';
@@ -162,7 +162,7 @@ export default async function handler(req, res) {
     }
 
     console.log(
-      '\x1b[32m✓ Vercel adapter build complete in .vercel/output\x1b[0m',
+      '\x1b[32m[+] Vercel adapter build complete in .vercel/output\x1b[0m',
     );
   }
 }

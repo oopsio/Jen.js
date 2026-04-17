@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { intro, outro, text, spinner, note } from '@clack/prompts';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'fs-extra';
 import path from 'node:path';
 
 async function main() {

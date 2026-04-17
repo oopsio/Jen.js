@@ -11,7 +11,7 @@ import {
 import renderToString from 'preact-render-to-string';
 import { h } from 'preact';
 import type { ViteDevServer } from 'vite';
-import fs from 'node:fs';
+import fs from 'fs-extra';
 
 export class ISRBuildIntegration {
   /**
@@ -135,7 +135,7 @@ export class ISRBuildIntegration {
     }
 
     console.log(
-      `\x1b[32m✓ ISR cache: ${cached} routes (${skipped} skipped)\x1b[0m`,
+      `\x1b[32m[+] ISR cache: ${cached} routes (${skipped} skipped)\x1b[0m`,
     );
   }
 

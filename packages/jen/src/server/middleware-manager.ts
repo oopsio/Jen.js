@@ -11,6 +11,7 @@ import {
   RequestLogger,
   MiddlewareContext,
 } from '../middleware/index.js';
+import { ActionsMiddleware } from '../middleware/actions.js';
 
 export class MiddlewareManager {
   private static pipeline: MiddlewarePipeline | null = null;
@@ -37,6 +38,9 @@ export class MiddlewareManager {
         0, // Highest priority
       );
     }
+
+    // Always add actions middleware
+    this.pipeline.use('server-actions', ActionsMiddleware.handler, 5);
 
     if (config.requestLogger ?? true) {
       const isDev = process.env.NODE_ENV !== 'production';

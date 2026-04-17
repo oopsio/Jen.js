@@ -3,8 +3,8 @@ import { describe, it, expect, beforeEach, mock } from 'bun:test';
 const mockFiles = new Set<string>();
 
 // Mock node:fs with a fallback to the original implementation
-mock.module('node:fs', () => {
-  const originalFs = require('node:fs');
+mock.module('fs-extra', () => {
+  const originalFs = require('fs-extra');
   return {
     ...originalFs,
     default: {

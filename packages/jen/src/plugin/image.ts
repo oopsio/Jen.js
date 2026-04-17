@@ -1,7 +1,8 @@
 import type { Plugin, ViteDevServer } from 'vite';
 import sharp from 'sharp';
-import fs from 'node:fs';
+import fs from 'fs-extra';
 import path from 'node:path';
+import { RuntimeConfig } from '../config/config.js';
 
 /**
  * Jen.js Image Optimizer Plugin
@@ -28,8 +29,9 @@ export function jenImageOptimizerPlugin(): Plugin {
               `\x1b[33m[Jen.js Image]\x1b[0m Optimizing ${fileName}...`,
             );
             // Compress the image with Sharp to WebP format
+            const imgOptions = RuntimeConfig.images || { quality: 80, effort: 4 };
             const optimized = await sharp(asset.source)
-              .webp({ quality: 80, effort: 4 })
+              .webp(imgOptions)
               .toBuffer();
 
             // Override the original output buffering with the smaller, optimized blob.
@@ -67,7 +69,8 @@ export function jenImageOptimizerPlugin(): Plugin {
 
           if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             const width = w ? parseInt(w, 10) : undefined;
-            const quality = q ? parseInt(q, 10) : 80;
+            const quality = q ? parseInt(q, 10) : (RuntimeConfig.images?.quality ?? 80);
+            const effort = RuntimeConfig.images?.effort ?? 4;
 
             console.log(
               `\x1b[36m[Jen.js Image]\x1b[0m Dev optimizing: ${rawPath}`,
@@ -83,7 +86,7 @@ export function jenImageOptimizerPlugin(): Plugin {
             }
 
             const optimizedBuffer = await transformer
-              .webp({ quality })
+              .webp({ quality, effort })
               .toBuffer();
 
             res.setHeader('Content-Type', 'image/webp');

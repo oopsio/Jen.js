@@ -14,6 +14,8 @@ export { Link } from './client/link.js';
 export { defineConfig } from './config/config.js';
 export { RouteScanner } from './core/scan.js';
 export { RouterMap } from './core/map.js';
+export { jen } from './core/cache-revalidation.js';
+export { jenFetch as fetch } from './core/fetch.js';
 
 // Types
 export * from './types.js';

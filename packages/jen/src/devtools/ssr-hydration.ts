@@ -146,13 +146,13 @@ export class SSRHydrationDetector {
 
     if (metrics.renderTime > 100) {
       issues.push(
-        `⚠️ Slow SSR render: ${metrics.renderTime.toFixed(0)}ms (target: <50ms)`,
+        `[!] Slow SSR render: ${metrics.renderTime.toFixed(0)}ms (target: <50ms)`,
       );
     }
 
     if (metrics.componentCount > 500) {
       issues.push(
-        `⚠️ High component count: ${metrics.componentCount} (consider chunking)`,
+        `[!] High component count: ${metrics.componentCount} (consider chunking)`,
       );
     }
 
@@ -161,7 +161,7 @@ export class SSRHydrationDetector {
       metrics.hydrationChecksum.mismatches.length > 0
     ) {
       issues.push(
-        `❌ Hydration mismatch: ${metrics.hydrationChecksum.mismatches.length} DOM differences`,
+        `[-] Hydration mismatch: ${metrics.hydrationChecksum.mismatches.length} DOM differences`,
       );
     }
 

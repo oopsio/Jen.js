@@ -4,7 +4,7 @@
 
 import os from 'os';
 import { execSync } from 'child_process';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 
 export type TaskResult = {

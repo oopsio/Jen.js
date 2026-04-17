@@ -13,6 +13,7 @@ import { FreshnessChecker } from '../freshness/freshness-checker.js';
 
 export class CacheManager {
   private renderQueue: Set<string> = new Set();
+  private inFlightMisses: Map<string, Promise<ISRResponse>> = new Map();
 
   constructor(
     private storage: IStorageProvider,
@@ -72,24 +73,35 @@ export class CacheManager {
     route: RouteMetadata,
     render: RenderFunction,
   ): Promise<ISRResponse> {
-    try {
-      const html = await render(route.path);
-      const entry: CacheEntry = {
-        html,
-        timestamp: Date.now(),
-      };
-
-      await this.storage.set(cacheKey, entry);
-
-      return {
-        html,
-        status: 'MISS',
-      };
-    } catch (error) {
-      throw new Error(`Failed to render page ${route.path}: ${String(error)}`, {
-        cause: error,
-      });
+    if (this.inFlightMisses.has(cacheKey)) {
+      return this.inFlightMisses.get(cacheKey)!;
     }
+
+    const promise = (async () => {
+      try {
+        const html = await render(route.path);
+        const entry: CacheEntry = {
+          html,
+          timestamp: Date.now(),
+        };
+
+        await this.storage.set(cacheKey, entry);
+
+        return {
+          html,
+          status: 'MISS',
+        } as ISRResponse;
+      } catch (error) {
+        throw new Error(`Failed to render page ${route.path}: ${String(error)}`, {
+          cause: error,
+        });
+      } finally {
+        this.inFlightMisses.delete(cacheKey);
+      }
+    })();
+
+    this.inFlightMisses.set(cacheKey, promise);
+    return promise;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs-extra';
 import { join } from 'node:path';
 import { Buffer } from 'node:buffer';
 import path from 'node:path';

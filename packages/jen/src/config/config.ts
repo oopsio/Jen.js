@@ -31,6 +31,10 @@ export const RuntimeConfig: JenConfig = {
     enabled: false,
   },
   requireDangerouslySetScripts: true,
+  images: {
+    quality: 80,
+    effort: 4,
+  },
 };
 
 /**
@@ -62,6 +66,11 @@ export function updateRuntimeConfig(userSettings: Partial<JenConfig>): void {
   if (userSettings.ppr) {
     RuntimeConfig.ppr = { ...RuntimeConfig.ppr, ...userSettings.ppr };
     delete userSettings.ppr;
+  }
+  // Merge images config properly
+  if (userSettings.images) {
+    RuntimeConfig.images = { ...RuntimeConfig.images, ...userSettings.images };
+    delete userSettings.images;
   }
   Object.assign(RuntimeConfig, userSettings);
 }

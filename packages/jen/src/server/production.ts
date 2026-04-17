@@ -19,6 +19,13 @@ import { RuntimeConfig } from '../config/config.js';
 import renderToString from 'preact-render-to-string';
 import { renderToReadableStream } from 'preact-render-to-string/stream';
 import { h } from 'preact';
+import {
+  APIRouteScanner,
+  APIRouter,
+  APIResponse,
+  type HTTPMethod,
+  type APIRequest,
+} from '../core/api-router.js';
 
 const colors = {
   reset: '\x1b[0m',
@@ -383,6 +390,59 @@ async function handleRequest(request: Request): Promise<Response> {
     }
 
     // ────────────────────────────────────────────────────────────────────
+    // 0.75 RUST ROUTER GATEKEEPER: Check API Routes
+    // ────────────────────────────────────────────────────────────────────
+    if (APIRouter.isAPIRoute(pathname)) {
+      const method = (req.method || 'GET').toUpperCase() as HTTPMethod;
+      const handler = APIRouter.findRoute(pathname, method);
+
+      if (handler) {
+        const apiReq = new Request(req.url, {
+          method: req.method,
+          headers: req.headers,
+        }) as APIRequest;
+
+        const urlObj = new URL(req.url);
+        apiReq.query = Object.fromEntries(urlObj.searchParams);
+
+        if (['POST', 'PUT', 'PATCH'].includes(method) && req.body) {
+          const bodyText = await req.text();
+          if (bodyText) {
+            try {
+              apiReq.body = JSON.parse(bodyText);
+            } catch {
+              apiReq.body = bodyText;
+            }
+          }
+        }
+
+        try {
+          const apiRes = new APIResponse();
+          const apiResponse = await handler(apiReq, apiRes);
+          if (!apiResponse || typeof apiResponse.status === 'undefined') {
+             throw new Error('API Route handler must return a Response object');
+          }
+
+          const duration = performance.now() - startTime;
+          logRequest(req.method, pathname, apiResponse.status, duration);
+
+          return new Response(apiResponse.body, {
+            status: apiResponse.status,
+            headers: apiResponse.headers,
+          });
+        } catch (error) {
+          console.error(`[API ERROR] ${pathname}:`, error);
+          const duration = performance.now() - startTime;
+          logRequest(req.method, pathname, 500, duration);
+          return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json', ...buildSecurityHeaders() },
+          });
+        }
+      }
+    }
+
+    // ────────────────────────────────────────────────────────────────────
     // 1. RUST ROUTER GATEKEEPER: Validate route before any processing
     // ────────────────────────────────────────────────────────────────────
     const jenResponse = await RouterMap.resolveRequest(req);
@@ -452,7 +512,7 @@ export async function startProductionServer(
   const runtime = RuntimeDetector.detect();
 
   if (runtime === 'unknown') {
-    console.error('❌ Unsupported runtime environment');
+    console.error('[-] Unsupported runtime environment');
     process.exit(1);
   }
 
@@ -474,6 +534,31 @@ export async function startProductionServer(
       }
     } catch (e) {
       console.error('Failed to load middleware:', e);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────────
+  // REGISTER API ROUTES
+  // ────────────────────────────────────────────────────────────────────
+  const apiRoutes = APIRouteScanner.scanAPIRoutes();
+  for (const apiRoute of apiRoutes) {
+    try {
+      const importedModule = await import(/* @vite-ignore */ apiRoute.filePath);
+      const moduleExports = importedModule.default ?? importedModule;
+      const handlers: Record<string, Function> = {};
+      for (const method of ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']) {
+        if (typeof importedModule[method] === 'function') {
+          handlers[method] = importedModule[method];
+        } else if (moduleExports && typeof moduleExports[method] === 'function') {
+          handlers[method] = moduleExports[method];
+        }
+      }
+      APIRouter.registerRoute(apiRoute.pathname, handlers);
+      if (Object.keys(handlers).length > 0) {
+        console.log(`${colors.green}API${colors.reset} ${Object.keys(handlers).join('|')} ${colors.blue}${apiRoute.pathname}${colors.reset}`);
+      }
+    } catch (e) {
+      // API route load failure
     }
   }
 
@@ -529,7 +614,7 @@ export async function startProductionServer(
       },
     });
 
-    console.log(`${colors.green}✓ Server running${colors.reset}`);
+    console.log(`${colors.green}[+] Server running${colors.reset}`);
     return;
   }
 
@@ -543,7 +628,7 @@ export async function startProductionServer(
       handleRequest,
     );
 
-    console.log(`${colors.green}✓ Server running${colors.reset}`);
+    console.log(`${colors.green}[+] Server running${colors.reset}`);
     return;
   }
 
@@ -573,7 +658,7 @@ export async function startProductionServer(
     });
 
     server.listen(port, () => {
-      console.log(`${colors.green}✓ Server running${colors.reset}`);
+      console.log(`${colors.green}[+] Server running${colors.reset}`);
     });
 
     server.on('error', (error) => {
@@ -610,13 +695,13 @@ export class ProductionServerManager {
 
   private static async startNodeServer(port: number): Promise<void> {
     const http = await import('node:http');
-    const fs = await import('node:fs');
+    const fs = await import('fs-extra');
     const path = await import('node:path');
 
     const distDir = path.resolve(process.cwd(), 'dist/static');
     if (!fs.existsSync(distDir)) {
       console.error(
-        '\x1b[31m✗ dist/static not found. Run "jen build" first.\x1b[0m',
+        '\x1b[31m[-] dist/static not found. Run "jen build" first.\x1b[0m',
       );
       process.exit(1);
     }
@@ -643,7 +728,7 @@ export class ProductionServerManager {
 
     server.listen(port, () => {
       console.log(
-        `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
+        `${colors.green}[+] Production server running at http://localhost:${port}${colors.reset}`,
       );
       console.log(
         `${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`,
@@ -652,7 +737,7 @@ export class ProductionServerManager {
 
     server.on('error', (error: Error) => {
       console.error(
-        `${colors.red}✗ Server error: ${error.message}${colors.reset}`,
+        `${colors.red}[-] Server error: ${error.message}${colors.reset}`,
       );
       process.exit(1);
     });
@@ -662,7 +747,7 @@ export class ProductionServerManager {
     const distDir = Bun.env.PWD + '/dist/static';
     if (!Bun.file(distDir).exists()) {
       console.error(
-        '\x1b[31m✗ dist/static not found. Run "jen build" first.\x1b[0m',
+        '\x1b[31m[-] dist/static not found. Run "jen build" first.\x1b[0m',
       );
       process.exit(1);
     }
@@ -678,7 +763,7 @@ export class ProductionServerManager {
     });
 
     console.log(
-      `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
+      `${colors.green}[+] Production server running at http://localhost:${port}${colors.reset}`,
     );
     console.log(
       `${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`,
@@ -693,7 +778,7 @@ export class ProductionServerManager {
     );
 
     console.log(
-      `${colors.green}✓ Production server running at http://localhost:${port}${colors.reset}`,
+      `${colors.green}[+] Production server running at http://localhost:${port}${colors.reset}`,
     );
     console.log(
       `${colors.blue}NIST SP 800-44 & OWASP ASVS L1 Compliant${colors.reset}`,
