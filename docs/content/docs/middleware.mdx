@@ -76,7 +76,7 @@ Only the first match is used.
 1. A request arrives at the server
 2. If a middleware file exists, it is executed **before** the router
 3. If middleware returns a `Response`, it short-circuits (no routing occurs)
-4. If middleware returns via `NextResponse.next()`, the request proceeds normally
+4. If middleware returns `NextResponse.next()`, the request proceeds normally
 
 > [!IMPORTANT]
 > Middleware runs on both the development server and edge adapters (Vercel Edge, Cloudflare Workers).
