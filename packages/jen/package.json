@@ -37,7 +37,7 @@
     "mime": "^4.1.0",
     "preact": "^10.29.0",
     "preact-render-to-string": "^6.6.6",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.4",
     "vite": "^8.0.1"
   },
   "devDependencies": {
