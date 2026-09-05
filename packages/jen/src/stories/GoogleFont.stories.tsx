@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/preact-vite';
 import { GoogleFont } from '../fonts/google';
-import { h } from 'preact';
 
 const GoogleFontDemo = ({ fontName, text }: { fontName: string, text: string }) => {
   const font = GoogleFont(fontName, { weight: [400, 700], subsets: ['latin'] });
